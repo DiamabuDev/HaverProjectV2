@@ -1,0 +1,250 @@
+html {
+    font-size: 14px;
+}
+
+h1 {
+    font-size: 26px;
+    margin-left: -6px;
+}
+
+h2 {
+    font-size: 20px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+    background-image: url('/images/haver_backgroundV2.png');
+    background-position: left bottom;
+    background-repeat: no-repeat;
+    background-size: 100% auto;
+}
+
+.navbar {
+    background-color: #001B40;
+    color: #fff;
+}
+
+.navbar-nav .nav-item {
+    margin-left: 20px;
+    font-size: 17px;
+}
+
+.dashboard {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 50px;
+    padding: 30px;
+}
+
+.dashboard-item {
+    width: 210px;
+    height: 140px;
+    background-color: #345B91;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.35);
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+    .dashboard-item i {
+        font-size: 50px;
+    }
+
+    .dashboard-item p {
+        margin: 0;
+        font-weight: 500;
+        padding-top: 5px;
+    }
+
+    .dashboard-item:hover {
+        background-color: #1C335E;
+        color: lightgray;
+    }
+
+        .dashboard-item:hover i {
+            font-size: 55px;
+        }
+
+.custom-dropdown-color .dropdown-item:hover {
+    background-color: #345B91;
+    color: #FFFFFF
+}
+
+.dropdown-item {
+    width: 210px;
+}
+
+/* Styles for mobile devices */
+@media (max-width: 767px) {
+    .dashboard {
+        gap: 20px;
+        padding: 5px;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .dashboard-item {
+        width: 90%;
+        height: 80px;
+        font-size: 16px;
+        flex-direction: row;
+        justify-content: left;
+    }
+
+        .dashboard-item i {
+            font-size: 30px;
+            margin-right: 12px;
+            margin-left: 25px;
+        }
+
+        .dashboard-item p {
+            padding-top: 3px;
+            margin: 0;
+        }
+
+        .dashboard-item:hover i {
+            font-size: 35px;
+        }
+
+    .dropdown-item {
+        width: 220px;
+    }
+
+    .dropdown {
+        width: 90%
+    }
+
+    .dropdown-with {
+        width: 100%
+    }
+}
+
+.custom-header-bg {
+    background-color: #345B91;
+    color: #fff;
+}
+
+.custom-secondary-bg {
+    background-color: #516282;
+    color: #fff;
+}
+
+.custom-light-bg {
+    background-color: #A9C0D4;
+    color: #000;
+}
+
+.rounded {
+    border-radius: 10px;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #6B81AA;
+    color: #fff;
+}
+
+.btn-primary {
+    background-color: #1C335E;
+}
+
+.bg-custom-color {
+    background-color: #E7EAEB;
+    border-color: #1C335E;
+}
+
+.card-header {
+    background-color: #ABB6CA;
+}
+
+.text-danger {
+    font-style: italic;
+}
+
+.custom-tooltip {
+    font-size: 14px;
+}
+
+.custom-bg-dashboard-item {
+    background-color: gray;
+}
+
+/* Provided by David S*/
+.form-group {
+    margin-bottom: 1rem
+}
+
+/*Style for NCR List (Index.html)*/
+
+.stillactive {
+    color: green
+}
+
+.closed {
+    color: red;
+}
+
+.standout, .closed, .stillactive {
+    font-weight: 600;
+}
+
+.two-cols-1 {
+    width: 30%;
+}
+
+.two-cols {
+    width: 70%;
+}
+
+.three-cols {
+    width: 20%;
+}
+
+.four-cols {
+    width: 25%;
+}
+
+.icon-drop {
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.custom-btn-text-start {
+    text-align: left;
+    padding-left: 0;
+}
+
+.custom-link:hover {
+    color: white !important;
+}
+
+.custom-hover:hover a {
+    color: white !important;
+}
+
+.big-col {
+    width: 40%;
+}

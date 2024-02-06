@@ -1,0 +1,108 @@
+﻿@model IEnumerable<HaverDevProject.Models.NcrQa>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Non Conforming Report</h2>
+
+<form asp-action="Index" method="get">
+    <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
+    <input type="hidden" name="sortField" value="@ViewData["sortField"]" />      
+    <div class="form-horizontal">        
+        <div class="card card-body bg-custom-color mb-2">
+            <div class="row d-flex justify-content-center align-items-center">
+                <div class="form-group col-lg-4 col-md-5 col-sm-10 col-10">
+                    <label class="control-label">Filter by Suppliers:</label>
+                    @Html.DropDownList("SupplierID", null, "All Suppliers", htmlAttributes: new { @class = "form-control" })
+                </div>
+                <div class="form-group col-lg-4 col-md-5 col-sm-10 col-10">
+                    <label class="control-label mb-1">Find by NCR # / Item:</label>
+                    @Html.TextBox("SearchField", null, new { @class = "form-control" })
+                </div>
+                
+                <div class="form-group col-lg-4 col-md-6 col-sm-10 col-8 align-self-end">
+                    <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary ms-2"/>
+                    <a asp-action="Index" class="btn btn-outline-dark ms-2">Clear</a>                    
+                    <a asp-action="Create" class="btn btn-primary ms-2"> <i class="bi bi-plus-square-dotted"></i> Create New</a>
+                </div>                    
+            </div>
+        </div>        
+    </div>
+    <table class="table table-hover table-striped">
+        <thead class="custom-header-bg">
+            <tr>
+                <th>
+                    <input type="submit" name="actionButton" value="Date" class="btn text-light" />
+                    <span><i class="bi bi-filter"></i></span>
+                </th>
+                <th>
+                    <input type="submit" name="actionButton" value="NCR #" class="btn text-light" />
+                    <span><i class="bi bi-filter"></i></span>
+                </th>
+                <th>
+                    <input type="submit" name="actionButton" value="Supplier" class="btn text-light" />
+                    <span><i class="bi bi-filter"></i></span>
+                </th>
+                <th>
+                    <input type="submit" name="actionButton" value="Item" class="btn text-light" />
+                    <span><i class="bi bi-filter"></i></span>
+                </th>
+                <th class="d-none d-md-table-cell">
+                    <input type="submit" name="actionButton" value="Defect" class="btn text-light" />
+                    <span><i class="bi bi-filter"></i></span>
+                </th>
+                <th class="d-none d-xxl-table-cell">
+                    <input type="submit" name="actionButton" value="Qty Rec." class="btn text-light" />
+                    <span><i class="bi bi-filter"></i></span>
+                </th>
+                <th class="d-none d-md-table-cell">
+                    <input type="submit" name="actionButton" value="Qty Def." class="btn text-light" />
+                    <span><i class="bi bi-filter"></i></span>
+                </th>                
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NcrQacreationDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Ncr.NcrNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderDetails.FirstOrDefault().Item.Supplier.SupplierName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderDetails.FirstOrDefault().Item.ItemName)
+                </td>
+                <td class="d-none d-md-table-cell">
+                    @Html.DisplayFor(modelItem => item.OrderDetails.FirstOrDefault().Item.ItemDefects.FirstOrDefault().Defect.DefectName)
+                </td>
+                    <td class="text-center d-none d-xxl-table-cell">
+                    @Html.DisplayFor(modelItem => item.OrderDetails.FirstOrDefault().OrderQuanReceived)
+                </td>
+                <td class="text-center d-none d-md-table-cell">
+                    @Html.DisplayFor(modelItem => item.OrderDetails.FirstOrDefault().OrderQuanDefective)
+                </td>                
+                <td>                    
+                    <a asp-action="Edit" asp-route-id="@item.NcrQaid" class="btn text-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
+                    <a asp-action="Details" asp-route-id="@item.NcrQaid" class="btn text-primary" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
+                    <a asp-action="Delete" asp-route-id="@item.NcrQaid" class="btn text-danger" data-bs-toggle="tooltip" title="Delete"><i class="bi bi-trash3-fill"></i></a>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+    <partial name="_PagingNavBar" />
+</form>
+@section Scripts {
+    <script type="text/javascript">
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+}

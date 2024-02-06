@@ -1,0 +1,161 @@
+﻿@model IEnumerable<HaverDevProject.Models.Ncr>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1><i class="bi bi-caret-right-fill"></i> Non-Conformance Reports</h1>
+
+<form id="ncrForm" asp-action="Index" method="get">
+    <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
+    <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
+    <input type="hidden" id="filter" name="filter" value="@ViewData["filter"]" />
+    <div class="row mt-3 mb-2">
+        <div class="col-8">
+            <div class="d-flex justify-content-start">
+                <input type="radio" class="btn-check btn-filter" name="filter" id="All" autocomplete="off" checked value="All">
+                <label class="btn btn-primary me-2" for="All">All NCRs</label>
+
+                <input type="radio" class="btn-check btn-filter" name="filter" id="Active" autocomplete="off" value="Active" data-filter="Active">
+                <label class="btn btn-success me-2" for="Active">NCRs Actives</label>
+
+                <input type="radio" class="btn-check btn-filter" name="filter" id="Closed" autocomplete="off" value="Closed" data-filter="Closed">
+                <label class="btn btn-danger me-2" for="Closed">NCRs Closed</label>
+            </div>
+        </div>
+        <div class="col-4 text-end">
+            <a asp-action="" class="btn btn-secondary ms-4"> <i class="bi bi-plus-square-dotted"></i> Create New NCR</a> @* asp-action="Create" *@
+        </div>
+    </div>
+    <div class="form-horizontal">
+        <div class="card card-body bg-custom-color mb-2">
+            <div class="row d-flex justify-content-center align-items-center">
+                <div class="form-group col-lg-3 col-md-5 col-sm-10 col-10">
+                    <label class="control-label">Filter by Suppliers:</label>
+                    @Html.DropDownList("SupplierID", null, "All Suppliers", htmlAttributes: new { @class = "form-control" })
+                </div>
+                <div class="form-group col-lg-2">
+                    <label class="control-label">Start Date:</label>
+                    @Html.TextBox("StartDate", @ViewData["StartDate"], new { @class = "form-control", type = "date" })
+                </div>
+                <div class="form-group col-lg-2">
+                    <label class="control-label">End Date:</label>
+                    @Html.TextBox("EndDate", @ViewData["EndDate"], new { @class = "form-control", type = "date" })
+                </div>
+                <div class="form-group col-lg-3 col-md-5 col-sm-10 col-10">
+                    <label class="control-label mb-1">Find by NCR # or Defect :</label>
+                    @Html.TextBox("SearchCode", null, new { @class = "form-control" })
+                </div>
+                <div class="form-group col-lg-2 col-md-7 col-sm-10 col-10 align-self-end">
+                    <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary ms-2" />
+                    <a asp-action="Index" class="btn btn-outline-dark ms-4">Clear</a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <table class="table table-hover table-striped">
+        <thead class="custom-header-bg">
+            <tr>
+                <th></th>
+                <th class="d-none d-md-table-cell">
+                    <button type="submit" name="actionButton" value="Created" class="btn text-light custom-btn-text-start">
+                        Created
+                        @Html.Raw(ViewData["filterApplied:Created"])
+                    </button>
+                </th>
+                <th>
+                    <button type="submit" name="actionButton" value="NCR #" class="btn text-light custom-btn-text-start">
+                        NCR #
+                        @Html.Raw(ViewData["filterApplied:NcrNumber"])
+                    </button>
+                </th>
+                <th>
+                    <button type="submit" name="actionButton" value="Supplier" class="btn text-light custom-btn-text-start">
+                        Supplier
+                        @Html.Raw(ViewData["filterApplied:Supplier"])
+                    </button>
+                </th>
+                <th class="d-none d-md-table-cell">
+                    <button type="submit" name="actionButton" value="Defect" class="btn text-light custom-btn-text-start">
+                        Defect
+                        @Html.Raw(ViewData["filterApplied:Defect"])
+                    </button>
+                </th>
+                <th class="d-none d-md-table-cell">
+                    <button type="submit" name="actionButton" value="PO Number" class="btn text-light custom-btn-text-start">
+                        PO Number
+                        @Html.Raw(ViewData["filterApplied:PONumber"])
+                    </button>
+                </th>
+                <th>
+                    <button type="submit" name="actionButton" value="Status" class="btn text-light custom-btn-text-start">
+                        Status
+                        @Html.Raw(ViewData["filterApplied:Status"])
+                    </button>
+                </th>
+                @*                 <th>
+                <input type="submit" name="actionButton" value="Assigned" class="btn text-light" />
+                <span><i class="bi bi-filter"></i></span>
+                </th> *@
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="ps-3 @((item.StatusUpdate.StatusUpdateName =="Active" ) ? "stillactive" : "closed" )">
+                        <i class="bi bi-circle-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="@((item.StatusUpdate.StatusUpdateName == "Active") ? "Active" : "Closed")"></i>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                        @Html.DisplayFor(modelItem => item.NcrQas.FirstOrDefault().NcrQacreationDate)
+                    </td>
+                    <td class="standout">
+                        @Html.DisplayFor(modelItem => item.NcrNumber)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NcrQas.FirstOrDefault().OrderDetails.FirstOrDefault().Item.Supplier.SupplierName)
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                        @Html.DisplayFor(modelItem => item.NcrQas.FirstOrDefault().OrderDetails.FirstOrDefault().Item.ItemDefects.FirstOrDefault().Defect.DefectName)
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                        @Html.DisplayFor(modelItem => item.NcrQas.FirstOrDefault().OrderDetails.FirstOrDefault().OrderNumber)
+                    </td>
+                    <td class="@((item.StatusUpdate.StatusUpdateName == "Active") ? "stillactive" : "closed")">
+                        @Html.DisplayFor(modelItem => item.StatusUpdate.StatusUpdateName)
+                    </td>
+                    @*                     <td>
+                @Html.DisplayFor(modelItem => item.NcrQas.FirstOrDefault().NcrQauserId)
+                </td> *@
+                    <td>
+                        @* <a asp-action="Edit" asp-route-id="@item.NcrId" class="btn text-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a> *@
+                        <a asp-action="Details" asp-route-id="@item.NcrId" class="btn text-primary" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <partial name="_PagingNavBar" />
+</form>
+@section Scripts {
+    <script type="text/javascript">
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.btn-filter').on('click', function () {
+                $('#filter').val($(this).data('filter'));
+                $('#ncrForm').submit();
+            });
+        });
+    </script>
+
+
+}

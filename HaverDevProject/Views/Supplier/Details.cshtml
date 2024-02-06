@@ -1,0 +1,52 @@
+﻿@model HaverDevProject.Models.Supplier
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="col-md-6 col-10 mx-auto">
+    <h1><i class="bi bi-caret-right-fill"></i>Supplier</h1>
+</div>
+<div class="col-md-6 col-10 mx-auto">
+    <div class="card border-2">
+        <div class="card-header bg-custom-color mb-2">
+            <h2 class="m-0">Supplier Details</h2>
+        </div>
+        <div class="card-body col-lg-10 col-11 mx-auto">            
+            <dl class="row">
+                <dt class = "col-sm-2">
+                    Code
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.SupplierCode)
+                </dd>
+                <dt class = "col-sm-2">
+                    Name            
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.SupplierName)
+                </dd>
+                <dt class = "col-sm-2">
+                    Email
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.SupplierEmail)
+                </dd>
+            </dl>
+        </div>
+        <div class="card-footer">
+            <div class="form-group d-flex justify-content-end mt-2">
+                <div>
+                    <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn btn-primary">
+                        <i class="bi bi-arrow-90deg-left"></i> Back to the @ViewData["ControllerName"] List
+                    </button>
+                </div>
+                <div>
+                    <a type="button" class="btn btn-primary ms-4" asp-action="Edit" asp-route-id="@Model?.SupplierId">
+                        <i class="bi bi-pencil-square"></i> Edit
+                    </a>
+                </div>           
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,92 @@
+﻿@model IEnumerable<HaverDevProject.Models.Supplier>
+
+@{
+    ViewData["Title"] = "Index";
+}
+<h1><i class="bi bi-caret-right-fill"></i>Suppliers</h1>
+<form asp-action="Index" method="get">
+    <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
+    <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
+    <input type="hidden" id="filter" name="filter" value="@ViewData["filter"]" />
+    <div class="row mt-3 mb-2">
+        <div class="d-flex justify-content-end">
+            <a asp-action="Create" class="btn btn-primary ms-4"> <i class="bi bi-plus-square-dotted"></i> Create New Supplier</a>
+        </div>
+    </div>
+    <div class="form-horizontal">        
+        <div class="card card-body bg-custom-color mb-2">
+            <div class="row d-flex justify-content-center align-items-center">
+                <div class="form-group col-lg-5 col-md-5 col-sm-10 col-10">
+                    <label class="control-label mb-1">Find by Code or Name:</label>
+                    @Html.TextBox("SearchCode", null, new { @class = "form-control" })
+                </div>  
+                <div class="form-group col-lg-6 col-md-7 col-sm-10 col-10 align-self-end">
+                    <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary ms-2"/>
+                    <a asp-action="Index" class="btn btn-outline-dark ms-4">Clear</a>                    
+                </div>                    
+            </div>
+        </div>        
+    </div>    
+    <table class="table table-hover table-striped">
+        <thead class="custom-header-bg">
+            <tr>
+                <th>  
+                    <button type="submit" name="actionButton" value="Code" class="btn text-light custom-btn-text-start">
+                        Code
+                        @Html.Raw(ViewData["filterApplied:SupplierCode"])
+                    </button>
+                </th>
+                <th>                    
+                    <button type="submit" name="actionButton" value="Name" class="btn text-light custom-btn-text-start">
+                        Name
+                        @Html.Raw(ViewData["filterApplied:SupplierName"])
+                    </button>
+                </th>
+                <th class="d-none d-md-table-cell">            
+                    <button type="submit" name="actionButton" value="Email" class="btn text-light custom-btn-text-start">
+                        Email
+                        @Html.Raw(ViewData["filterApplied:SupplierEmail"])
+                    </button>
+                </th>
+                @* <th>
+                    <button type="submit" name="actionButton" value="Status" class="btn text-light custom-btn-text-start">
+                        Status
+                        @Html.Raw(ViewData["filterApplied:Status"])
+                    </button>
+                </th> *@
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SupplierCode)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SupplierName)
+                </td>
+                <td class="d-none d-md-table-cell">
+                    @Html.DisplayFor(modelItem => item.SupplierEmail)
+                </td>
+                @* <td class="stillactive">
+                    Active
+                </td> *@
+                <td>   
+                    <a asp-action="Edit" asp-route-id="@item.SupplierId" class="btn text-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
+                    <a asp-action="Details" asp-route-id="@item.SupplierId" class="btn text-primary" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+    <partial name="_PagingNavBar" />
+</form>
+@section Scripts {
+    <script type="text/javascript">
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+}

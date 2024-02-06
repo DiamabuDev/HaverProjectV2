@@ -1,0 +1,60 @@
+﻿@model HaverDevProject.Models.NcrQa
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>NcrQa</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NcrQaitemMarNonConforming)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NcrQaitemMarNonConforming)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NcrQasalesOrder)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NcrQasalesOrder)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NcrQacreationDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NcrQacreationDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NcrQalastUpdated)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NcrQalastUpdated)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NcrQauserId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NcrQauserId)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Ncr)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Ncr.NcrNumber)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ProApp)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ProApp.ProAppName)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.NcrQaid">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
