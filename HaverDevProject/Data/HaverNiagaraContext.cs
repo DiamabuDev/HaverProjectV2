@@ -7,6 +7,32 @@ namespace HaverDevProject.Data;
 
 public partial class HaverNiagaraContext : DbContext
 {
+    //To give access to IHttpContextAccessor for Audit Data with IAuditable
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
+    //Property to hold the UserName value
+    public string UserName
+    {
+        get; private set;
+    }
+
+    public HaverNiagaraContext(DbContextOptions<HaverNiagaraContext> options, IHttpContextAccessor httpContextAccessor)
+        : base(options)
+    {
+        _httpContextAccessor = httpContextAccessor;
+        if (_httpContextAccessor.HttpContext != null)
+        {
+            //We have a HttpContext, but there might not be anyone Authenticated
+            UserName = _httpContextAccessor.HttpContext?.User.Identity.Name;
+            UserName ??= "Unknown";
+        }
+        else
+        {
+            //No HttpContext so seeding data
+            UserName = "Seed Data";
+        }
+    }
+
     public HaverNiagaraContext()
     {
     }
@@ -48,11 +74,11 @@ public partial class HaverNiagaraContext : DbContext
 
     public virtual DbSet<OpDispositionType> OpDispositionTypes { get; set; }
 
-    public virtual DbSet<OrderDetail> OrderDetails { get; set; }
+    //public virtual DbSet<OrderDetail> OrderDetails { get; set; }
 
-    public virtual DbSet<ProcessApplicable> ProcessApplicables { get; set; }
+    //public virtual DbSet<ProcessApplicable> ProcessApplicables { get; set; }
 
-    public virtual DbSet<StatusUpdate> StatusUpdates { get; set; }
+    //public virtual DbSet<StatusUpdate> StatusUpdates { get; set; }
 
     public virtual DbSet<Supplier> Suppliers { get; set; }
 
@@ -64,10 +90,6 @@ public partial class HaverNiagaraContext : DbContext
         modelBuilder.Entity<Car>(entity =>
         {
             entity.HasKey(e => e.CarId).HasName("pk_car_carId");
-
-            entity.HasOne(d => d.NcrPurch).WithMany(p => p.Cars)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_car_ncrPurchasing");
         });
 
         modelBuilder.Entity<Defect>(entity =>
@@ -78,10 +100,6 @@ public partial class HaverNiagaraContext : DbContext
         modelBuilder.Entity<Drawing>(entity =>
         {
             entity.HasKey(e => e.DrawingId).HasName("pk_drawing_drawingId");
-
-            entity.HasOne(d => d.NcrEng).WithMany(p => p.Drawings)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_drawing_ncrEng");
         });
 
         modelBuilder.Entity<EngDispositionType>(entity =>
@@ -96,10 +114,6 @@ public partial class HaverNiagaraContext : DbContext
             entity.HasOne(d => d.FollowUpType).WithMany(p => p.FollowUps)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_followUp_followUpType");
-
-            entity.HasOne(d => d.NcrPurch).WithMany(p => p.FollowUps)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_followUp_ncrPurchasing");
         });
 
         modelBuilder.Entity<FollowUpType>(entity =>
@@ -134,7 +148,7 @@ public partial class HaverNiagaraContext : DbContext
         {
             entity.HasKey(e => e.ItemDefectPhotoId).HasName("pk_itemDefectPhoto_itemDefectPhotoId");
 
-            entity.HasOne(d => d.ItemDefect).WithMany(p => p.ItemDefectPhotos)
+            entity.HasOne(d => d.NcrQa).WithMany(p => p.ItemDefectPhotos)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_itemDefectPhoto_itemDefect");
         });
@@ -143,7 +157,7 @@ public partial class HaverNiagaraContext : DbContext
         {
             entity.HasKey(e => e.ItemDefectVideoId).HasName("pk_itemDefectVideo");
 
-            entity.HasOne(d => d.ItemDefect).WithMany(p => p.ItemDefectVideos)
+            entity.HasOne(d => d.NcrQa).WithMany(p => p.ItemDefectVideos)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_itemDefectVideo_itemDefect");
         });
@@ -152,9 +166,6 @@ public partial class HaverNiagaraContext : DbContext
         {
             entity.HasKey(e => e.NcrId).HasName("pk_ncr_ncrId");
 
-            entity.HasOne(d => d.StatusUpdate).WithMany(p => p.Ncrs)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_ncr_statusUpdate");
         });
 
         modelBuilder.Entity<NcrEng>(entity =>
@@ -164,19 +175,11 @@ public partial class HaverNiagaraContext : DbContext
             entity.HasOne(d => d.EngDispositionType).WithMany(p => p.NcrEngs)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_ncrEng_engDispositionType");
-
-            entity.HasOne(d => d.Ncr).WithMany(p => p.NcrEngs)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_ncrEng_ncr");
         });
 
         modelBuilder.Entity<NcrPurchasing>(entity =>
         {
             entity.HasKey(e => e.NcrPurchId).HasName("pk_ncrPurchasing_ncrPurchId");
-
-            entity.HasOne(d => d.Ncr).WithMany(p => p.NcrPurchasings)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_ncrPurchasing_ncr");
 
             entity.HasOne(d => d.OpDispositionType).WithMany(p => p.NcrPurchasings)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -185,24 +188,12 @@ public partial class HaverNiagaraContext : DbContext
 
         modelBuilder.Entity<NcrQa>(entity =>
         {
-            entity.HasKey(e => e.NcrQaid).HasName("pk_ncrQA_ncrQAId");
-
-            entity.HasOne(d => d.Ncr).WithMany(p => p.NcrQas)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_ncrQA_ncr");
-
-            entity.HasOne(d => d.ProApp).WithMany(p => p.NcrQas)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_ncrQA_processApplicable");
+            entity.HasKey(e => e.NcrQaId).HasName("pk_ncrQA_ncrQAId");
         });
 
         modelBuilder.Entity<NcrReInspect>(entity =>
         {
             entity.HasKey(e => e.NcrReInspectId).HasName("pk_ncrReInspect_ncrReInspectId");
-
-            entity.HasOne(d => d.Ncr).WithMany(p => p.NcrReInspects)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_ncrReInspect_ncr");
         });
 
         modelBuilder.Entity<OpDispositionType>(entity =>
@@ -210,28 +201,28 @@ public partial class HaverNiagaraContext : DbContext
             entity.HasKey(e => e.OpDispositionTypeId).HasName("pk_opDispositionType_opDispositionTypeId");
         });
 
-        modelBuilder.Entity<OrderDetail>(entity =>
-        {
-            entity.HasKey(e => e.OrderId).HasName("pk_orderDetail_orderId");
+        //modelBuilder.Entity<OrderDetail>(entity =>
+        //{
+        //    entity.HasKey(e => e.OrderId).HasName("pk_orderDetail_orderId");
 
-            entity.HasOne(d => d.Item).WithMany(p => p.OrderDetails)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_orderDetail_item");
+        //    entity.HasOne(d => d.Item).WithMany(p => p.OrderDetails)
+        //        .OnDelete(DeleteBehavior.ClientSetNull)
+        //        .HasConstraintName("fk_orderDetail_item");
 
-            entity.HasOne(d => d.NcrQa).WithMany(p => p.OrderDetails)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_orderDetail_ncrQA");
-        });
+        //    entity.HasOne(d => d.NcrQa).WithMany(p => p.OrderDetails)
+        //        .OnDelete(DeleteBehavior.ClientSetNull)
+        //        .HasConstraintName("fk_orderDetail_ncrQA");
+        //});
 
-        modelBuilder.Entity<ProcessApplicable>(entity =>
-        {
-            entity.HasKey(e => e.ProAppId).HasName("pk_processApplicable_proAppId");
-        });
+        //modelBuilder.Entity<ProcessApplicable>(entity =>
+        //{
+        //    entity.HasKey(e => e.ProAppId).HasName("pk_processApplicable_proAppId");
+        //});
 
-        modelBuilder.Entity<StatusUpdate>(entity =>
-        {
-            entity.HasKey(e => e.StatusUpdateId).HasName("pk_status_statusUpdateId");
-        });
+        //modelBuilder.Entity<StatusUpdate>(entity =>
+        //{
+        //    entity.HasKey(e => e.StatusUpdateId).HasName("pk_status_statusUpdateId");
+        //});
 
         modelBuilder.Entity<Item>()
             .HasIndex(i => i.ItemNumber)
@@ -247,5 +238,42 @@ public partial class HaverNiagaraContext : DbContext
         OnModelCreatingPartial(modelBuilder);
     }
 
+    public override int SaveChanges(bool acceptAllChangesOnSuccess)
+    {
+        OnBeforeSaving();
+        return base.SaveChanges(acceptAllChangesOnSuccess);
+    }
+
+    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default(CancellationToken))
+    {
+        OnBeforeSaving();
+        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+    }
+
+    private void OnBeforeSaving()
+    {
+        var entries = ChangeTracker.Entries();
+        foreach (var entry in entries)
+        {
+            if (entry.Entity is IAuditable trackable)
+            {
+                var now = DateTime.UtcNow;
+                switch (entry.State)
+                {
+                    case EntityState.Modified:
+                        trackable.UpdatedOn = now;
+                        trackable.UpdatedBy = UserName;
+                        break;
+
+                    case EntityState.Added:
+                        trackable.CreatedOn = now;
+                        trackable.CreatedBy = UserName;
+                        trackable.UpdatedOn = now;
+                        trackable.UpdatedBy = UserName;
+                        break;
+                }
+            }
+        }
+    }
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

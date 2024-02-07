@@ -38,8 +38,8 @@ public partial class Item
     [InverseProperty("Item")]
     public virtual ICollection<ItemDefect> ItemDefects { get; set; } = new List<ItemDefect>();
 
-    [InverseProperty("Item")]
-    public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+    //[InverseProperty("Item")]
+    //public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 
     [ForeignKey("SupplierId")]
     [InverseProperty("Items")]

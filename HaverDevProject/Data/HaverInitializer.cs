@@ -32,13 +32,15 @@ namespace HaverDevProject.Data
                         {
                             SupplierCode = "793254",
                             SupplierName = "INTEGRITY WOVEN WIRE",
-                            SupplierEmail = "integritywire@example.com"
+                            SupplierEmail = "integritywire@example.com",
+                            SupplierStatus = false
                         },
                         new Supplier
                         {
                             SupplierCode = "792356",
                             SupplierName = "FLO COMPONENTS LTD.",
-                            SupplierEmail = "flocompltd@example.com"
+                            SupplierEmail = "flocompltd@example.com",
+                            SupplierStatus = false
                         },
                         new Supplier
                         {
@@ -62,7 +64,8 @@ namespace HaverDevProject.Data
                         {
                             SupplierCode = "700044",
                             SupplierName = "BLACK CREEK METAL",
-                            SupplierEmail = "blackcreekmetal@example.com"
+                            SupplierEmail = "blackcreekmetal@example.com",
+                            SupplierStatus = false
                         },
                         new Supplier
                         {
@@ -355,37 +358,7 @@ namespace HaverDevProject.Data
                         });
 
                     context.SaveChanges();
-                }
-
-                if (!context.ProcessApplicables.Any())
-                {
-                    context.ProcessApplicables.AddRange(
-                        new ProcessApplicable
-                        {
-                            ProAppName = "Supplier or Rec-Insp"
-                        },
-                        new ProcessApplicable
-                        {
-                            ProAppName = "WIP (Production Order)"
-                        });
-
-                    context.SaveChanges();
-                }
-
-                if (!context.StatusUpdates.Any())
-                {
-                    context.StatusUpdates.AddRange(
-                        new StatusUpdate
-                        {
-                            StatusUpdateName = "Active"
-                        },
-                        new StatusUpdate
-                        {
-                            StatusUpdateName = "Closed"
-                        });
-
-                    context.SaveChanges();
-                }
+                }                               
 
                 if (!context.Ncrs.Any())
                 {
@@ -393,74 +366,64 @@ namespace HaverDevProject.Data
                         new Ncr
                         {
                             NcrNumber = "2023-137",
-                            NcrLastUpdated = DateTime.Parse("2023-12-18"),
-                            StatusUpdateId = context.StatusUpdates.FirstOrDefault(f => f.StatusUpdateName == "Closed").StatusUpdateId
+                            NcrLastUpdated = DateTime.Parse("2023-12-18")
+                            
                         },
                         new Ncr
                         {
                             NcrNumber = "2023-138",
-                            NcrLastUpdated = DateTime.Parse("2023-12-19"),
-                            StatusUpdateId = context.StatusUpdates.FirstOrDefault(f => f.StatusUpdateName == "Closed").StatusUpdateId
+                            NcrLastUpdated = DateTime.Parse("2023-12-19")
+                           
                         },
                         new Ncr
                         {
                             NcrNumber = "2023-139",
-                            NcrLastUpdated = DateTime.Parse("2023-12-22"),
-                            StatusUpdateId = context.StatusUpdates.FirstOrDefault(f => f.StatusUpdateName == "Closed").StatusUpdateId
+                            NcrLastUpdated = DateTime.Parse("2023-12-22")
                         },
                         new Ncr
                         {
                             NcrNumber = "2023-140",
-                            NcrLastUpdated = DateTime.Parse("2024-01-18"),
-                            StatusUpdateId = context.StatusUpdates.FirstOrDefault(f => f.StatusUpdateName == "Active").StatusUpdateId
+                            NcrLastUpdated = DateTime.Parse("2024-01-18")
                         },
                         new Ncr
                         {
                             NcrNumber = "2023-141",
-                            NcrLastUpdated = DateTime.Parse("2024-01-14"),
-                            StatusUpdateId = context.StatusUpdates.FirstOrDefault(f => f.StatusUpdateName == "Active").StatusUpdateId
+                            NcrLastUpdated = DateTime.Parse("2024-01-14")
                         },
                         new Ncr
                         {
                             NcrNumber = "2024-001",
-                            NcrLastUpdated = DateTime.Parse("2024-01-10"),
-                            StatusUpdateId = context.StatusUpdates.FirstOrDefault(f => f.StatusUpdateName == "Closed").StatusUpdateId
+                            NcrLastUpdated = DateTime.Parse("2024-01-10")
                         },
                         new Ncr
                         {
                             NcrNumber = "2024-002",
-                            NcrLastUpdated = DateTime.Parse("2024-01-11"),
-                            StatusUpdateId = context.StatusUpdates.FirstOrDefault(f => f.StatusUpdateName == "Closed").StatusUpdateId
+                            NcrLastUpdated = DateTime.Parse("2024-01-11")
                         },
                         new Ncr
                         {
                             NcrNumber = "2024-003",
-                            NcrLastUpdated = DateTime.Parse("2024-01-15"),
-                            StatusUpdateId = context.StatusUpdates.FirstOrDefault(f => f.StatusUpdateName == "Active").StatusUpdateId
+                            NcrLastUpdated = DateTime.Parse("2024-01-15")
                         },
                         new Ncr
                         {
                             NcrNumber = "2024-004",
-                            NcrLastUpdated = DateTime.Parse("2024-01-19"),
-                            StatusUpdateId = context.StatusUpdates.FirstOrDefault(f => f.StatusUpdateName == "Active").StatusUpdateId
+                            NcrLastUpdated = DateTime.Parse("2024-01-19")
                         },
                         new Ncr
                         {
                             NcrNumber = "2024-005",
-                            NcrLastUpdated = DateTime.Parse("2024-01-22"),
-                            StatusUpdateId = context.StatusUpdates.FirstOrDefault(f => f.StatusUpdateName == "Active").StatusUpdateId
+                            NcrLastUpdated = DateTime.Parse("2024-01-22")
                         },
                         new Ncr
                         {
                             NcrNumber = "2024-006",
-                            NcrLastUpdated = DateTime.Parse("2024-01-23"),
-                            StatusUpdateId = context.StatusUpdates.FirstOrDefault(f => f.StatusUpdateName == "Active").StatusUpdateId
+                            NcrLastUpdated = DateTime.Parse("2024-01-23")
                         },
                         new Ncr
                         {
                             NcrNumber = "2024-007",
-                            NcrLastUpdated = DateTime.Parse("2024-01-23"),
-                            StatusUpdateId = context.StatusUpdates.FirstOrDefault(f => f.StatusUpdateName == "Active").StatusUpdateId
+                            NcrLastUpdated = DateTime.Parse("2024-01-23")
                         });
                     context.SaveChanges();
                 }
@@ -470,229 +433,102 @@ namespace HaverDevProject.Data
                     context.NcrQas.AddRange(
                         new NcrQa
                         {
-                            NcrQaitemMarNonConforming = true,
-                            NcrQasalesOrder = "10401227",
+                            NcrQaItemMarNonConforming = true,
+                            NcrQaOrderNumber = 10401227,
                             NcrQacreationDate = DateTime.Parse("2023-12-07"),
-                            NcrQalastUpdated = DateTime.Parse("2023-12-07"),
                             NcrQauserId = 1, //need to make nullable
-                            ProAppId = context.ProcessApplicables.FirstOrDefault(f => f.ProAppName == "Supplier or Rec-Insp").ProAppId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-137").NcrId
                         },
                         new NcrQa
                         {
-                            NcrQaitemMarNonConforming = true,
-                            NcrQasalesOrder = "10401228",
+                            NcrQaItemMarNonConforming = true,
+                            NcrQaOrderNumber = 10401228,
                             NcrQacreationDate = DateTime.Parse("2023-12-09"),
-                            NcrQalastUpdated = DateTime.Parse("2023-12-09"),
                             NcrQauserId = 2, //need to make nullable
-                            ProAppId = context.ProcessApplicables.FirstOrDefault(f => f.ProAppName == "Supplier or Rec-Insp").ProAppId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-138").NcrId
                         },
                         new NcrQa
                         {
-                            NcrQaitemMarNonConforming = true,
-                            NcrQasalesOrder = "10401229",
+                            NcrQaItemMarNonConforming = true,
+                            NcrQaOrderNumber = 10401229,
                             NcrQacreationDate = DateTime.Parse("2023-12-11"),
-                            NcrQalastUpdated = DateTime.Parse("2023-12-11"),
                             NcrQauserId = 3, //need to make nullable
-                            ProAppId = context.ProcessApplicables.FirstOrDefault(f => f.ProAppName == "Supplier or Rec-Insp").ProAppId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-139").NcrId
                         },
                         new NcrQa
                         {
-                            NcrQaitemMarNonConforming = true,
-                            NcrQasalesOrder = "10401230",
+                            NcrQaItemMarNonConforming = true,
+                            NcrQaOrderNumber = 10401230,
                             NcrQacreationDate = DateTime.Parse("2023-12-13"),
-                            NcrQalastUpdated = DateTime.Parse("2023-12-13"),
                             NcrQauserId = 4, //need to make nullable
-                            ProAppId = context.ProcessApplicables.FirstOrDefault(f => f.ProAppName == "WIP (Production Order)").ProAppId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-140").NcrId
                         },
                         new NcrQa
                         {
-                            NcrQaitemMarNonConforming = true,
-                            NcrQasalesOrder = "10401231",
+                            NcrQaItemMarNonConforming = true,
+                            NcrQaOrderNumber = 10401231,
                             NcrQacreationDate = DateTime.Parse("2023-12-17"),
-                            NcrQalastUpdated = DateTime.Parse("2023-12-17"),
                             NcrQauserId = 1, //need to make nullable
-                            ProAppId = context.ProcessApplicables.FirstOrDefault(f => f.ProAppName == "Supplier or Rec-Insp").ProAppId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-141").NcrId
                         },
                         new NcrQa
                         {
-                            NcrQaitemMarNonConforming = true,
-                            NcrQasalesOrder = "10410676",
+                            NcrQaItemMarNonConforming = true,
+                            NcrQaOrderNumber = 10410676,
                             NcrQacreationDate = DateTime.Parse("2024-01-03"),
-                            NcrQalastUpdated = DateTime.Parse("2024-01-03"),
                             NcrQauserId = 2, //need to make nullable
-                            ProAppId = context.ProcessApplicables.FirstOrDefault(f => f.ProAppName == "Supplier or Rec-Insp").ProAppId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-001").NcrId
                         },
                         new NcrQa
                         {
-                            NcrQaitemMarNonConforming = true,
-                            NcrQasalesOrder = "10410677",
+                            NcrQaItemMarNonConforming = true,
+                            NcrQaOrderNumber = 10410677,
                             NcrQacreationDate = DateTime.Parse("2024-01-04"),
-                            NcrQalastUpdated = DateTime.Parse("2024-01-04"),
                             NcrQauserId = 3, //need to make nullable
-                            ProAppId = context.ProcessApplicables.FirstOrDefault(f => f.ProAppName == "Supplier or Rec-Insp").ProAppId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-002").NcrId
                         },
                         new NcrQa
                         {
-                            NcrQaitemMarNonConforming = true,
-                            NcrQasalesOrder = "10410678",
+                            NcrQaItemMarNonConforming = true,
+                            NcrQaOrderNumber = 10410678,
                             NcrQacreationDate = DateTime.Parse("2024-01-06"),
-                            NcrQalastUpdated = DateTime.Parse("2024-01-06"),
                             NcrQauserId = 4, //need to make nullable
-                            ProAppId = context.ProcessApplicables.FirstOrDefault(f => f.ProAppName == "WIP (Production Order)").ProAppId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-003").NcrId
                         },
                         new NcrQa
                         {
-                            NcrQaitemMarNonConforming = true,
-                            NcrQasalesOrder = "10410679",
+                            NcrQaItemMarNonConforming = true,
+                            NcrQaOrderNumber = 10410679,
                             NcrQacreationDate = DateTime.Parse("2024-01-07"),
-                            NcrQalastUpdated = DateTime.Parse("2024-01-07"),
                             NcrQauserId = 1, //need to make nullable
-                            ProAppId = context.ProcessApplicables.FirstOrDefault(f => f.ProAppName == "Supplier or Rec-Insp").ProAppId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-004").NcrId
                         },
                         new NcrQa
                         {
-                            NcrQaitemMarNonConforming = true,
-                            NcrQasalesOrder = "10410680",
+                            NcrQaItemMarNonConforming = true,
+                            NcrQaOrderNumber = 10410680,
                             NcrQacreationDate = DateTime.Parse("2024-01-11"),
-                            NcrQalastUpdated = DateTime.Parse("2024-01-11"),
                             NcrQauserId = 2, //need to make nullable
-                            ProAppId = context.ProcessApplicables.FirstOrDefault(f => f.ProAppName == "Supplier or Rec-Insp").ProAppId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-005").NcrId
                         },
                         new NcrQa
                         {
-                            NcrQaitemMarNonConforming = true,
-                            NcrQasalesOrder = "10410681",
+                            NcrQaItemMarNonConforming = true,
+                            NcrQaOrderNumber = 10410681,
                             NcrQacreationDate = DateTime.Parse("2024-01-14"),
-                            NcrQalastUpdated = DateTime.Parse("2024-01-14"),
                             NcrQauserId = 3, //need to make nullable
-                            ProAppId = context.ProcessApplicables.FirstOrDefault(f => f.ProAppName == "Supplier or Rec-Insp").ProAppId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-006").NcrId
                         },
                         new NcrQa
                         {
-                            NcrQaitemMarNonConforming = true,
-                            NcrQasalesOrder = "10410682",
+                            NcrQaItemMarNonConforming = true,
+                            NcrQaOrderNumber = 10410682,
                             NcrQacreationDate = DateTime.Parse("2024-01-14"),
-                            NcrQalastUpdated = DateTime.Parse("2024-01-14"),
                             NcrQauserId = 4, //need to make nullable
-                            ProAppId = context.ProcessApplicables.FirstOrDefault(f => f.ProAppName == "WIP (Production Order)").ProAppId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-007").NcrId
                         });
                     context.SaveChanges();
-                }
-
-                if (!context.OrderDetails.Any())
-                {
-                    context.OrderDetails.AddRange(
-                        new OrderDetail
-                        {
-                            OrderNumber = 450074554,
-                            OrderQuanReceived = 10,
-                            OrderQuanDefective = 2,
-                            ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Bearing Housing").ItemId,
-                            NcrQaid = context.NcrQas.FirstOrDefault(f => f.NcrQasalesOrder == "10401227").NcrQaid
-                        },
-                        new OrderDetail
-                        {
-                            OrderNumber = 450074555,
-                            OrderQuanReceived = 5,
-                            OrderQuanDefective = 1,
-                            ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Backing Shield").ItemId,
-                            NcrQaid = context.NcrQas.FirstOrDefault(f => f.NcrQasalesOrder == "10401228").NcrQaid
-                        },
-                        new OrderDetail
-                        {
-                            OrderNumber = 450074556,
-                            OrderQuanReceived = 40,
-                            OrderQuanDefective = 40,
-                            ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Side Arm").ItemId,
-                            NcrQaid = context.NcrQas.FirstOrDefault(f => f.NcrQasalesOrder == "10401229").NcrQaid
-                        },
-                        new OrderDetail
-                        {
-                            OrderNumber = 450074557,
-                            OrderQuanReceived = 40,
-                            OrderQuanDefective = 8,
-                            ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Panel").ItemId,
-                            NcrQaid = context.NcrQas.FirstOrDefault(f => f.NcrQasalesOrder == "10401230").NcrQaid
-                        },
-                        new OrderDetail
-                        {
-                            OrderNumber = 450074558,
-                            OrderQuanReceived = 12,
-                            OrderQuanDefective = 4,
-                            ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Bearing Housing").ItemId,
-                            NcrQaid = context.NcrQas.FirstOrDefault(f => f.NcrQasalesOrder == "10401231").NcrQaid
-                        },
-                        new OrderDetail
-                        {
-                            OrderNumber = 450075793,
-                            OrderQuanReceived = 6,
-                            OrderQuanDefective = 1,
-                            ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Backing Shield").ItemId,
-                            NcrQaid = context.NcrQas.FirstOrDefault(f => f.NcrQasalesOrder == "10410676").NcrQaid
-                        },
-                        new OrderDetail
-                        {
-                            OrderNumber = 450075794,
-                            OrderQuanReceived = 20,
-                            OrderQuanDefective = 10,
-                            ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Side Arm").ItemId,
-                            NcrQaid = context.NcrQas.FirstOrDefault(f => f.NcrQasalesOrder == "10410677").NcrQaid
-                        },
-                        new OrderDetail
-                        {
-                            OrderNumber = 450075795,
-                            OrderQuanReceived = 20,
-                            OrderQuanDefective = 20,
-                            ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Panel").ItemId,
-                            NcrQaid = context.NcrQas.FirstOrDefault(f => f.NcrQasalesOrder == "10410678").NcrQaid
-                        },
-                                                new OrderDetail
-                        {
-                            OrderNumber = 450075796,
-                            OrderQuanReceived = 16,
-                            OrderQuanDefective = 4,
-                            ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Bearing Housing").ItemId,
-                            NcrQaid = context.NcrQas.FirstOrDefault(f => f.NcrQasalesOrder == "10410679").NcrQaid
-                        },
-                        new OrderDetail
-                        {
-                            OrderNumber = 450075797,
-                            OrderQuanReceived = 5,
-                            OrderQuanDefective = 5,
-                            ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Backing Shield").ItemId,
-                            NcrQaid = context.NcrQas.FirstOrDefault(f => f.NcrQasalesOrder == "10410680").NcrQaid
-                        },
-                        new OrderDetail
-                        {
-                            OrderNumber = 450075798,
-                            OrderQuanReceived = 12,
-                            OrderQuanDefective = 6,
-                            ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Side Arm").ItemId,
-                            NcrQaid = context.NcrQas.FirstOrDefault(f => f.NcrQasalesOrder == "10410681").NcrQaid
-                        },
-                        new OrderDetail
-                        {
-                            OrderNumber = 450075799,
-                            OrderQuanReceived = 40,
-                            OrderQuanDefective = 32,
-                            ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Panel").ItemId,
-                            NcrQaid = context.NcrQas.FirstOrDefault(f => f.NcrQasalesOrder == "10410682").NcrQaid
-                        });
-
-                    context.SaveChanges();
-                }
+                }                
 
                 if (!context.EngDispositionTypes.Any())
                 {
@@ -723,8 +559,6 @@ namespace HaverDevProject.Data
                         {
                             NcrEngCustomerNotification = false,
                             NcrEngDispositionDescription = "Example Description of Disposition 1",
-                            NcrEngLastUpdated = DateTime.Parse("2023-12-08"),
-                            NcrEngCreationDate = DateTime.Parse("2023-12-08"),
                             NcrEngUserId = 1, //nullable
                             EngDispositionTypeId = context.EngDispositionTypes.FirstOrDefault(f => f.EngDispositionTypeName == "Use As Is").EngDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-137").NcrId
@@ -733,8 +567,6 @@ namespace HaverDevProject.Data
                         {
                             NcrEngCustomerNotification = true,
                             NcrEngDispositionDescription = "Example Description of Disposition 2",
-                            NcrEngLastUpdated = DateTime.Parse("2023-12-10"),
-                            NcrEngCreationDate = DateTime.Parse("2023-12-10"),
                             NcrEngUserId = 2, //nullable
                             EngDispositionTypeId = context.EngDispositionTypes.FirstOrDefault(f => f.EngDispositionTypeName == "Repair").EngDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-138").NcrId
@@ -743,8 +575,6 @@ namespace HaverDevProject.Data
                         {
                             NcrEngCustomerNotification = true,
                             NcrEngDispositionDescription = "Example Description of Disposition 3",
-                            NcrEngLastUpdated = DateTime.Parse("2023-12-16"),
-                            NcrEngCreationDate = DateTime.Parse("2023-12-16"),
                             NcrEngUserId = 3, //nullable
                             EngDispositionTypeId = context.EngDispositionTypes.FirstOrDefault(f => f.EngDispositionTypeName == "Rework").EngDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-139").NcrId
@@ -753,8 +583,6 @@ namespace HaverDevProject.Data
                         {
                             NcrEngCustomerNotification = true,
                             NcrEngDispositionDescription = "Example Description of Disposition 4",
-                            NcrEngLastUpdated = DateTime.Parse("2023-12-16"),
-                            NcrEngCreationDate = DateTime.Parse("2023-12-16"),
                             NcrEngUserId = 4, //nullable
                             EngDispositionTypeId = context.EngDispositionTypes.FirstOrDefault(f => f.EngDispositionTypeName == "Scrap").EngDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-140").NcrId
@@ -763,8 +591,6 @@ namespace HaverDevProject.Data
                         {
                             NcrEngCustomerNotification = false,
                             NcrEngDispositionDescription = "Example Description of Disposition 5",
-                            NcrEngLastUpdated = DateTime.Parse("2023-12-19"),
-                            NcrEngCreationDate = DateTime.Parse("2023-12-19"),
                             NcrEngUserId = 1, //nullable
                             EngDispositionTypeId = context.EngDispositionTypes.FirstOrDefault(f => f.EngDispositionTypeName == "Use As Is").EngDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-141").NcrId
@@ -773,8 +599,6 @@ namespace HaverDevProject.Data
                         {
                             NcrEngCustomerNotification = true,
                             NcrEngDispositionDescription = "Example Description of Disposition 6",
-                            NcrEngLastUpdated = DateTime.Parse("2024-01-04"),
-                            NcrEngCreationDate = DateTime.Parse("2024-01-04"),
                             NcrEngUserId = 2, //nullable
                             EngDispositionTypeId = context.EngDispositionTypes.FirstOrDefault(f => f.EngDispositionTypeName == "Scrap").EngDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-001").NcrId
@@ -783,8 +607,6 @@ namespace HaverDevProject.Data
                         {
                             NcrEngCustomerNotification = true,
                             NcrEngDispositionDescription = "Example Description of Disposition 7",
-                            NcrEngLastUpdated = DateTime.Parse("2024-01-06"),
-                            NcrEngCreationDate = DateTime.Parse("2024-01-06"),
                             NcrEngUserId = 3, //nullable
                             EngDispositionTypeId = context.EngDispositionTypes.FirstOrDefault(f => f.EngDispositionTypeName == "Rework").EngDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-002").NcrId
@@ -793,8 +615,6 @@ namespace HaverDevProject.Data
                         {
                             NcrEngCustomerNotification = true,
                             NcrEngDispositionDescription = "Example Description of Disposition 8",
-                            NcrEngLastUpdated = DateTime.Parse("2024-01-07"),
-                            NcrEngCreationDate = DateTime.Parse("2024-01-07"),
                             NcrEngUserId = 4, //nullable
                             EngDispositionTypeId = context.EngDispositionTypes.FirstOrDefault(f => f.EngDispositionTypeName == "Rework").EngDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-003").NcrId
@@ -803,8 +623,6 @@ namespace HaverDevProject.Data
                         {
                             NcrEngCustomerNotification = false,
                             NcrEngDispositionDescription = "Example Description of Disposition 9",
-                            NcrEngLastUpdated = DateTime.Parse("2024-01-08"),
-                            NcrEngCreationDate = DateTime.Parse("2024-01-08"),
                             NcrEngUserId = 1, //nullable
                             EngDispositionTypeId = context.EngDispositionTypes.FirstOrDefault(f => f.EngDispositionTypeName == "Repair").EngDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-004").NcrId
@@ -813,8 +631,6 @@ namespace HaverDevProject.Data
                         {
                             NcrEngCustomerNotification = true,
                             NcrEngDispositionDescription = "Example Description of Disposition 10",
-                            NcrEngLastUpdated = DateTime.Parse("2024-01-12"),
-                            NcrEngCreationDate = DateTime.Parse("2024-01-12"),
                             NcrEngUserId = 2, //nullable
                             EngDispositionTypeId = context.EngDispositionTypes.FirstOrDefault(f => f.EngDispositionTypeName == "Scrap").EngDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-005").NcrId
@@ -823,8 +639,6 @@ namespace HaverDevProject.Data
                         {
                             NcrEngCustomerNotification = true,
                             NcrEngDispositionDescription = "Example Description of Disposition 11",
-                            NcrEngLastUpdated = DateTime.Parse("2024-01-14"),
-                            NcrEngCreationDate = DateTime.Parse("2024-01-14"),
                             NcrEngUserId = 3, //nullable
                             EngDispositionTypeId = context.EngDispositionTypes.FirstOrDefault(f => f.EngDispositionTypeName == "Scrap").EngDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-006").NcrId
@@ -833,8 +647,6 @@ namespace HaverDevProject.Data
                         {
                             NcrEngCustomerNotification = true,
                             NcrEngDispositionDescription = "Example Description of Disposition 12",
-                            NcrEngLastUpdated = DateTime.Parse("2024-01-18"),
-                            NcrEngCreationDate = DateTime.Parse("2024-01-18"),
                             NcrEngUserId = 4, //nullable
                             EngDispositionTypeId = context.EngDispositionTypes.FirstOrDefault(f => f.EngDispositionTypeName == "Rework").EngDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-007").NcrId
@@ -996,8 +808,6 @@ namespace HaverDevProject.Data
                         new NcrPurchasing
                         {
                             NcrPurchasingDescription = "Replacement required",
-                            NcrPurchCreationDate = DateTime.Parse("2023-12-09"),
-                            NcrPurchasingLastUpdated = DateTime.Parse("2023-12-09"),
                             NcrPurchasingUserId = 1, //need to make nullable
                             OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Rework 'In-House'").OpDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-137").NcrId
@@ -1005,8 +815,6 @@ namespace HaverDevProject.Data
                         new NcrPurchasing
                         {
                             NcrPurchasingDescription = "Use as is",
-                            NcrPurchCreationDate = DateTime.Parse("2023-12-11"),
-                            NcrPurchasingLastUpdated = DateTime.Parse("2023-12-11"),
                             NcrPurchasingUserId = 2, //need to make nullable
                             OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Scrap in House").OpDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-138").NcrId
@@ -1014,8 +822,6 @@ namespace HaverDevProject.Data
                         new NcrPurchasing
                         {
                             NcrPurchasingDescription = "Use as is",
-                            NcrPurchCreationDate = DateTime.Parse("2023-12-17"),
-                            NcrPurchasingLastUpdated = DateTime.Parse("2023-12-17"),
                             NcrPurchasingUserId = 3, //need to make nullable
                             OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Scrap in House").OpDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-139").NcrId
@@ -1023,8 +829,6 @@ namespace HaverDevProject.Data
                         new NcrPurchasing
                         {
                             NcrPurchasingDescription = "Rework per engineering disposition",
-                            NcrPurchCreationDate = DateTime.Parse("2023-12-17"),
-                            NcrPurchasingLastUpdated = DateTime.Parse("2023-12-17"),
                             NcrPurchasingUserId = 4, //need to make nullable
                             OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Return to Supplier for either 'rework' or 'replace'").OpDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-140").NcrId
@@ -1032,8 +836,6 @@ namespace HaverDevProject.Data
                         new NcrPurchasing
                         {
                             NcrPurchasingDescription = "Replacement required",
-                            NcrPurchCreationDate = DateTime.Parse("2023-12-20"),
-                            NcrPurchasingLastUpdated = DateTime.Parse("2023-12-20"),
                             NcrPurchasingUserId = 5, //need to make nullable
                             OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Rework 'In-House'").OpDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-141").NcrId
@@ -1041,8 +843,6 @@ namespace HaverDevProject.Data
                         new NcrPurchasing
                         {
                             NcrPurchasingDescription = "Use as is",
-                            NcrPurchCreationDate = DateTime.Parse("2024-01-05"),
-                            NcrPurchasingLastUpdated = DateTime.Parse("2024-01-05"),
                             NcrPurchasingUserId = 6, //need to make nullable
                             OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Scrap in House").OpDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-001").NcrId
@@ -1050,8 +850,6 @@ namespace HaverDevProject.Data
                         new NcrPurchasing
                         {
                             NcrPurchasingDescription = "Use as is",
-                            NcrPurchCreationDate = DateTime.Parse("2024-01-07"),
-                            NcrPurchasingLastUpdated = DateTime.Parse("2024-01-07"),
                             NcrPurchasingUserId = 7, //need to make nullable
                             OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Return to Supplier for either 'rework' or 'replace'").OpDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-002").NcrId
@@ -1059,8 +857,6 @@ namespace HaverDevProject.Data
                         new NcrPurchasing
                         {
                             NcrPurchasingDescription = "Rework per engineering disposition",
-                            NcrPurchCreationDate = DateTime.Parse("2024-01-08"),
-                            NcrPurchasingLastUpdated = DateTime.Parse("2024-01-08"),
                             NcrPurchasingUserId = 8, //need to make nullable
                             OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Defer for HBC Engineering Review").OpDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-003").NcrId
@@ -1068,8 +864,6 @@ namespace HaverDevProject.Data
                         new NcrPurchasing
                         {
                             NcrPurchasingDescription = "Replacement required",
-                            NcrPurchCreationDate = DateTime.Parse("2024-01-09"),
-                            NcrPurchasingLastUpdated = DateTime.Parse("2024-01-09"),
                             NcrPurchasingUserId = 9, //need to make nullable
                             OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Rework 'In-House'").OpDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-004").NcrId
@@ -1077,8 +871,6 @@ namespace HaverDevProject.Data
                         new NcrPurchasing
                         {
                             NcrPurchasingDescription = "Use as is",
-                            NcrPurchCreationDate = DateTime.Parse("2024-01-13"),
-                            NcrPurchasingLastUpdated = DateTime.Parse("2024-01-13"),
                             NcrPurchasingUserId = 10, //need to make nullable
                             OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Scrap in House").OpDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-005").NcrId
@@ -1086,8 +878,6 @@ namespace HaverDevProject.Data
                         new NcrPurchasing
                         {
                             NcrPurchasingDescription = "Use as is",
-                            NcrPurchCreationDate = DateTime.Parse("2024-01-15"),
-                            NcrPurchasingLastUpdated = DateTime.Parse("2024-01-15"),
                             NcrPurchasingUserId = 11, //need to make nullable
                             OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Defer for HBC Engineering Review").OpDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-006").NcrId
@@ -1095,8 +885,6 @@ namespace HaverDevProject.Data
                         new NcrPurchasing
                         {
                             NcrPurchasingDescription = "Rework per engineering disposition",
-                            NcrPurchCreationDate = DateTime.Parse("2024-01-19"),
-                            NcrPurchasingLastUpdated = DateTime.Parse("2024-01-19"),
                             NcrPurchasingUserId = 12, //need to make nullable
                             OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Return to Supplier for either 'rework' or 'replace'").OpDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-007").NcrId
@@ -1257,8 +1045,6 @@ namespace HaverDevProject.Data
                         {
                             NcrReInspectAcceptable = true,
                             NcrReInspectNewNcrNumber = null,
-                            NcrReInspectCreationDate = DateTime.Parse("2023-12-11"),
-                            NcrReInspectLastUpdated = DateTime.Parse("2023-12-11"),
                             NcrReInspectUserId = 1, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-137").NcrId
                         },
@@ -1266,8 +1052,6 @@ namespace HaverDevProject.Data
                         {
                             NcrReInspectAcceptable = true,
                             NcrReInspectNewNcrNumber = null,
-                            NcrReInspectCreationDate = DateTime.Parse("2023-12-13"),
-                            NcrReInspectLastUpdated = DateTime.Parse("2023-12-13"),
                             NcrReInspectUserId = 2, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-138").NcrId
                         },
@@ -1275,9 +1059,6 @@ namespace HaverDevProject.Data
                         {
                             NcrReInspectAcceptable = true,
                             NcrReInspectNewNcrNumber = null,
-
-                            NcrReInspectCreationDate = DateTime.Parse("2023-12-19"),
-                            NcrReInspectLastUpdated = DateTime.Parse("2023-12-19"),
                             NcrReInspectUserId = 3, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-139").NcrId
                         },
@@ -1285,8 +1066,6 @@ namespace HaverDevProject.Data
                         {
                             NcrReInspectAcceptable = true,
                             NcrReInspectNewNcrNumber = null,
-                            NcrReInspectCreationDate = DateTime.Parse("2023-12-19"),
-                            NcrReInspectLastUpdated = DateTime.Parse("2023-12-19"),
                             NcrReInspectUserId = 4, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-140").NcrId
                         },
@@ -1294,8 +1073,6 @@ namespace HaverDevProject.Data
                         {
                             NcrReInspectAcceptable = true,
                             NcrReInspectNewNcrNumber = null,
-                            NcrReInspectCreationDate = DateTime.Parse("2023-12-22"),
-                            NcrReInspectLastUpdated = DateTime.Parse("2023-12-22"),
                             NcrReInspectUserId = 1, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-141").NcrId
                         },
@@ -1303,8 +1080,6 @@ namespace HaverDevProject.Data
                         {
                             NcrReInspectAcceptable = true,
                             NcrReInspectNewNcrNumber = null,
-                            NcrReInspectCreationDate = DateTime.Parse("2024-01-07"),
-                            NcrReInspectLastUpdated = DateTime.Parse("2024-01-07"),
                             NcrReInspectUserId = 2, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-001").NcrId
                         },
@@ -1312,8 +1087,6 @@ namespace HaverDevProject.Data
                         {
                             NcrReInspectAcceptable = true,
                             NcrReInspectNewNcrNumber = null,
-                            NcrReInspectCreationDate = DateTime.Parse("2024-01-09"),
-                            NcrReInspectLastUpdated = DateTime.Parse("2024-01-09"),
                             NcrReInspectUserId = 3, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-002").NcrId
                         },
@@ -1321,8 +1094,6 @@ namespace HaverDevProject.Data
                         {
                             NcrReInspectAcceptable = true,
                             NcrReInspectNewNcrNumber = null,
-                            NcrReInspectCreationDate = DateTime.Parse("2024-01-10"),
-                            NcrReInspectLastUpdated = DateTime.Parse("2024-01-10"),
                             NcrReInspectUserId = 4, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-003").NcrId
                         },
@@ -1330,8 +1101,6 @@ namespace HaverDevProject.Data
                         {
                             NcrReInspectAcceptable = true,
                             NcrReInspectNewNcrNumber = null,
-                            NcrReInspectCreationDate = DateTime.Parse("2024-01-11"),
-                            NcrReInspectLastUpdated = DateTime.Parse("2024-01-11"),
                             NcrReInspectUserId = 1, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-004").NcrId
                         },
@@ -1339,8 +1108,6 @@ namespace HaverDevProject.Data
                         {
                             NcrReInspectAcceptable = true,
                             NcrReInspectNewNcrNumber = null,
-                            NcrReInspectCreationDate = DateTime.Parse("2024-01-15"),
-                            NcrReInspectLastUpdated = DateTime.Parse("2024-01-15"),
                             NcrReInspectUserId = 2, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-005").NcrId
                         },
@@ -1348,8 +1115,6 @@ namespace HaverDevProject.Data
                         {
                             NcrReInspectAcceptable = true,
                             NcrReInspectNewNcrNumber = null,
-                            NcrReInspectCreationDate = DateTime.Parse("2024-01-17"),
-                            NcrReInspectLastUpdated = DateTime.Parse("2024-01-17"),
                             NcrReInspectUserId = 3, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-006").NcrId
                         },
@@ -1357,8 +1122,6 @@ namespace HaverDevProject.Data
                         {
                             NcrReInspectAcceptable = true,
                             NcrReInspectNewNcrNumber = null,
-                            NcrReInspectCreationDate = DateTime.Parse("2024-01-21"),
-                            NcrReInspectLastUpdated = DateTime.Parse("2024-01-21"),
                             NcrReInspectUserId = 4, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-007").NcrId
                         });

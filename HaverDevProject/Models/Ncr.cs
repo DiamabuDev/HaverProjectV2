@@ -23,32 +23,22 @@ public partial class Ncr
     [Display(Name = "Last Updated")]
     [Required(ErrorMessage = "You must provide the last date the NCR was updated.")]
     [Column("ncrLastUpdated", TypeName = "datetime")]
-    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+    [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}", ApplyFormatInEditMode = true)]
     public DateTime NcrLastUpdated { get; set; }
 
-    [Display(Name = "Status Update")]
-    [Column("statusUpdateId")]
-    public int StatusUpdateId { get; set; }
+    [Display(Name = "Status")]
+    [Column("ncrStatus")]
+    public bool NcrStatus { get; set; } = true; //default value
 
     [Display(Name = "Engineer")]
-    [InverseProperty("Ncr")]
-    public virtual ICollection<NcrEng> NcrEngs { get; set; } = new List<NcrEng>();
+    public virtual NcrEng NcrEng { get; set; }
 
     [Display(Name = "Purchasing")]
-    [InverseProperty("Ncr")]
-    public virtual ICollection<NcrPurchasing> NcrPurchasings { get; set; } = new List<NcrPurchasing>();
+    public virtual NcrPurchasing NcrPurchasing { get; set; }
 
     [Display(Name = "Quality Representative")]
-    [InverseProperty("Ncr")]
-    public virtual ICollection<NcrQa> NcrQas { get; set; } = new List<NcrQa>();
+    public virtual NcrQa NcrQa { get; set; }
 
     [Display(Name = "Re-Inspector")]
-    [InverseProperty("Ncr")]
-    public virtual ICollection<NcrReInspect> NcrReInspects { get; set; } = new List<NcrReInspect>();
-
-    [Display(Name = "Status Update")]
-    [Required(ErrorMessage = "You must provide the Status.")]
-    [ForeignKey("StatusUpdateId")]
-    [InverseProperty("Ncrs")]
-    public virtual StatusUpdate StatusUpdate { get; set; }
+    public virtual NcrReInspect NcrReInspect { get; set; }       
 }

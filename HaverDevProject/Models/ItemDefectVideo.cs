@@ -19,10 +19,10 @@ public partial class ItemDefectVideo
     [Unicode(false)]
     public string ItemDefectVideoLink { get; set; }
 
-    [Column("itemDefectId")]
-    public int ItemDefectId { get; set; }
+    [Column("ncrQaId")]
+    public int NcrQaId { get; set; }
 
-    [ForeignKey("ItemDefectId")]
+    [ForeignKey("NcrQaId")]
     [InverseProperty("ItemDefectVideos")]
-    public virtual ItemDefect ItemDefect { get; set; }
+    public virtual NcrQa NcrQa { get; set; }
 }

@@ -7,42 +7,65 @@ using Microsoft.EntityFrameworkCore;
 namespace HaverDevProject.Models;
 
 [Table("ncrQA")]
-public partial class NcrQa : IValidatableObject
+public partial class NcrQa : Auditable
 {
     [Key]
     [Column("ncrQAId")]
-    public int NcrQaid { get; set; }
+    public int NcrQaId { get; set; }
 
     [Display(Name = "Item marked Nonconforming")]
-    [Column("ncrQAItemMarNonConforming")]
-    public bool NcrQaitemMarNonConforming { get; set; } = false;
+    [Column("ncrQaItemMarNonConforming")]
+    public bool NcrQaItemMarNonConforming { get; set; } = false; //Default value is false    
 
-    [Display(Name = "Sales Order No.")]
-    [Required(ErrorMessage = "You must provide the Sales Order Number.")]
-    [Column("ncrQASalesOrder")]
-    [StringLength(45)]
-    [Unicode(false)]
-    public string NcrQasalesOrder { get; set; }
+    [Display(Name = "Identify Process Applicable")]
+    [Column("ncrQAProcessApplicable")]
+    public bool NcrQaProcessApplicable { get; set; } = true; //Default value is true (Supplier or Rec-Insp)
 
     [Display(Name = "Creation Date")]
     [Required(ErrorMessage = "You must provide the date the NCR was created.")]
     [Column("ncrQACreationDate", TypeName = "date")]
-    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-    public DateTime NcrQacreationDate { get; set; }
+    [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}", ApplyFormatInEditMode = true)]
+    public DateTime NcrQacreationDate { get; set; } = DateTime.Now;
 
-    [Display(Name = "Date")]
-    [Required(ErrorMessage = "You must provide the last date the NCR was updated.")]
-    [Column("ncrQALastUpdated", TypeName = "datetime")]
-    [DataType(DataType.DateTime)]
-    public DateTime NcrQalastUpdated { get; set; }
+    [Display(Name = "PO or Prod. No.")]
+    [Required(ErrorMessage = "You must provide the PO or Prod. No.")]
+    [Column("ncrQaOrderNumber")]
+    public int NcrQaOrderNumber { get; set; }
+
+    [Display(Name = "Sales Order No.")]
+    [Required(ErrorMessage = "You must provide the Sales Order No.")]
+    [StringLength(45, ErrorMessage = "The Sales Order No. cannot be more than 45 characters.")]
+    [Column("ncrQaSalesOrder")]
+    public string NcrQaSalesOrder { get; set; }
+
+    [Display(Name = "Quantity Received")]
+    [Required(ErrorMessage = "You must provide the Quantity Received.")]
+    [Column("ncrQaQuanReceived")]
+    public int NcrQaQuanReceived { get; set; }
+
+    [Display(Name = "Quantity Defective")]
+    [Required(ErrorMessage = "You must provide the Defective Quantity.")]
+    [Column("ncrQaQuanDefective")]
+    public int NcrQaQuanDefective { get; set; }
+
+    [Display(Name = "Defect description")]
+    [Required(ErrorMessage = "You must provide the defect description.")]
+    [StringLength(300, ErrorMessage = "Only 300 characters for defect description.")]
+    [DataType(DataType.MultilineText)]
+    [Column("ncrQaDescriptionOfDefect")]
+    public string NcrQaDescriptionOfDefect { get; set; }   
 
     [Display(Name = "Quality Representative's Name")]
     [Column("ncrQAUserId")]
     public int NcrQauserId { get; set; }
 
-    [Display(Name = "Identify Process Applicable")]
-    [Column("proAppId")]
-    public int ProAppId { get; set; }
+    [Display(Name = "Engineer Disposition Required?")]
+    [Column("ncrQaEngDispositionRequired")]
+    public bool NcrQaEngDispositionRequired { get; set; } = true; //Default value is true (yes)
+
+    [ScaffoldColumn(false)]
+    [Timestamp]
+    public Byte[] RowVersion { get; set; }//Added for concurrency
 
     [Display(Name = "NCR")]
     [Column("ncrId")]
@@ -51,24 +74,18 @@ public partial class NcrQa : IValidatableObject
     [Display(Name = "NCR")]
     [Required(ErrorMessage = "You must provide the NCR.")]
     [ForeignKey("NcrId")]
-    [InverseProperty("NcrQas")]
     public virtual Ncr Ncr { get; set; }
 
-    [Display(Name = "PO or Prod. No.")]
-    [InverseProperty("NcrQa")]
-    public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+    [Column("itemDefectId")]
+    public int ItemDefectId { get; set; }
 
-    [Display(Name = "Identify Process Applicable")]
-    [Required(ErrorMessage = "You must provide the Applicable Process.")]
-    [ForeignKey("ProAppId")]
+    [ForeignKey("DefectId")]
     [InverseProperty("NcrQas")]
-    public virtual ProcessApplicable ProApp { get; set; }
+    public virtual ItemDefect ItemDefect { get; set; }
 
-    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-    {
-        if (NcrQalastUpdated < NcrQacreationDate)
-        {
-            yield return new ValidationResult("The NCR cannot be updated before it was created.", new[] { "NcrQalastUpdated" });
-        }
-    }
+    [InverseProperty("NcrQa")]
+    public virtual ICollection<ItemDefectPhoto> ItemDefectPhotos { get; set; } = new List<ItemDefectPhoto>();
+
+    [InverseProperty("NcrQa")]
+    public virtual ICollection<ItemDefectVideo> ItemDefectVideos { get; set; } = new List<ItemDefectVideo>();
 }

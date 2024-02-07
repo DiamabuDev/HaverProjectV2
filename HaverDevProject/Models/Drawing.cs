@@ -35,6 +35,5 @@ public partial class Drawing
 
     [Display(Name = "Engineering")]
     [ForeignKey("NcrEngId")]
-    [InverseProperty("Drawings")]
     public virtual NcrEng NcrEng { get; set; }
 }

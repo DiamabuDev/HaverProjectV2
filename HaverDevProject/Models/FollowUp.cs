@@ -32,6 +32,6 @@ public partial class FollowUp
 
     [Display(Name = "Operations Manager")]
     [ForeignKey("NcrPurchId")]
-    [InverseProperty("FollowUps")]
+    [InverseProperty("FollowUp")]
     public virtual NcrPurchasing NcrPurch { get; set; }
 }
