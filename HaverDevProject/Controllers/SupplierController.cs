@@ -28,7 +28,7 @@ namespace HaverDevProject.Controllers
             string actionButton, string sortDirection = "asc", string sortField = "Code")
         {
             //List of sort options.
-            string[] sortOptions = new[] { "Code", "Name", "Email"};            
+            string[] sortOptions = new[] { "Code", "Name", "Email", "Status"};            
 
             var suppliers = _context.Suppliers
                 .AsNoTracking();
@@ -86,7 +86,7 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:SupplierName"] = "<i class='bi bi-sort-down'></i>";
                 }
             }            
-            else //Sorting by Email
+            else if (sortField == "Email") //Sorting by Email
             {
                 if (sortDirection == "asc")
                 {
@@ -102,22 +102,22 @@ namespace HaverDevProject.Controllers
 
                 }
             }
-            //else //Sorting by Status
-            //{
-            //    if (sortDirection == "asc")
-            //    {
-            //        suppliers = suppliers
-            //            .OrderBy(p => p.Status);
-            //        ViewData["filterApplied:SupplierEmail"] = "<i class='bi bi-sort-up'></i>";
-            //    }
-            //    else
-            //    {
-            //        suppliers = suppliers
-            //            .OrderByDescending(p => p.SupplierEmail);
-            //        ViewData["filterApplied:SupplierEmail"] = "<i class='bi bi-sort-down'></i>";
+            else //Sorting by Status
+            {
+                if (sortDirection == "asc")
+                {
+                    suppliers = suppliers
+                        .OrderBy(p => p.SupplierStatus);
+                    ViewData["filterApplied:SupplierStatus"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    suppliers = suppliers
+                        .OrderByDescending(p => p.SupplierStatus);
+                    ViewData["filterApplied:SupplierStatus"] = "<i class='bi bi-sort-down'></i>";
 
-            //    }
-            //}
+                }
+            }
             //Set sort for next time
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;

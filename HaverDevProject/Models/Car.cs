@@ -23,6 +23,6 @@ public partial class Car
 
     [Display(Name = "Purchase ID")]
     [ForeignKey("NcrPurchId")]
-    [InverseProperty("Cars")]
+    [InverseProperty("Car")]
     public virtual NcrPurchasing NcrPurch { get; set; }
 }

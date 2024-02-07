@@ -28,8 +28,12 @@ public partial class ItemDefect
     public virtual Item Item { get; set; }
 
     [InverseProperty("ItemDefect")]
-    public virtual ICollection<ItemDefectPhoto> ItemDefectPhotos { get; set; } = new List<ItemDefectPhoto>();
+    public virtual ICollection<NcrQa> NcrQas { get; set; } = new List<NcrQa>();
+    
 
-    [InverseProperty("ItemDefect")]
-    public virtual ICollection<ItemDefectVideo> ItemDefectVideos { get; set; } = new List<ItemDefectVideo>();
+    //[InverseProperty("ItemDefect")]
+    //public virtual ICollection<ItemDefectPhoto> ItemDefectPhotos { get; set; } = new List<ItemDefectPhoto>();
+
+    //[InverseProperty("ItemDefect")]
+    //public virtual ICollection<ItemDefectVideo> ItemDefectVideos { get; set; } = new List<ItemDefectVideo>();
 }

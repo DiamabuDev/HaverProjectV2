@@ -24,14 +24,15 @@ public partial class ItemDefectPhoto
     public string ItemDefectPhotoMimeType { get; set; }
 
     [Column("itemDefectPhotoDescription")]
-    [StringLength(300)]
+    [StringLength(300, ErrorMessage = "Only 300 characters for photo description.")]
+    [DataType(DataType.MultilineText)]
     [Unicode(false)]
     public string ItemDefectPhotoDescription { get; set; }
 
-    [Column("itemDefectId")]
-    public int ItemDefectId { get; set; }
+    [Column("ncrQaId")]
+    public int NcrQaId { get; set; }
 
-    [ForeignKey("ItemDefectId")]
+    [ForeignKey("NcrQaId")]
     [InverseProperty("ItemDefectPhotos")]
-    public virtual ItemDefect ItemDefect { get; set; }
+    public virtual NcrQa NcrQa { get; set; }
 }
