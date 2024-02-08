@@ -14,24 +14,37 @@
         </div>
         <div class="card-body col-lg-10 col-11 mx-auto">            
             <dl class="row">
-                <dt class = "col-sm-2">
+                <dt class = "col-sm-3">
                     Code
                 </dt>
-                <dd class = "col-sm-10">
+                <dd class = "col-sm-9">
                     @Html.DisplayFor(model => model.SupplierCode)
                 </dd>
-                <dt class = "col-sm-2">
+                <dt class = "col-sm-3">
                     Name            
                 </dt>
-                <dd class = "col-sm-10">
+                <dd class = "col-sm-9">
                     @Html.DisplayFor(model => model.SupplierName)
+                </dd>                
+                <dt class="col-sm-3">
+                    Contact Name
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.SupplierContactName)
                 </dd>
-                <dt class = "col-sm-2">
+                <dt class="col-sm-3">
                     Email
                 </dt>
-                <dd class = "col-sm-10">
+                <dd class="col-sm-9">
                     @Html.DisplayFor(model => model.SupplierEmail)
                 </dd>
+                <dt class="col-sm-3">
+                    Status
+                </dt>
+                <dd class="col-sm-9">
+                    @(Model.SupplierStatus ? "Active" : "Inactive")
+                </dd>
+                
             </dl>
         </div>
         <div class="card-footer">

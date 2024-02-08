@@ -16,11 +16,16 @@
     <div class="form-horizontal">        
         <div class="card card-body bg-custom-color mb-2">
             <div class="row d-flex justify-content-center align-items-center">
-                <div class="form-group col-lg-5 col-md-5 col-sm-10 col-10">
+                <div class="form-group col-lg-4 col-md-5 col-sm-10 col-10">
                     <label class="control-label mb-1">Find by Code or Name:</label>
                     @Html.TextBox("SearchCode", null, new { @class = "form-control" })
                 </div>  
-                <div class="form-group col-lg-6 col-md-7 col-sm-10 col-10 align-self-end">
+                <div class="form-group col-lg-4 col-md-5 col-sm-10 col-10">
+                    <label class="control-label mb-1">Find by Contact Name:</label>
+                    @Html.TextBox("SearchContact", null, new { @class = "form-control" })
+                </div>
+
+                <div class="form-group col-lg-4 col-md-7 col-sm-10 col-10 align-self-end">
                     <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary ms-2"/>
                     <a asp-action="Index" class="btn btn-outline-dark ms-4">Clear</a>                    
                 </div>                    
@@ -30,28 +35,28 @@
     <table class="table table-hover table-striped">
         <thead class="custom-header-bg">
             <tr>
-                <th>  
+                <th class="code-col">
                     <button type="submit" name="actionButton" value="Code" class="btn text-light custom-btn-text-start">
                         Code
                         @Html.Raw(ViewData["filterApplied:SupplierCode"])
                     </button>
                 </th>
-                <th>                    
+                <th class="four-cols">                    
                     <button type="submit" name="actionButton" value="Name" class="btn text-light custom-btn-text-start">
                         Name
                         @Html.Raw(ViewData["filterApplied:SupplierName"])
                     </button>
                 </th>
-                <th class="d-none d-md-table-cell">            
+                <th class="d-none d-md-table-cell">
+                    <button type="submit" name="actionButton" value="Contact" class="btn text-light custom-btn-text-start">
+                        Contact Name
+                        @Html.Raw(ViewData["filterApplied:SupplierContact"])
+                    </button>
+                </th>
+                <th class="four-cols">            
                     <button type="submit" name="actionButton" value="Email" class="btn text-light custom-btn-text-start">
                         Email
                         @Html.Raw(ViewData["filterApplied:SupplierEmail"])
-                    </button>
-                </th>
-                <th class="text-center">
-                    <button type="submit" name="actionButton" value="Status" class="btn text-light custom-btn-text-start">
-                        Status
-                        @Html.Raw(ViewData["filterApplied:SupplierStatus"])
                     </button>
                 </th>
                 <th></th>
@@ -60,17 +65,17 @@
         <tbody>
     @foreach (var item in Model) {
             <tr>
-                <td>
+                <td class="code-col">
                     @Html.DisplayFor(modelItem => item.SupplierCode)
                 </td>
-                <td>
+                <td class="four-cols">
                     @Html.DisplayFor(modelItem => item.SupplierName)
                 </td>
                 <td class="d-none d-md-table-cell">
-                    @Html.DisplayFor(modelItem => item.SupplierEmail)
+                    @Html.DisplayFor(modelItem => item.SupplierContactName)
                 </td>
-                <td class=" text-center @((item.SupplierStatus == true) ? "stillactive" : "closed")">
-                    @Html.DisplayFor(modelItem => item.SupplierStatus)
+                <td class="four-cols">
+                    @Html.DisplayFor(modelItem => item.SupplierEmail)
                 </td>
                 <td>   
                     <a asp-action="Edit" asp-route-id="@item.SupplierId" class="btn text-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
