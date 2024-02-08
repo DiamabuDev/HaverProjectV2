@@ -436,7 +436,7 @@ namespace HaverDevProject.Data
                             NcrQauserId = 1, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-137").NcrId,
                             NcrQaProcessApplicable = false,
-                            ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 1).ItemDefectId, //hard-coded
+                            //ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 1).ItemDefectId, //hard-coded
                             NcrQaOrderNumber = "4500695162",
                             NcrQaQuanReceived = 10,
                             NcrQaQuanDefective = 8,
@@ -450,7 +450,7 @@ namespace HaverDevProject.Data
                             NcrQacreationDate = DateTime.Parse("2023-12-09"),
                             NcrQauserId = 2, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-138").NcrId,
-                            ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 2).ItemDefectId, //hard-coded
+                            //ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 2).ItemDefectId, //hard-coded
                             NcrQaOrderNumber = "4500695429",
                             NcrQaQuanReceived = 5,
                             NcrQaQuanDefective = 5,
@@ -464,7 +464,7 @@ namespace HaverDevProject.Data
                             NcrQacreationDate = DateTime.Parse("2023-12-11"),
                             NcrQauserId = 3, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-139").NcrId,
-                            ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 3).ItemDefectId, //hard-coded
+                            //ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 3).ItemDefectId, //hard-coded
                             NcrQaProcessApplicable = false,
                             NcrQaOrderNumber = "4500684525",
                             NcrQaQuanReceived = 12,
@@ -479,7 +479,7 @@ namespace HaverDevProject.Data
                             NcrQacreationDate = DateTime.Parse("2023-12-13"),
                             NcrQauserId = 4, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-140").NcrId,
-                            ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 4).ItemDefectId, //hard-coded
+                            //ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 4).ItemDefectId, //hard-coded
                             NcrQaOrderNumber = "4500683983",
                             NcrQaQuanReceived = 28,
                             NcrQaQuanDefective = 14,
@@ -493,7 +493,7 @@ namespace HaverDevProject.Data
                             NcrQacreationDate = DateTime.Parse("2023-12-17"),
                             NcrQauserId = 1, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-141").NcrId,
-                            ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 5).ItemDefectId, //hard-coded
+                            //ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 5).ItemDefectId, //hard-coded
                             NcrQaOrderNumber = "4500694121",
                             NcrQaQuanReceived = 2,
                             NcrQaQuanDefective = 2,
@@ -507,7 +507,7 @@ namespace HaverDevProject.Data
                             NcrQacreationDate = DateTime.Parse("2024-01-03"),
                             NcrQauserId = 2, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-001").NcrId,
-                            ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 1).ItemDefectId, //hard-coded
+                            //ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 1).ItemDefectId, //hard-coded
                             NcrQaProcessApplicable = false,
                             NcrQaOrderNumber = "4500681790",
                             NcrQaQuanReceived = 1,
@@ -522,7 +522,7 @@ namespace HaverDevProject.Data
                             NcrQacreationDate = DateTime.Parse("2024-01-04"),
                             NcrQauserId = 3, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-002").NcrId,
-                            ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 2).ItemDefectId, //hard-coded
+                            //ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 2).ItemDefectId, //hard-coded
                             NcrQaOrderNumber = "4500671162",
                             NcrQaQuanReceived = 9,
                             NcrQaQuanDefective = 8,
@@ -536,7 +536,7 @@ namespace HaverDevProject.Data
                             NcrQacreationDate = DateTime.Parse("2024-01-06"),
                             NcrQauserId = 4, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-003").NcrId,
-                            ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 3).ItemDefectId, //hard-coded
+                            //ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 3).ItemDefectId, //hard-coded
                             NcrQaOrderNumber = "4500685546",
                             NcrQaQuanReceived = 4,
                             NcrQaQuanDefective = 1,
@@ -550,7 +550,7 @@ namespace HaverDevProject.Data
                             NcrQacreationDate = DateTime.Parse("2024-01-07"),
                             NcrQauserId = 1, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-004").NcrId,
-                            ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 4).ItemDefectId, //hard-coded
+                            //ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 4).ItemDefectId, //hard-coded
                             NcrQaOrderNumber = "4500683210",
                             NcrQaQuanReceived = 15,
                             NcrQaQuanDefective = 10,
@@ -564,7 +564,7 @@ namespace HaverDevProject.Data
                             NcrQacreationDate = DateTime.Parse("2024-01-11"),
                             NcrQauserId = 2, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-005").NcrId,
-                            ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 5).ItemDefectId, //hard-coded
+                            //ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 5).ItemDefectId, //hard-coded
                             NcrQaProcessApplicable = false,
                             NcrQaOrderNumber = "4500700595",
                             NcrQaQuanReceived = 17,
@@ -579,7 +579,7 @@ namespace HaverDevProject.Data
                             NcrQacreationDate = DateTime.Parse("2024-01-14"),
                             NcrQauserId = 3, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-006").NcrId,
-                            ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 1).ItemDefectId, //hard-coded
+                            //ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 1).ItemDefectId, //hard-coded
                             NcrQaOrderNumber = "4500695645",
                             NcrQaQuanReceived = 12,
                             NcrQaQuanDefective = 2,
@@ -593,7 +593,7 @@ namespace HaverDevProject.Data
                             NcrQacreationDate = DateTime.Parse("2024-01-14"),
                             NcrQauserId = 4, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-007").NcrId,
-                            ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 2).ItemDefectId, //hard-coded
+                            //ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 2).ItemDefectId, //hard-coded
                             NcrQaOrderNumber = "4500691574",
                             NcrQaQuanReceived = 24,
                             NcrQaQuanDefective = 6,
