@@ -82,6 +82,8 @@ public partial class HaverNiagaraContext : DbContext
 
     public virtual DbSet<Supplier> Suppliers { get; set; }
 
+    public virtual DbSet<NcrProcurement> NcrProcurements { get; set; }
+
     //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     //    => optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=HaverNiagara;Trusted_Connection=SSPI;encrypt=false;");
 
@@ -194,6 +196,11 @@ public partial class HaverNiagaraContext : DbContext
         modelBuilder.Entity<NcrReInspect>(entity =>
         {
             entity.HasKey(e => e.NcrReInspectId).HasName("pk_ncrReInspect_ncrReInspectId");
+        });
+
+        modelBuilder.Entity<NcrProcurement>(entity =>
+        {
+            entity.HasKey(e => e.NcrProcurementId).HasName("pk_ncrProcurement_ncrProcurementId");
         });
 
         modelBuilder.Entity<OpDispositionType>(entity =>

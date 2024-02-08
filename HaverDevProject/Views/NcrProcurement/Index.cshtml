@@ -1,0 +1,71 @@
+﻿@model IEnumerable<HaverDevProject.Models.NcrProcurement>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.NcrProcSupplierReturnReq)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NcrProcExpectedDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NcrProcDisposedAllowed)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NcrProcSAPReturnCompleted)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NcrProcCreditExpected)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NcrProcSupplierBilled)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ncr)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.NcrProcSupplierReturnReq)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NcrProcExpectedDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NcrProcDisposedAllowed)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NcrProcSAPReturnCompleted)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NcrProcCreditExpected)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NcrProcSupplierBilled)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ncr.NcrNumber)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.NcrProcurementId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.NcrProcurementId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.NcrProcurementId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
