@@ -340,7 +340,6 @@ namespace HaverDevProject.Data
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Bearing Housing").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect dimensions").DefectId
                         },
-
                         new ItemDefect
                         {
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Backing Shield").ItemId,
@@ -366,14 +365,12 @@ namespace HaverDevProject.Data
                         new Ncr
                         {
                             NcrNumber = "2023-137",
-                            NcrLastUpdated = DateTime.Parse("2023-12-18")
-                            
+                            NcrLastUpdated = DateTime.Parse("2023-12-18")                            
                         },
                         new Ncr
                         {
                             NcrNumber = "2023-138",
-                            NcrLastUpdated = DateTime.Parse("2023-12-19")
-                           
+                            NcrLastUpdated = DateTime.Parse("2023-12-19")                      
                         },
                         new Ncr
                         {
@@ -434,98 +431,174 @@ namespace HaverDevProject.Data
                         new NcrQa
                         {
                             NcrQaItemMarNonConforming = true,
-                            NcrQaOrderNumber = 10401227,
-                            NcrQacreationDate = DateTime.Parse("2023-12-07"),
+                            NcrQaSalesOrder = "10401227",
+                            NcrQacreationDate = DateTime.Parse("2023-12-07"), //take out?
                             NcrQauserId = 1, //need to make nullable
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-137").NcrId
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-137").NcrId,
+                            NcrQaProcessApplicable = false,
+                            ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 1).ItemDefectId, //hard-coded
+                            NcrQaOrderNumber = "4500695162",
+                            NcrQaQuanReceived = 10,
+                            NcrQaQuanDefective = 8,
+                            NcrQaDescriptionOfDefect = "Example description 1",
+                            NcrQaEngDispositionRequired = true
                         },
                         new NcrQa
                         {
                             NcrQaItemMarNonConforming = true,
-                            NcrQaOrderNumber = 10401228,
+                            NcrQaSalesOrder = "10401228",
                             NcrQacreationDate = DateTime.Parse("2023-12-09"),
                             NcrQauserId = 2, //need to make nullable
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-138").NcrId
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-138").NcrId,
+                            ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 2).ItemDefectId, //hard-coded
+                            NcrQaOrderNumber = "4500695429",
+                            NcrQaQuanReceived = 5,
+                            NcrQaQuanDefective = 5,
+                            NcrQaDescriptionOfDefect = "Example description 2",
+                            NcrQaEngDispositionRequired = true
                         },
                         new NcrQa
                         {
                             NcrQaItemMarNonConforming = true,
-                            NcrQaOrderNumber = 10401229,
+                            NcrQaSalesOrder = "10401229",
                             NcrQacreationDate = DateTime.Parse("2023-12-11"),
                             NcrQauserId = 3, //need to make nullable
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-139").NcrId
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-139").NcrId,
+                            ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 3).ItemDefectId, //hard-coded
+                            NcrQaProcessApplicable = false,
+                            NcrQaOrderNumber = "4500684525",
+                            NcrQaQuanReceived = 12,
+                            NcrQaQuanDefective = 3,
+                            NcrQaDescriptionOfDefect = "Example description 3",
+                            NcrQaEngDispositionRequired = true
                         },
                         new NcrQa
                         {
                             NcrQaItemMarNonConforming = true,
-                            NcrQaOrderNumber = 10401230,
+                            NcrQaSalesOrder = "10401230",
                             NcrQacreationDate = DateTime.Parse("2023-12-13"),
                             NcrQauserId = 4, //need to make nullable
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-140").NcrId
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-140").NcrId,
+                            ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 4).ItemDefectId, //hard-coded
+                            NcrQaOrderNumber = "4500683983",
+                            NcrQaQuanReceived = 28,
+                            NcrQaQuanDefective = 14,
+                            NcrQaDescriptionOfDefect = "Example description 4",
+                            NcrQaEngDispositionRequired = true
                         },
                         new NcrQa
                         {
                             NcrQaItemMarNonConforming = true,
-                            NcrQaOrderNumber = 10401231,
+                            NcrQaSalesOrder = "10401231",
                             NcrQacreationDate = DateTime.Parse("2023-12-17"),
                             NcrQauserId = 1, //need to make nullable
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-141").NcrId
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-141").NcrId,
+                            ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 5).ItemDefectId, //hard-coded
+                            NcrQaOrderNumber = "4500694121",
+                            NcrQaQuanReceived = 2,
+                            NcrQaQuanDefective = 2,
+                            NcrQaDescriptionOfDefect = "Example description 5",
+                            NcrQaEngDispositionRequired = true
                         },
                         new NcrQa
                         {
                             NcrQaItemMarNonConforming = true,
-                            NcrQaOrderNumber = 10410676,
+                            NcrQaSalesOrder = "10401232",
                             NcrQacreationDate = DateTime.Parse("2024-01-03"),
                             NcrQauserId = 2, //need to make nullable
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-001").NcrId
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-001").NcrId,
+                            ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 1).ItemDefectId, //hard-coded
+                            NcrQaProcessApplicable = false,
+                            NcrQaOrderNumber = "4500681790",
+                            NcrQaQuanReceived = 1,
+                            NcrQaQuanDefective = 1,
+                            NcrQaDescriptionOfDefect = "Example description 6",
+                            NcrQaEngDispositionRequired = true
                         },
                         new NcrQa
                         {
                             NcrQaItemMarNonConforming = true,
-                            NcrQaOrderNumber = 10410677,
+                            NcrQaSalesOrder = "10401233",
                             NcrQacreationDate = DateTime.Parse("2024-01-04"),
                             NcrQauserId = 3, //need to make nullable
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-002").NcrId
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-002").NcrId,
+                            ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 2).ItemDefectId, //hard-coded
+                            NcrQaOrderNumber = "4500671162",
+                            NcrQaQuanReceived = 9,
+                            NcrQaQuanDefective = 8,
+                            NcrQaDescriptionOfDefect = "Example description 7",
+                            NcrQaEngDispositionRequired = true
                         },
                         new NcrQa
                         {
                             NcrQaItemMarNonConforming = true,
-                            NcrQaOrderNumber = 10410678,
+                            NcrQaSalesOrder = "10401234",
                             NcrQacreationDate = DateTime.Parse("2024-01-06"),
                             NcrQauserId = 4, //need to make nullable
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-003").NcrId
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-003").NcrId,
+                            ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 3).ItemDefectId, //hard-coded
+                            NcrQaOrderNumber = "4500685546",
+                            NcrQaQuanReceived = 4,
+                            NcrQaQuanDefective = 1,
+                            NcrQaDescriptionOfDefect = "Example description 8",
+                            NcrQaEngDispositionRequired = true
                         },
                         new NcrQa
                         {
                             NcrQaItemMarNonConforming = true,
-                            NcrQaOrderNumber = 10410679,
+                            NcrQaSalesOrder = "10401235",
                             NcrQacreationDate = DateTime.Parse("2024-01-07"),
                             NcrQauserId = 1, //need to make nullable
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-004").NcrId
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-004").NcrId,
+                            ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 4).ItemDefectId, //hard-coded
+                            NcrQaOrderNumber = "4500683210",
+                            NcrQaQuanReceived = 15,
+                            NcrQaQuanDefective = 10,
+                            NcrQaDescriptionOfDefect = "Example description 9",
+                            NcrQaEngDispositionRequired = true
                         },
                         new NcrQa
                         {
                             NcrQaItemMarNonConforming = true,
-                            NcrQaOrderNumber = 10410680,
+                            NcrQaSalesOrder = "10401236",
                             NcrQacreationDate = DateTime.Parse("2024-01-11"),
                             NcrQauserId = 2, //need to make nullable
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-005").NcrId
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-005").NcrId,
+                            ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 5).ItemDefectId, //hard-coded
+                            NcrQaProcessApplicable = false,
+                            NcrQaOrderNumber = "4500700595",
+                            NcrQaQuanReceived = 17,
+                            NcrQaQuanDefective = 6,
+                            NcrQaDescriptionOfDefect = "Example description 10",
+                            NcrQaEngDispositionRequired = true
                         },
                         new NcrQa
                         {
                             NcrQaItemMarNonConforming = true,
-                            NcrQaOrderNumber = 10410681,
+                            NcrQaSalesOrder = "10401681",
                             NcrQacreationDate = DateTime.Parse("2024-01-14"),
                             NcrQauserId = 3, //need to make nullable
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-006").NcrId
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-006").NcrId,
+                            ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 1).ItemDefectId, //hard-coded
+                            NcrQaOrderNumber = "4500695645",
+                            NcrQaQuanReceived = 12,
+                            NcrQaQuanDefective = 2,
+                            NcrQaDescriptionOfDefect = "Example description 11",
+                            NcrQaEngDispositionRequired = true
                         },
                         new NcrQa
                         {
                             NcrQaItemMarNonConforming = true,
-                            NcrQaOrderNumber = 10410682,
+                            NcrQaSalesOrder = "10401682",
                             NcrQacreationDate = DateTime.Parse("2024-01-14"),
                             NcrQauserId = 4, //need to make nullable
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-007").NcrId
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-007").NcrId,
+                            ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 2).ItemDefectId, //hard-coded
+                            NcrQaOrderNumber = "4500691574",
+                            NcrQaQuanReceived = 24,
+                            NcrQaQuanDefective = 6,
+                            NcrQaDescriptionOfDefect = "Example description 12",
+                            NcrQaEngDispositionRequired = true
                         });
                     context.SaveChanges();
                 }                
