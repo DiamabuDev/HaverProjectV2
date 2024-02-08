@@ -29,8 +29,9 @@ public partial class NcrQa : Auditable
 
     [Display(Name = "PO or Prod. No.")]
     [Required(ErrorMessage = "You must provide the PO or Prod. No.")]
+    [StringLength(45, ErrorMessage = "The PO or Prod. No. cannot be more than 45 characters.")]
     [Column("ncrQaOrderNumber")]
-    public int NcrQaOrderNumber { get; set; }
+    public string NcrQaOrderNumber { get; set; }
 
     [Display(Name = "Sales Order No.")]
     [Required(ErrorMessage = "You must provide the Sales Order No.")]
