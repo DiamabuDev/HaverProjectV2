@@ -1,0 +1,60 @@
+﻿@model HaverDevProject.Models.NcrProcurement
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>NcrProcurement</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NcrProcSupplierReturnReq)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NcrProcSupplierReturnReq)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NcrProcExpectedDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NcrProcExpectedDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NcrProcDisposedAllowed)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NcrProcDisposedAllowed)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NcrProcSAPReturnCompleted)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NcrProcSAPReturnCompleted)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NcrProcCreditExpected)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NcrProcCreditExpected)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NcrProcSupplierBilled)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NcrProcSupplierBilled)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Ncr)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Ncr.NcrNumber)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.NcrProcurementId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
