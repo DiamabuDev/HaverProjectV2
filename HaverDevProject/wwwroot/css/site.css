@@ -226,6 +226,10 @@ body {
     width: 25%;
 }
 
+.code-col {
+    width: 10%;
+}
+
 .icon-drop {
     justify-content: space-between;
     width: 100%;

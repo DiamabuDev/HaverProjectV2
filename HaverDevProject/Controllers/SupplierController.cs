@@ -24,11 +24,11 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: Supplier
-        public async Task<IActionResult> Index(string SearchCode, int? page, int? pageSizeID, 
+        public async Task<IActionResult> Index(string SearchCode, string SearchContact, int? page, int? pageSizeID, 
             string actionButton, string sortDirection = "asc", string sortField = "Code")
         {
             //List of sort options.
-            string[] sortOptions = new[] { "Code", "Name", "Email", "Status"};            
+            string[] sortOptions = new[] { "Code", "Name", "Email", "Contact"};            
 
             var suppliers = _context.Suppliers
                 .AsNoTracking();
@@ -38,7 +38,12 @@ namespace HaverDevProject.Controllers
             {
                 suppliers = suppliers.Where(s => s.SupplierCode.ToUpper().Contains(SearchCode.ToUpper())
                                         || s.SupplierName.ToUpper().Contains(SearchCode.ToUpper()));
-            }           
+            }
+
+            if (!String.IsNullOrEmpty(SearchContact))
+            {
+                suppliers = suppliers.Where(s => s.SupplierContactName.ToUpper().Contains(SearchContact.ToUpper()));
+            }
 
             //Sorting columns
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
@@ -102,20 +107,17 @@ namespace HaverDevProject.Controllers
 
                 }
             }
-            else //Sorting by Status
+            else //Sorting by Contact
             {
                 if (sortDirection == "asc")
                 {
-                    suppliers = suppliers
-                        .OrderBy(p => p.SupplierStatus);
-                    ViewData["filterApplied:SupplierStatus"] = "<i class='bi bi-sort-up'></i>";
+                    suppliers = suppliers.OrderBy(s => s.SupplierContactName);
+                    ViewData["filterApplied:SupplierContact"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
-                    suppliers = suppliers
-                        .OrderByDescending(p => p.SupplierStatus);
-                    ViewData["filterApplied:SupplierStatus"] = "<i class='bi bi-sort-down'></i>";
-
+                    suppliers = suppliers.OrderByDescending(s => s.SupplierContactName);
+                    ViewData["filterApplied:SupplierContact"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
             //Set sort for next time
@@ -216,7 +218,7 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("SupplierId,SupplierCode,SupplierName,SupplierEmail")] Supplier supplier)
+        public async Task<IActionResult> Edit(int id, [Bind("SupplierId,SupplierCode,SupplierName,SupplierContactName,SupplierEmail,SupplierStatus")] Supplier supplier)
         {
             if (id != supplier.SupplierId)
             {
