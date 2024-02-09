@@ -6,8 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HaverDevProject.Models;
 
-[Table("ncrPurchasing")]
-public partial class NcrPurchasing : Auditable
+[Table("ncrOperation")]
+public partial class NcrOperation : Auditable
 {
     [Key]
     [Column("ncrPurchId")]
@@ -48,6 +48,6 @@ public partial class NcrPurchasing : Auditable
     [Display(Name = "Purchasing's Preliminary Decision")]
     [Required(ErrorMessage = "You must provide the Disposition Type.")]
     [ForeignKey("OpDispositionTypeId")]
-    [InverseProperty("NcrPurchasings")]
+    [InverseProperty("NcrOperations")]
     public virtual OpDispositionType OpDispositionType { get; set; }
 }

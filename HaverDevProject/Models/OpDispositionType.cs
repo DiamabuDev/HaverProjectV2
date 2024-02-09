@@ -22,5 +22,5 @@ public partial class OpDispositionType
 
     [Display(Name = "Purchasing")]
     [InverseProperty("OpDispositionType")]
-    public virtual ICollection<NcrPurchasing> NcrPurchasings { get; set; } = new List<NcrPurchasing>();
+    public virtual ICollection<NcrOperation> NcrOperations { get; set; } = new List<NcrOperation>();
 }

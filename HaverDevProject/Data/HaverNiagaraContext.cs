@@ -66,7 +66,7 @@ public partial class HaverNiagaraContext : DbContext
 
     public virtual DbSet<NcrEng> NcrEngs { get; set; }
 
-    public virtual DbSet<NcrPurchasing> NcrPurchasings { get; set; }
+    public virtual DbSet<NcrOperation> NcrOperations { get; set; }
 
     public virtual DbSet<NcrQa> NcrQas { get; set; }
 
@@ -179,11 +179,11 @@ public partial class HaverNiagaraContext : DbContext
                 .HasConstraintName("fk_ncrEng_engDispositionType");
         });
 
-        modelBuilder.Entity<NcrPurchasing>(entity =>
+        modelBuilder.Entity<NcrOperation>(entity =>
         {
             entity.HasKey(e => e.NcrPurchId).HasName("pk_ncrPurchasing_ncrPurchId");
 
-            entity.HasOne(d => d.OpDispositionType).WithMany(p => p.NcrPurchasings)
+            entity.HasOne(d => d.OpDispositionType).WithMany(p => p.NcrOperations)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_ncrPurchasing_opDispositionType");
         });

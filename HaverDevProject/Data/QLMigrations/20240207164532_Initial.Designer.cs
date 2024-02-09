@@ -385,7 +385,7 @@ namespace HaverDevProject.Data.QLMigrations
                     b.ToTable("ncrEng");
                 });
 
-            modelBuilder.Entity("HaverDevProject.Models.NcrPurchasing", b =>
+            modelBuilder.Entity("HaverDevProject.Models.NcrOperation", b =>
                 {
                     b.Property<int>("NcrPurchId")
                         .ValueGeneratedOnAdd()
@@ -641,7 +641,7 @@ namespace HaverDevProject.Data.QLMigrations
 
             modelBuilder.Entity("HaverDevProject.Models.Car", b =>
                 {
-                    b.HasOne("HaverDevProject.Models.NcrPurchasing", "NcrPurch")
+                    b.HasOne("HaverDevProject.Models.NcrOperation", "NcrPurch")
                         .WithOne("Car")
                         .HasForeignKey("HaverDevProject.Models.Car", "NcrPurchId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -669,7 +669,7 @@ namespace HaverDevProject.Data.QLMigrations
                         .IsRequired()
                         .HasConstraintName("fk_followUp_followUpType");
 
-                    b.HasOne("HaverDevProject.Models.NcrPurchasing", "NcrPurch")
+                    b.HasOne("HaverDevProject.Models.NcrOperation", "NcrPurch")
                         .WithOne("FollowUp")
                         .HasForeignKey("HaverDevProject.Models.FollowUp", "NcrPurchId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -751,16 +751,16 @@ namespace HaverDevProject.Data.QLMigrations
                     b.Navigation("Ncr");
                 });
 
-            modelBuilder.Entity("HaverDevProject.Models.NcrPurchasing", b =>
+            modelBuilder.Entity("HaverDevProject.Models.NcrOperation", b =>
                 {
                     b.HasOne("HaverDevProject.Models.Ncr", "Ncr")
-                        .WithOne("NcrPurchasing")
-                        .HasForeignKey("HaverDevProject.Models.NcrPurchasing", "NcrId")
+                        .WithOne("NcrOperation")
+                        .HasForeignKey("HaverDevProject.Models.NcrOperation", "NcrId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("HaverDevProject.Models.OpDispositionType", "OpDispositionType")
-                        .WithMany("NcrPurchasings")
+                        .WithMany("NcrOperations")
                         .HasForeignKey("OpDispositionTypeId")
                         .IsRequired()
                         .HasConstraintName("fk_ncrPurchasing_opDispositionType");
@@ -827,7 +827,7 @@ namespace HaverDevProject.Data.QLMigrations
                 {
                     b.Navigation("NcrEng");
 
-                    b.Navigation("NcrPurchasing");
+                    b.Navigation("NcrOperation");
 
                     b.Navigation("NcrQa");
 
@@ -839,7 +839,7 @@ namespace HaverDevProject.Data.QLMigrations
                     b.Navigation("Drawing");
                 });
 
-            modelBuilder.Entity("HaverDevProject.Models.NcrPurchasing", b =>
+            modelBuilder.Entity("HaverDevProject.Models.NcrOperation", b =>
                 {
                     b.Navigation("Car");
 
@@ -855,7 +855,7 @@ namespace HaverDevProject.Data.QLMigrations
 
             modelBuilder.Entity("HaverDevProject.Models.OpDispositionType", b =>
                 {
-                    b.Navigation("NcrPurchasings");
+                    b.Navigation("NcrOperations");
                 });
 
             modelBuilder.Entity("HaverDevProject.Models.Supplier", b =>

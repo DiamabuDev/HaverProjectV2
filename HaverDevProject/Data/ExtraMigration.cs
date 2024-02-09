@@ -49,9 +49,9 @@ namespace HaverDevProject.Data
             migrationBuilder.Sql(
                 @"
                     CREATE TRIGGER SetNcrOperationTimestampOnUpdate
-                    AFTER UPDATE ON NcrOperations
+                    AFTER UPDATE ON NcrOperation
                     BEGIN
-                        UPDATE NcrOperations
+                        UPDATE NcrOperation
                         SET RowVersion = randomblob(8)
                         WHERE rowid = NEW.rowid;
                     END
