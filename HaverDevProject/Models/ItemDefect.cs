@@ -7,33 +7,17 @@ using Microsoft.EntityFrameworkCore;
 namespace HaverDevProject.Models;
 
 [Table("itemDefect")]
-public partial class ItemDefect
-{
-    [Key]
-    [Column("itemDefectId")]
-    public int ItemDefectId { get; set; }
-
+public class ItemDefect
+{    
+    [Display(Name = "Item")]
     [Column("itemId")]
-    public int ItemId { get; set; }
+    public int ItemId { get; set; }   
+    [InverseProperty("ItemDefects")]
+    public Item Item { get; set; }
 
+    [Display(Name = "Defect")]
     [Column("defectId")]
-    public int DefectId { get; set; }
-
-    [ForeignKey("DefectId")]
+    public int DefectId { get; set; }      
     [InverseProperty("ItemDefects")]
-    public virtual Defect Defect { get; set; }
-
-    [ForeignKey("ItemId")]
-    [InverseProperty("ItemDefects")]
-    public virtual Item Item { get; set; }
-
-    [InverseProperty("ItemDefect")]
-    public virtual ICollection<NcrQa> NcrQas { get; set; } = new List<NcrQa>();
-    
-
-    //[InverseProperty("ItemDefect")]
-    //public virtual ICollection<ItemDefectPhoto> ItemDefectPhotos { get; set; } = new List<ItemDefectPhoto>();
-
-    //[InverseProperty("ItemDefect")]
-    //public virtual ICollection<ItemDefectVideo> ItemDefectVideos { get; set; } = new List<ItemDefectVideo>();
+    public Defect Defect { get; set; }       
 }

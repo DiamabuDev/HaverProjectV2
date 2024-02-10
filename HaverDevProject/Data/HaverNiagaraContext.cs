@@ -130,19 +130,46 @@ public partial class HaverNiagaraContext : DbContext
                 .HasConstraintName("fk_item_supplier");
         });
 
-        modelBuilder.Entity<ItemDefect>(entity =>
-        {
-            entity.HasKey(e => e.ItemDefectId).HasName("pk_itemDefect_itemDefectId");
+        //modelBuilder.Entity<Item>() //verificar
+        //    .HasOne(i => i.Supplier)
+        //    .WithMany(s => s.Items)
+        //    .HasForeignKey(i => i.SupplierId)
+        //    .OnDelete(DeleteBehavior.Restrict);
 
-            entity.HasOne(d => d.Defect).WithMany(p => p.ItemDefects)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_itemDefect_defect");
 
-            entity.HasOne(d => d.Item).WithMany(p => p.ItemDefects)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_itemDefect_item");
 
-        });
+        //modelBuilder.Entity<ItemDefect>(entity =>  ///actualizacion de many to many entre itemdefect
+        //{
+
+
+        //    entity.HasOne(d => d.Defect).WithMany(p => p.ItemDefects)
+        //        .OnDelete(DeleteBehavior.ClientSetNull)
+        //        .HasConstraintName("fk_itemDefect_defect");
+
+        //    entity.HasOne(d => d.Item).WithMany(p => p.ItemDefects)
+        //        .OnDelete(DeleteBehavior.ClientSetNull)
+        //        .HasConstraintName("fk_itemDefect_item");
+
+        //});
+
+        modelBuilder.Entity<ItemDefect>()
+            .HasKey(t => new { t.ItemId, t.DefectId });
+
+
+        //modelBuilder.Entity<ItemDefect>() //verificar
+        //    .HasOne(id => id.Item)
+        //    .WithMany(i => i.ItemDefects)
+        //    .HasForeignKey(id => id.ItemId)
+        //    .OnDelete(DeleteBehavior.Restrict);
+
+        //modelBuilder.Entity<ItemDefect>()  //verificar
+        //   .HasOne(id => id.Defect)
+        //   .WithMany(d => d.ItemDefects)
+        //   .HasForeignKey(id => id.DefectId)
+        //   .OnDelete(DeleteBehavior.Restrict);
+
+
+
 
         modelBuilder.Entity<ItemDefectPhoto>(entity =>
         {
@@ -189,7 +216,19 @@ public partial class HaverNiagaraContext : DbContext
         modelBuilder.Entity<NcrQa>(entity =>
         {
             entity.HasKey(e => e.NcrQaId).HasName("pk_ncrQA_ncrQAId");
+
+            entity.HasOne(d => d.Item).WithMany(p => p.NcrQas)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_ncrQa_item");
         });
+
+        //modelBuilder.Entity<NcrQa>() // verificar
+        //    .HasOne(nq => nq.ItemDefect)
+        //    .WithMany(id => id.NcrQas)
+        //    .HasForeignKey(nq => nq.ItemDefectId)
+        //    .OnDelete(DeleteBehavior.Restrict);
+
+
 
         modelBuilder.Entity<NcrReInspect>(entity =>
         {

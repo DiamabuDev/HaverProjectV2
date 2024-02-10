@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using HaverDevProject.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace HaverDevProject.Models;
 
 [Table("ncrQA")]
-public partial class NcrQa : Auditable
+public class NcrQa : Auditable
 {
     [Key]
     [Column("ncrQAId")]
@@ -24,7 +25,8 @@ public partial class NcrQa : Auditable
     [Display(Name = "Creation Date")]
     [Required(ErrorMessage = "You must provide the date the NCR was created.")]
     [Column("ncrQACreationDate", TypeName = "date")]
-    [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}", ApplyFormatInEditMode = true)]
+    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+    [DataType(DataType.Date)]
     public DateTime NcrQacreationDate { get; set; } = DateTime.Now;
 
     [Display(Name = "PO or Prod. No.")]
@@ -75,18 +77,37 @@ public partial class NcrQa : Auditable
     [Display(Name = "NCR")]
     [Required(ErrorMessage = "You must provide the NCR.")]
     [ForeignKey("NcrId")]
-    public virtual Ncr Ncr { get; set; }
+    public Ncr Ncr { get; set; }
 
-    [Column("itemDefectId")]
-    public int ItemDefectId { get; set; }
+    [Display(Name = "Item")]
+    [Column("itemId")]
+    public int ItemId { get; set; }
 
-    [ForeignKey("DefectId")]
-    [InverseProperty("NcrQas")]
-    public virtual ItemDefect ItemDefect { get; set; }
+    [ForeignKey("ItemId")]
+    //[InverseProperty("NcrQas")]
+    [Required(ErrorMessage = "You must select an item.")]
+    public Item Item { get; set; }
 
     [InverseProperty("NcrQa")]
-    public virtual ICollection<ItemDefectPhoto> ItemDefectPhotos { get; set; } = new List<ItemDefectPhoto>();
+    public ICollection<ItemDefectPhoto> ItemDefectPhotos { get; set; } = new HashSet<ItemDefectPhoto>();
 
     [InverseProperty("NcrQa")]
-    public virtual ICollection<ItemDefectVideo> ItemDefectVideos { get; set; } = new List<ItemDefectVideo>();
+    public ICollection<ItemDefectVideo> ItemDefectVideos { get; set; } = new HashSet<ItemDefectVideo>();
+
+
+    public void GenerateNcrNumber(DbContext dbContext)
+    {
+        var currentYear = DateTime.Now.Year.ToString(); //Get the current year
+        // Asegúrate de que Set<NcrQa> refleje tu DbSet para NcrQa
+        var lastNcrOfYear = dbContext.Set<Ncr>()
+            .Where(n => n.NcrNumber.StartsWith(currentYear))
+            .OrderByDescending(n => n.NcrNumber)
+            .FirstOrDefault();
+
+        int sequenceNumber = (lastNcrOfYear != null)
+            ? int.Parse(lastNcrOfYear.NcrNumber.Substring(currentYear.Length + 1)) + 1
+            : 1;
+
+        Ncr.NcrNumber = $"{currentYear}-{sequenceNumber:D4}";
+    }
 }

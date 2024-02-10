@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HaverDevProject.Data.QLMigrations
 {
     [DbContext(typeof(HaverNiagaraContext))]
-    [Migration("20240207164532_Initial")]
+    [Migration("20240209012850_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -217,25 +217,17 @@ namespace HaverDevProject.Data.QLMigrations
 
             modelBuilder.Entity("HaverDevProject.Models.ItemDefect", b =>
                 {
-                    b.Property<int>("ItemDefectId")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("ItemId")
                         .HasColumnType("INTEGER")
-                        .HasColumnName("itemDefectId");
+                        .HasColumnName("itemId");
 
                     b.Property<int>("DefectId")
                         .HasColumnType("INTEGER")
                         .HasColumnName("defectId");
 
-                    b.Property<int>("ItemId")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("itemId");
-
-                    b.HasKey("ItemDefectId")
-                        .HasName("pk_itemDefect_itemDefectId");
+                    b.HasKey("ItemId", "DefectId");
 
                     b.HasIndex("DefectId");
-
-                    b.HasIndex("ItemId");
 
                     b.ToTable("itemDefect");
                 });
@@ -449,12 +441,9 @@ namespace HaverDevProject.Data.QLMigrations
                     b.Property<DateTime?>("CreatedOn")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("DefectId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ItemDefectId")
+                    b.Property<int>("ItemId")
                         .HasColumnType("INTEGER")
-                        .HasColumnName("itemDefectId");
+                        .HasColumnName("itemId");
 
                     b.Property<int>("NcrId")
                         .HasColumnType("INTEGER")
@@ -474,8 +463,10 @@ namespace HaverDevProject.Data.QLMigrations
                         .HasColumnType("INTEGER")
                         .HasColumnName("ncrQaItemMarNonConforming");
 
-                    b.Property<int>("NcrQaOrderNumber")
-                        .HasColumnType("INTEGER")
+                    b.Property<string>("NcrQaOrderNumber")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("TEXT")
                         .HasColumnName("ncrQaOrderNumber");
 
                     b.Property<bool>("NcrQaProcessApplicable")
@@ -519,7 +510,7 @@ namespace HaverDevProject.Data.QLMigrations
                     b.HasKey("NcrQaId")
                         .HasName("pk_ncrQA_ncrQAId");
 
-                    b.HasIndex("DefectId");
+                    b.HasIndex("ItemId");
 
                     b.HasIndex("NcrId")
                         .IsUnique();
@@ -696,14 +687,14 @@ namespace HaverDevProject.Data.QLMigrations
                     b.HasOne("HaverDevProject.Models.Defect", "Defect")
                         .WithMany("ItemDefects")
                         .HasForeignKey("DefectId")
-                        .IsRequired()
-                        .HasConstraintName("fk_itemDefect_defect");
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("HaverDevProject.Models.Item", "Item")
                         .WithMany("ItemDefects")
                         .HasForeignKey("ItemId")
-                        .IsRequired()
-                        .HasConstraintName("fk_itemDefect_item");
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Defect");
 
@@ -772,9 +763,11 @@ namespace HaverDevProject.Data.QLMigrations
 
             modelBuilder.Entity("HaverDevProject.Models.NcrQa", b =>
                 {
-                    b.HasOne("HaverDevProject.Models.ItemDefect", "ItemDefect")
+                    b.HasOne("HaverDevProject.Models.Item", "Item")
                         .WithMany("NcrQas")
-                        .HasForeignKey("DefectId");
+                        .HasForeignKey("ItemId")
+                        .IsRequired()
+                        .HasConstraintName("fk_ncrQa_item");
 
                     b.HasOne("HaverDevProject.Models.Ncr", "Ncr")
                         .WithOne("NcrQa")
@@ -782,7 +775,7 @@ namespace HaverDevProject.Data.QLMigrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ItemDefect");
+                    b.Navigation("Item");
 
                     b.Navigation("Ncr");
                 });
@@ -816,10 +809,7 @@ namespace HaverDevProject.Data.QLMigrations
             modelBuilder.Entity("HaverDevProject.Models.Item", b =>
                 {
                     b.Navigation("ItemDefects");
-                });
 
-            modelBuilder.Entity("HaverDevProject.Models.ItemDefect", b =>
-                {
                     b.Navigation("NcrQas");
                 });
 
