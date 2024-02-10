@@ -279,24 +279,24 @@ namespace HaverDevProject.Data.QLMigrations
                 name: "itemDefect",
                 columns: table => new
                 {
-                    itemDefectId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
                     itemId = table.Column<int>(type: "INTEGER", nullable: false),
                     defectId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_itemDefect_itemDefectId", x => x.itemDefectId);
+                    table.PrimaryKey("PK_itemDefect", x => new { x.itemId, x.defectId });
                     table.ForeignKey(
-                        name: "fk_itemDefect_defect",
+                        name: "FK_itemDefect_defect_defectId",
                         column: x => x.defectId,
                         principalTable: "defect",
-                        principalColumn: "defectId");
+                        principalColumn: "defectId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_itemDefect_item",
+                        name: "FK_itemDefect_item_itemId",
                         column: x => x.itemId,
                         principalTable: "item",
-                        principalColumn: "itemId");
+                        principalColumn: "itemId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -308,7 +308,7 @@ namespace HaverDevProject.Data.QLMigrations
                     ncrQaItemMarNonConforming = table.Column<bool>(type: "INTEGER", nullable: false),
                     ncrQAProcessApplicable = table.Column<bool>(type: "INTEGER", nullable: false),
                     ncrQACreationDate = table.Column<DateTime>(type: "date", nullable: false),
-                    ncrQaOrderNumber = table.Column<int>(type: "INTEGER", nullable: false),
+                    ncrQaOrderNumber = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
                     ncrQaSalesOrder = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
                     ncrQaQuanReceived = table.Column<int>(type: "INTEGER", nullable: false),
                     ncrQaQuanDefective = table.Column<int>(type: "INTEGER", nullable: false),
@@ -317,8 +317,7 @@ namespace HaverDevProject.Data.QLMigrations
                     ncrQaEngDispositionRequired = table.Column<bool>(type: "INTEGER", nullable: false),
                     RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true),
                     ncrId = table.Column<int>(type: "INTEGER", nullable: false),
-                    itemDefectId = table.Column<int>(type: "INTEGER", nullable: false),
-                    DefectId = table.Column<int>(type: "INTEGER", nullable: true),
+                    itemId = table.Column<int>(type: "INTEGER", nullable: false),
                     CreatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
                     UpdatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
@@ -328,16 +327,16 @@ namespace HaverDevProject.Data.QLMigrations
                 {
                     table.PrimaryKey("pk_ncrQA_ncrQAId", x => x.ncrQAId);
                     table.ForeignKey(
-                        name: "FK_ncrQA_itemDefect_DefectId",
-                        column: x => x.DefectId,
-                        principalTable: "itemDefect",
-                        principalColumn: "itemDefectId");
-                    table.ForeignKey(
                         name: "FK_ncrQA_ncr_ncrId",
                         column: x => x.ncrId,
                         principalTable: "ncr",
                         principalColumn: "ncrId",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_ncrQa_item",
+                        column: x => x.itemId,
+                        principalTable: "item",
+                        principalColumn: "itemId");
                 });
 
             migrationBuilder.CreateTable(
@@ -420,11 +419,6 @@ namespace HaverDevProject.Data.QLMigrations
                 column: "defectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_itemDefect_itemId",
-                table: "itemDefect",
-                column: "itemId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_itemDefectPhoto_ncrQaId",
                 table: "itemDefectPhoto",
                 column: "ncrQaId");
@@ -457,9 +451,9 @@ namespace HaverDevProject.Data.QLMigrations
                 column: "opDispositionTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ncrQA_DefectId",
+                name: "IX_ncrQA_itemId",
                 table: "ncrQA",
-                column: "DefectId");
+                column: "itemId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ncrQA_ncrId",
@@ -493,6 +487,9 @@ namespace HaverDevProject.Data.QLMigrations
                 name: "followUp");
 
             migrationBuilder.DropTable(
+                name: "itemDefect");
+
+            migrationBuilder.DropTable(
                 name: "itemDefectPhoto");
 
             migrationBuilder.DropTable(
@@ -511,6 +508,9 @@ namespace HaverDevProject.Data.QLMigrations
                 name: "followUpType");
 
             migrationBuilder.DropTable(
+                name: "defect");
+
+            migrationBuilder.DropTable(
                 name: "ncrQA");
 
             migrationBuilder.DropTable(
@@ -520,13 +520,7 @@ namespace HaverDevProject.Data.QLMigrations
                 name: "opDispositionType");
 
             migrationBuilder.DropTable(
-                name: "itemDefect");
-
-            migrationBuilder.DropTable(
                 name: "ncr");
-
-            migrationBuilder.DropTable(
-                name: "defect");
 
             migrationBuilder.DropTable(
                 name: "item");
