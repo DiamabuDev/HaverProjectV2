@@ -45,6 +45,8 @@ namespace HaverDevProject.Controllers
                 StartDate = temp;
             }
 
+            
+
             //List of sort options.
             string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "Defect", "PO Number" };
 
@@ -231,6 +233,9 @@ namespace HaverDevProject.Controllers
         // GET: NcrQa/Create
         public IActionResult Create()
         {
+            //Ncr ncr = new Ncr();
+            //ncr.NcrNumber = "L0005";
+
             ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName");
             ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber");
             return View();

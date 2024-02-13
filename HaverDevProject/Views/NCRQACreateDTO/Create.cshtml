@@ -1,0 +1,93 @@
+﻿@model HaverDevProject.ViewModels.NCRQACreateDTO
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2>Create</h2>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="NcrNumber" class="control-label"></label>
+        <input asp-for="NcrNumber" class="form-control" />
+        <span asp-validation-for="NcrNumber" class="text-danger"></span>
+    </div>
+
+    @* <div class="form-group">
+        <label asp-for="NcrLastUpdated" class="control-label"></label>
+        <input asp-for="NcrLastUpdated" class="form-control" />
+        <span asp-validation-for="NcrLastUpdated" class="text-danger"></span>
+    </div> *@
+
+    @* <div class="form-group form-check">
+        <label class="form-check-label">
+            <input class="form-check-input" asp-for="NcrStatus" /> @Html.DisplayNameFor(model => model.NcrStatus)
+        </label>
+    </div> *@
+
+    <div class="form-group form-check">
+        <label class="form-check-label">
+            <input class="form-check-input" asp-for="NcrQaItemMarNonConforming" /> @Html.DisplayNameFor(model => model.NcrQaItemMarNonConforming)
+        </label>
+    </div>
+
+    <div class="form-group form-check">
+        <label class="form-check-label">
+            <input class="form-check-input" asp-for="NcrQaProcessApplicable" /> @Html.DisplayNameFor(model => model.NcrQaProcessApplicable)
+        </label>
+    </div>
+
+    @* <div class="form-group">
+        <label asp-for="NcrQacreationDate" class="control-label"></label>
+        <input asp-for="NcrQacreationDate" class="form-control" />
+        <span asp-validation-for="NcrQacreationDate" class="text-danger"></span>
+    </div> *@
+    <div class="form-group">
+        <label asp-for="NcrQaOrderNumber" class="control-label"></label>
+        <input asp-for="NcrQaOrderNumber" class="form-control" />
+        <span asp-validation-for="NcrQaOrderNumber" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="NcrQaSalesOrder" class="control-label"></label>
+        <input asp-for="NcrQaSalesOrder" class="form-control" />
+        <span asp-validation-for="NcrQaSalesOrder" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="NcrQaQuanReceived" class="control-label"></label>
+        <input asp-for="NcrQaQuanReceived" class="form-control" />
+        <span asp-validation-for="NcrQaQuanReceived" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="NcrQaQuanDefective" class="control-label"></label>
+        <input asp-for="NcrQaQuanDefective" class="form-control" />
+        <span asp-validation-for="NcrQaQuanDefective" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="NcrQaDescriptionOfDefect" class="control-label"></label>
+        <textarea asp-for="NcrQaDescriptionOfDefect" class="form-control"></textarea>
+        <span asp-validation-for="NcrQaDescriptionOfDefect" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ItemId" class="control-label"></label>
+        <input asp-for="ItemId" class="form-control"/>
+    </div>   
+
+
+    <!-- Repite estos bloques para los demás campos del modelo -->
+
+    <div class="form-group">
+        <input type="submit" value="Create" class="btn btn-primary" />
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
