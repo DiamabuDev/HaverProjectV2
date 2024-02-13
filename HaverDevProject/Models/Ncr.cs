@@ -10,6 +10,7 @@ namespace HaverDevProject.Models;
 public partial class Ncr
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("ncrId")]
     public int NcrId { get; set; }
 
@@ -18,13 +19,14 @@ public partial class Ncr
     [Column("ncrNumber")]
     [StringLength(10, ErrorMessage = "The NCR Number cannot be more than 10 characters long.")]
     [Unicode(false)]
-    public string NcrNumber { get; set; }
+    public string NcrNumber { get; set; }   
 
     [Display(Name = "Last Updated")]
     [Required(ErrorMessage = "You must provide the last date the NCR was updated.")]
     [Column("ncrLastUpdated", TypeName = "datetime")]
-    [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}", ApplyFormatInEditMode = true)]
-    public DateTime NcrLastUpdated { get; set; }
+    //[DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+    [DataType(DataType.Date)]
+    public DateTime NcrLastUpdated { get; set; } = DateTime.Now;
 
     [Display(Name = "Status")]
     [Column("ncrStatus")]
@@ -40,5 +42,5 @@ public partial class Ncr
     public virtual NcrQa NcrQa { get; set; }
 
     [Display(Name = "Re-Inspector")]
-    public virtual NcrReInspect NcrReInspect { get; set; }       
+    public virtual NcrReInspect NcrReInspect { get; set; }    
 }

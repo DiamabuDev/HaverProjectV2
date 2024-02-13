@@ -16,18 +16,17 @@ public class NcrQa : Auditable
 
     [Display(Name = "Item marked Nonconforming")]
     [Column("ncrQaItemMarNonConforming")]
-    public bool NcrQaItemMarNonConforming { get; set; } = false; //Default value is false    
+    public bool NcrQaItemMarNonConforming { get; set; }
 
     [Display(Name = "Identify Process Applicable")]
     [Column("ncrQAProcessApplicable")]
-    public bool NcrQaProcessApplicable { get; set; } = true; //Default value is true (Supplier or Rec-Insp)
-
+    public bool NcrQaProcessApplicable { get; set; }
     [Display(Name = "Creation Date")]
     [Required(ErrorMessage = "You must provide the date the NCR was created.")]
     [Column("ncrQACreationDate", TypeName = "date")]
     [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
     [DataType(DataType.Date)]
-    public DateTime NcrQacreationDate { get; set; } = DateTime.Now;
+    public DateTime NcrQacreationDate { get; set; }
 
     [Display(Name = "PO or Prod. No.")]
     [Required(ErrorMessage = "You must provide the PO or Prod. No.")]
@@ -64,7 +63,7 @@ public class NcrQa : Auditable
 
     [Display(Name = "Engineer Disposition Required?")]
     [Column("ncrQaEngDispositionRequired")]
-    public bool NcrQaEngDispositionRequired { get; set; } = true; //Default value is true (yes)
+    public bool NcrQaEngDispositionRequired { get; set; }
 
     [ScaffoldColumn(false)]
     [Timestamp]
@@ -93,21 +92,4 @@ public class NcrQa : Auditable
 
     [InverseProperty("NcrQa")]
     public ICollection<ItemDefectVideo> ItemDefectVideos { get; set; } = new HashSet<ItemDefectVideo>();
-
-
-    public void GenerateNcrNumber(DbContext dbContext)
-    {
-        var currentYear = DateTime.Now.Year.ToString(); //Get the current year
-        // Asegúrate de que Set<NcrQa> refleje tu DbSet para NcrQa
-        var lastNcrOfYear = dbContext.Set<Ncr>()
-            .Where(n => n.NcrNumber.StartsWith(currentYear))
-            .OrderByDescending(n => n.NcrNumber)
-            .FirstOrDefault();
-
-        int sequenceNumber = (lastNcrOfYear != null)
-            ? int.Parse(lastNcrOfYear.NcrNumber.Substring(currentYear.Length + 1)) + 1
-            : 1;
-
-        Ncr.NcrNumber = $"{currentYear}-{sequenceNumber:D4}";
-    }
 }
