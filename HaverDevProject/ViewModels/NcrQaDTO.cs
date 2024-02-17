@@ -2,17 +2,14 @@
 using System.ComponentModel.DataAnnotations;
 using HaverDevProject.Models;
 using Microsoft.AspNetCore.Mvc;
+using Humanizer;
 
 namespace HaverDevProject.ViewModels
-{    
-    public class NcrQaDTO
-    {
-
-        //public int NcrId { get; set; }
+{
+    [ModelMetadataType(typeof(NcrQaDTOMetaData))]
+    public class NcrQaDTO : IValidatableObject
+    {                
         public string NcrNumber { get; set; }
-
-        //public DateTime NcrLastUpdated { get; set; }
-
         public bool NcrStatus { get; set; } = true;        
         public bool NcrQaItemMarNonConforming { get; set; }        
         public bool NcrQaProcessApplicable { get; set; }        
@@ -26,5 +23,12 @@ namespace HaverDevProject.ViewModels
         public int ItemId { get; set; }
         public bool NcrQaEngDispositionRequired { get; set; }
 
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (NcrQaQuanDefective > NcrQaQuanReceived)
+            {
+                yield return new ValidationResult("Quantity Defective must be equal or less than Quantity Received.", new[] { "NcrQaQuanDefective" });
+            }
+        }
     }
 }
