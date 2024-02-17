@@ -10,6 +10,7 @@ using HaverDevProject.Models;
 using HaverDevProject.CustomControllers;
 using HaverDevProject.Utilities;
 using HaverDevProject.ViewModels;
+using System.Numerics;
 
 namespace HaverDevProject.Controllers
 {
@@ -242,7 +243,8 @@ namespace HaverDevProject.Controllers
             ncr.NcrQaItemMarNonConforming = true; //Yes
             ncr.NcrQaEngDispositionRequired = true; //Yes
 
-            ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName");
+            //ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName");
+            PopulateDropDownLists();
             return View(ncr);
         }
 
@@ -251,7 +253,7 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(NcrQaDTO ncrQaDTO)
+        public async Task<IActionResult> Create(NcrQaDTO ncrQaDTO, int ItemId)
         {
             if (ModelState.IsValid)
             {
@@ -302,7 +304,8 @@ namespace HaverDevProject.Controllers
                 //ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrQa.NcrId);
                 //return View(ncrQa);
             }
-            ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName", ncrQaDTO.ItemId);
+            //ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName", ncrQaDTO.ItemId);
+            PopulateDropDownLists(); //-----checking
             return View(ncrQaDTO);
         }
 
@@ -436,14 +439,56 @@ namespace HaverDevProject.Controllers
                 .OrderBy(s => s.SupplierName), "SupplierId", "SupplierName", selectedId);
         }
 
+        //private SelectList ItemSelectList(int? selectedId)
+        //{
+        //    return new SelectList(_context.Items
+        //        .OrderBy(i => i.ItemName), "ItemId", "ItemName", selectedId);            
+        //}
+
+        private SelectList ItemSelectList(int? SupplierID, int? selectedId)
+        {
+            var query = from c in _context.Items
+                        where c.SupplierId == SupplierID
+                        select c;
+            return new SelectList(query.OrderBy(i => i.ItemName), "ItemId", "ItemName", selectedId);
+
+            //return new SelectList(_context.Items
+            //    .OrderBy(i => i.ItemName), "ItemId", "ItemName", selectedId);
+        }
+
+
         private void PopulateDropDownLists(NcrQa ncrQa = null)
         {
-            ViewData["SupplierId"] = SupplierSelectList(ncrQa?.Item.Supplier.SupplierId);
+            if ((ncrQa?.ItemId).HasValue)
+            {   
+                if (ncrQa.Item == null)
+                {
+                    ncrQa.Item = _context.Items.Find(ncrQa.ItemId);
+                }
+                ViewData["SupplierId"] = SupplierSelectList(ncrQa?.Item.Supplier.SupplierId);
+                ViewData["ItemId"] = ItemSelectList(ncrQa.Item.SupplierId, ncrQa.ItemId);
+            }
+            else
+            {
+                ViewData["SupplierId"] = SupplierSelectList(null);
+                ViewData["ItemId"] = ItemSelectList(null, null);
+            }
+
+
+
+            //ViewData["SupplierId"] = SupplierSelectList(ncrQa?.Item.Supplier.SupplierId);
+            //ViewData["ItemId"] = ItemSelectList(ncrQa?.Item.ItemId);
             //ViewData["ItemId"] = ItemSelectList(ncr?.NcrQas.FirstOrDefault()?.OrderDetails.FirstOrDefault()?.Item.ItemId);
+
             //ViewData["DefectId"] = DefectSelectList(ncr?.NcrQas.FirstOrDefault()?.OrderDetails.FirstOrDefault()?.Item.ItemDefects.FirstOrDefault()?.DefectId);
-            //ViewData["ProAppId"] = ProAppSelectList(ncr?.NcrQas.FirstOrDefault()?.ProAppId);
-            //ViewData["StatusUpdateId"] = StatusSelectList(ncr?.StatusUpdateId);
         }
+
+        [HttpGet]
+        public JsonResult GetItems(int SupplierId)
+        {
+            return Json(ItemSelectList(SupplierId, null));
+        }
+
 
 
         private bool NcrQaExists(int id)
