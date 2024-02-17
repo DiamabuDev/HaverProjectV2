@@ -1,4 +1,4 @@
-﻿@model HaverDevProject.Models.NcrQa
+﻿@model HaverDevProject.ViewModels.NcrQaDTO
 
 @{
     ViewData["Title"] = "Create";
@@ -12,6 +12,12 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="NcrNumber" class="control-label"></label>
+                <input asp-for="NcrNumber" class="form-control" readonly/>
+                <span asp-validation-for="NcrNumber" class="text-danger"></span>
+            </div>
+            
             <div class="form-group form-check">
                 <label class="form-check-label">
                     <input class="form-check-input" asp-for="NcrQaItemMarNonConforming" /> @Html.DisplayNameFor(model => model.NcrQaItemMarNonConforming)
@@ -52,20 +58,20 @@
                 <textarea asp-for="NcrQaDescriptionOfDefect" class="form-control"></textarea>
                 <span asp-validation-for="NcrQaDescriptionOfDefect" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            @* <div class="form-group">
                 <label asp-for="NcrQauserId" class="control-label"></label>
                 <input asp-for="NcrQauserId" class="form-control" />
                 <span asp-validation-for="NcrQauserId" class="text-danger"></span>
-            </div>
+            </div> *@
             <div class="form-group form-check">
                 <label class="form-check-label">
                     <input class="form-check-input" asp-for="NcrQaEngDispositionRequired" /> @Html.DisplayNameFor(model => model.NcrQaEngDispositionRequired)
                 </label>
             </div>
-            <div class="form-group">
+            @* <div class="form-group">
                 <label asp-for="NcrId" class="control-label"></label>
                 <select asp-for="NcrId" class ="form-control" asp-items="ViewBag.NcrId"></select>
-            </div>
+            </div> *@
             <div class="form-group">
                 <label asp-for="ItemId" class="control-label"></label>
                 <select asp-for="ItemId" class ="form-control" asp-items="ViewBag.ItemId"></select>

@@ -9,6 +9,7 @@ using HaverDevProject.Data;
 using HaverDevProject.Models;
 using HaverDevProject.CustomControllers;
 using HaverDevProject.Utilities;
+using HaverDevProject.ViewModels;
 
 namespace HaverDevProject.Controllers
 {
@@ -233,12 +234,13 @@ namespace HaverDevProject.Controllers
         // GET: NcrQa/Create
         public IActionResult Create()
         {
-            //Ncr ncr = new Ncr();
-            //ncr.NcrNumber = "L0005";
+            NcrQaDTO ncr = new NcrQaDTO();
+            ncr.NcrNumber = GetNcrNumber();
+            ncr.NcrQacreationDate = DateTime.Today;
+            ncr.NcrStatus = true;
 
             ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName");
-            ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber");
-            return View();
+            return View(ncr);
         }
 
         // POST: NcrQa/Create
@@ -246,17 +248,58 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("NcrQaId,NcrQaItemMarNonConforming,NcrQaProcessApplicable,NcrQacreationDate,NcrQaOrderNumber,NcrQaSalesOrder,NcrQaQuanReceived,NcrQaQuanDefective,NcrQaDescriptionOfDefect,NcrQauserId,NcrQaEngDispositionRequired,NcrId,ItemId")] NcrQa ncrQa)
+        public async Task<IActionResult> Create(NcrQaDTO ncrQaDTO)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(ncrQa);
+                Ncr ncr = new Ncr
+                {
+                    NcrNumber = ncrQaDTO.NcrNumber,
+                    NcrLastUpdated = DateTime.Now,
+                    NcrStatus = ncrQaDTO.NcrStatus
+                };
+
+                _context.Add(ncr);
                 await _context.SaveChangesAsync();
+
+                //getting the ncrId through the NcrNumber 
+                int ncrIdObt = _context.Ncrs
+                    .Where(n => n.NcrNumber == ncrQaDTO.NcrNumber)
+                    .Select(n => n.NcrId)
+                    .FirstOrDefault();
+
+                NcrQa ncrQa = new NcrQa
+                {
+                    NcrQaItemMarNonConforming = ncrQaDTO.NcrQaItemMarNonConforming,
+                    NcrQaProcessApplicable = ncrQaDTO.NcrQaProcessApplicable,  
+                    NcrQacreationDate = ncrQaDTO.NcrQacreationDate,
+                    NcrQaOrderNumber = ncrQaDTO.NcrQaOrderNumber,
+                    NcrQaSalesOrder = ncrQaDTO.NcrQaSalesOrder,
+                    NcrQaQuanReceived = ncrQaDTO.NcrQaQuanReceived,
+                    NcrQaQuanDefective = ncrQaDTO.NcrQaQuanDefective,
+                    NcrQaDescriptionOfDefect = ncrQaDTO.NcrQaDescriptionOfDefect,
+                    NcrQauserId = 1,  //Change when we have this information
+                    NcrId = ncrIdObt,
+                    ItemId = ncrQaDTO.ItemId,
+                    NcrQaEngDispositionRequired = ncrQaDTO.NcrQaEngDispositionRequired
+                };
+                
+                _context.NcrQas.Add(ncrQa);
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
+
+                //if (ModelState.IsValid)
+                //{
+                //    _context.Add(ncrQa);
+                //    await _context.SaveChangesAsync();
+                //    return RedirectToAction(nameof(Index));
+                //}
+                //ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName", ncrQa.ItemId);
+                //ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrQa.NcrId);
+                //return View(ncrQa);
             }
-            ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName", ncrQa.ItemId);
-            ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrQa.NcrId);
-            return View(ncrQa);
+            return View(ncrQaDTO);
         }
 
         // GET: NcrQa/Edit/5
@@ -351,6 +394,36 @@ namespace HaverDevProject.Controllers
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        public string GetNcrNumber()
+        {
+            string lastNcrNumber = _context.Ncrs
+                .OrderByDescending(n => n.NcrNumber)
+                .Select(n => n.NcrNumber)
+                .FirstOrDefault();
+
+            if(lastNcrNumber != null)
+            {
+                string lastYear = lastNcrNumber.Substring(0, 4);
+                string lastConsecutiveNumber = lastNcrNumber.Substring(5);
+
+                if(lastYear == DateTime.Today.Year.ToString())
+                {
+                    int nextNumber = int.Parse(lastConsecutiveNumber) + 1;
+                    string nextNumberString = nextNumber.ToString("000");
+
+                    //Ncr Format
+                    return $"{lastYear}-{nextNumberString}";
+                }                
+            }
+
+            string currentYear = DateTime.Today.Year.ToString();
+            int nextConsecutiveNumber = 1;
+            string nextConsecutiveNumberString = nextConsecutiveNumber.ToString("000");
+
+            //Ncr Format
+            return $"{currentYear}-{nextConsecutiveNumberString}";
         }
 
         private SelectList SupplierSelectList(int? selectedId)
