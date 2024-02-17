@@ -237,7 +237,10 @@ namespace HaverDevProject.Controllers
             NcrQaDTO ncr = new NcrQaDTO();
             ncr.NcrNumber = GetNcrNumber();
             ncr.NcrQacreationDate = DateTime.Today;
-            ncr.NcrStatus = true;
+            ncr.NcrStatus = true; //Active
+            ncr.NcrQaProcessApplicable = true; //Supplier or Rec-Insp
+            ncr.NcrQaItemMarNonConforming = true; //Yes
+            ncr.NcrQaEngDispositionRequired = true; //Yes
 
             ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName");
             return View(ncr);
@@ -299,6 +302,7 @@ namespace HaverDevProject.Controllers
                 //ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrQa.NcrId);
                 //return View(ncrQa);
             }
+            ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName", ncrQaDTO.ItemId);
             return View(ncrQaDTO);
         }
 
