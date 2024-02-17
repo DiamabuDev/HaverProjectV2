@@ -330,12 +330,12 @@ namespace HaverDevProject.Data
                 if (!context.ItemDefects.Any())
                 {
                     context.ItemDefects.AddRange(
-                        //new ItemDefect
-                        //{
-                        //    //ItemDefectId = 1,
-                        //    ItemId = 1, //context.Items.FirstOrDefault(f => f.ItemName == "Bearing Housing").ItemId,
-                        //    DefectId = 2 // context.Defects.FirstOrDefault(f => f.DefectName == "Delivery quality").DefectId
-                        //},
+                        new ItemDefect
+                        {
+                            //ItemDefectId = 1,
+                            ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Bearing Housing").ItemId,
+                            DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Delivery quality").DefectId
+                        },
                         new ItemDefect
                         {
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Bearing Housing").ItemId,
@@ -372,7 +372,8 @@ namespace HaverDevProject.Data
                         new Ncr
                         {
                             NcrNumber = "2023-138",
-                            NcrLastUpdated = DateTime.Parse("2023-12-19")                      
+                            NcrLastUpdated = DateTime.Parse("2023-12-19"),
+                            NcrStatus = true
                         },
                         new Ncr
                         {
@@ -383,47 +384,56 @@ namespace HaverDevProject.Data
                         new Ncr
                         {
                             NcrNumber = "2023-140",
-                            NcrLastUpdated = DateTime.Parse("2024-01-18")
+                            NcrLastUpdated = DateTime.Parse("2024-01-18"),
+                            NcrStatus = true
                         },
                         new Ncr
                         {
                             NcrNumber = "2023-141",
-                            NcrLastUpdated = DateTime.Parse("2024-01-14")
+                            NcrLastUpdated = DateTime.Parse("2024-01-14"),
+                            NcrStatus = true
                         },
                         new Ncr
                         {
                             NcrNumber = "2024-001",
-                            NcrLastUpdated = DateTime.Parse("2024-01-10")
+                            NcrLastUpdated = DateTime.Parse("2024-01-10"),
+                            NcrStatus = true
                         },
                         new Ncr
                         {
                             NcrNumber = "2024-002",
-                            NcrLastUpdated = DateTime.Parse("2024-01-11")
+                            NcrLastUpdated = DateTime.Parse("2024-01-11"),
+                            NcrStatus = true
                         },
                         new Ncr
                         {
                             NcrNumber = "2024-003",
-                            NcrLastUpdated = DateTime.Parse("2024-01-15")
+                            NcrLastUpdated = DateTime.Parse("2024-01-15"),
+                            NcrStatus = true
                         },
                         new Ncr
                         {
                             NcrNumber = "2024-004",
-                            NcrLastUpdated = DateTime.Parse("2024-01-19")
+                            NcrLastUpdated = DateTime.Parse("2024-01-19"),
+                            NcrStatus = true
                         },
                         new Ncr
                         {
                             NcrNumber = "2024-005",
-                            NcrLastUpdated = DateTime.Parse("2024-01-22")
+                            NcrLastUpdated = DateTime.Parse("2024-01-22"),
+                            NcrStatus = true
                         },
                         new Ncr
                         {
                             NcrNumber = "2024-006",
-                            NcrLastUpdated = DateTime.Parse("2024-01-23")
+                            NcrLastUpdated = DateTime.Parse("2024-01-23"),
+                            NcrStatus = false
                         },
                         new Ncr
                         {
                             NcrNumber = "2024-007",
-                            NcrLastUpdated = DateTime.Parse("2024-01-23")
+                            NcrLastUpdated = DateTime.Parse("2024-01-23"),
+                            NcrStatus = true
                         });
                     context.SaveChanges();
                 }
@@ -539,7 +549,7 @@ namespace HaverDevProject.Data
                             NcrQacreationDate = DateTime.Parse("2024-01-06"),
                             NcrQauserId = 4, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-003").NcrId,
-                            ItemId = 5, ////ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 3).ItemDefectId, //hard-coded
+                            ItemId = 1, ////ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 3).ItemDefectId, //hard-coded
                             NcrQaOrderNumber = "4500685546",
                             NcrQaQuanReceived = 4,
                             NcrQaQuanDefective = 1,
@@ -553,7 +563,7 @@ namespace HaverDevProject.Data
                             NcrQacreationDate = DateTime.Parse("2024-01-07"),
                             NcrQauserId = 1, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-004").NcrId,
-                            ItemId = 5, ////ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 4).ItemDefectId, //hard-coded
+                            ItemId = 4, ////ItemDefectId = context.ItemDefects.FirstOrDefault(d => d.ItemId == 4).ItemDefectId, //hard-coded
                             NcrQaOrderNumber = "4500683210",
                             NcrQaQuanReceived = 15,
                             NcrQaQuanDefective = 10,
