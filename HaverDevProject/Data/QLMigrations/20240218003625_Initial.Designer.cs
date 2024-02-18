@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HaverDevProject.Data.QLMigrations
 {
     [DbContext(typeof(HaverNiagaraContext))]
-    [Migration("20240213153046_Initial")]
+    [Migration("20240218003625_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -299,23 +299,16 @@ namespace HaverDevProject.Data.QLMigrations
                 {
                     b.Property<int>("NcrId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("ncrId");
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("NcrLastUpdated")
-                        .HasColumnType("datetime")
-                        .HasColumnName("ncrLastUpdated");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("NcrNumber")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .IsUnicode(false)
-                        .HasColumnType("TEXT")
-                        .HasColumnName("ncrNumber");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("NcrStatus")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("ncrStatus");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("NcrId")
                         .HasName("pk_ncr_ncrId");
@@ -358,6 +351,11 @@ namespace HaverDevProject.Data.QLMigrations
                     b.Property<int>("NcrId")
                         .HasColumnType("INTEGER")
                         .HasColumnName("ncrId");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
 
                     b.Property<string>("UpdatedBy")
                         .HasMaxLength(256)
@@ -409,6 +407,11 @@ namespace HaverDevProject.Data.QLMigrations
                         .HasColumnType("INTEGER")
                         .HasColumnName("opDispositionTypeId");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
+
                     b.Property<string>("UpdatedBy")
                         .HasMaxLength(256)
                         .HasColumnType("TEXT");
@@ -431,8 +434,7 @@ namespace HaverDevProject.Data.QLMigrations
                 {
                     b.Property<int>("NcrQaId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("ncrQAId");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(256)
@@ -441,59 +443,44 @@ namespace HaverDevProject.Data.QLMigrations
                     b.Property<DateTime?>("CreatedOn")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("DefectId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("ItemId")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("itemId");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("NcrId")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("ncrId");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("NcrQaDescriptionOfDefect")
-                        .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("TEXT")
-                        .HasColumnName("ncrQaDescriptionOfDefect");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("NcrQaEngDispositionRequired")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("ncrQaEngDispositionRequired");
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("NcrQaItemMarNonConforming")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("ncrQaItemMarNonConforming");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("NcrQaOrderNumber")
-                        .IsRequired()
-                        .HasMaxLength(45)
-                        .HasColumnType("TEXT")
-                        .HasColumnName("ncrQaOrderNumber");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("NcrQaProcessApplicable")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("ncrQAProcessApplicable");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("NcrQaQuanDefective")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("ncrQaQuanDefective");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("NcrQaQuanReceived")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("ncrQaQuanReceived");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("NcrQaSalesOrder")
-                        .IsRequired()
-                        .HasMaxLength(45)
-                        .HasColumnType("TEXT")
-                        .HasColumnName("ncrQaSalesOrder");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("NcrQacreationDate")
-                        .HasColumnType("date")
-                        .HasColumnName("ncrQACreationDate");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("NcrQauserId")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("ncrQAUserId");
+                        .HasColumnType("INTEGER");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -509,6 +496,8 @@ namespace HaverDevProject.Data.QLMigrations
 
                     b.HasKey("NcrQaId")
                         .HasName("pk_ncrQA_ncrQAId");
+
+                    b.HasIndex("DefectId");
 
                     b.HasIndex("ItemId");
 
@@ -547,6 +536,11 @@ namespace HaverDevProject.Data.QLMigrations
                     b.Property<int>("NcrReInspectUserId")
                         .HasColumnType("INTEGER")
                         .HasColumnName("ncrReInspectUserId");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
 
                     b.Property<string>("UpdatedBy")
                         .HasMaxLength(256)
@@ -763,6 +757,12 @@ namespace HaverDevProject.Data.QLMigrations
 
             modelBuilder.Entity("HaverDevProject.Models.NcrQa", b =>
                 {
+                    b.HasOne("HaverDevProject.Models.Defect", "Defect")
+                        .WithMany()
+                        .HasForeignKey("DefectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("HaverDevProject.Models.Item", "Item")
                         .WithMany("NcrQas")
                         .HasForeignKey("ItemId")
@@ -774,6 +774,8 @@ namespace HaverDevProject.Data.QLMigrations
                         .HasForeignKey("HaverDevProject.Models.NcrQa", "NcrId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Defect");
 
                     b.Navigation("Item");
 

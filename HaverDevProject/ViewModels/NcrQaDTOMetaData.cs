@@ -57,6 +57,10 @@ namespace HaverDevProject.ViewModels
         [Required(ErrorMessage = "You must select an item.")]
         public int ItemId { get; set; }
 
+        [Display(Name = "Defect")] //Validar
+        [Required(ErrorMessage = "You must select a Defect.")]
+        public int DefectId { get; set; }
+
         [Display(Name = "Engineer Disposition Required?")]
         public bool NcrQaEngDispositionRequired { get; set; }
     }

@@ -21,6 +21,7 @@ namespace HaverDevProject.ViewModels
         public string NcrQaDescriptionOfDefect { get; set; }
         public int NcrId { get; set; }
         public int ItemId { get; set; }
+        public int DefectId { get; set; } //Validar
         public bool NcrQaEngDispositionRequired { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

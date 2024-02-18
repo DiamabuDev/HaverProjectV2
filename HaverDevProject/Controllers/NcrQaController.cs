@@ -286,6 +286,7 @@ namespace HaverDevProject.Controllers
                     NcrQauserId = 1,  //Change when we have this information
                     NcrId = ncrIdObt,
                     ItemId = ncrQaDTO.ItemId,
+                    DefectId = ncrQaDTO.DefectId,
                     NcrQaEngDispositionRequired = ncrQaDTO.NcrQaEngDispositionRequired
                 };
                 
@@ -473,14 +474,6 @@ namespace HaverDevProject.Controllers
                 ViewData["SupplierId"] = SupplierSelectList(null);
                 ViewData["ItemId"] = ItemSelectList(null, null);
             }
-
-
-
-            //ViewData["SupplierId"] = SupplierSelectList(ncrQa?.Item.Supplier.SupplierId);
-            //ViewData["ItemId"] = ItemSelectList(ncrQa?.Item.ItemId);
-            //ViewData["ItemId"] = ItemSelectList(ncr?.NcrQas.FirstOrDefault()?.OrderDetails.FirstOrDefault()?.Item.ItemId);
-
-            //ViewData["DefectId"] = DefectSelectList(ncr?.NcrQas.FirstOrDefault()?.OrderDetails.FirstOrDefault()?.Item.ItemDefects.FirstOrDefault()?.DefectId);
         }
 
         [HttpGet]
@@ -489,6 +482,16 @@ namespace HaverDevProject.Controllers
             return Json(ItemSelectList(SupplierId, null));
         }
 
+        [HttpGet]
+        public JsonResult GetDefects(int ItemId)
+        {
+            var defects = _context.ItemDefects
+                .Where(id => id.ItemId == ItemId)
+                .Select(id => new { id.DefectId, id.Defect.DefectName })
+                .ToList();
+
+            return Json(new SelectList(defects, "DefectId", "DefectName"));
+        }
 
 
         private bool NcrQaExists(int id)

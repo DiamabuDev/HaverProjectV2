@@ -81,6 +81,18 @@ public class NcrQaMetaData
     [ForeignKey("ItemId")]   
     public Item Item { get; set; }
 
+    //Validar
+    [Display(Name = "Defect")]
+    [Required(ErrorMessage = "You must select a Defect.")]
+    [Column("defectId")]
+    public int DefectId { get; set; }
+
+    [ForeignKey("DefectId")]
+    public Defect Defect { get; set; }
+
+    //Validar
+
+
     [InverseProperty("NcrQa")]
     public ICollection<ItemDefectPhoto> ItemDefectPhotos { get; set; } = new HashSet<ItemDefectPhoto>();
 
