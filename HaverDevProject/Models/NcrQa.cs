@@ -26,7 +26,9 @@ public class NcrQa : Auditable
     public int NcrId { get; set; }    
     public Ncr Ncr { get; set; }    
     public int ItemId { get; set; }    
-    public Item Item { get; set; }    
+    public Item Item { get; set; }
+    public int DefectId { get; set; }
+    public Defect Defect { get; set; }
     public ICollection<ItemDefectPhoto> ItemDefectPhotos { get; set; } = new HashSet<ItemDefectPhoto>();    
     public ICollection<ItemDefectVideo> ItemDefectVideos { get; set; } = new HashSet<ItemDefectVideo>();
 }

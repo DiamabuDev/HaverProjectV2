@@ -105,7 +105,13 @@
                         <span asp-validation-for="ItemId" class="text-danger"></span>
                     </div>
 
-
+                    <div class="form-group">
+                        <label asp-for="DefectId" class="control-label"></label>
+                        <select asp-for="DefectId" class="form-control" id="DefectId" name="DefectId" asp-items="ViewBag.DefectId">
+                            <option value="0">Select an Item First</option>
+                        </select>
+                        <span asp-validation-for="DefectId" class="text-danger"></span>
+                    </div>
 
 
 
@@ -200,4 +206,11 @@
         });
     </script>
 
+    <script type="text/javascript">
+        $('#ItemId').change(function () {
+            var selectedItemId = $("#ItemId").val();
+            var URL = "/NcrQa/GetDefects/?ItemId=" + selectedItemId;
+            refreshDDL('DefectId', URL, true, 'Select an Item with Defects first', false, null, true);
+        });
+    </script>
 }
