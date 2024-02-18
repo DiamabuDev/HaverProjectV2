@@ -84,13 +84,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">                     
-                    @* <div class="form-group">
-                        <label asp-for="ItemId" class="control-label"></label>
-                        <select asp-for="ItemId" class="form-control" asp-items="ViewBag.ItemId"></select>
-                    </div> *@
-                    
-
+                <div class="row">     
                     <div class="form-group">
                         <label class="control-label">Supplier:</label>
                         <select class="form-control" id="SupplierId" name="SupplierId" asp-items="ViewBag.SupplierId">
@@ -104,7 +98,6 @@
                         </select>
                         <span asp-validation-for="ItemId" class="text-danger"></span>
                     </div>
-
                     <div class="form-group">
                         <label asp-for="DefectId" class="control-label"></label>
                         <select asp-for="DefectId" class="form-control" id="DefectId" name="DefectId" asp-items="ViewBag.DefectId">
@@ -112,9 +105,6 @@
                         </select>
                         <span asp-validation-for="DefectId" class="text-danger"></span>
                     </div>
-
-
-
                     <div class="form-group">
                         <label asp-for="NcrQaDescriptionOfDefect" class="control-label"></label>
                         <textarea asp-for="NcrQaDescriptionOfDefect" class="form-control"></textarea>
@@ -158,22 +148,12 @@
                 <div class="row">
                     <p>
                         Completed NCR to be forwarded to HBC Purchasing Manager complete with any relevant documents attached (pictures, actual measurements, material certs, etc.)
-                    </p>
-                    
-                @* <div class="form-group form-check">
-                    <label class="form-check-label">
-                        <input class="form-check-input" asp-for="NcrQaItemMarNonConforming" /> @Html.DisplayNameFor(model => model.NcrQaItemMarNonConforming)
-                    </label>
-                </div> *@
-
-                
+                    </p>   
                 @* <div class="form-group">
                 <label asp-for="NcrQauserId" class="control-label"></label>
                 <input asp-for="NcrQauserId" class="form-control" />
                 <span asp-validation-for="NcrQauserId" class="text-danger"></span>
                 </div> *@
-
-                    
 
                 </div>
             </div>

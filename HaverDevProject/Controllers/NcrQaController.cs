@@ -292,21 +292,9 @@ namespace HaverDevProject.Controllers
                 
                 _context.NcrQas.Add(ncrQa);
                 await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
-
-                //if (ModelState.IsValid)
-                //{
-                //    _context.Add(ncrQa);
-                //    await _context.SaveChangesAsync();
-                //    return RedirectToAction(nameof(Index));
-                //}
-                //ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName", ncrQa.ItemId);
-                //ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrQa.NcrId);
-                //return View(ncrQa);
-            }
-            //ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName", ncrQaDTO.ItemId);
-            PopulateDropDownLists(); //-----checking
+                return RedirectToAction(nameof(Index));                
+            }            
+            PopulateDropDownLists(); 
             return View(ncrQaDTO);
         }
 
@@ -451,10 +439,7 @@ namespace HaverDevProject.Controllers
             var query = from c in _context.Items
                         where c.SupplierId == SupplierID
                         select c;
-            return new SelectList(query.OrderBy(i => i.ItemName), "ItemId", "ItemName", selectedId);
-
-            //return new SelectList(_context.Items
-            //    .OrderBy(i => i.ItemName), "ItemId", "ItemName", selectedId);
+            return new SelectList(query.OrderBy(i => i.ItemName), "ItemId", "ItemName", selectedId);            
         }
 
 
