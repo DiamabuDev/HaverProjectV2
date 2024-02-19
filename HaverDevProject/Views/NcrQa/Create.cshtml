@@ -182,7 +182,7 @@
         $('#SupplierId').change(function () {
             var selectedSupplier = $("#SupplierId").val();
             var URL = "/NcrQa/GetItems/?SupplierId=" + selectedSupplier;
-            refreshDDL('ItemId', URL, true, 'Select a Supplier with Items first', false, null, true);
+            refreshDDL('ItemId', URL, true, 'No items related with the supplier selected', true, "Select an item", true);
         });
     </script>
 
