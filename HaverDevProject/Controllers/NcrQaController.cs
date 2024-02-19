@@ -242,8 +242,7 @@ namespace HaverDevProject.Controllers
             ncr.NcrQaProcessApplicable = true; //Supplier or Rec-Insp
             ncr.NcrQaItemMarNonConforming = true; //Yes
             ncr.NcrQaEngDispositionRequired = true; //Yes
-
-            //ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName");
+            
             PopulateDropDownLists();
             return View(ncr);
         }

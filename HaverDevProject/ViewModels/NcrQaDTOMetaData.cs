@@ -53,8 +53,12 @@ namespace HaverDevProject.ViewModels
         [DataType(DataType.MultilineText)]
         public string NcrQaDescriptionOfDefect { get; set; }
 
+        [Display(Name = "Supplier")]
+        [Required(ErrorMessage = "You must select a Supplier.")]
+        public int SupplierId { get; set; }
+
         [Display(Name = "Item")]
-        [Required(ErrorMessage = "You must select an item.")]
+        [Required(ErrorMessage = "You must select an Item.")]
         public int ItemId { get; set; }
 
         [Display(Name = "Defect")]
