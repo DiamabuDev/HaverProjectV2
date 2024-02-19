@@ -57,7 +57,7 @@ namespace HaverDevProject.Controllers
             var ncrQa = _context.NcrQas
                 .Include(n => n.Item)
                 .Include(n => n.Item).ThenInclude(i => i.Supplier)
-                .Include(n => n.Item).ThenInclude(i => i.ItemDefects).ThenInclude(i => i.Defect)
+                .Include(n => n.Defect)
                 .Include(n => n.Ncr)
                 .AsNoTracking();
 
@@ -221,13 +221,35 @@ namespace HaverDevProject.Controllers
             }
 
             var ncrQa = await _context.NcrQas
-                .Include(n => n.Item)
                 .Include(n => n.Ncr)
-                .FirstOrDefaultAsync(m => m.NcrQaId == id);
+                .Include(n => n.Item).ThenInclude(i => i.Supplier)
+                .Include(n => n.Defect)
+                .FirstOrDefaultAsync(n => n.NcrQaId == id);
+
             if (ncrQa == null)
             {
                 return NotFound();
             }
+
+            //NcrQaDTO ncrQaDTO = new NcrQaDTO
+            //{
+            //    NcrQaId = ncrQa.NcrQaId,
+            //    NcrNumber = ncrQa.Ncr.NcrNumber,
+            //    NcrStatus = ncrQa.Ncr.NcrStatus,
+            //    NcrQaItemMarNonConforming = ncrQa.NcrQaItemMarNonConforming,
+            //    NcrQaProcessApplicable = ncrQa.NcrQaProcessApplicable,
+            //    NcrQacreationDate = ncrQa.NcrQacreationDate,
+            //    NcrQaOrderNumber = ncrQa.NcrQaOrderNumber,
+            //    NcrQaSalesOrder = ncrQa.NcrQaSalesOrder,
+            //    NcrQaQuanReceived = ncrQa.NcrQaQuanReceived,
+            //    NcrQaQuanDefective = ncrQa.NcrQaQuanDefective,
+            //    NcrQaDescriptionOfDefect = ncrQa.NcrQaDescriptionOfDefect,
+            //    SupplierId = ncrQa.Item.Supplier.SupplierId,
+            //    NcrId = ncrQa.NcrId,
+            //    ItemId = ncrQa.Item.ItemId,
+            //    DefectId = ncrQa.DefectId,
+            //    NcrQaEngDispositionRequired = ncrQa.NcrQaEngDispositionRequired
+            //};
 
             return View(ncrQa);
         }

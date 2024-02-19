@@ -190,7 +190,7 @@
         $('#ItemId').change(function () {
             var selectedItemId = $("#ItemId").val();
             var URL = "/NcrQa/GetDefects/?ItemId=" + selectedItemId;
-            refreshDDL('DefectId', URL, true, 'Select an Item with Defects first', false, null, true);
+            refreshDDL('DefectId', URL, true, 'No defects related with the item selected', false, null, true);
         });
     </script>
 }

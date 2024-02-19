@@ -113,9 +113,8 @@
                     <td class="col-3">
                         @Html.DisplayFor(modelItem => item.Item.Supplier.SupplierName)
                     </td>
-
                     <td class="d-none d-md-table-cell col-3">
-                        @Html.DisplayFor(modelItem => item.Item.ItemDefects.FirstOrDefault().Defect.DefectName)
+                        @Html.DisplayFor(modelItem => item.Defect.DefectName)
                     </td>
                     <td class="d-none d-md-table-cell">
                         @Html.DisplayFor(modelItem => item.NcrQaOrderNumber)
