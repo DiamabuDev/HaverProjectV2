@@ -1,0 +1,73 @@
+﻿@model IEnumerable<HaverDevProject.Models.NcrOperation>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1><i class="bi bi-caret-right-fill"></i> Non-Conformance Reports</h1>
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Ncr)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OpDispositionType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NcrPurchasingDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Car)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FollowUp)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UpdateOp)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NcrPurchasingUserId)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ncr.NcrNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OpDispositionType.OpDispositionTypeName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NcrPurchasingDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Car)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FollowUp)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdateOp)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NcrPurchasingUserId)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.NcrOpId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.NcrOpId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.NcrOpId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -880,234 +880,59 @@ namespace HaverDevProject.Data
                     context.NcrOperations.AddRange(
                         new NcrOperation
                         {
-                            NcrPurchasingDescription = "Replacement required",
-                            NcrPurchasingUserId = 1, //need to make nullable
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-137").NcrId,
                             OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Rework 'In-House'").OpDispositionTypeId,
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-137").NcrId
-                        },
-                        new NcrOperation
-                        {
-                            NcrPurchasingDescription = "Use as is",
-                            NcrPurchasingUserId = 2, //need to make nullable
-                            OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Scrap in House").OpDispositionTypeId,
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-138").NcrId
-                        },
-                        new NcrOperation
-                        {
-                            NcrPurchasingDescription = "Use as is",
-                            NcrPurchasingUserId = 3, //need to make nullable
-                            OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Scrap in House").OpDispositionTypeId,
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-139").NcrId
-                        },
-                        new NcrOperation
-                        {
-                            NcrPurchasingDescription = "Rework per engineering disposition",
-                            NcrPurchasingUserId = 4, //need to make nullable
-                            OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Return to Supplier for either 'rework' or 'replace'").OpDispositionTypeId,
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-140").NcrId
-                        },
-                        new NcrOperation
-                        {
                             NcrPurchasingDescription = "Replacement required",
-                            NcrPurchasingUserId = 5, //need to make nullable
-                            OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Rework 'In-House'").OpDispositionTypeId,
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-141").NcrId
+                            Car = true,
+                            CarNumber = "3456",
+                            FollowUp = true,
+                            ExpectedDate = DateTime.Parse("2024-05-18"),
+                            FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Update").FollowUpTypeId,
+                            UpdateOp = DateTime.Now,
+                            NcrPurchasingUserId = 1
+                            
                         },
                         new NcrOperation
                         {
-                            NcrPurchasingDescription = "Use as is",
-                            NcrPurchasingUserId = 6, //need to make nullable
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-138").NcrId,
                             OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Scrap in House").OpDispositionTypeId,
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-001").NcrId
+                            NcrPurchasingDescription = "Replacement required",
+                            Car = true,
+                            CarNumber = "3456",
+                            FollowUp = true,
+                            ExpectedDate = DateTime.Parse("2024-05-18"),
+                            FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Resolution").FollowUpTypeId,
+                            UpdateOp = DateTime.Now,
+                            NcrPurchasingUserId = 1
+                            
                         },
                         new NcrOperation
                         {
-                            NcrPurchasingDescription = "Use as is",
-                            NcrPurchasingUserId = 7, //need to make nullable
-                            OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Return to Supplier for either 'rework' or 'replace'").OpDispositionTypeId,
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-002").NcrId
-                        },
-                        new NcrOperation
-                        {
-                            NcrPurchasingDescription = "Rework per engineering disposition",
-                            NcrPurchasingUserId = 8, //need to make nullable
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-139").NcrId,
                             OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Defer for HBC Engineering Review").OpDispositionTypeId,
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-003").NcrId
-                        },
-                        new NcrOperation
-                        {
                             NcrPurchasingDescription = "Replacement required",
-                            NcrPurchasingUserId = 9, //need to make nullable
+                            Car = true,
+                            CarNumber = "3456",
+                            FollowUp = true,
+                            ExpectedDate = DateTime.Parse("2024-05-18"),
+                            FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Clarification").FollowUpTypeId,
+                            UpdateOp = DateTime.Now,
+                            NcrPurchasingUserId = 1
+                            
+                        },
+                        new NcrOperation
+                        {
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-140").NcrId,
                             OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Rework 'In-House'").OpDispositionTypeId,
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-004").NcrId
-                        },
-                        new NcrOperation
-                        {
-                            NcrPurchasingDescription = "Use as is",
-                            NcrPurchasingUserId = 10, //need to make nullable
-                            OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Scrap in House").OpDispositionTypeId,
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-005").NcrId
-                        },
-                        new NcrOperation
-                        {
-                            NcrPurchasingDescription = "Use as is",
-                            NcrPurchasingUserId = 11, //need to make nullable
-                            OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Defer for HBC Engineering Review").OpDispositionTypeId,
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-006").NcrId
-                        },
-                        new NcrOperation
-                        {
                             NcrPurchasingDescription = "Rework per engineering disposition",
-                            NcrPurchasingUserId = 12, //need to make nullable
-                            OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Return to Supplier for either 'rework' or 'replace'").OpDispositionTypeId,
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-007").NcrId
-                        });
-                    context.SaveChanges();
-                }
-
-                if (!context.FollowUps.Any())
-                {
-                    context.FollowUps.AddRange(
-                        new FollowUp
-                        {
-                            FollowUpExpectedDate = DateTime.Parse("2023-12-10"),
-                            FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Resolution").FollowUpTypeId,
-                            NcrPurchId = context.NcrOperations.FirstOrDefault(f => f.NcrPurchasingUserId == 1).NcrPurchId //THIS MUST CHANGE
-                        },
-                        new FollowUp
-                        {
-                            FollowUpExpectedDate = DateTime.Parse("2023-12-12"),
-                            FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Clarification").FollowUpTypeId,
-                            NcrPurchId = context.NcrOperations.FirstOrDefault(f => f.NcrPurchasingUserId == 2).NcrPurchId //THIS MUST CHANGE
-                        },
-                        new FollowUp
-                        {
-                            FollowUpExpectedDate = DateTime.Parse("2023-12-18"),
+                            Car = true,
+                            CarNumber = "3456",
+                            FollowUp = true,
+                            ExpectedDate = DateTime.Parse("2024-05-18"),
                             FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Feedback").FollowUpTypeId,
-                            NcrPurchId = context.NcrOperations.FirstOrDefault(f => f.NcrPurchasingUserId == 3).NcrPurchId //THIS MUST CHANGE
-                        },
-                        new FollowUp
-                        {
-                            FollowUpExpectedDate = DateTime.Parse("2023-12-18"),
-                            FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Update").FollowUpTypeId,
-                            NcrPurchId = context.NcrOperations.FirstOrDefault(f => f.NcrPurchasingUserId == 4).NcrPurchId //THIS MUST CHANGE
-                        },
-                        new FollowUp
-                        {
-                            FollowUpExpectedDate = DateTime.Parse("2023-12-21"),
-                            FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Resolution").FollowUpTypeId,
-                            NcrPurchId = context.NcrOperations.FirstOrDefault(f => f.NcrPurchasingUserId == 5).NcrPurchId //THIS MUST CHANGE
-                        },
-                        new FollowUp
-                        {
-                            FollowUpExpectedDate = DateTime.Parse("2024-01-06"),
-                            FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Clarification").FollowUpTypeId,
-                            NcrPurchId = context.NcrOperations.FirstOrDefault(f => f.NcrPurchasingUserId == 6).NcrPurchId //THIS MUST CHANGE
-                        },
-                        new FollowUp
-                        {
-                            FollowUpExpectedDate = DateTime.Parse("2024-01-08"),
-                            FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Feedback").FollowUpTypeId,
-                            NcrPurchId = context.NcrOperations.FirstOrDefault(f => f.NcrPurchasingUserId == 7).NcrPurchId //THIS MUST CHANGE
-                        },
-                        new FollowUp
-                        {
-                            FollowUpExpectedDate = DateTime.Parse("2024-01-09"),
-                            FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Update").FollowUpTypeId,
-                            NcrPurchId = context.NcrOperations.FirstOrDefault(f => f.NcrPurchasingUserId == 8).NcrPurchId //THIS MUST CHANGE
-                        },
-                        new FollowUp
-                        {
-                            FollowUpExpectedDate = DateTime.Parse("2024-01-10"),
-                            FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Resolution").FollowUpTypeId,
-                            NcrPurchId = context.NcrOperations.FirstOrDefault(f => f.NcrPurchasingUserId == 9).NcrPurchId //THIS MUST CHANGE
-                        },
-                        new FollowUp
-                        {
-                            FollowUpExpectedDate = DateTime.Parse("2024-01-14"),
-                            FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Clarification").FollowUpTypeId,
-                            NcrPurchId = context.NcrOperations.FirstOrDefault(f => f.NcrPurchasingUserId == 10).NcrPurchId //THIS MUST CHANGE
-                        },
-                        new FollowUp
-                        {
-                            FollowUpExpectedDate = DateTime.Parse("2024-01-16"),
-                            FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Feedback").FollowUpTypeId,
-                            NcrPurchId = context.NcrOperations.FirstOrDefault(f => f.NcrPurchasingUserId == 11).NcrPurchId //THIS MUST CHANGE
-                        },
-                        new FollowUp
-                        {
-                            FollowUpExpectedDate = DateTime.Parse("2024-01-20"),
-                            FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Update").FollowUpTypeId,
-                            NcrPurchId = context.NcrOperations.FirstOrDefault(f => f.NcrPurchasingUserId == 12).NcrPurchId //THIS MUST CHANGE
+                            UpdateOp = DateTime.Now,
+                            NcrPurchasingUserId = 1
                         });
-
-                    context.SaveChanges();
-                }
-
-                if (!context.Cars.Any())
-                {
-                    context.Cars.AddRange(
-                        new Car
-                        {
-                            CarNumber = 3456,
-                            NcrPurchId = context.NcrOperations.FirstOrDefault(f => f.NcrPurchasingUserId == 1).NcrPurchId //THIS MUST CHANGE
-                        },
-                        new Car
-                        {
-                            CarNumber = 1243,
-                            NcrPurchId = context.NcrOperations.FirstOrDefault(f => f.NcrPurchasingUserId == 2).NcrPurchId //THIS MUST CHANGE
-                        },
-                        new Car
-                        {
-                            CarNumber = 7542,
-                            NcrPurchId = context.NcrOperations.FirstOrDefault(f => f.NcrPurchasingUserId == 3).NcrPurchId //THIS MUST CHANGE
-                        },
-                        new Car
-                        {
-                            CarNumber = 9253,
-                            NcrPurchId = context.NcrOperations.FirstOrDefault(f => f.NcrPurchasingUserId == 4).NcrPurchId //THIS MUST CHANGE
-                        },
-                        new Car
-                        {
-                            CarNumber = 2618,
-                            NcrPurchId = context.NcrOperations.FirstOrDefault(f => f.NcrPurchasingUserId == 5).NcrPurchId //THIS MUST CHANGE
-                        },
-                        new Car
-                        {
-                            CarNumber = 8723,
-                            NcrPurchId = context.NcrOperations.FirstOrDefault(f => f.NcrPurchasingUserId == 6).NcrPurchId //THIS MUST CHANGE
-                        },
-                        new Car
-                        {
-                            CarNumber = 9231,
-                            NcrPurchId = context.NcrOperations.FirstOrDefault(f => f.NcrPurchasingUserId == 7).NcrPurchId //THIS MUST CHANGE
-                        },
-                        new Car
-                        {
-                            CarNumber = 7772,
-                            NcrPurchId = context.NcrOperations.FirstOrDefault(f => f.NcrPurchasingUserId == 8).NcrPurchId //THIS MUST CHANGE
-                        },
-                        new Car
-                        {
-                            CarNumber = 3290,
-                            NcrPurchId = context.NcrOperations.FirstOrDefault(f => f.NcrPurchasingUserId == 9).NcrPurchId //THIS MUST CHANGE
-                        },
-                        new Car
-                        {
-                            CarNumber = 6666,
-                            NcrPurchId = context.NcrOperations.FirstOrDefault(f => f.NcrPurchasingUserId == 10).NcrPurchId //THIS MUST CHANGE
-                        },
-                        new Car
-                        {
-                            CarNumber = 4411,
-                            NcrPurchId = context.NcrOperations.FirstOrDefault(f => f.NcrPurchasingUserId == 11).NcrPurchId //THIS MUST CHANGE
-                        },
-                        new Car
-                        {
-                            CarNumber = 1592,
-                            NcrPurchId = context.NcrOperations.FirstOrDefault(f => f.NcrPurchasingUserId == 12).NcrPurchId //THIS MUST CHANGE
-                        });
-
                     context.SaveChanges();
                 }
 

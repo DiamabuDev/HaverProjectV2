@@ -2,52 +2,29 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using HaverDevProject.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace HaverDevProject.Models;
 
-[Table("ncrOperation")]
-public partial class NcrOperation : Auditable
+[ModelMetadataType(typeof(NcrOperationMetaData))]
+public class NcrOperation : Auditable
 {
-    [Key]
-    [Column("ncrPurchId")]
-    public int NcrPurchId { get; set; }
-
-    [Column("ncrPurchasingDescription")]
-    [StringLength(300)]
-    [Display(Name = "Description")]
-    [DataType(DataType.MultilineText)] 
-    [Unicode(false)]
-    public string NcrPurchasingDescription { get; set; }
-
-    [Display(Name = "Operations Manager")]
-    [Column("ncrPurchasingUserId")]
-    public int NcrPurchasingUserId { get; set; }
-
-    [Display(Name = "Purchasing's Preliminary Decision")]
-    [Column("opDispositionTypeId")]
-    public int OpDispositionTypeId { get; set; }
-
-    [Display(Name = "NCR")]
-    [Column("ncrId")]
+    public int NcrOpId { get; set; }
     public int NcrId { get; set; }
-
-    [Display(Name = "Was a CAR raised")]
-    [InverseProperty("NcrPurch")]
-    public virtual Car Car { get; set; }
-
-    [Display(Name = "Follow-up Required")]
-    [InverseProperty("NcrPurch")]
-    public virtual FollowUp FollowUp { get; set; }
-
-    [Display(Name = "NCR")]
-    [Required(ErrorMessage = "You must provide the NCR.")]
-    [ForeignKey("NcrId")]
-    public virtual Ncr Ncr { get; set; }
-
-    [Display(Name = "Purchasing's Preliminary Decision")]
-    [Required(ErrorMessage = "You must provide the Disposition Type.")]
-    [ForeignKey("OpDispositionTypeId")]
-    [InverseProperty("NcrOperations")]
+    public Ncr Ncr { get; set; }
+    public int OpDispositionTypeId { get; set; }
     public virtual OpDispositionType OpDispositionType { get; set; }
+    public string NcrPurchasingDescription { get; set; }
+    public bool Car { get; set; }
+    public string CarNumber { get; set; }
+    public bool FollowUp { get; set; }
+    public DateTime ExpectedDate { get; set; }
+    public int? FollowUpTypeId { get; set; }
+    public FollowUpType FollowUpType { get; set; }
+    public DateTime UpdateOp { get; set; }
+    public int NcrPurchasingUserId { get; set; }
+    public ICollection<ItemDefectPhoto> ItemDefectPhotos { get; set; } = new HashSet<ItemDefectPhoto>();
+    public ICollection<ItemDefectVideo> ItemDefectVideos { get; set; } = new HashSet<ItemDefectVideo>();
 }

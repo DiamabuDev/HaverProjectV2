@@ -42,15 +42,11 @@ public partial class HaverNiagaraContext : DbContext
     {
     }
 
-    public virtual DbSet<Car> Cars { get; set; }
-
     public virtual DbSet<Defect> Defects { get; set; }
 
     public virtual DbSet<Drawing> Drawings { get; set; }
 
     public virtual DbSet<EngDispositionType> EngDispositionTypes { get; set; }
-
-    public virtual DbSet<FollowUp> FollowUps { get; set; }
 
     public virtual DbSet<FollowUpType> FollowUpTypes { get; set; }
 
@@ -89,11 +85,6 @@ public partial class HaverNiagaraContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Car>(entity =>
-        {
-            entity.HasKey(e => e.CarId).HasName("pk_car_carId");
-        });
-
         modelBuilder.Entity<Defect>(entity =>
         {
             entity.HasKey(e => e.DefectId).HasName("pk_defect_defectId");
@@ -107,15 +98,6 @@ public partial class HaverNiagaraContext : DbContext
         modelBuilder.Entity<EngDispositionType>(entity =>
         {
             entity.HasKey(e => e.EngDispositionTypeId).HasName("pk_engDispoistionType_engDispositionTypeId");
-        });
-
-        modelBuilder.Entity<FollowUp>(entity =>
-        {
-            entity.HasKey(e => e.FollowUpId).HasName("pk_followUp_followUpId");
-
-            entity.HasOne(d => d.FollowUpType).WithMany(p => p.FollowUps)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_followUp_followUpType");
         });
 
         modelBuilder.Entity<FollowUpType>(entity =>
@@ -181,11 +163,11 @@ public partial class HaverNiagaraContext : DbContext
 
         modelBuilder.Entity<NcrOperation>(entity =>
         {
-            entity.HasKey(e => e.NcrPurchId).HasName("pk_ncrPurchasing_ncrPurchId");
+            entity.HasKey(e => e.NcrOpId).HasName("pk_ncrOperation_NcrOpId");
 
             entity.HasOne(d => d.OpDispositionType).WithMany(p => p.NcrOperations)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_ncrPurchasing_opDispositionType");
+                .HasConstraintName("fk_ncrOperation_opDispositionType");
         });
 
         modelBuilder.Entity<NcrQa>(entity =>
