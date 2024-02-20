@@ -130,6 +130,36 @@ namespace HaverDevProject.Data.QLMigrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ncrProcurement",
+                columns: table => new
+                {
+                    ncrProcurementId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ncrProcSupplierReturnReq = table.Column<bool>(type: "INTEGER", nullable: false),
+                    ncrProcExpectedDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ncrProcDisposedAllowed = table.Column<bool>(type: "INTEGER", nullable: false),
+                    ncrProcSAPReturnCompleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    ncrProcCreditExpected = table.Column<bool>(type: "INTEGER", nullable: false),
+                    ncrProcSupplierBilled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true),
+                    ncrId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_ncrProcurement_ncrProcurementId", x => x.ncrProcurementId);
+                    table.ForeignKey(
+                        name: "FK_ncrProcurement_ncr_ncrId",
+                        column: x => x.ncrId,
+                        principalTable: "ncr",
+                        principalColumn: "NcrId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ncrReInspect",
                 columns: table => new
                 {
@@ -138,12 +168,12 @@ namespace HaverDevProject.Data.QLMigrations
                     ncrReInspectAcceptable = table.Column<bool>(type: "INTEGER", nullable: false),
                     ncrReInspectNewNcrNumber = table.Column<int>(type: "INTEGER", nullable: true),
                     ncrReInspectUserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true),
                     ncrId = table.Column<int>(type: "INTEGER", nullable: false),
                     CreatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
                     UpdatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
-                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true)
+                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -321,6 +351,7 @@ namespace HaverDevProject.Data.QLMigrations
                     NcrId = table.Column<int>(type: "INTEGER", nullable: false),
                     ItemId = table.Column<int>(type: "INTEGER", nullable: false),
                     DefectId = table.Column<int>(type: "INTEGER", nullable: false),
+                    NcrQaDefectVideo = table.Column<string>(type: "TEXT", nullable: true),
                     CreatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
                     UpdatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
@@ -358,32 +389,18 @@ namespace HaverDevProject.Data.QLMigrations
                     itemDefectPhotoContent = table.Column<byte[]>(type: "BLOB", nullable: false),
                     itemDefectPhotoMimeType = table.Column<string>(type: "TEXT", unicode: false, maxLength: 45, nullable: false),
                     itemDefectPhotoDescription = table.Column<string>(type: "TEXT", unicode: false, maxLength: 300, nullable: true),
-                    ncrQaId = table.Column<int>(type: "INTEGER", nullable: false)
+                    ncrQaId = table.Column<int>(type: "INTEGER", nullable: false),
+                    reInspectPhotoId = table.Column<int>(type: "INTEGER", nullable: false),
+                    reInspectPhotoContent = table.Column<byte[]>(type: "BLOB", nullable: false),
+                    reInspectPhotoMimeType = table.Column<string>(type: "TEXT", unicode: false, maxLength: 45, nullable: false),
+                    reInspectPhotoDescription = table.Column<string>(type: "TEXT", unicode: false, maxLength: 300, nullable: true),
+                    reInspectId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_itemDefectPhoto_itemDefectPhotoId", x => x.itemDefectPhotoId);
                     table.ForeignKey(
                         name: "fk_itemDefectPhoto_itemDefect",
-                        column: x => x.ncrQaId,
-                        principalTable: "ncrQA",
-                        principalColumn: "NcrQaId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "itemDefectVideo",
-                columns: table => new
-                {
-                    itemDefectVideoId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    itemDefectVideoLink = table.Column<string>(type: "TEXT", unicode: false, maxLength: 100, nullable: false),
-                    ncrQaId = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_itemDefectVideo", x => x.itemDefectVideoId);
-                    table.ForeignKey(
-                        name: "fk_itemDefectVideo_itemDefect",
                         column: x => x.ncrQaId,
                         principalTable: "ncrQA",
                         principalColumn: "NcrQaId");
@@ -434,11 +451,6 @@ namespace HaverDevProject.Data.QLMigrations
                 column: "ncrQaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_itemDefectVideo_ncrQaId",
-                table: "itemDefectVideo",
-                column: "ncrQaId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ncrEng_engDispositionTypeId",
                 table: "ncrEng",
                 column: "engDispositionTypeId");
@@ -448,6 +460,11 @@ namespace HaverDevProject.Data.QLMigrations
                 table: "ncrEng",
                 column: "ncrId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ncrProcurement_ncrId",
+                table: "ncrProcurement",
+                column: "ncrId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ncrPurchasing_ncrId",
@@ -508,7 +525,7 @@ namespace HaverDevProject.Data.QLMigrations
                 name: "itemDefectPhoto");
 
             migrationBuilder.DropTable(
-                name: "itemDefectVideo");
+                name: "ncrProcurement");
 
             migrationBuilder.DropTable(
                 name: "ncrReInspect");

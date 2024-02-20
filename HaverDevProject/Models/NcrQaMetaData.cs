@@ -91,11 +91,13 @@ public class NcrQaMetaData
     public Defect Defect { get; set; }
 
     //Validar
-
+    [Display(Name = "Video Link")]
+    [StringLength(100, ErrorMessage = "Video link cannot be more than 100 characters.")]
+    public string NcrQaDefectVideo { get; set; }
 
     [InverseProperty("NcrQa")]
     public ICollection<ItemDefectPhoto> ItemDefectPhotos { get; set; } = new HashSet<ItemDefectPhoto>();
 
-    [InverseProperty("NcrQa")]
-    public ICollection<ItemDefectVideo> ItemDefectVideos { get; set; } = new HashSet<ItemDefectVideo>();
+    //[InverseProperty("NcrQa")]
+    //public ICollection<ItemDefectVideo> ItemDefectVideos { get; set; } = new HashSet<ItemDefectVideo>();
 }

@@ -67,5 +67,9 @@ namespace HaverDevProject.ViewModels
 
         [Display(Name = "Engineer Disposition Required?")]
         public bool NcrQaEngDispositionRequired { get; set; }
+
+        [Display(Name = "Video Link")]
+        [StringLength(100, ErrorMessage = "Video link cannot be more than 100 characters.")]
+        public string NcrQaDefectVideo { get; set; }
     }
 }

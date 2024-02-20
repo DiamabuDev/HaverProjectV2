@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HaverDevProject.Data.QLMigrations
 {
     [DbContext(typeof(HaverNiagaraContext))]
-    [Migration("20240218003625_Initial")]
+    [Migration("20240220024134_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -261,38 +261,38 @@ namespace HaverDevProject.Data.QLMigrations
                         .HasColumnType("INTEGER")
                         .HasColumnName("ncrQaId");
 
+                    b.Property<int>("ReInspectId")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("reInspectId");
+
+                    b.Property<byte[]>("ReInspectPhotoContent")
+                        .IsRequired()
+                        .HasColumnType("BLOB")
+                        .HasColumnName("reInspectPhotoContent");
+
+                    b.Property<string>("ReInspectPhotoDescription")
+                        .HasMaxLength(300)
+                        .IsUnicode(false)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("reInspectPhotoDescription");
+
+                    b.Property<int>("ReInspectPhotoId")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("reInspectPhotoId");
+
+                    b.Property<string>("ReInspectPhotoMimeType")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .IsUnicode(false)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("reInspectPhotoMimeType");
+
                     b.HasKey("ItemDefectPhotoId")
                         .HasName("pk_itemDefectPhoto_itemDefectPhotoId");
 
                     b.HasIndex("NcrQaId");
 
                     b.ToTable("itemDefectPhoto");
-                });
-
-            modelBuilder.Entity("HaverDevProject.Models.ItemDefectVideo", b =>
-                {
-                    b.Property<int>("ItemDefectVideoId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("itemDefectVideoId");
-
-                    b.Property<string>("ItemDefectVideoLink")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("TEXT")
-                        .HasColumnName("itemDefectVideoLink");
-
-                    b.Property<int>("NcrQaId")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("ncrQaId");
-
-                    b.HasKey("ItemDefectVideoId")
-                        .HasName("pk_itemDefectVideo");
-
-                    b.HasIndex("NcrQaId");
-
-                    b.ToTable("itemDefectVideo");
                 });
 
             modelBuilder.Entity("HaverDevProject.Models.Ncr", b =>
@@ -375,6 +375,68 @@ namespace HaverDevProject.Data.QLMigrations
                     b.ToTable("ncrEng");
                 });
 
+            modelBuilder.Entity("HaverDevProject.Models.NcrProcurement", b =>
+                {
+                    b.Property<int>("NcrProcurementId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("ncrProcurementId");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("NcrId")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("ncrId");
+
+                    b.Property<bool>("NcrProcCreditExpected")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("ncrProcCreditExpected");
+
+                    b.Property<bool>("NcrProcDisposedAllowed")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("ncrProcDisposedAllowed");
+
+                    b.Property<DateTime>("NcrProcExpectedDate")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("ncrProcExpectedDate");
+
+                    b.Property<bool>("NcrProcSAPReturnCompleted")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("ncrProcSAPReturnCompleted");
+
+                    b.Property<bool>("NcrProcSupplierBilled")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("ncrProcSupplierBilled");
+
+                    b.Property<bool>("NcrProcSupplierReturnReq")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("ncrProcSupplierReturnReq");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("NcrProcurementId")
+                        .HasName("pk_ncrProcurement_ncrProcurementId");
+
+                    b.HasIndex("NcrId");
+
+                    b.ToTable("ncrProcurement");
+                });
+
             modelBuilder.Entity("HaverDevProject.Models.NcrPurchasing", b =>
                 {
                     b.Property<int>("NcrPurchId")
@@ -451,6 +513,9 @@ namespace HaverDevProject.Data.QLMigrations
 
                     b.Property<int>("NcrId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("NcrQaDefectVideo")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("NcrQaDescriptionOfDefect")
                         .HasColumnType("TEXT");
@@ -706,17 +771,6 @@ namespace HaverDevProject.Data.QLMigrations
                     b.Navigation("NcrQa");
                 });
 
-            modelBuilder.Entity("HaverDevProject.Models.ItemDefectVideo", b =>
-                {
-                    b.HasOne("HaverDevProject.Models.NcrQa", "NcrQa")
-                        .WithMany("ItemDefectVideos")
-                        .HasForeignKey("NcrQaId")
-                        .IsRequired()
-                        .HasConstraintName("fk_itemDefectVideo_itemDefect");
-
-                    b.Navigation("NcrQa");
-                });
-
             modelBuilder.Entity("HaverDevProject.Models.NcrEng", b =>
                 {
                     b.HasOne("HaverDevProject.Models.EngDispositionType", "EngDispositionType")
@@ -732,6 +786,17 @@ namespace HaverDevProject.Data.QLMigrations
                         .IsRequired();
 
                     b.Navigation("EngDispositionType");
+
+                    b.Navigation("Ncr");
+                });
+
+            modelBuilder.Entity("HaverDevProject.Models.NcrProcurement", b =>
+                {
+                    b.HasOne("HaverDevProject.Models.Ncr", "Ncr")
+                        .WithMany()
+                        .HasForeignKey("NcrId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Ncr");
                 });
@@ -841,8 +906,6 @@ namespace HaverDevProject.Data.QLMigrations
             modelBuilder.Entity("HaverDevProject.Models.NcrQa", b =>
                 {
                     b.Navigation("ItemDefectPhotos");
-
-                    b.Navigation("ItemDefectVideos");
                 });
 
             modelBuilder.Entity("HaverDevProject.Models.OpDispositionType", b =>

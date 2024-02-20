@@ -297,13 +297,14 @@ namespace HaverDevProject.Controllers
                 NcrQa ncrQa = new NcrQa
                 {
                     NcrQaItemMarNonConforming = ncrQaDTO.NcrQaItemMarNonConforming,
-                    NcrQaProcessApplicable = ncrQaDTO.NcrQaProcessApplicable,  
+                    NcrQaProcessApplicable = ncrQaDTO.NcrQaProcessApplicable,
                     NcrQacreationDate = ncrQaDTO.NcrQacreationDate,
                     NcrQaOrderNumber = ncrQaDTO.NcrQaOrderNumber,
                     NcrQaSalesOrder = ncrQaDTO.NcrQaSalesOrder,
                     NcrQaQuanReceived = ncrQaDTO.NcrQaQuanReceived,
                     NcrQaQuanDefective = ncrQaDTO.NcrQaQuanDefective,
                     NcrQaDescriptionOfDefect = ncrQaDTO.NcrQaDescriptionOfDefect,
+                    NcrQaDefectVideo = ncrQaDTO.NcrQaDefectVideo,
                     NcrQauserId = 1,  //Change when we have this information
                     NcrId = ncrIdObt,
                     ItemId = ncrQaDTO.ItemId,
