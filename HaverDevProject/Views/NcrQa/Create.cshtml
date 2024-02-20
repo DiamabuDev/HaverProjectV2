@@ -9,7 +9,7 @@
 </div>
 
 <div class="col-md-8 col-10 mx-auto">    
-    <form asp-action="Create">
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
         <div class="card border-2">
             <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
                 <div>
@@ -87,21 +87,21 @@
                 <div class="row">     
                     <div class="form-group">
                         <label class="control-label">Supplier:</label>
-                        <select class="form-control" id="SupplierId" name="SupplierId" asp-items="ViewBag.SupplierId">
-                            <option value="0">Select Supplier</option>
+                        <select class="form-control" id="SupplierId" name="SupplierId" asp-items="ViewBag.SupplierId" required>
+                            <option value="">Select Supplier</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label asp-for="ItemId" class="control-label"></label>
-                        <select asp-for="ItemId" class="form-control" asp-items="ViewBag.ItemId">
-                            <option value="0">Select a Supplier First</option>
+                        <select asp-for="ItemId" class="form-control" asp-items="ViewBag.ItemId" required>
+                            <option value="">Select a Supplier First</option>
                         </select>
                         <span asp-validation-for="ItemId" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="DefectId" class="control-label"></label>
                         <select asp-for="DefectId" class="form-control" id="DefectId" name="DefectId" asp-items="ViewBag.DefectId">
-                            <option value="0">Select an Item First</option>
+                            <option value="">Select an Item First</option>
                         </select>
                         <span asp-validation-for="DefectId" class="text-danger"></span>
                     </div>
@@ -109,7 +109,23 @@
                         <label asp-for="NcrQaDescriptionOfDefect" class="control-label"></label>
                         <textarea asp-for="NcrQaDescriptionOfDefect" class="form-control"></textarea>
                         <span asp-validation-for="NcrQaDescriptionOfDefect" class="text-danger"></span>
-                    </div>                
+                    </div>
+                    @* <div class="form-group">
+                        <label class="control-label custom-file-label">Defect Photo File:</label>
+                        <div class="input-group mb-3">
+                            <input type="file" class="form-control" name="pictures" id="pictures">
+                        </div>
+                    </div> *@
+                    <div class="form-group">
+                        <label asp-for="ItemDefectPhotos" class="control-label"></label>
+                        <input type="file" name="Photos" multiple />
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="NcrQaDefectVideo" class="control-label"></label>
+                        <input asp-for="NcrQaDefectVideo" class="form-control" />
+                        <span asp-validation-for="NcrQaDefectVideo" class="text-danger"></span>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-6">                                           
@@ -139,8 +155,7 @@
                                     <input type="radio" class="form-check-input" asp-for="NcrQaEngDispositionRequired" value="false" />
                                     <label class="form-check-label">No</label>
                                 </div>
-                            </div>
-                                @* <input class="form-check-input" asp-for="NcrQaEngDispositionRequired" /> @Html.DisplayNameFor(model => model.NcrQaEngDispositionRequired) *@                        
+                            </div>                        
                         </div>
                     </div>
 
@@ -182,15 +197,14 @@
         $('#SupplierId').change(function () {
             var selectedSupplier = $("#SupplierId").val();
             var URL = "/NcrQa/GetItems/?SupplierId=" + selectedSupplier;
-            refreshDDL('ItemId', URL, true, 'Select a Supplier with Items first', false, null, true);
+            refreshDDL('ItemId', URL, true, 'No items related with the supplier selected', true, "Select an item", true);
         });
     </script>
-
     <script type="text/javascript">
         $('#ItemId').change(function () {
             var selectedItemId = $("#ItemId").val();
             var URL = "/NcrQa/GetDefects/?ItemId=" + selectedItemId;
-            refreshDDL('DefectId', URL, true, 'Select an Item with Defects first', false, null, true);
+            refreshDDL('DefectId', URL, true, 'No defects related with the item selected', false, null, true);
         });
     </script>
 }

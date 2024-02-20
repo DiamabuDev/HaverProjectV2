@@ -53,8 +53,12 @@ namespace HaverDevProject.ViewModels
         [DataType(DataType.MultilineText)]
         public string NcrQaDescriptionOfDefect { get; set; }
 
+        [Display(Name = "Supplier")]
+        [Required(ErrorMessage = "You must select a Supplier.")]
+        public int SupplierId { get; set; }
+
         [Display(Name = "Item")]
-        [Required(ErrorMessage = "You must select an item.")]
+        [Required(ErrorMessage = "You must select an Item.")]
         public int ItemId { get; set; }
 
         [Display(Name = "Defect")]
@@ -63,5 +67,12 @@ namespace HaverDevProject.ViewModels
 
         [Display(Name = "Engineer Disposition Required?")]
         public bool NcrQaEngDispositionRequired { get; set; }
+
+        [Display(Name = "Video Link")]
+        [StringLength(100, ErrorMessage = "Video link cannot be more than 100 characters.")]
+        public string NcrQaDefectVideo { get; set; }
+
+        [Display(Name = "Defect Photos")]
+        public ICollection<ItemDefectPhoto> ItemDefectPhotos { get; set; } = new HashSet<ItemDefectPhoto>();
     }
 }
