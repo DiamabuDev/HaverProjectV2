@@ -8,10 +8,13 @@ using Microsoft.EntityFrameworkCore;
 using HaverDevProject.Data;
 using HaverDevProject.Models;
 using HaverDevProject.ViewModels;
+using HaverDevProject.Utilities;
+using HaverDevProject.CustomControllers;
+using System.Numerics;
 
 namespace HaverDevProject.Controllers
 {
-    public class NcrOperationController : Controller
+    public class NcrOperationController : ElephantController
     {
         private readonly HaverNiagaraContext _context;
 
@@ -21,14 +24,207 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: NcrOperation
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string SearchCode, DateTime StartDate, DateTime EndDate,
+            int? page, int? pageSizeID, string actionButton, string sortDirection = "desc", string sortField = "Created", string filter = "Active")
         {
-            var haverNiagaraContext = _context.NcrOperations.Include(n => n.FollowUpType).Include(n => n.Ncr).Include(n => n.OpDispositionType);
-            return View(await haverNiagaraContext.ToListAsync());
+            //Set the date range filer based on the values in the database
+            if (EndDate == DateTime.MinValue)
+            {
+                StartDate = _context.NcrOperations
+                .Min(f => f.UpdateOp.Date);
+
+                EndDate = _context.NcrOperations
+                .Max(f => f.UpdateOp.Date);
+
+                ViewData["StartDate"] = StartDate.ToString("yyyy-MM-dd");
+                ViewData["EndDate"] = EndDate.ToString("yyyy-MM-dd");
+            }
+            //Check the order of the dates and swap them if required
+            if (EndDate < StartDate)
+            {
+                DateTime temp = EndDate;
+                EndDate = StartDate;
+                StartDate = temp;
+            }
+
+            //List of sort options.
+            string[] sortOptions = new[] { "Created", "NCR #", "Disposition Type", "Purchasing Description", "Car", "FollowUp-up", };
+
+            PopulateDropDownLists();
+
+            var ncrOperation = _context.NcrOperations
+                .Include(n => n.Ncr)
+                .Include(n => n.OpDispositionType)
+                .Include(n => n.FollowUpType)
+                .AsNoTracking();
+
+            //Filterig values            
+            if (!String.IsNullOrEmpty(filter))
+            {
+                if (filter == "Active")
+                {
+                    ncrOperation = ncrOperation.Where(n => n.Ncr.NcrStatus == true);
+                }
+                else //(filter == "Closed")
+                {
+
+                    ncrOperation = ncrOperation.Where(n => n.Ncr.NcrStatus == false);
+                }
+            }
+            if (!String.IsNullOrEmpty(SearchCode))
+            {
+                ncrOperation = ncrOperation.Where(s => s.Ncr.NcrNumber.ToUpper().Contains(SearchCode.ToUpper()));
+            }
+            if (StartDate == EndDate)
+            {
+                ncrOperation = ncrOperation.Where(n => n.UpdateOp == StartDate);
+            }
+            else
+            {
+                ncrOperation = ncrOperation.Where(n => n.UpdateOp >= StartDate &&
+                         n.UpdateOp <= EndDate);
+            }
+
+            //Sorting columns
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                page = 1;//Reset page to start
+
+                if (sortOptions.Contains(actionButton))//Change of sort is requested
+                {
+                    if (actionButton == sortField) //Reverse order on same field
+                    {
+                        sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                    }
+                    sortField = actionButton;//Sort by the button clicked
+                }
+            }
+            //Now we know which field and direction to sort by
+            if (sortField == "NCR #")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncrOperation = ncrOperation
+                        .OrderBy(p => p.Ncr.NcrNumber);
+                    ViewData["filterApplied:NcrNumber"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrOperation = ncrOperation
+                        .OrderByDescending(p => p.Ncr.NcrNumber);
+                    ViewData["filterApplied:NcrNumber"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Disposition Type")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncrOperation = ncrOperation
+                        .OrderBy(p => p.OpDispositionType.OpDispositionTypeName);
+                    ViewData["filterApplied:DispositionType"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrOperation = ncrOperation
+                        .OrderByDescending(p => p.OpDispositionType.OpDispositionTypeName);
+                    ViewData["filterApplied:DispositionType"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Purchasing Description")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncrOperation = ncrOperation
+                        .OrderBy(p => p.NcrPurchasingDescription);
+                    ViewData["filterApplied:PurchasingDescription"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrOperation = ncrOperation
+                        .OrderByDescending(p => p.NcrPurchasingDescription);
+                    ViewData["filterApplied:PurchasingDescription"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Created")
+            {
+                if (sortDirection == "desc") //desc by default
+                {
+                    ncrOperation = ncrOperation
+                        .OrderBy(p => p.UpdateOp);
+
+                    ViewData["filterApplied:Created"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrOperation = ncrOperation
+                        .OrderByDescending(p => p.UpdateOp);
+
+                    ViewData["filterApplied:Created"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Status")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncrOperation = ncrOperation
+                        .OrderBy(p => p.Ncr.NcrStatus);
+                    ViewData["filterApplied:Status"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrOperation = ncrOperation
+                        .OrderByDescending(p => p.Ncr.NcrStatus);
+                    ViewData["filterApplied:Status"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Status")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncrOperation = ncrOperation
+                        .OrderBy(p => p.FollowUp);
+                    ViewData["filterApplied:FollowUp"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrOperation = ncrOperation
+                        .OrderByDescending(p => p.FollowUp);
+                    ViewData["filterApplied:FollowUp"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else //(sortField == "CAR")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncrOperation = ncrOperation
+                        .OrderBy(p => p.Car);
+                    ViewData["filterApplied:Car"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrOperation = ncrOperation
+                        .OrderByDescending(p => p.Car);
+                    ViewData["filterApplied:Car"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+
+
+            //Set sort for next time
+            ViewData["sortField"] = sortField;
+            ViewData["sortDirection"] = sortDirection;
+
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, ControllerName());
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+            var pagedData = await PaginatedList<NcrOperation>.CreateAsync(ncrOperation.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData);
         }
 
-        // GET: NcrOperation/Details/5
-        public async Task<IActionResult> Details(int? id)
+    
+
+
+    // GET: NcrOperation/Details/5
+    public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.NcrOperations == null)
             {
