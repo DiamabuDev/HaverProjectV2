@@ -9,7 +9,7 @@
 </div>
 
 <div class="col-md-8 col-10 mx-auto">    
-    <form asp-action="Create">
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
         <div class="card border-2">
             <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
                 <div>
@@ -109,7 +109,18 @@
                         <label asp-for="NcrQaDescriptionOfDefect" class="control-label"></label>
                         <textarea asp-for="NcrQaDescriptionOfDefect" class="form-control"></textarea>
                         <span asp-validation-for="NcrQaDescriptionOfDefect" class="text-danger"></span>
-                    </div> 
+                    </div>
+                    @* <div class="form-group">
+                        <label class="control-label custom-file-label">Defect Photo File:</label>
+                        <div class="input-group mb-3">
+                            <input type="file" class="form-control" name="pictures" id="pictures">
+                        </div>
+                    </div> *@
+                    <div class="form-group">
+                        <label asp-for="ItemDefectPhotos" class="control-label"></label>
+                        <input type="file" name="Photos" multiple />
+                    </div>
+
                     <div class="form-group">
                         <label asp-for="NcrQaDefectVideo" class="control-label"></label>
                         <input asp-for="NcrQaDefectVideo" class="form-control" />
@@ -144,8 +155,7 @@
                                     <input type="radio" class="form-check-input" asp-for="NcrQaEngDispositionRequired" value="false" />
                                     <label class="form-check-label">No</label>
                                 </div>
-                            </div>
-                                @* <input class="form-check-input" asp-for="NcrQaEngDispositionRequired" /> @Html.DisplayNameFor(model => model.NcrQaEngDispositionRequired) *@                        
+                            </div>                        
                         </div>
                     </div>
 
@@ -190,7 +200,6 @@
             refreshDDL('ItemId', URL, true, 'No items related with the supplier selected', true, "Select an item", true);
         });
     </script>
-
     <script type="text/javascript">
         $('#ItemId').change(function () {
             var selectedItemId = $("#ItemId").val();

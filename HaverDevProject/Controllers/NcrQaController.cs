@@ -45,9 +45,7 @@ namespace HaverDevProject.Controllers
                 DateTime temp = EndDate;
                 EndDate = StartDate;
                 StartDate = temp;
-            }
-
-            
+            }            
 
             //List of sort options.
             string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "Defect", "PO Number" };
@@ -107,7 +105,7 @@ namespace HaverDevProject.Controllers
                     sortField = actionButton;//Sort by the button clicked
                 }
             }
-            //Now we know which field and direction to sort by
+            
             if (sortField == "NCR #")
             {
                 if (sortDirection == "asc")
@@ -200,8 +198,7 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:PONumber"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
-
-            //Set sort for next time
+            
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
 
@@ -224,32 +221,13 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr)
                 .Include(n => n.Item).ThenInclude(i => i.Supplier)
                 .Include(n => n.Defect)
+                .Include(n => n.ItemDefectPhotos)
                 .FirstOrDefaultAsync(n => n.NcrQaId == id);
 
             if (ncrQa == null)
             {
                 return NotFound();
-            }
-
-            //NcrQaDTO ncrQaDTO = new NcrQaDTO
-            //{
-            //    NcrQaId = ncrQa.NcrQaId,
-            //    NcrNumber = ncrQa.Ncr.NcrNumber,
-            //    NcrStatus = ncrQa.Ncr.NcrStatus,
-            //    NcrQaItemMarNonConforming = ncrQa.NcrQaItemMarNonConforming,
-            //    NcrQaProcessApplicable = ncrQa.NcrQaProcessApplicable,
-            //    NcrQacreationDate = ncrQa.NcrQacreationDate,
-            //    NcrQaOrderNumber = ncrQa.NcrQaOrderNumber,
-            //    NcrQaSalesOrder = ncrQa.NcrQaSalesOrder,
-            //    NcrQaQuanReceived = ncrQa.NcrQaQuanReceived,
-            //    NcrQaQuanDefective = ncrQa.NcrQaQuanDefective,
-            //    NcrQaDescriptionOfDefect = ncrQa.NcrQaDescriptionOfDefect,
-            //    SupplierId = ncrQa.Item.Supplier.SupplierId,
-            //    NcrId = ncrQa.NcrId,
-            //    ItemId = ncrQa.Item.ItemId,
-            //    DefectId = ncrQa.DefectId,
-            //    NcrQaEngDispositionRequired = ncrQa.NcrQaEngDispositionRequired
-            //};
+            }            
 
             return View(ncrQa);
         }
@@ -274,7 +252,7 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(NcrQaDTO ncrQaDTO, int ItemId)
+        public async Task<IActionResult> Create(NcrQaDTO ncrQaDTO, List<IFormFile> Photos)
         {
             if (ModelState.IsValid)
             {
@@ -294,6 +272,8 @@ namespace HaverDevProject.Controllers
                     .Select(n => n.NcrId)
                     .FirstOrDefault();
 
+                await AddPictures(ncrQaDTO, Photos);                
+
                 NcrQa ncrQa = new NcrQa
                 {
                     NcrQaItemMarNonConforming = ncrQaDTO.NcrQaItemMarNonConforming,
@@ -305,12 +285,13 @@ namespace HaverDevProject.Controllers
                     NcrQaQuanDefective = ncrQaDTO.NcrQaQuanDefective,
                     NcrQaDescriptionOfDefect = ncrQaDTO.NcrQaDescriptionOfDefect,
                     NcrQaDefectVideo = ncrQaDTO.NcrQaDefectVideo,
+                    ItemDefectPhotos = ncrQaDTO.ItemDefectPhotos,
                     NcrQauserId = 1,  //Change when we have this information
                     NcrId = ncrIdObt,
                     ItemId = ncrQaDTO.ItemId,
                     DefectId = ncrQaDTO.DefectId,
                     NcrQaEngDispositionRequired = ncrQaDTO.NcrQaEngDispositionRequired
-                };
+                };                
                 
                 _context.NcrQas.Add(ncrQa);
                 await _context.SaveChangesAsync();
@@ -464,7 +445,6 @@ namespace HaverDevProject.Controllers
             return new SelectList(query.OrderBy(i => i.ItemName), "ItemId", "ItemName", selectedId);            
         }
 
-
         private void PopulateDropDownLists(NcrQa ncrQa = null)
         {
             if ((ncrQa?.ItemId).HasValue)
@@ -499,7 +479,36 @@ namespace HaverDevProject.Controllers
 
             return Json(new SelectList(defects, "DefectId", "DefectName"));
         }
+         
+        private async Task AddPictures(NcrQaDTO ncrQaDTO, List<IFormFile> pictures)
+        {
+            if (pictures != null && pictures.Any())
+            {
+                ncrQaDTO.ItemDefectPhotos = new List<ItemDefectPhoto>();
 
+                foreach (var picture in pictures)
+                {
+                    string mimeType = picture.ContentType;
+                    long fileLength = picture.Length;
+
+                    if (!(mimeType == "" || fileLength == 0))
+                    {
+                        if (mimeType.Contains("image"))
+                        {
+                            using var memoryStream = new MemoryStream();
+                            await picture.CopyToAsync(memoryStream);
+                            var pictureArray = memoryStream.ToArray();
+
+                            ncrQaDTO.ItemDefectPhotos.Add(new ItemDefectPhoto
+                            {
+                                ItemDefectPhotoContent = ResizeImage.shrinkImageWebp(pictureArray, 500, 600),
+                                ItemDefectPhotoMimeType = "image/webp"
+                            });
+                        }
+                    }
+                }
+            }
+        }
 
         private bool NcrQaExists(int id)
         {

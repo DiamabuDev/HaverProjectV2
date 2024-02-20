@@ -389,12 +389,7 @@ namespace HaverDevProject.Data.QLMigrations
                     itemDefectPhotoContent = table.Column<byte[]>(type: "BLOB", nullable: false),
                     itemDefectPhotoMimeType = table.Column<string>(type: "TEXT", unicode: false, maxLength: 45, nullable: false),
                     itemDefectPhotoDescription = table.Column<string>(type: "TEXT", unicode: false, maxLength: 300, nullable: true),
-                    ncrQaId = table.Column<int>(type: "INTEGER", nullable: false),
-                    reInspectPhotoId = table.Column<int>(type: "INTEGER", nullable: false),
-                    reInspectPhotoContent = table.Column<byte[]>(type: "BLOB", nullable: false),
-                    reInspectPhotoMimeType = table.Column<string>(type: "TEXT", unicode: false, maxLength: 45, nullable: false),
-                    reInspectPhotoDescription = table.Column<string>(type: "TEXT", unicode: false, maxLength: 300, nullable: true),
-                    reInspectId = table.Column<int>(type: "INTEGER", nullable: false)
+                    ncrQaId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {

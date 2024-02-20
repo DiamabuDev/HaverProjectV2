@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HaverDevProject.Data.QLMigrations
 {
     [DbContext(typeof(HaverNiagaraContext))]
-    [Migration("20240220024134_Initial")]
+    [Migration("20240220181428_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -260,32 +260,6 @@ namespace HaverDevProject.Data.QLMigrations
                     b.Property<int>("NcrQaId")
                         .HasColumnType("INTEGER")
                         .HasColumnName("ncrQaId");
-
-                    b.Property<int>("ReInspectId")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("reInspectId");
-
-                    b.Property<byte[]>("ReInspectPhotoContent")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
-                        .HasColumnName("reInspectPhotoContent");
-
-                    b.Property<string>("ReInspectPhotoDescription")
-                        .HasMaxLength(300)
-                        .IsUnicode(false)
-                        .HasColumnType("TEXT")
-                        .HasColumnName("reInspectPhotoDescription");
-
-                    b.Property<int>("ReInspectPhotoId")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("reInspectPhotoId");
-
-                    b.Property<string>("ReInspectPhotoMimeType")
-                        .IsRequired()
-                        .HasMaxLength(45)
-                        .IsUnicode(false)
-                        .HasColumnType("TEXT")
-                        .HasColumnName("reInspectPhotoMimeType");
 
                     b.HasKey("ItemDefectPhotoId")
                         .HasName("pk_itemDefectPhoto_itemDefectPhotoId");

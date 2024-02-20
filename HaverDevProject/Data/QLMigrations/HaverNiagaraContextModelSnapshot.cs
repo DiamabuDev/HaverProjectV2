@@ -258,32 +258,6 @@ namespace HaverDevProject.Data.QLMigrations
                         .HasColumnType("INTEGER")
                         .HasColumnName("ncrQaId");
 
-                    b.Property<int>("ReInspectId")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("reInspectId");
-
-                    b.Property<byte[]>("ReInspectPhotoContent")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
-                        .HasColumnName("reInspectPhotoContent");
-
-                    b.Property<string>("ReInspectPhotoDescription")
-                        .HasMaxLength(300)
-                        .IsUnicode(false)
-                        .HasColumnType("TEXT")
-                        .HasColumnName("reInspectPhotoDescription");
-
-                    b.Property<int>("ReInspectPhotoId")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("reInspectPhotoId");
-
-                    b.Property<string>("ReInspectPhotoMimeType")
-                        .IsRequired()
-                        .HasMaxLength(45)
-                        .IsUnicode(false)
-                        .HasColumnType("TEXT")
-                        .HasColumnName("reInspectPhotoMimeType");
-
                     b.HasKey("ItemDefectPhotoId")
                         .HasName("pk_itemDefectPhoto_itemDefectPhotoId");
 
