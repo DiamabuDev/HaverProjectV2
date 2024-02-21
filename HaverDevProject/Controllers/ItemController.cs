@@ -25,16 +25,17 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: Item
-        public async Task<IActionResult> Index(string SearchCode, int? SupplierID, int? page, int? pageSizeID,
+        public async Task<IActionResult> Index(string SearchCode, int? SupplierID, int? DefectID, int? page, int? pageSizeID,
             string actionButton, string sortDirection = "asc", string sortField = "Code")
         {
             //List of sort options.
-            string[] sortOptions = new[] { "Code", "Item", "Description", "Supplier" };
+            string[] sortOptions = new[] { "Code", "Item", "Description", "Supplier", "Defect" };
 
-            PopulateDrodDownList();
+            PopulateDropDownList();
 
             var items = _context.Items
                 .Include(i => i.Supplier)
+                .Include(d => d.ItemDefects).ThenInclude(id => id.Defect)
                 .AsNoTracking();
 
             //Filterig values                       
@@ -48,6 +49,12 @@ namespace HaverDevProject.Controllers
             {
                 items = items.Where(s => s.Supplier.SupplierId == SupplierID);
             }
+
+            if (DefectID.HasValue)
+            {
+                items = items.Where(d => d.ItemDefects.Any(id => id.DefectId == DefectID));
+            }
+
 
             //Sorting columns
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
@@ -96,24 +103,7 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:ItemName"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
-            //else if (sortField == "Description")
-            //{
-            //    if (sortDirection == "asc")
-            //    {
-            //        items = items
-            //            .OrderBy(p => p.ItemDescription);
-            //        ViewData["filterApplied:Description"] = "<i class='bi bi-sort-up'></i>";
-
-            //    }
-            //    else
-            //    {
-            //        items = items
-            //            .OrderByDescending(p => p.ItemDescription);
-            //        ViewData["filterApplied:Description"] = "<i class='bi bi-sort-down'></i>";
-
-            //    }
-            //}
-            else //Sorting by Supplier Name
+            else if (sortField == "Supplier")
             {
                 if (sortDirection == "asc")
                 {
@@ -129,11 +119,27 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
+            else //Sorting by Item
+            {
+                if (sortDirection == "asc")
+                {
+                    items = items
+                        .OrderBy(d => d.ItemDefects.Select(id => id.Defect.DefectName).FirstOrDefault()).AsNoTracking();
+                    ViewData["filterApplied:Defect"] = "<i class='bi bi-sort-up'></i>";
+
+                }
+                else
+                {
+                    items = items
+                        .OrderByDescending(d => d.ItemDefects.Select(id => id.Defect.DefectName).FirstOrDefault()).AsNoTracking();
+                    ViewData["filterApplied:Defect"] = "<i class='bi bi-sort-down'></i>";
+                }
+
+            }
+            
             //Set sort for next time
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
-
-            //return View(await suppliers.ToListAsync());
 
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, ControllerName());
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
@@ -167,11 +173,9 @@ namespace HaverDevProject.Controllers
         // GET: Item/Create
         public IActionResult Create()
         {
-            //ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierName");
-            //Item item = new Item();
-            PopulateDrodDownList();
+            PopulateDropDownList();
             Item item = new Item();
-            PopulateAssignedItemCheckboxes(item);
+            PopulateAssignedDefectCheckboxes(item);
             return View();
         }
 
@@ -200,7 +204,6 @@ namespace HaverDevProject.Controllers
                     TempData["SuccessMessage"] = "Item created successfully!";
                     int newItemId = item.ItemId;
                     return RedirectToAction("Details", new { id = newItemId });
-                    //return RedirectToAction(nameof(Index));
                 }
             }
             catch (RetryLimitExceededException)
@@ -238,7 +241,7 @@ namespace HaverDevProject.Controllers
             {
                 return NotFound();
             }
-            PopulateAssignedItemCheckboxes(item);
+            PopulateAssignedDefectCheckboxes(item);
             ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierName", item.SupplierId);
             return View(item);
         }
@@ -271,7 +274,6 @@ namespace HaverDevProject.Controllers
                     TempData["SuccessMessage"] = "Item updated successfully!";
                     int updateItemId = itemToUpdate.ItemId;
                     return RedirectToAction("Details", new { id = updateItemId });
-                    //return RedirectToAction(nameof(Index));
                 }
                 catch (RetryLimitExceededException)
                 {
@@ -290,7 +292,7 @@ namespace HaverDevProject.Controllers
                 }
 
             }
-            PopulateAssignedItemCheckboxes(itemToUpdate);
+            PopulateAssignedDefectCheckboxes(itemToUpdate);
             ViewBag.SupplierId = new SelectList(_context.Suppliers, "SupplierId", "SupplierName", itemToUpdate.SupplierId);
             return View(itemToUpdate);
         }
@@ -338,13 +340,18 @@ namespace HaverDevProject.Controllers
         {
             return new SelectList(_context.Suppliers.OrderBy(s => s.SupplierName), "SupplierId", "SupplierName", selectedId);
         }
-
-        private void PopulateDrodDownList(Supplier supplier = null)
+        private SelectList DefectSelectList(int? selectedId)
+        {
+            return new SelectList(_context.Defects.OrderBy(i => i.DefectName).Select(i => new { i.DefectId, i.DefectName })
+            .Distinct(), "DefectId", "DefectName", selectedId);
+        }
+        private void PopulateDropDownList(Supplier supplier = null, Defect defect = null)
         {
             ViewData["SupplierID"] = SupplierSelectList(supplier?.SupplierId);
+            ViewData["DefectID"] = DefectSelectList(defect?.DefectId);
         }
 
-        private void PopulateAssignedItemCheckboxes(Item item)
+        private void PopulateAssignedDefectCheckboxes(Item item)
         {
             var allDefects = _context.Defects
                 .Select(d => new { d.DefectId, d.DefectName })
@@ -361,8 +368,7 @@ namespace HaverDevProject.Controllers
                     Assigned = currentItemDefectIDs.Contains(defect.DefectId)
                 });
             }
-            ViewData["ItemOptions"] = checkBoxes;
-            //ViewData["ItemOptions"] = new MultiSelectList(checkBoxes.OrderBy(d => d.DisplayText), "ID", "DisplayTex");
+            ViewData["DefectOptions"] = checkBoxes;
         }
 
         private void UpdateDefectItemsCheckboxes(string[] selectedDefects, Item itemToUpdate)
