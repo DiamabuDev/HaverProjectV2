@@ -25,7 +25,7 @@ namespace HaverDevProject.Controllers
 
         // GET: Supplier
         public async Task<IActionResult> Index(string SearchCode, string SearchContact, int? page, int? pageSizeID, 
-            string actionButton, string sortDirection = "asc", string sortField = "Code")
+            string actionButton, string sortDirection = "asc", string sortField = "Code", string filter = "Active")
         {
             //List of sort options.
             string[] sortOptions = new[] { "Code", "Name", "Email", "Contact"};            
@@ -43,6 +43,19 @@ namespace HaverDevProject.Controllers
             if (!String.IsNullOrEmpty(SearchContact))
             {
                 suppliers = suppliers.Where(s => s.SupplierContactName.ToUpper().Contains(SearchContact.ToUpper()));
+            }
+
+            if (!String.IsNullOrEmpty(filter))
+            {
+                if (filter == "Active")
+                {
+                    suppliers = suppliers.Where(s => s.SupplierStatus == true);
+                }
+                else //(filter == "Inactive")
+                {
+
+                    suppliers = suppliers.Where(s => s.SupplierStatus == false);
+                }
             }
 
             //Sorting columns
@@ -105,6 +118,21 @@ namespace HaverDevProject.Controllers
                         .OrderByDescending(p => p.SupplierEmail);
                     ViewData["filterApplied:SupplierEmail"] = "<i class='bi bi-sort-down'></i>";
 
+                }
+            }
+            else if (sortField == "Status")
+            {
+                if (sortDirection == "asc")
+                {
+                    suppliers = suppliers
+                        .OrderBy(s => s.SupplierStatus);
+                    ViewData["filterApplied:Status"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    suppliers = suppliers
+                        .OrderByDescending(s => s.SupplierStatus);
+                    ViewData["filterApplied:Status"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
             else //Sorting by Contact
