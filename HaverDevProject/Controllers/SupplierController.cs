@@ -10,6 +10,7 @@ using HaverDevProject.Models;
 using HaverDevProject.Utilities;
 using HaverDevProject.CustomControllers;
 using Microsoft.EntityFrameworkCore.Storage;
+using HaverDevProject.ViewModels;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HaverDevProject.Controllers
@@ -172,11 +173,21 @@ namespace HaverDevProject.Controllers
             }
 
             var supplier = await _context.Suppliers
+                .Include(s => s.Items)
+                .ThenInclude(s => s.NcrQas)
+                .ThenInclude(s => s.Ncr)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.SupplierId == id);
             if (supplier == null)
             {
                 return NotFound();
             }
+
+            var viewModel = new SupplierDetailsViewModel
+            {
+                Supplier = supplier,
+                RelatedNCRs = supplier.Items.FirstOrDefault().NcrQas.Select(nqa => nqa.Ncr).ToList()
+            };
 
             return View(supplier);
         }
