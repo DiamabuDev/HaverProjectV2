@@ -39,36 +39,19 @@
                     @Html.DisplayFor(model => model.Supplier.SupplierName)
                 </dd>
                 <dt class="col-sm-4">
-                Items
-                </dt>
-                <dd class="col-sm-10">
-                @{
-                int itemCount = Model.ItemDefects.Count;
-                if (itemCount > 0)
-                {
-                string firstItem = Model.ItemDefects.FirstOrDefault().Defect.DefectName;
-                if (itemCount > 1)
-                {
-                string itemList = "";
-                var c = Model.ItemDefects.ToList();
-                for (int i = 1; i < itemCount; i++)//Skip the first because we have it already
-                {
-                itemList += c[i].Defect.DefectName + " <br />";
-                }
-                <a class="text-dark" role="button" data-bs-toggle="collapse" href="#collapseItem@(Model.ItemId)"
-                aria-expanded="false" aria-controls="collapseItem@(Model.ItemId)">
-                @firstItem <span class="badge btn-primary">@itemCount</span>
-                </a>
-                <div class="collapse" id="collapseItem@(Model.ItemId)">
-                @Html.Raw(itemList)
-                </div>
-                }
-                else
-                {
-                @firstItem
-                }
-                }
-                }
+                Defects                
+                <dd>
+                        @if (Model.ItemDefects.Any())
+                        {
+                        <div class="defects-container @(Model.ItemDefects.Count() > 5 ? "two-columns" : "")">
+                            <ul class="defect-row">                                
+                                    @foreach (var defect in Model.ItemDefects)
+                                    {
+                                    <li>@defect.Defect.DefectName</li>
+                                    }
+                            </ul>
+                        </div>
+                        }
                 </dd>
             </dl>
         </div>

@@ -1,4 +1,4 @@
-﻿@model HaverDevProject.Models.Supplier
+﻿@model HaverDevProject.ViewModels.SupplierDetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -18,31 +18,61 @@
                     Code
                 </dt>
                 <dd class = "col-sm-9">
-                    @Html.DisplayFor(model => model.SupplierCode)
+                    @Html.DisplayFor(model => model.Supplier.SupplierCode)
                 </dd>
                 <dt class = "col-sm-3">
                     Name            
                 </dt>
                 <dd class = "col-sm-9">
-                    @Html.DisplayFor(model => model.SupplierName)
+                    @Html.DisplayFor(model => model.Supplier.SupplierName)
                 </dd>                
                 <dt class="col-sm-3">
                     Contact Name
                 </dt>
                 <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.SupplierContactName)
+                    @Html.DisplayFor(model => model.Supplier.SupplierContactName)
                 </dd>
                 <dt class="col-sm-3">
                     Email
                 </dt>
                 <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.SupplierEmail)
+                    @Html.DisplayFor(model => model.Supplier.SupplierEmail)
                 </dd>
                 <dt class="col-sm-3">
                     Status
                 </dt>
                 <dd class="col-sm-9">
-                    @(Model.SupplierStatus ? "Active" : "Inactive")
+                    @(Model.Supplier.SupplierStatus ? "Active" : "Inactive")
+                </dd>
+                <dt class="col-sm-3">
+                    Related NCRs
+                </dt>
+                <dd class="col-sm-9">
+                    @if (Model.RelatedNCRs != null && Model.RelatedNCRs.Any())
+                    {
+                        <h3>Related NCRs</h3>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>NCR ID</th>
+                                    <th>Defect Type</th>
+                                    <th>Defect Description</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var ncr in Model.RelatedNCRs)
+                                {
+                                    <tr>
+                                        <td>@ncr.NcrId</td>
+                                        <td>@ncr.NcrQa.Item.ItemDefects.FirstOrDefault().Defect.DefectName</td>
+                                        <td>@ncr.NcrQa.Item.ItemDefects.FirstOrDefault().Defect.DefectDesription</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+
                 </dd>
                 
             </dl>
@@ -55,7 +85,7 @@
                     </button>
                 </div>
                 <div>
-                    <a type="button" class="btn btn-primary ms-4" asp-action="Edit" asp-route-id="@Model?.SupplierId">
+                    <a type="button" class="btn btn-primary ms-4" asp-action="Edit" asp-route-id="@Model?.Supplier.SupplierId">
                         <i class="bi bi-pencil-square"></i> Edit
                     </a>
                 </div>           

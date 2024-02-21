@@ -18,5 +18,5 @@ public class Ncr
     public virtual NcrEng NcrEng { get; set; }    
     public virtual NcrPurchasing NcrPurchasing { get; set; }    
     public virtual NcrQa NcrQa { get; set; }    
-    public virtual NcrReInspect NcrReInspect { get; set; }    
+    public virtual NcrReInspect NcrReInspect { get; set; }  
 }
