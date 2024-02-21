@@ -888,7 +888,7 @@ namespace HaverDevProject.Data
                             FollowUp = true,
                             ExpectedDate = DateTime.Parse("2024-05-18"),
                             FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Update").FollowUpTypeId,
-                            UpdateOp = DateTime.Now,
+                            UpdateOp = DateTime.Parse("2024-01-18"),
                             NcrPurchasingUserId = 1
                             
                         },
@@ -902,7 +902,7 @@ namespace HaverDevProject.Data
                             FollowUp = true,
                             ExpectedDate = DateTime.Parse("2024-05-18"),
                             FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Resolution").FollowUpTypeId,
-                            UpdateOp = DateTime.Now,
+                            UpdateOp = DateTime.Parse("2024-01-19"),
                             NcrPurchasingUserId = 1
                             
                         },
@@ -916,7 +916,7 @@ namespace HaverDevProject.Data
                             FollowUp = true,
                             ExpectedDate = DateTime.Parse("2024-05-18"),
                             FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Clarification").FollowUpTypeId,
-                            UpdateOp = DateTime.Now,
+                            UpdateOp = DateTime.Parse("2024-01-20"),
                             NcrPurchasingUserId = 1
                             
                         },
@@ -930,7 +930,7 @@ namespace HaverDevProject.Data
                             FollowUp = true,
                             ExpectedDate = DateTime.Parse("2024-05-18"),
                             FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Feedback").FollowUpTypeId,
-                            UpdateOp = DateTime.Now,
+                            UpdateOp = DateTime.Parse("2024-01-21"),
                             NcrPurchasingUserId = 1
                         });
                     context.SaveChanges();

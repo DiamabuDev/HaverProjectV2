@@ -67,6 +67,21 @@ namespace HaverDevProject.Data.QLMigrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Notification",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Message = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    IsRead = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notification", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "opDispositionType",
                 columns: table => new
                 {
@@ -185,48 +200,6 @@ namespace HaverDevProject.Data.QLMigrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "NcrOperations",
-                columns: table => new
-                {
-                    NcrOpId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    NcrId = table.Column<int>(type: "INTEGER", nullable: false),
-                    OpDispositionTypeId = table.Column<int>(type: "INTEGER", nullable: false),
-                    NcrPurchasingDescription = table.Column<string>(type: "TEXT", nullable: true),
-                    Car = table.Column<bool>(type: "INTEGER", nullable: false),
-                    CarNumber = table.Column<string>(type: "TEXT", nullable: true),
-                    FollowUp = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ExpectedDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    FollowUpTypeId = table.Column<int>(type: "INTEGER", nullable: true),
-                    UpdateOp = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    NcrPurchasingUserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    CreatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
-                    CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    UpdatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
-                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_ncrOperation_NcrOpId", x => x.NcrOpId);
-                    table.ForeignKey(
-                        name: "FK_NcrOperations_followUpType_FollowUpTypeId",
-                        column: x => x.FollowUpTypeId,
-                        principalTable: "followUpType",
-                        principalColumn: "FollowUpTypeId");
-                    table.ForeignKey(
-                        name: "FK_NcrOperations_ncr_NcrId",
-                        column: x => x.NcrId,
-                        principalTable: "ncr",
-                        principalColumn: "ncrId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "fk_ncrOperation_opDispositionType",
-                        column: x => x.OpDispositionTypeId,
-                        principalTable: "opDispositionType",
-                        principalColumn: "OpDispositionTypeId");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "item",
                 columns: table => new
                 {
@@ -268,6 +241,54 @@ namespace HaverDevProject.Data.QLMigrations
                         principalTable: "ncrEng",
                         principalColumn: "ncrEngId",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "NcrOperations",
+                columns: table => new
+                {
+                    NcrOpId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    NcrId = table.Column<int>(type: "INTEGER", nullable: false),
+                    OpDispositionTypeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    NcrPurchasingDescription = table.Column<string>(type: "TEXT", nullable: true),
+                    Car = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CarNumber = table.Column<string>(type: "TEXT", nullable: true),
+                    FollowUp = table.Column<bool>(type: "INTEGER", nullable: false),
+                    ExpectedDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    FollowUpTypeId = table.Column<int>(type: "INTEGER", nullable: true),
+                    UpdateOp = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    NcrPurchasingUserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    NcrEngId = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_ncrOperation_NcrOpId", x => x.NcrOpId);
+                    table.ForeignKey(
+                        name: "FK_NcrOperations_followUpType_FollowUpTypeId",
+                        column: x => x.FollowUpTypeId,
+                        principalTable: "followUpType",
+                        principalColumn: "FollowUpTypeId");
+                    table.ForeignKey(
+                        name: "FK_NcrOperations_ncrEng_NcrEngId",
+                        column: x => x.NcrEngId,
+                        principalTable: "ncrEng",
+                        principalColumn: "ncrEngId");
+                    table.ForeignKey(
+                        name: "FK_NcrOperations_ncr_NcrId",
+                        column: x => x.NcrId,
+                        principalTable: "ncr",
+                        principalColumn: "ncrId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_ncrOperation_opDispositionType",
+                        column: x => x.OpDispositionTypeId,
+                        principalTable: "opDispositionType",
+                        principalColumn: "OpDispositionTypeId");
                 });
 
             migrationBuilder.CreateTable(
@@ -451,6 +472,11 @@ namespace HaverDevProject.Data.QLMigrations
                 column: "FollowUpTypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_NcrOperations_NcrEngId",
+                table: "NcrOperations",
+                column: "NcrEngId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_NcrOperations_NcrId",
                 table: "NcrOperations",
                 column: "NcrId",
@@ -509,7 +535,7 @@ namespace HaverDevProject.Data.QLMigrations
                 name: "ncrReInspect");
 
             migrationBuilder.DropTable(
-                name: "ncrEng");
+                name: "Notification");
 
             migrationBuilder.DropTable(
                 name: "NcrOperations");
@@ -518,10 +544,10 @@ namespace HaverDevProject.Data.QLMigrations
                 name: "ncrQA");
 
             migrationBuilder.DropTable(
-                name: "engDispositionType");
+                name: "followUpType");
 
             migrationBuilder.DropTable(
-                name: "followUpType");
+                name: "ncrEng");
 
             migrationBuilder.DropTable(
                 name: "opDispositionType");
@@ -531,6 +557,9 @@ namespace HaverDevProject.Data.QLMigrations
 
             migrationBuilder.DropTable(
                 name: "ncr");
+
+            migrationBuilder.DropTable(
+                name: "engDispositionType");
 
             migrationBuilder.DropTable(
                 name: "defect");

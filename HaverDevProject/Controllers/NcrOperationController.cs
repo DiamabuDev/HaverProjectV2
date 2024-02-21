@@ -53,10 +53,12 @@ namespace HaverDevProject.Controllers
             PopulateDropDownLists();
 
             var ncrOperation = _context.NcrOperations
+                .Include(n => n.NcrEng)
                 .Include(n => n.Ncr)
                 .Include(n => n.OpDispositionType)
                 .Include(n => n.FollowUpType)
                 .AsNoTracking();
+
 
             //Filterig values            
             if (!String.IsNullOrEmpty(filter))
@@ -210,6 +212,7 @@ namespace HaverDevProject.Controllers
 
 
             //Set sort for next time
+
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
 

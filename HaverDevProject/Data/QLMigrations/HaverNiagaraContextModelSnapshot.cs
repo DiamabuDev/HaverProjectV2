@@ -15,7 +15,7 @@ namespace HaverDevProject.Data.QLMigrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "7.0.15");
+            modelBuilder.HasAnnotation("ProductVersion", "7.0.16");
 
             modelBuilder.Entity("HaverDevProject.Models.Defect", b =>
                 {
@@ -363,6 +363,9 @@ namespace HaverDevProject.Data.QLMigrations
                     b.Property<int?>("FollowUpTypeId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("NcrEngId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("NcrId")
                         .HasColumnType("INTEGER");
 
@@ -389,6 +392,8 @@ namespace HaverDevProject.Data.QLMigrations
                         .HasName("pk_ncrOperation_NcrOpId");
 
                     b.HasIndex("FollowUpTypeId");
+
+                    b.HasIndex("NcrEngId");
 
                     b.HasIndex("NcrId")
                         .IsUnique();
@@ -600,6 +605,26 @@ namespace HaverDevProject.Data.QLMigrations
                     b.ToTable("ncrReInspect");
                 });
 
+            modelBuilder.Entity("HaverDevProject.Models.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Notification");
+                });
+
             modelBuilder.Entity("HaverDevProject.Models.OpDispositionType", b =>
                 {
                     b.Property<int>("OpDispositionTypeId")
@@ -759,6 +784,10 @@ namespace HaverDevProject.Data.QLMigrations
                         .WithMany("NcrOperations")
                         .HasForeignKey("FollowUpTypeId");
 
+                    b.HasOne("HaverDevProject.Models.NcrEng", "NcrEng")
+                        .WithMany()
+                        .HasForeignKey("NcrEngId");
+
                     b.HasOne("HaverDevProject.Models.Ncr", "Ncr")
                         .WithOne("NcrOperation")
                         .HasForeignKey("HaverDevProject.Models.NcrOperation", "NcrId")
@@ -774,6 +803,8 @@ namespace HaverDevProject.Data.QLMigrations
                     b.Navigation("FollowUpType");
 
                     b.Navigation("Ncr");
+
+                    b.Navigation("NcrEng");
 
                     b.Navigation("OpDispositionType");
                 });

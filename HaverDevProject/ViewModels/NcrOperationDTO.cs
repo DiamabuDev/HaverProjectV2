@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 namespace HaverDevProject.ViewModels
 {
     [ModelMetadataType(typeof(NcrOperationMetaData))]
-    public class NcrOperationDTO : Auditable
+    public class NcrOperationDTO
     {
         public string NcrNumber { get; set; }
         public bool NcrStatus { get; set; } = true;
@@ -23,6 +23,7 @@ namespace HaverDevProject.ViewModels
         public FollowUpType FollowUpType { get; set; }
         public DateTime UpdateOp { get; set; }
         public int NcrPurchasingUserId { get; set; }
+        public NcrEng NcrEng { get; set; }
         public ICollection<ItemDefectPhoto> ItemDefectPhotos { get; set; } = new HashSet<ItemDefectPhoto>();
         public ICollection<ItemDefectVideo> ItemDefectVideos { get; set; } = new HashSet<ItemDefectVideo>();
     }

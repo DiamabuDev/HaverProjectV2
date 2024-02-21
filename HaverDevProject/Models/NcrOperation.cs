@@ -25,6 +25,7 @@ public class NcrOperation : Auditable
     public FollowUpType FollowUpType { get; set; }
     public DateTime UpdateOp { get; set; }
     public int NcrPurchasingUserId { get; set; }
+    public NcrEng NcrEng { get; set; }
     public ICollection<ItemDefectPhoto> ItemDefectPhotos { get; set; } = new HashSet<ItemDefectPhoto>();
     public ICollection<ItemDefectVideo> ItemDefectVideos { get; set; } = new HashSet<ItemDefectVideo>();
 }

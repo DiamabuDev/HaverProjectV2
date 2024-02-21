@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HaverDevProject.ViewModels
 {
-    public class NcrOperationMetaData : Auditable
+    public class NcrOperationMetaData
     {
         [Display(Name = "NCR")]
         public int NcrId { get; set; }
