@@ -26,7 +26,7 @@
                         <span asp-validation-for="ItemNumber" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="ItemName" class="control-label">Name <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Item Name">(e.g. 1/4" .120)</small> <span class="fw-bold text-danger">*</span></label>
+                        <label asp-for="ItemName" class="control-label">Name <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Item Name">(e.g. Screw 1/4" .120)</small> <span class="fw-bold text-danger">*</span></label>
                         <input asp-for="ItemName" class="form-control" placeholder="Name" />
                         <span asp-validation-for="ItemName" class="text-danger"></span>
                     </div>
@@ -43,15 +43,13 @@
                         <span asp-validation-for="SupplierId" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label class="control-label">Defects</label><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Defects related with this item (One or Multiple)"> (e.g. Control Panel, Outlet)</small>
-                        
-                        <hr />
+                        <label class="control-label">Defects</label><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Defects related to this Item (One or Multiple)"> (e.g. Loose wire, Bend)</small>                        
                         <div class="m-2">
                         <table>
                             <tr>
                                 @{
                                     int cnt = 0;
-                                    var checkboxes = ViewData["ItemOptions"] as List<HaverDevProject.ViewModels.CheckOptionVM>; 
+                                    var checkboxes = ViewData["DefectOptions"] as List<HaverDevProject.ViewModels.CheckOptionVM>; 
                                     foreach (var checkbox in checkboxes)
                                     {
                                         if (cnt++ % 2 == 0)

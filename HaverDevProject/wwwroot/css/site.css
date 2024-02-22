@@ -246,14 +246,36 @@ body {
     padding-left: 0;
 }
 
-.custom-link:hover {
-    color: white !important;
+.custom-hover:hover .view-more {
+    color: white !important; 
 }
 
-.custom-hover:hover a {
-    color: white !important;
+.custom-hover ul {
+    padding-left: 1.5rem;
 }
 
 .big-col {
-    width: 40%;
+    width: 55%;
+}
+
+.defects-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; 
+}
+
+.defect-row {
+    list-style-type: none; 
+    padding: 0; 
+}
+
+.two-columns {
+    column-count: 2;
+    column-gap: 20px; 
+}
+
+.defects-container.two-columns {
+    display: block; 
+    column-count: 2;
+    column-gap: 20px;
 }

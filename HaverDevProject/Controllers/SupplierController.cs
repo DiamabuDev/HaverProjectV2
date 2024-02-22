@@ -10,6 +10,7 @@ using HaverDevProject.Models;
 using HaverDevProject.Utilities;
 using HaverDevProject.CustomControllers;
 using Microsoft.EntityFrameworkCore.Storage;
+using HaverDevProject.ViewModels;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HaverDevProject.Controllers
@@ -25,7 +26,7 @@ namespace HaverDevProject.Controllers
 
         // GET: Supplier
         public async Task<IActionResult> Index(string SearchCode, string SearchContact, int? page, int? pageSizeID, 
-            string actionButton, string sortDirection = "asc", string sortField = "Code")
+            string actionButton, string sortDirection = "asc", string sortField = "Code", string filter = "Active")
         {
             //List of sort options.
             string[] sortOptions = new[] { "Code", "Name", "Email", "Contact"};            
@@ -43,6 +44,19 @@ namespace HaverDevProject.Controllers
             if (!String.IsNullOrEmpty(SearchContact))
             {
                 suppliers = suppliers.Where(s => s.SupplierContactName.ToUpper().Contains(SearchContact.ToUpper()));
+            }
+
+            if (!String.IsNullOrEmpty(filter))
+            {
+                if (filter == "Active")
+                {
+                    suppliers = suppliers.Where(s => s.SupplierStatus == true);
+                }
+                else //(filter == "Inactive")
+                {
+
+                    suppliers = suppliers.Where(s => s.SupplierStatus == false);
+                }
             }
 
             //Sorting columns
@@ -107,6 +121,21 @@ namespace HaverDevProject.Controllers
 
                 }
             }
+            else if (sortField == "Status")
+            {
+                if (sortDirection == "asc")
+                {
+                    suppliers = suppliers
+                        .OrderBy(s => s.SupplierStatus);
+                    ViewData["filterApplied:Status"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    suppliers = suppliers
+                        .OrderByDescending(s => s.SupplierStatus);
+                    ViewData["filterApplied:Status"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
             else //Sorting by Contact
             {
                 if (sortDirection == "asc")
@@ -144,11 +173,21 @@ namespace HaverDevProject.Controllers
             }
 
             var supplier = await _context.Suppliers
+                .Include(s => s.Items)
+                .ThenInclude(s => s.NcrQas)
+                .ThenInclude(s => s.Ncr)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.SupplierId == id);
             if (supplier == null)
             {
                 return NotFound();
             }
+
+            var viewModel = new SupplierDetailsViewModel
+            {
+                Supplier = supplier,
+                RelatedNCRs = supplier.Items.FirstOrDefault().NcrQas.Select(nqa => nqa.Ncr).ToList()
+            };
 
             return View(supplier);
         }
