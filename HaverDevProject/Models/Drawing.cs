@@ -7,15 +7,11 @@ using Microsoft.EntityFrameworkCore;
 namespace HaverDevProject.Models;
 
 [Table("drawing")]
-public partial class Drawing 
+public partial class Drawing
 {
     [Key]
     [Column("drawingId")]
     public int DrawingId { get; set; }
-
-    [Display(Name = "Check the box if drawing requires updating")]
-    [Column("DrawingRequireUpdating")]
-    public bool DrawingRequireUpdating { get; set; } = false;
 
     [Display(Name = "Original Rev. Number")]
     [Column("drawingOriginalRevNumber")]

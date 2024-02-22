@@ -7,26 +7,22 @@ using Microsoft.EntityFrameworkCore;
 namespace HaverDevProject.Models;
 
 [Table("ncrEng")]
-public partial class NcrEng : Auditable, IAuditable
+public partial class NcrEng : Auditable
 {
     [Key]
     [Column("ncrEngId")]
     public int NcrEngId { get; set; }
 
-    [Display(Name = "Check the box if customer requires notification of NCR (if checked, raise message to customer detailing issues)")]
+    [Display(Name = "Does Customer require notification of NCR")]
     [Column("ncrEngCustomerNotification")]
     public bool NcrEngCustomerNotification { get; set; } = false;
 
-    [Display(Name = "Disposition (Sequence of work steps required when 'repair' or 'rework' indicated)")]
+    [Display(Name = "Disposition")]
     [Column("ncrEngDispositionDescription")]
     [StringLength(300, ErrorMessage = "Only 300 characters for disposition description.")]
     [DataType(DataType.MultilineText)]
     [Unicode(false)]
     public string NcrEngDispositionDescription { get; set; }
-
-    [ScaffoldColumn(false)]
-    [Timestamp]
-    public Byte[] RowVersion { get; set; }
 
     [Display(Name = "Engineering")]
     [Column("ncrEngUserId")]
@@ -36,7 +32,7 @@ public partial class NcrEng : Auditable, IAuditable
     [Column("engDispositionTypeId")]
     public int EngDispositionTypeId { get; set; }
 
-    [Display(Name = "Review by HBC Engineering: (indicate disposition by 'checking' one of the following)")]
+    [Display(Name = "Review by HBC Engineering")]
     [Required(ErrorMessage = "You must provide the Disposition Type.")]
     [ForeignKey("EngDispositionTypeId")]
     [InverseProperty("NcrEngs")]
