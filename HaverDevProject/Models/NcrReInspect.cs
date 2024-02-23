@@ -25,6 +25,10 @@ public partial class NcrReInspect : Auditable
     [Column("ncrReInspectUserId")]
     public int NcrReInspectUserId { get; set; }
 
+    [ScaffoldColumn(false)]
+    [Timestamp]
+    public Byte[] RowVersion { get; set; }
+
     [Display(Name = "NCR")]
     [Column("ncrId")]
     public int NcrId { get; set; }

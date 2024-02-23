@@ -2,43 +2,21 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace HaverDevProject.Models;
 
+[ModelMetadataType(typeof(NcrMetaData))]
 [Table("ncr")]
-public partial class Ncr
-{
-    [Key]
-    [Column("ncrId")]
-    public int NcrId { get; set; }
-
-    [Display(Name = "NCR No.")]
-    [Required(ErrorMessage = "You must provide the NCR Number.")]
-    [Column("ncrNumber")]
-    [StringLength(10, ErrorMessage = "The NCR Number cannot be more than 10 characters long.")]
-    [Unicode(false)]
-    public string NcrNumber { get; set; }
-
-    [Display(Name = "Last Updated")]
-    [Required(ErrorMessage = "You must provide the last date the NCR was updated.")]
-    [Column("ncrLastUpdated", TypeName = "datetime")]
-    [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}", ApplyFormatInEditMode = true)]
-    public DateTime NcrLastUpdated { get; set; }
-
-    [Display(Name = "Status")]
-    [Column("ncrStatus")]
-    public bool NcrStatus { get; set; } = true; //default value
-
-    [Display(Name = "Engineer")]
-    public virtual NcrEng NcrEng { get; set; }
-
-    [Display(Name = "Purchasing")]
-    public virtual NcrPurchasing NcrPurchasing { get; set; }
-
-    [Display(Name = "Quality Representative")]
-    public virtual NcrQa NcrQa { get; set; }
-
-    [Display(Name = "Re-Inspector")]
-    public virtual NcrReInspect NcrReInspect { get; set; }       
+public class Ncr
+{    
+    public int NcrId { get; set; }    
+    public string NcrNumber { get; set; }      
+    public DateTime NcrLastUpdated { get; set; }        
+    public bool NcrStatus { get; set; }    
+    public virtual NcrEng NcrEng { get; set; }    
+    public virtual NcrPurchasing NcrPurchasing { get; set; }    
+    public virtual NcrQa NcrQa { get; set; }    
+    public virtual NcrReInspect NcrReInspect { get; set; }  
 }

@@ -2,7 +2,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h2>Lookup Values</h2>
+<h1 class="mb-5"><i class="bi bi-caret-right-fill"></i>Lookup Values</h1>
 
 <div class="text-danger">@Html.Raw(TempData["Feedback"])</div>
 <div>
@@ -10,8 +10,6 @@
     <nav>
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
             <button class="nav-link active" id="Information-Tab" data-bs-toggle="tab" data-bs-target="#InformationPanel" type="button" role="tab" aria-controls="InformationPanel" aria-selected="true">Information</button>
-@*          <button class="nav-link" id="StatusUpdate-Tab" data-bs-toggle="tab" data-bs-target="#StatusUpdatePanel" type="button" role="tab" aria-controls="StatusUpdatePanel" aria-selected="false">Status Update</button>
- *@         @* <button class="nav-link" id="ProcessApplicable-Tab" data-bs-toggle="tab" data-bs-target="#ProcessApplicablePanel" type="button" role="tab" aria-controls="ProcessApplicablePanel" aria-selected="false">Process Applicable</button> *@
             <button class="nav-link" id="EngDispositionType-Tab" data-bs-toggle="tab" data-bs-target="#EngDispositionTypePanel" type="button" role="tab" aria-controls="EngDispositionTypePanel" aria-selected="false">Engineer Disposition Types</button>
             <button class="nav-link" id="OpDispositionType-Tab" data-bs-toggle="tab" data-bs-target="#OpDispositionTypePanel" type="button" role="tab" aria-controls="OpDispositionTypePanel" aria-selected="false">Operations Manager Disposition Types</button>
             <button class="nav-link" id="FollowUpType-Tab" data-bs-toggle="tab" data-bs-target="#FollowUpTypePanel" type="button" role="tab" aria-controls="FollowUpTypePanel" aria-selected="false">Follow Up Types</button>
@@ -24,8 +22,6 @@
                 Just select a Tab to view and maintiain the values for a specific one.
             </p>
         </div>
-@*      <div class="tab-pane fade" id="StatusUpdatePanel" role="tabpanel" aria-labelledby="StatusUpdate-Tab"><br /></div>
- *@     @* <div class="tab-pane fade" id="ProcessApplicablePanel" role="tabpanel" aria-labelledby="ProcessApplicable-Tab"><br /></div> *@
         <div class="tab-pane fade" id="EngDispositionTypePanel" role="tabpanel" aria-labelledby="EngDispositionType-Tab"><br /></div>
         <div class="tab-pane fade" id="OpDispositionTypePanel" role="tabpanel" aria-labelledby="OpDispositionType-Tab"><br /></div>
         <div class="tab-pane fade" id="FollowUpTypePanel" role="tabpanel" aria-labelledby="FollowUpType-Tab"><br /></div>
@@ -37,25 +33,19 @@
 @section Scripts {
     <script type="text/javascript">
         // Mapping for lookup names to dropdown IDs
-        var lookupToDropdownId = {
-            // "ProcessApplicable": "proAppId",
+        var lookupToDropdownId = {        
             "EngDispositionType": "engDispositionTypeId",
             "OpDispositionType": "opDispositionTypeId",
             "FollowUpType": "followUpTypeId",
-            // "StatusUpdate": "statusUpdateId",
         };
         function refreshTab(activeTab) {
             switch (activeTab) {
-                // case 'ProcessApplicable-Tab': $('#ProcessApplicablePanel').load('/Lookup/ProcessApplicable');
-                //     break;
                 case 'EngDispositionType-Tab': $('#EngDispositionTypePanel').load('/Lookup/EngDispositionType');
                     break;
                 case 'OpDispositionType-Tab': $('#OpDispositionTypePanel').load('/Lookup/OpDispositionType');
                     break;
                 case 'FollowUpType-Tab': $('#FollowUpTypePanel').load('/Lookup/FollowUpType');
                     break;
-                // case 'StatusUpdate-Tab': $('#StatusUpdatePanel').load('/Lookup/StatusUpdate');
-                //     break;
                 default: break;
             };
             return;

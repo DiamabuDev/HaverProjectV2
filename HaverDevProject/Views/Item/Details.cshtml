@@ -38,27 +38,20 @@
                 <dd class="col-sm-10">
                     @Html.DisplayFor(model => model.Supplier.SupplierName)
                 </dd>
-                @* Add Defects List Here *@
-                <dt class="col-sm-10">Defects</dt>
-                <dd class="col-sm-10">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Defect Name</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var defect in Model.ItemDefects)
-                            {
-                                <tr>
-                                    <td>@Html.DisplayFor(_ => defect.Defect.DefectName)</td>
-                                    <td>@Html.DisplayFor(_ => defect.Defect.DefectDesription)</td>
-                                    <!-- Add more cells as needed -->
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                <dt class="col-sm-4">
+                Defects                
+                <dd>
+                        @if (Model.ItemDefects.Any())
+                        {
+                        <div class="defects-container @(Model.ItemDefects.Count() > 5 ? "two-columns" : "")">
+                            <ul class="defect-row">                                
+                                    @foreach (var defect in Model.ItemDefects)
+                                    {
+                                    <li>@defect.Defect.DefectName</li>
+                                    }
+                            </ul>
+                        </div>
+                        }
                 </dd>
             </dl>
         </div>

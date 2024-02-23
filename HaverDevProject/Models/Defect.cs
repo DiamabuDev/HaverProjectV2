@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace HaverDevProject.Models;
 
 [Table("defect")]
-public partial class Defect
+public class Defect
 {
     [Key]
     [Column("defectId")]
@@ -28,5 +28,5 @@ public partial class Defect
     public string DefectDesription { get; set; }
 
     [InverseProperty("Defect")]
-    public virtual ICollection<ItemDefect> ItemDefects { get; set; } = new List<ItemDefect>();
+    public ICollection<ItemDefect> ItemDefects { get; set; } = new HashSet<ItemDefect>();
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Xml.Linq;
 using Microsoft.EntityFrameworkCore;
 
 namespace HaverDevProject.Models;
@@ -12,6 +13,10 @@ public partial class Supplier
     [Key]
     [Column("supplierId")]
     public int SupplierId { get; set; }
+
+    [NotMapped]
+    [Display(Name = "Supplier (incl Code)")]
+    public string Summary => $"{SupplierCode} {SupplierName}";
 
     [Display(Name = "Code")]
     [Required(ErrorMessage = "You must provide the Supplier Code.")]

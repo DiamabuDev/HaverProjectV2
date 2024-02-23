@@ -1,0 +1,70 @@
+﻿@model HaverDevProject.Models.Ncr
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<!-- Ensure this div has the id 'contentToDownload' -->
+<div id="contentToDownload">
+    <div>
+        <h4>Ncr</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.NcrNumber)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.NcrNumber)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.NcrLastUpdated)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.NcrLastUpdated)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.NcrStatus)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.NcrStatus)
+            </dd>
+        </dl>
+    </div>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model?.NcrId">Edit</a> |
+        <a asp-action="Index">Back to List</a>
+    </div>
+</div>
+
+<!-- Button to trigger PDF download -->
+<button id="downloadPdf">Download PDF</button>
+
+<!-- Include html2canvas and jspdf libraries using CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+
+<script>
+    document.getElementById('downloadPdf').addEventListener('click', function () {
+        html2canvas(document.getElementById('contentToDownload')).then(canvas => {
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jspdf.jsPDF();
+
+            const imgProps = pdf.getImageProperties(imgData);
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+            const topMargin = 20; // Top margin
+            const sideMargin = 15; // Side margin for both left and right
+
+            // Adjust the width and height to maintain proportions and fit within the margins
+            const adjustedWidth = pdfWidth - (sideMargin * 2); // Width adjusted for side margins
+            const adjustedHeight = (imgProps.height * adjustedWidth) / imgProps.width; // Adjusted height to maintain aspect ratio
+
+            // Add the image with margins
+            pdf.addImage(imgData, 'PNG', sideMargin, topMargin, adjustedWidth, adjustedHeight);
+            pdf.save("download.pdf");
+        });
+    });
+</script>

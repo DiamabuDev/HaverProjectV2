@@ -117,8 +117,6 @@ namespace HaverDevProject.Controllers
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
 
-            //return View(await suppliers.ToListAsync());
-
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, ControllerName());
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
             var pagedData = await PaginatedList<Defect>.CreateAsync(defects.AsNoTracking(), page ?? 1, pageSize);
@@ -178,7 +176,6 @@ namespace HaverDevProject.Controllers
                     TempData["SuccessMessage"] = "Defect created successfully!";
                     int newDefectId = defect.DefectId;
                     return RedirectToAction("Details", new { id = newDefectId });
-                    //return RedirectToAction(nameof(Index));
                 }
             }
             catch (RetryLimitExceededException /* dex */)
@@ -243,7 +240,6 @@ namespace HaverDevProject.Controllers
                     TempData["SuccessMessage"] = "Defect updated successfully!";
                     int updateDefectId = defectToUpdate.DefectId;
                     return RedirectToAction("Details", new { id = updateDefectId });
-                    //return RedirectToAction(nameof(Index));
                 }
                 catch (RetryLimitExceededException /* dex */)
                 {

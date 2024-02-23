@@ -20,15 +20,19 @@
     <div class="form-horizontal">
         <div class="card card-body bg-custom-color mb-2">
             <div class="row d-flex justify-content-center align-items-center">                
-                <div class="form-group col-lg-4 col-md-5 col-sm-10 col-10">
+                <div class="form-group col-lg-3 col-md-5 col-sm-10 col-10">
                     <label class="control-label mb-1">Find by Name:</label>
                     @Html.TextBox("SearchCode", null, new { @class = "form-control" })
                 </div>
-                <div class="form-group col-lg-4 col-md-5 col-sm-10 col-10">
+                <div class="form-group col-lg-3 col-md-5 col-sm-10 col-10">
                     <label class="mb-1 control-label">Filter by Supplier:</label>
                     @Html.DropDownList("SupplierID", null, "All Suppliers", htmlAttributes: new { @class = "form-control" })
                 </div>
-                <div class="form-group col-lg-4 col-md-6 col-sm-10 col-8 align-self-end">
+                <div class="form-group col-lg-3 col-md-5 col-sm-10 col-10">
+                    <label class="control-label">Filter by Defect:</label>
+                    @Html.DropDownList("DefectID", null, "All Defects", htmlAttributes: new { @class = "form-control" })
+                </div>
+                <div class="form-group col-lg-3 col-md-6 col-sm-10 col-8 align-self-end">
                     <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary mt-4 ms-2" />
                     <a asp-action="Index" class="btn btn-outline-dark mt-4 ms-4">Clear</a>
                 </div>
@@ -38,27 +42,29 @@
     <table class="table table-hover table-striped">
         <thead class="custom-header-bg">
             <tr>                
-                <th class="d-none d-md-table-cell">
+                <th class="code-col">
                     <button type="submit" name="actionButton" value="Code" class="btn text-light custom-btn-text-start">
                         SAP No.
                         @Html.Raw(ViewData["filterApplied:ItemNumber"])
                     </button>
                 </th>
-                <th>
+                <th class="two-col-1">
                     <button type="submit" name="actionButton" value="Item" class="btn text-light custom-btn-text-start">
                         Name
                         @Html.Raw(ViewData["filterApplied:ItemName"])
                     </button>
                 </th>
-                @* <th class="d-none d-md-table-cell">
-                <input type="submit" name="actionButton" value="Description" class="btn text-light" />
-                <span><i class="bi bi-filter"></i></span>
-                </th> *@
-                <th>
+                <th class="four-cols">
                     <button type="submit" name="actionButton" value="Supplier" class="btn text-light custom-btn-text-start">
                         Supplier
                         @Html.Raw(ViewData["filterApplied:Supplier"])
                     </button>
+                </th>
+                <th class="four-cols">
+                <button type="submit" name="actionButton" value="Defect" class="btn text-light custom-btn-text-start">
+                Defect Types
+                @Html.Raw(ViewData["filterApplied:Defect"])
+                </button>
                 </th>
                 <th></th>
             </tr>
@@ -66,19 +72,52 @@
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>                    
+                <tr class="custom-hover">
                     <td>
                         @Html.DisplayFor(modelItem => item.ItemNumber)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.ItemName)
                     </td>
-                    @* <td class="d-none d-md-table-cell">
-                @Html.DisplayFor(modelItem => item.ItemDescription)
-                </td> *@
                     <td>
                         @Html.DisplayFor(modelItem => item.Supplier.SupplierName)
                     </td>
+                    <td>
+                        @if (item.ItemDefects.Any())
+                        {
+                            <ul>
+                                @for (int i = 0; i < item.ItemDefects.Count && i < 5; i++)
+                                {
+                                    <li>@item.ItemDefects.OrderBy(id => id.Defect.DefectName).ElementAt(i).Defect.DefectName</li>
+                                }
+                            </ul>
+
+                            @if (item.ItemDefects.Count > 5)
+                            {
+                                <a href="#" class="text-dark view-more" onclick="toggleDefectsVisibility(this); return false;">View More</a>
+                                <ul class="additional-defects" style="display:none;">
+                                    @for (int i = 5; i < item.ItemDefects.Count; i++)
+                                    {
+                                        <li>@item.ItemDefects.OrderBy(id => id.Defect.DefectName).ElementAt(i).Defect.DefectName</li>
+                                    }
+                                </ul>
+                            }
+                        }
+
+                        <script>
+                            function toggleDefectsVisibility(element) {
+                                var additionalDefects = element.nextElementSibling;
+                                if (additionalDefects.style.display === "none") {
+                                    additionalDefects.style.display = "block";
+                                    element.innerText = "View Less";
+                                } else {
+                                    additionalDefects.style.display = "none";
+                                    element.innerText = "View More";
+                                }
+                            }
+                        </script>
+                    </td>
+
 
                     <td>
                         <a asp-action="Edit" asp-route-id="@item.ItemId" class="btn text-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>

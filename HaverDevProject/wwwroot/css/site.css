@@ -97,6 +97,8 @@ body {
     width: 210px;
 }
 
+
+
 /* Styles for mobile devices */
 @media (max-width: 767px) {
     .dashboard {
@@ -165,6 +167,9 @@ body {
     background-color: #6B81AA;
     color: #fff;
 }
+.table-hover tbody tr:hover .btn.text-primary i {    
+    color: #fff;
+}
 
 .btn-primary {
     background-color: #1C335E;
@@ -226,6 +231,10 @@ body {
     width: 25%;
 }
 
+.code-col {
+    width: 10%;
+}
+
 .icon-drop {
     justify-content: space-between;
     width: 100%;
@@ -237,14 +246,36 @@ body {
     padding-left: 0;
 }
 
-.custom-link:hover {
-    color: white !important;
+.custom-hover:hover .view-more {
+    color: white !important; 
 }
 
-.custom-hover:hover a {
-    color: white !important;
+.custom-hover ul {
+    padding-left: 1.5rem;
 }
 
 .big-col {
-    width: 40%;
+    width: 55%;
+}
+
+.defects-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; 
+}
+
+.defect-row {
+    list-style-type: none; 
+    padding: 0; 
+}
+
+.two-columns {
+    column-count: 2;
+    column-gap: 20px; 
+}
+
+.defects-container.two-columns {
+    display: block; 
+    column-count: 2;
+    column-gap: 20px;
 }

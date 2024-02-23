@@ -60,8 +60,6 @@ public partial class HaverNiagaraContext : DbContext
 
     public virtual DbSet<ItemDefectPhoto> ItemDefectPhotos { get; set; }
 
-    public virtual DbSet<ItemDefectVideo> ItemDefectVideos { get; set; }
-
     public virtual DbSet<Ncr> Ncrs { get; set; }
 
     public virtual DbSet<NcrEng> NcrEngs { get; set; }
@@ -74,13 +72,9 @@ public partial class HaverNiagaraContext : DbContext
 
     public virtual DbSet<OpDispositionType> OpDispositionTypes { get; set; }
 
-    //public virtual DbSet<OrderDetail> OrderDetails { get; set; }
-
-    //public virtual DbSet<ProcessApplicable> ProcessApplicables { get; set; }
-
-    //public virtual DbSet<StatusUpdate> StatusUpdates { get; set; }
-
     public virtual DbSet<Supplier> Suppliers { get; set; }
+
+    public virtual DbSet<NcrProcurement> NcrProcurements { get; set; }
 
     //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     //    => optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=HaverNiagara;Trusted_Connection=SSPI;encrypt=false;");
@@ -128,21 +122,10 @@ public partial class HaverNiagaraContext : DbContext
             entity.HasOne(d => d.Supplier).WithMany(p => p.Items)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_item_supplier");
-        });
+        });  
 
-        modelBuilder.Entity<ItemDefect>(entity =>
-        {
-            entity.HasKey(e => e.ItemDefectId).HasName("pk_itemDefect_itemDefectId");
-
-            entity.HasOne(d => d.Defect).WithMany(p => p.ItemDefects)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_itemDefect_defect");
-
-            entity.HasOne(d => d.Item).WithMany(p => p.ItemDefects)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_itemDefect_item");
-
-        });
+        modelBuilder.Entity<ItemDefect>()
+            .HasKey(t => new { t.ItemId, t.DefectId });
 
         modelBuilder.Entity<ItemDefectPhoto>(entity =>
         {
@@ -151,15 +134,6 @@ public partial class HaverNiagaraContext : DbContext
             entity.HasOne(d => d.NcrQa).WithMany(p => p.ItemDefectPhotos)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_itemDefectPhoto_itemDefect");
-        });
-
-        modelBuilder.Entity<ItemDefectVideo>(entity =>
-        {
-            entity.HasKey(e => e.ItemDefectVideoId).HasName("pk_itemDefectVideo");
-
-            entity.HasOne(d => d.NcrQa).WithMany(p => p.ItemDefectVideos)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_itemDefectVideo_itemDefect");
         });
 
         modelBuilder.Entity<Ncr>(entity =>
@@ -189,6 +163,10 @@ public partial class HaverNiagaraContext : DbContext
         modelBuilder.Entity<NcrQa>(entity =>
         {
             entity.HasKey(e => e.NcrQaId).HasName("pk_ncrQA_ncrQAId");
+
+            entity.HasOne(d => d.Item).WithMany(p => p.NcrQas)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_ncrQa_item");
         });
 
         modelBuilder.Entity<NcrReInspect>(entity =>
@@ -196,33 +174,16 @@ public partial class HaverNiagaraContext : DbContext
             entity.HasKey(e => e.NcrReInspectId).HasName("pk_ncrReInspect_ncrReInspectId");
         });
 
+        modelBuilder.Entity<NcrProcurement>(entity =>
+        {
+            entity.HasKey(e => e.NcrProcurementId).HasName("pk_ncrProcurement_ncrProcurementId");
+        });
+
         modelBuilder.Entity<OpDispositionType>(entity =>
         {
             entity.HasKey(e => e.OpDispositionTypeId).HasName("pk_opDispositionType_opDispositionTypeId");
         });
-
-        //modelBuilder.Entity<OrderDetail>(entity =>
-        //{
-        //    entity.HasKey(e => e.OrderId).HasName("pk_orderDetail_orderId");
-
-        //    entity.HasOne(d => d.Item).WithMany(p => p.OrderDetails)
-        //        .OnDelete(DeleteBehavior.ClientSetNull)
-        //        .HasConstraintName("fk_orderDetail_item");
-
-        //    entity.HasOne(d => d.NcrQa).WithMany(p => p.OrderDetails)
-        //        .OnDelete(DeleteBehavior.ClientSetNull)
-        //        .HasConstraintName("fk_orderDetail_ncrQA");
-        //});
-
-        //modelBuilder.Entity<ProcessApplicable>(entity =>
-        //{
-        //    entity.HasKey(e => e.ProAppId).HasName("pk_processApplicable_proAppId");
-        //});
-
-        //modelBuilder.Entity<StatusUpdate>(entity =>
-        //{
-        //    entity.HasKey(e => e.StatusUpdateId).HasName("pk_status_statusUpdateId");
-        //});
+               
 
         modelBuilder.Entity<Item>()
             .HasIndex(i => i.ItemNumber)

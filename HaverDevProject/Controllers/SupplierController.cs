@@ -10,6 +10,7 @@ using HaverDevProject.Models;
 using HaverDevProject.Utilities;
 using HaverDevProject.CustomControllers;
 using Microsoft.EntityFrameworkCore.Storage;
+using HaverDevProject.ViewModels;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HaverDevProject.Controllers
@@ -24,11 +25,11 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: Supplier
-        public async Task<IActionResult> Index(string SearchCode, int? page, int? pageSizeID, 
-            string actionButton, string sortDirection = "asc", string sortField = "Code")
+        public async Task<IActionResult> Index(string SearchCode, string SearchContact, int? page, int? pageSizeID, 
+            string actionButton, string sortDirection = "asc", string sortField = "Code", string filter = "Active")
         {
             //List of sort options.
-            string[] sortOptions = new[] { "Code", "Name", "Email", "Status"};            
+            string[] sortOptions = new[] { "Code", "Name", "Email", "Contact"};            
 
             var suppliers = _context.Suppliers
                 .AsNoTracking();
@@ -38,7 +39,25 @@ namespace HaverDevProject.Controllers
             {
                 suppliers = suppliers.Where(s => s.SupplierCode.ToUpper().Contains(SearchCode.ToUpper())
                                         || s.SupplierName.ToUpper().Contains(SearchCode.ToUpper()));
-            }           
+            }
+
+            if (!String.IsNullOrEmpty(SearchContact))
+            {
+                suppliers = suppliers.Where(s => s.SupplierContactName.ToUpper().Contains(SearchContact.ToUpper()));
+            }
+
+            if (!String.IsNullOrEmpty(filter))
+            {
+                if (filter == "Active")
+                {
+                    suppliers = suppliers.Where(s => s.SupplierStatus == true);
+                }
+                else //(filter == "Inactive")
+                {
+
+                    suppliers = suppliers.Where(s => s.SupplierStatus == false);
+                }
+            }
 
             //Sorting columns
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
@@ -102,20 +121,32 @@ namespace HaverDevProject.Controllers
 
                 }
             }
-            else //Sorting by Status
+            else if (sortField == "Status")
             {
                 if (sortDirection == "asc")
                 {
                     suppliers = suppliers
-                        .OrderBy(p => p.SupplierStatus);
-                    ViewData["filterApplied:SupplierStatus"] = "<i class='bi bi-sort-up'></i>";
+                        .OrderBy(s => s.SupplierStatus);
+                    ViewData["filterApplied:Status"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     suppliers = suppliers
-                        .OrderByDescending(p => p.SupplierStatus);
-                    ViewData["filterApplied:SupplierStatus"] = "<i class='bi bi-sort-down'></i>";
-
+                        .OrderByDescending(s => s.SupplierStatus);
+                    ViewData["filterApplied:Status"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else //Sorting by Contact
+            {
+                if (sortDirection == "asc")
+                {
+                    suppliers = suppliers.OrderBy(s => s.SupplierContactName);
+                    ViewData["filterApplied:SupplierContact"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    suppliers = suppliers.OrderByDescending(s => s.SupplierContactName);
+                    ViewData["filterApplied:SupplierContact"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
             //Set sort for next time
@@ -142,11 +173,21 @@ namespace HaverDevProject.Controllers
             }
 
             var supplier = await _context.Suppliers
+                .Include(s => s.Items)
+                .ThenInclude(s => s.NcrQas)
+                .ThenInclude(s => s.Ncr)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.SupplierId == id);
             if (supplier == null)
             {
                 return NotFound();
             }
+
+            var viewModel = new SupplierDetailsViewModel
+            {
+                Supplier = supplier,
+                RelatedNCRs = supplier.Items.FirstOrDefault().NcrQas.Select(nqa => nqa.Ncr).ToList()
+            };
 
             return View(supplier);
         }
@@ -216,7 +257,7 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("SupplierId,SupplierCode,SupplierName,SupplierEmail")] Supplier supplier)
+        public async Task<IActionResult> Edit(int id, [Bind("SupplierId,SupplierCode,SupplierName,SupplierContactName,SupplierEmail,SupplierStatus")] Supplier supplier)
         {
             if (id != supplier.SupplierId)
             {
