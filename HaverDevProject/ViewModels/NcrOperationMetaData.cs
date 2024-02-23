@@ -9,10 +9,10 @@ namespace HaverDevProject.ViewModels
         public int NcrId { get; set; }
 
         [Display(Name = "Purchasing's Preliminary Decision")]
+        [Required(ErrorMessage = "You must provide the Disposition Type.")]
         public int OpDispositionTypeId { get; set; }
 
         [Display(Name = "Purchasing's Preliminary Decision")]
-        [Required(ErrorMessage = "You must provide the Disposition Type.")]
         public OpDispositionType OpDispositionType { get; set; }
 
         [StringLength(300)]

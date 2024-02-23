@@ -1,0 +1,46 @@
+﻿@model IEnumerable<HaverDevProject.Models.NcrEng>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.NcrEngCustomerNotification)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NcrEngDispositionDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NcrEngUserId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EngDispositionType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ncr)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.NcrEngCustomerNotification)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NcrEngDispositionDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NcrEngUserId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EngDispositionType.EngDispositionTypeName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ncr.NcrNumber)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

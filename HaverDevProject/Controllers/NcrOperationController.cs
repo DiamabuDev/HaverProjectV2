@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -11,6 +12,7 @@ using HaverDevProject.ViewModels;
 using HaverDevProject.Utilities;
 using HaverDevProject.CustomControllers;
 using System.Numerics;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace HaverDevProject.Controllers
 {
@@ -27,14 +29,17 @@ namespace HaverDevProject.Controllers
         public async Task<IActionResult> Index(string SearchCode, DateTime StartDate, DateTime EndDate,
             int? page, int? pageSizeID, string actionButton, string sortDirection = "desc", string sortField = "Created", string filter = "Active")
         {
+            
             //Set the date range filer based on the values in the database
             if (EndDate == DateTime.MinValue)
             {
                 StartDate = _context.NcrOperations
-                .Min(f => f.UpdateOp.Date);
+                    .Min(f => f.UpdateOp.Date)
+                    .Subtract(TimeSpan.FromDays(1));
 
                 EndDate = _context.NcrOperations
-                .Max(f => f.UpdateOp.Date);
+                    .Max(f => f.UpdateOp.Date)
+                    .Add(TimeSpan.FromDays(1));
 
                 ViewData["StartDate"] = StartDate.ToString("yyyy-MM-dd");
                 ViewData["EndDate"] = EndDate.ToString("yyyy-MM-dd");
@@ -59,6 +64,7 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.FollowUpType)
                 .AsNoTracking();
 
+            GetNcrs();
 
             //Filterig values            
             if (!String.IsNullOrEmpty(filter))
@@ -248,12 +254,12 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: NcrOperation/Create
-        public IActionResult Create()
+        public IActionResult Create(string ncrNumber)
         {
             NcrOperationDTO ncr = new NcrOperationDTO();
-            ncr.NcrNumber = GetNcrNumber();
-            ncr.UpdateOp = DateTime.Today;
-            ncr.NcrStatus = true; //Active
+            ncr.NcrNumber = ncrNumber; // Set the NcrNumber from the parameter
+            ncr.UpdateOp = DateTime.Now;
+            ncr.NcrStatus = true; // Active
 
             ViewData["FollowUpTypeId"] = new SelectList(_context.FollowUpTypes, "FollowUpTypeId", "FollowUpTypeName");
             ViewData["OpDispositionTypeId"] = new SelectList(_context.OpDispositionTypes, "OpDispositionTypeId", "OpDispositionTypeName");
@@ -267,41 +273,44 @@ namespace HaverDevProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(NcrOperationDTO ncrOperationDTO, int FollowUpTypeId, int OpDispositionTypeId)
         {
-            if (ModelState.IsValid)
+            try
             {
-                Ncr ncr = new Ncr
+                if (ModelState.IsValid)
                 {
-                    NcrNumber = ncrOperationDTO.NcrNumber,
-                    NcrLastUpdated = DateTime.Now,
-                    NcrStatus = ncrOperationDTO.NcrStatus
-                };
+                    // Find the Ncr entity based on the NcrNumber in the DTO
+                    int ncrIdObt = _context.Ncrs
+                        .Where(n => n.NcrNumber == ncrOperationDTO.NcrNumber)
+                        .Select(n => n.NcrId)
+                        .FirstOrDefault();
 
-                _context.Add(ncr);
-                await _context.SaveChangesAsync();
+                    NcrOperation ncrOperation = new NcrOperation
+                    {
+                        NcrId = ncrIdObt, // Assign the NcrId from the found Ncr entity
+                        OpDispositionTypeId = ncrOperationDTO.OpDispositionTypeId,
+                        NcrPurchasingDescription = ncrOperationDTO.NcrPurchasingDescription,
+                        Car = ncrOperationDTO.Car,
+                        CarNumber = ncrOperationDTO.CarNumber,
+                        FollowUp = ncrOperationDTO.FollowUp,
+                        ExpectedDate = ncrOperationDTO.ExpectedDate,
+                        FollowUpTypeId = ncrOperationDTO.FollowUpTypeId,
+                        UpdateOp = DateTime.Now,
+                        NcrPurchasingUserId = 1,
+                    };
 
-                //getting the ncrId through the NcrNumber 
-                int ncrIdObt = _context.Ncrs
-                    .Where(n => n.NcrNumber == ncrOperationDTO.NcrNumber)
-                    .Select(n => n.NcrId)
-                    .FirstOrDefault();
-
-                NcrOperation ncrOperation = new NcrOperation
-                {
-                    NcrOpId = ncrOperationDTO.NcrOpId,
-                    NcrId = ncrOperationDTO.NcrId,
-                    OpDispositionTypeId = ncrOperationDTO.OpDispositionTypeId,
-                    NcrPurchasingDescription = ncrOperationDTO.NcrPurchasingDescription,
-                    Car = ncrOperationDTO.Car,
-                    CarNumber = ncrOperationDTO.CarNumber,
-                    ExpectedDate = ncrOperationDTO.ExpectedDate,
-                    FollowUpTypeId = ncrOperationDTO.FollowUpTypeId,
-                    UpdateOp = ncrOperationDTO.UpdateOp,
-                    NcrPurchasingUserId = ncrOperationDTO.NcrPurchasingUserId,
-                };
-                _context.NcrOperations.Add(ncrOperation);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                    _context.NcrOperations.Add(ncrOperation);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
             }
+            catch (RetryLimitExceededException /* dex */)
+            {
+                ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
+            }
+            catch (DbUpdateException)
+            {
+                ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+            }
+
             PopulateDropDownLists();
             return View(ncrOperationDTO);
         }
@@ -408,35 +417,6 @@ namespace HaverDevProject.Controllers
           return _context.NcrOperations.Any(e => e.NcrOpId == id);
         }
 
-        public string GetNcrNumber()
-        {
-            string lastNcrNumber = _context.Ncrs
-                .OrderByDescending(n => n.NcrNumber)
-                .Select(n => n.NcrNumber)
-                .FirstOrDefault();
-
-            if (lastNcrNumber != null)
-            {
-                string lastYear = lastNcrNumber.Substring(0, 4);
-                string lastConsecutiveNumber = lastNcrNumber.Substring(5);
-
-                if (lastYear == DateTime.Today.Year.ToString())
-                {
-                    int nextNumber = int.Parse(lastConsecutiveNumber) + 1;
-                    string nextNumberString = nextNumber.ToString("000");
-
-                    //Ncr Format
-                    return $"{lastYear}-{nextNumberString}";
-                }
-            }
-
-            string currentYear = DateTime.Today.Year.ToString();
-            int nextConsecutiveNumber = 1;
-            string nextConsecutiveNumberString = nextConsecutiveNumber.ToString("000");
-
-            //Ncr Format
-            return $"{currentYear}-{nextConsecutiveNumberString}";
-        }
 
         private SelectList OpDispositionTypeSelectList(int? selectedId)
         {
@@ -449,6 +429,55 @@ namespace HaverDevProject.Controllers
             return new SelectList(_context.FollowUpTypes
                 .OrderBy(s => s.FollowUpTypeName), "FollowUpTypeId", "FollowUpTypeName", selectedId);
         }
+
+        //public PartialViewResult All()
+        //{
+        //    List<NcrEng> model = _context.NcrEngs.ToList();
+        //    return PartialView("_NcrEng", model);
+        //}
+
+        public JsonResult GetNcrs()
+        {
+            // Get the list of NcrIds that already exist in NcrOperation
+            List<int> existingNcrIds = _context.NcrOperations.Select(op => op.NcrId).ToList();
+
+            // Include related data in the query for NcrEng
+            List<NcrEng> pendings = _context.NcrEngs
+                .Include(ncrEng => ncrEng.Ncr)
+                .Where(ncrEng => !existingNcrIds.Contains(ncrEng.NcrId))
+                .ToList();
+
+            // Extract relevant data for the client-side
+            var ncrs = pendings.Select(ncrEng => new
+            {
+                NcrId = ncrEng.NcrId,
+                NcrEngDispositionDescription = ncrEng.NcrEngDispositionDescription,
+                NcrNumber = ncrEng.Ncr.NcrNumber
+            }).ToList();
+
+            return Json(ncrs);
+        }
+
+        public JsonResult GetPendingCount()
+        {
+            // Get the list of NcrIds that already exist in NcrOperation
+            List<int> existingNcrIds = _context.NcrOperations.Select(op => op.NcrId).ToList();
+
+            // Count only the unique NcrIds in NcrEngs
+            int pendingCount = _context.NcrEngs
+                .Where(ncrEng => !existingNcrIds.Contains(ncrEng.NcrId))
+                .Select(ncrEng => ncrEng.NcrId)
+                .Distinct()
+                .Count();
+
+            return Json(pendingCount);
+        }
+
+        //public JsonResult GetNcrs()      
+        //{
+        //    List<NcrEng> pendings = _context.NcrEngs.ToList();
+        //    return Json(pendings);
+        //}
 
         private void PopulateDropDownLists(NcrOperation ncrOperation = null)
         {

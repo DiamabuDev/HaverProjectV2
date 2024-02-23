@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace HaverDevProject.Models;
 
@@ -44,6 +45,7 @@ public partial class NcrEng : Auditable
 
     [Display(Name = "NCR")]
     [Required(ErrorMessage = "You must provide the NCR.")]
+    [Column("ncr")]
     [ForeignKey("NcrId")]
     public virtual Ncr Ncr { get; set; }
 
