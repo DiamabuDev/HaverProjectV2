@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace HaverDevProject.Models;
 
 [Table("ncrReInspect")]
-public partial class NcrReInspect : Auditable
+public class NcrReInspect : Auditable
 {
     [Key]
     [Column("ncrReInspectId")]
@@ -19,7 +20,7 @@ public partial class NcrReInspect : Auditable
 
     [Display(Name = "New NCR Number")]
     [Column("ncrReInspectNewNcrNumber")]
-    public int? NcrReInspectNewNcrNumber { get; set; }    
+    public int? NcrReInspectNewNcrNumber { get; set; }
 
     [Display(Name = "Inspector's Name")]
     [Column("ncrReInspectUserId")]
@@ -29,6 +30,8 @@ public partial class NcrReInspect : Auditable
     [Timestamp]
     public Byte[] RowVersion { get; set; }
 
+    //public bool NcrQaStatusFlag { get; set; } //would this be needed?
+
     [Display(Name = "NCR")]
     [Column("ncrId")]
     public int NcrId { get; set; }
@@ -36,6 +39,6 @@ public partial class NcrReInspect : Auditable
     [Display(Name = "NCR")]
     [Required(ErrorMessage = "You must provide the NCR.")]
     [ForeignKey("NcrId")]
-    public virtual Ncr Ncr { get; set; }
+    public Ncr Ncr { get; set; }
 
 }

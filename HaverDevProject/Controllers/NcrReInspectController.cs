@@ -9,10 +9,11 @@ using HaverDevProject.Data;
 using HaverDevProject.Models;
 using Microsoft.EntityFrameworkCore.Storage;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using HaverDevProject.CustomControllers;
 
 namespace HaverDevProject.Controllers
 {
-    public class NcrReInspectController : Controller
+    public class NcrReInspectController : ElephantController
     {
         private readonly HaverNiagaraContext _context;
 
@@ -107,7 +108,9 @@ namespace HaverDevProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id)
         {
-            var ncrReInspectToUpdate = await _context.NcrReInspects.FirstOrDefaultAsync(r => r.NcrReInspectId == id);
+            var ncrReInspectToUpdate = await _context.NcrReInspects
+                .Include(r => r.Ncr)
+                .FirstOrDefaultAsync(r => r.NcrReInspectId == id);
 
             if (ncrReInspectToUpdate == null)
             {
@@ -136,6 +139,26 @@ namespace HaverDevProject.Controllers
                 catch (DbUpdateException)
                 {
                     ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                }
+            }
+            else
+            {
+                //Debugging Approach: Not for production code.
+                //This code will list validation errors at the top of the View.
+                //Use it to diagnose when there seems to be a Validation Error
+                //that is going unreported.  Remove this code when you are
+                //finished debugging.
+                var booBoos = ModelState.Where(x => x.Value.Errors.Count > 0)
+                    .Select(x => new { x.Key, x.Value.Errors });
+
+                foreach (var booBoo in booBoos)
+                {
+                    string key = booBoo.Key;
+                    foreach (var error in booBoo.Errors)
+                    {
+                        var errorMessage = error?.ErrorMessage;
+                        ModelState.AddModelError("", "For " + key + ": " + errorMessage);
+                    }
                 }
             }
             ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrReInspectToUpdate.NcrId);
