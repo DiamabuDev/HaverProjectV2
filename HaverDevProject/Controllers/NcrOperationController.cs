@@ -473,12 +473,6 @@ namespace HaverDevProject.Controllers
             return Json(pendingCount);
         }
 
-        //public JsonResult GetNcrs()      
-        //{
-        //    List<NcrEng> pendings = _context.NcrEngs.ToList();
-        //    return Json(pendings);
-        //}
-
         private void PopulateDropDownLists(NcrOperation ncrOperation = null)
         {
             if ((ncrOperation?.OpDispositionTypeId).HasValue)
