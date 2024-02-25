@@ -58,6 +58,7 @@ namespace HaverDevProject.Controllers
 			var ncrEng = _context.NcrEngs
 				.Include(n => n.EngDispositionType)
 				.Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
+				.Include(n => n.Ncr)
 				.Include(n => n.Drawing)
 				.AsNoTracking();
 
