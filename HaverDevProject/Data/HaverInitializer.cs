@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Threading;
 using System;
+using Microsoft.EntityFrameworkCore;
 
 namespace HaverDevProject.Data
 {
