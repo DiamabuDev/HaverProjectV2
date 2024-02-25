@@ -11,7 +11,8 @@ namespace HaverDevProject.ViewModels
     {                
         public int NcrQaId { get; set; }
         public string NcrNumber { get; set; }
-        public bool NcrStatus { get; set; } = true;        
+        public bool NcrStatus { get; set; } = true;
+        public NcrPhase NcrPhase { get; set; }
         public bool NcrQaItemMarNonConforming { get; set; }        
         public bool NcrQaProcessApplicable { get; set; }        
         public DateTime NcrQacreationDate { get; set; }       

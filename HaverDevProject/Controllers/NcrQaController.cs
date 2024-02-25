@@ -48,7 +48,7 @@ namespace HaverDevProject.Controllers
             }            
 
             //List of sort options.
-            string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "Defect", "PO Number" };
+            string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "Defect", "PO Number", "Phase"};
 
             PopulateDropDownLists();
 
@@ -168,19 +168,19 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:Created"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
-            else if (sortField == "Status")
+            else if (sortField == "Phase")
             {
                 if (sortDirection == "asc")
                 {
                     ncrQa = ncrQa
-                        .OrderBy(p => p.Ncr.NcrStatus);
-                    ViewData["filterApplied:Status"] = "<i class='bi bi-sort-up'></i>";
+                        .OrderBy(p => p.Ncr.NcrPhase); //.OrderBy(p => p.Ncr.NcrStatus);
+                    ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncrQa = ncrQa
-                        .OrderByDescending(p => p.Ncr.NcrStatus);
-                    ViewData["filterApplied:Status"] = "<i class='bi bi-sort-down'></i>";
+                        .OrderByDescending(p => p.Ncr.NcrPhase); //.OrderByDescending(p => p.Ncr.NcrStatus);
+                    ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
             else //(sortField == "PO Number")
@@ -255,12 +255,13 @@ namespace HaverDevProject.Controllers
         public async Task<IActionResult> Create(NcrQaDTO ncrQaDTO, List<IFormFile> Photos)
         {
             if (ModelState.IsValid)
-            {
+            {                
                 Ncr ncr = new Ncr
                 {
                     NcrNumber = ncrQaDTO.NcrNumber,
                     NcrLastUpdated = DateTime.Now,
-                    NcrStatus = ncrQaDTO.NcrStatus
+                    NcrStatus = ncrQaDTO.NcrStatus,
+                    NcrPhase = ncrQaDTO.NcrQaEngDispositionRequired == true ? NcrPhase.Engineer : NcrPhase.Operations
                 };
 
                 _context.Add(ncr);
