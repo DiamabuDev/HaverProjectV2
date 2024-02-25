@@ -59,7 +59,9 @@ namespace HaverDevProject.Controllers
 				.Include(n => n.EngDispositionType)
 				.Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
 				.Include(n => n.Ncr)
-				.Include(n => n.Drawing)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n =>n.Item)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
+                .Include(n => n.Drawing)
 				.AsNoTracking();
 
 			//Filterig values            
@@ -201,11 +203,17 @@ namespace HaverDevProject.Controllers
 				return NotFound();
 			}
 
-			var ncrEng = await _context.NcrEngs
+            var ncrEng = await _context.NcrEngs
 				.Include(n => n.EngDispositionType)
+				.Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
 				.Include(n => n.Ncr)
+				.Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
+			    .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects).ThenInclude(n=>n.Defect)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
 				.Include(n => n.Drawing)
 				.FirstOrDefaultAsync(m => m.NcrEngId == id);
+
 			if (ncrEng == null)
 			{
 				return NotFound();
