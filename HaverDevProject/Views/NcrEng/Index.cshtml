@@ -123,7 +123,7 @@
                 </td> *@
 
                     <td>
-                        @Html.ActionLink("Edit", "Edit", new { id = item.NcrEngId })
+                        @* @Html.ActionLink("Edit", "Edit", new { id = item.NcrEngId }) *@
                         <a asp-action="Edit" asp-route-id="@item.NcrEngId" class="btn text-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
                         <a asp-action="Details" asp-route-id="@item.NcrEngId" class="btn text-primary" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
                         @* <a asp-action="Delete" asp-route-id="@item.NcrQaId">Delete</a> *@
