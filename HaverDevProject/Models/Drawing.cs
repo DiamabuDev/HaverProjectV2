@@ -27,7 +27,9 @@ public partial class Drawing
 
     [Display(Name = "Revision Date")]
     [Column("drawingRevDate", TypeName = "date")]
-    public DateTime DrawingRevDate { get; set; }
+    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+    [DataType(DataType.Date)]
+    public DateTime DrawingRevDate { get; set; } = DateTime.Now;
 
     [Display(Name = "Drawing User ID")]
     [Column("drawingUserId")]
