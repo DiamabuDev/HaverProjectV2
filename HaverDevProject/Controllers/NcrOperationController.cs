@@ -53,7 +53,7 @@ namespace HaverDevProject.Controllers
             }
 
             //List of sort options.
-            string[] sortOptions = new[] { "Created", "NCR #", "Disposition Type", "Purchasing Description", "Car", "FollowUp-up", };
+            string[] sortOptions = new[] { "Created", "NCR #", "Disposition Type", "Car", "FollowUp", };
 
             PopulateDropDownLists();
 
@@ -138,21 +138,21 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:DispositionType"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
-            else if (sortField == "Purchasing Description")
-            {
-                if (sortDirection == "asc")
-                {
-                    ncrOperation = ncrOperation
-                        .OrderBy(p => p.NcrPurchasingDescription);
-                    ViewData["filterApplied:PurchasingDescription"] = "<i class='bi bi-sort-up'></i>";
-                }
-                else
-                {
-                    ncrOperation = ncrOperation
-                        .OrderByDescending(p => p.NcrPurchasingDescription);
-                    ViewData["filterApplied:PurchasingDescription"] = "<i class='bi bi-sort-down'></i>";
-                }
-            }
+            //else if (sortField == "Purchasing Description")
+            //{
+            //    if (sortDirection == "asc")
+            //    {
+            //        ncrOperation = ncrOperation
+            //            .OrderBy(p => p.NcrPurchasingDescription);
+            //        ViewData["filterApplied:PurchasingDescription"] = "<i class='bi bi-sort-up'></i>";
+            //    }
+            //    else
+            //    {
+            //        ncrOperation = ncrOperation
+            //            .OrderByDescending(p => p.NcrPurchasingDescription);
+            //        ViewData["filterApplied:PurchasingDescription"] = "<i class='bi bi-sort-down'></i>";
+            //    }
+            //}
             else if (sortField == "Created")
             {
                 if (sortDirection == "desc") //desc by default
@@ -185,7 +185,7 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:Status"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
-            else if (sortField == "Status")
+            else if (sortField == "FollowUp")
             {
                 if (sortDirection == "asc")
                 {
@@ -443,7 +443,10 @@ namespace HaverDevProject.Controllers
 
             // Include related data in the query for NcrEng
             List<NcrEng> pendings = _context.NcrEngs
-                .Include(ncrEng => ncrEng.Ncr)
+                .Include(n => n.Ncr)
+                    .ThenInclude(n => n.NcrQa)
+                        .ThenInclude(n => n.Item)
+                            .ThenInclude(n => n.Supplier) 
                 .Where(ncrEng => !existingNcrIds.Contains(ncrEng.NcrId))
                 .ToList();
 
@@ -451,8 +454,8 @@ namespace HaverDevProject.Controllers
             var ncrs = pendings.Select(ncrEng => new
             {
                 NcrId = ncrEng.NcrId,
-                NcrEngDispositionDescription = ncrEng.NcrEngDispositionDescription,
-                NcrNumber = ncrEng.Ncr.NcrNumber
+                NcrNumber = ncrEng.Ncr.NcrNumber,
+                SupplierName = ncrEng.Ncr.NcrQa.Item.Supplier.SupplierName
             }).ToList();
 
             return Json(ncrs);
