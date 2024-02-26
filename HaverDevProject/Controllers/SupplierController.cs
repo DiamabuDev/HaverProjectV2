@@ -183,13 +183,13 @@ namespace HaverDevProject.Controllers
                 return NotFound();
             }
 
-            var viewModel = new SupplierDetailsViewModel
+            var supplierViewModel = new SupplierDetailsViewModel
             {
                 Supplier = supplier,
                 RelatedNCRs = supplier.Items.FirstOrDefault().NcrQas.Select(nqa => nqa.Ncr).ToList()
             };
 
-            return View(supplier);
+            return View(supplierViewModel);
         }
 
         // GET: Supplier/Create
@@ -353,6 +353,63 @@ namespace HaverDevProject.Controllers
                 }
             }
             return View(supplier);            
+        }
+
+        public async Task<IActionResult> SupplierReport(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var ncrData = await _context.Ncrs
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.Item)
+                        .ThenInclude(i => i.Supplier)
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.Item)
+                        .ThenInclude(i => i.ItemDefects)
+                            .ThenInclude(i => i.Defect)
+                .Include(n => n.NcrEng)
+                    .ThenInclude(e => e.EngDispositionType)
+                .Include(n => n.NcrOperation)
+                    .ThenInclude(o => o.FollowUpType)
+                .FirstOrDefaultAsync(n => n.NcrId == id);
+
+            if (ncrData == null)
+            {
+                return NotFound();
+            }
+
+            NcrSupplierReportDTO reportDto = new NcrSupplierReportDTO
+            {
+                NcrNumber = ncrData.NcrNumber,
+                NcrStatus = ncrData.NcrStatus,
+                SupplierName = ncrData.NcrQa?.Item?.Supplier?.SupplierName ?? "Not Available",
+                NcrQaOrderNumber = ncrData.NcrQa?.NcrQaOrderNumber ?? "Not Available",
+                ItemSAP = ncrData.NcrQa?.Item?.ItemNumber ?? 0,
+                ItemName = ncrData.NcrQa?.Item?.ItemName ?? "Not Available",
+                NcrQaQuanReceived = ncrData.NcrQa?.NcrQaQuanReceived ?? 0,
+                NcrQaQuanDefective = ncrData.NcrQa?.NcrQaQuanDefective ?? 0,
+                NcrQaDescriptionOfDefect = ncrData.NcrQa?.NcrQaDescriptionOfDefect ?? "Not Available",
+                EngDispositionType = ncrData.NcrEng?.EngDispositionType?.EngDispositionTypeName ?? "Not Available",
+                EngDispositionDescription = ncrData.NcrEng?.NcrEngDispositionDescription ?? "Not Available",
+                OpDispositionType = ncrData.NcrOperation?.OpDispositionType?.OpDispositionTypeName ?? "Not Available",
+                OperationDescription = ncrData.NcrOperation?.NcrPurchasingDescription ?? "Not Available",
+            };
+
+            foreach (var itemDefect in ncrData.NcrQa.Item.ItemDefects)
+            {
+                if (itemDefect.Defect != null && itemDefect.Defect.DefectName != null)
+                {
+                    reportDto.DefectNames.Add(itemDefect.Defect.DefectName);
+                }
+                else
+                {
+                    reportDto.DefectNames.Add("No Defect Available");                 }
+            }
+
+            return View("SupplierReport", reportDto);
         }
 
         private bool SupplierExists(int id)
