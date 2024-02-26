@@ -12,7 +12,8 @@ namespace HaverDevProject.Models;
 [Table("ncrQA")]
 public class NcrQa : Auditable
 {    
-    public int NcrQaId { get; set; }       
+    public int NcrQaId { get; set; }
+    public bool NcrQaStatusFlag { get; set; }
     public bool NcrQaItemMarNonConforming { get; set; }    
     public bool NcrQaProcessApplicable { get; set; }    
     public DateTime NcrQacreationDate { get; set; }    

@@ -21,8 +21,8 @@ namespace HaverDevProject.Data
 
             try
             {
-                //context.Database.EnsureDeleted();
-                //context.Database.EnsureCreated();
+                context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
                 //context.Database.Migrate();
 
 
@@ -359,6 +359,16 @@ namespace HaverDevProject.Data
                         },
                         new ItemDefect
                         {
+                            ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Side Arm").ItemId,
+                            DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect dimensions").DefectId
+                        },
+                        new ItemDefect
+                        {
+                            ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Side Arm").ItemId,
+                            DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Delivery quality").DefectId
+                        },
+                        new ItemDefect
+                        {
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Panel").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect dimensions").DefectId
                         });
@@ -373,67 +383,79 @@ namespace HaverDevProject.Data
                         {
                             NcrNumber = "2023-137",
                             NcrLastUpdated = DateTime.Parse("2023-12-18"),   
-                            NcrStatus = false
+                            NcrStatus = false,
+                            NcrPhase = NcrPhase.Closed
                         },
                         new Ncr
                         {
                             NcrNumber = "2023-138",
                             NcrLastUpdated = DateTime.Parse("2023-12-19"),
-                            NcrStatus = true
+                            NcrStatus = true,
+                            NcrPhase = NcrPhase.QualityInspector
+                            
                         },
                         new Ncr
                         {
                             NcrNumber = "2023-139",
                             NcrLastUpdated = DateTime.Parse("2023-12-22"),
-                            NcrStatus = false
+                            NcrStatus = false,
+                            NcrPhase = NcrPhase.Closed
                         },
                         new Ncr
                         {
                             NcrNumber = "2023-140",
                             NcrLastUpdated = DateTime.Parse("2024-01-18"),
-                            NcrStatus = true
+                            NcrStatus = true,
+                            NcrPhase = NcrPhase.Procurement
                         },
                         new Ncr
                         {
                             NcrNumber = "2023-141",
                             NcrLastUpdated = DateTime.Parse("2024-01-14"),
-                            NcrStatus = true
+                            NcrStatus = true,
+                            NcrPhase = NcrPhase.Procurement
                         },
                         new Ncr
                         {
                             NcrNumber = "2024-001",
                             NcrLastUpdated = DateTime.Parse("2024-01-10"),
-                            NcrStatus = true
+                            NcrStatus = true,
+                            NcrPhase = NcrPhase.Operations
                         },
                         new Ncr
                         {
                             NcrNumber = "2024-002",
                             NcrLastUpdated = DateTime.Parse("2024-01-11"),
-                            NcrStatus = true
+                            NcrStatus = true,
+                            NcrPhase = NcrPhase.Operations
                         },
                         new Ncr
                         {
                             NcrNumber = "2024-003",
                             NcrLastUpdated = DateTime.Parse("2024-01-15"),
-                            NcrStatus = true
+                            NcrStatus = true,
+                            NcrPhase = NcrPhase.QualityInspector
                         },
                         new Ncr
                         {
                             NcrNumber = "2024-004",
                             NcrLastUpdated = DateTime.Parse("2024-01-19"),
-                            NcrStatus = true
+                            NcrStatus = true,
+                            NcrPhase = NcrPhase.ReInspection
                         },
                         new Ncr
                         {
                             NcrNumber = "2024-005",
                             NcrLastUpdated = DateTime.Parse("2024-01-22"),
-                            NcrStatus = true
+                            NcrStatus = true,
+                            NcrPhase = NcrPhase.ReInspection
                         },
                         new Ncr
                         {
                             NcrNumber = "2024-006",
                             NcrLastUpdated = DateTime.Parse("2024-01-23"),
-                            NcrStatus = false
+                            NcrStatus = false,
+                            NcrPhase = NcrPhase.Closed
                         },
                         new Ncr
                         {

@@ -21,11 +21,11 @@
                         @(Model.Ncr.NcrStatus == true ? "Active" : "Closed")
                     </span>
                 </div>
-                @if (Model.Ncr.NcrStatus == false)
+                @if (Model.Ncr.NcrStatus == true)
                 {
                     <div class="col-auto">
-                        <span class="fw-bold">Quality Department:</span>
-                        <span> [Department Name]</span>
+                        <span class="fw-bold">Phase:</span>
+                        <span class="btn text-white bg-secondary" style="cursor: default;"> @Model.Ncr.NcrPhase </span>
                     </div>
                 }
                 <div class="col-auto">
@@ -247,6 +247,12 @@
                 <button type="button" onclick="location.href='@Url.Action("Index")'" class="btn btn-primary">
                     <i class="bi bi-arrow-90deg-left"></i> Back to NCR List
                 </button>
+                <div>
+                    <a type="button" class="btn btn-primary ms-4" asp-action="Edit" asp-route-id="@Model?.NcrId">
+                        <i class="bi bi-pencil-square"></i> Edit
+                    </a>
+                </div>
+
             </div>
         </div>
     </div>
