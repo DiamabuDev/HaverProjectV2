@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace HaverDevProject.Models;
 
 [Table("itemDefectPhoto")]
-public partial class ItemDefectPhoto
+public class ItemDefectPhoto
 {
     [Key]
     [Column("itemDefectPhotoId")]
@@ -16,6 +16,10 @@ public partial class ItemDefectPhoto
     [Required]
     [Column("itemDefectPhotoContent")]
     public byte[] ItemDefectPhotoContent { get; set; }
+
+    [StringLength(255, ErrorMessage = "The name of the file cannot be more than 255 characters.")]
+    [Display(Name = "File Name")]
+    public string FileName { get; set; }
 
     [Required]
     [Column("itemDefectPhotoMimeType")]
@@ -35,4 +39,7 @@ public partial class ItemDefectPhoto
     [ForeignKey("NcrQaId")]
     [InverseProperty("ItemDefectPhotos")]
     public virtual NcrQa NcrQa { get; set; }
+
+    public FileContent FileContent { get; set; } = new FileContent();
+    //public ICollection<FileContent> FileContent { get; set; } = new HashSet<FileContent>();
 }

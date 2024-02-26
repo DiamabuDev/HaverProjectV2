@@ -354,6 +354,16 @@ namespace HaverDevProject.Data
                         },
                         new ItemDefect
                         {
+                            ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Side Arm").ItemId,
+                            DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect dimensions").DefectId
+                        },
+                        new ItemDefect
+                        {
+                            ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Side Arm").ItemId,
+                            DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Delivery quality").DefectId
+                        },
+                        new ItemDefect
+                        {
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Panel").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect dimensions").DefectId
                         });

@@ -88,7 +88,7 @@
                         @Html.Raw(ViewData["filterApplied:PONumber"])
                     </button>
                 </th>
-                <th>
+                <th class="d-none d-xxl-table-cell">
                     <button type="submit" name="actionButton" value="Phase" class="btn text-light custom-btn-text-start">
                         Phase
                         @Html.Raw(ViewData["filterApplied:Phase"])
@@ -122,7 +122,7 @@
                     @* <td class="@((item.Ncr.NcrStatus == true) ? "stillactive" : "closed")">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrStatus)
                     </td> *@
-                    <td class="d-none d-md-table-cell">
+                    <td class="d-none d-xxl-table-cell">
                     @Html.DisplayFor(modelItem => item.Ncr.NcrPhase)
                     </td>
 

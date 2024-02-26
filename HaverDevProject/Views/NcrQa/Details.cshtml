@@ -21,11 +21,11 @@
                         @(Model.Ncr.NcrStatus == true ? "Active" : "Closed")
                     </span>
                 </div>
-                @if (Model.Ncr.NcrStatus == false)
+                @if (Model.Ncr.NcrStatus == true)
                 {
                     <div class="col-auto">
-                        <span class="fw-bold">Quality Department:</span>
-                        <span> [Department Name]</span>
+                        <span class="fw-bold">Phase:</span>
+                        <span class="btn text-white bg-secondary" style="cursor: default;"> @Model.Ncr.NcrPhase </span>
                     </div>
                 }
                 <div class="col-auto">

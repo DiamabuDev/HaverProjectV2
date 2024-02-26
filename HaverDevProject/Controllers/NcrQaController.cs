@@ -12,6 +12,7 @@ using HaverDevProject.Utilities;
 using HaverDevProject.ViewModels;
 using System.Numerics;
 using Microsoft.EntityFrameworkCore.Storage;
+//using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HaverDevProject.Controllers
 {
@@ -257,7 +258,7 @@ namespace HaverDevProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                bool engReq = ncrQaDTO.NcrQaEngDispositionRequired == true ? true : false;
+                bool engReq = ncrQaDTO.NcrQaEngDispositionRequired == true ? true : false;                
 
                 Ncr ncr = new Ncr
                 {
@@ -276,8 +277,7 @@ namespace HaverDevProject.Controllers
                     .Select(n => n.NcrId)
                     .FirstOrDefault();
 
-                await AddPictures(ncrQaDTO, Photos);                
-
+                await AddPictures(ncrQaDTO, Photos);   
                 NcrQa ncrQa = new NcrQa
                 {
                     NcrQaItemMarNonConforming = ncrQaDTO.NcrQaItemMarNonConforming,
@@ -313,15 +313,19 @@ namespace HaverDevProject.Controllers
                     await _context.SaveChangesAsync();
                 }
 
-                
                 //else --cambios pendientes Jorge
                 //{
                 //    ncr
                 //}
 
-                return RedirectToAction(nameof(Index));                
-            }            
-            PopulateDropDownLists(); 
+                TempData["SuccessMessage"] = "NCR created successfully!";
+                int ncrQaId = ncrQa.NcrQaId;
+                return RedirectToAction("Details", new { id = ncrQaId });                                
+            }           
+
+            ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierName", ncrQaDTO.SupplierId);
+            ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName", ncrQaDTO.ItemId);
+            ViewData["DefectId"] = new SelectList(_context.Defects, "DefectId", "DefectName", ncrQaDTO.DefectId);
             return View(ncrQaDTO);
         }
 
@@ -337,6 +341,7 @@ namespace HaverDevProject.Controllers
                 .Include(n =>n.Ncr)
                 .Include(n =>n.Item).ThenInclude(n => n.Supplier)
                 .Include(n =>n.Defect)
+                .Include(n =>n.ItemDefectPhotos)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(n => n.NcrQaId == id);
 
@@ -356,8 +361,7 @@ namespace HaverDevProject.Controllers
                 NcrQaQuanReceived = ncrQa.NcrQaQuanReceived,
                 NcrQaQuanDefective = ncrQa.NcrQaQuanDefective,
                 NcrQaDescriptionOfDefect = ncrQa.NcrQaDescriptionOfDefect,
-                NcrId = ncrQa.NcrId,
-                RowVersion = ncrQa.RowVersion, //Rowversion
+                NcrId = ncrQa.NcrId,                
                 SupplierId = ncrQa.Item.SupplierId,
                 NcrNumber = ncrQa.Ncr.NcrNumber,
                 ItemId = ncrQa.ItemId,
@@ -368,8 +372,7 @@ namespace HaverDevProject.Controllers
             };
             ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierName", ncrQa.Item.SupplierId);
             ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName", ncrQa.Item.ItemId);
-            ViewData["DefectId"] = new SelectList(_context.Defects, "DefectId", "DefectName", ncrQa.Defect.DefectId);
-            //PopulateDropDownLists();
+            ViewData["DefectId"] = new SelectList(_context.Defects, "DefectId", "DefectName", ncrQa.Defect.DefectId);            
             return View(ncrQaDTO);
         }
 
@@ -378,7 +381,7 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int NcrQaId, int NcrId, NcrQaDTO ncrQaDTO)
+        public async Task<IActionResult> Edit(int NcrQaId, int NcrId, NcrQaDTO ncrQaDTO, List<IFormFile> Photos)
         {
             if (ModelState.IsValid)
             {
@@ -414,6 +417,7 @@ namespace HaverDevProject.Controllers
                 }
                 else
                 {
+                    await AddPictures(ncrQaDTO, Photos);
                     try
                     {
                         ncrQaToUpdate.NcrQaItemMarNonConforming = ncrQaDTO.NcrQaItemMarNonConforming;
@@ -431,11 +435,12 @@ namespace HaverDevProject.Controllers
                         ncrQaToUpdate.DefectId = ncrQaDTO.DefectId;
                         ncrQaToUpdate.Defect = null;
                         ncrQaToUpdate.NcrQaEngDispositionRequired = ncrQaDTO.NcrQaEngDispositionRequired;
-                        //ncrQaToUpdate.ItemDefectPhotos = ncrQaDTO.ItemDefectPhotos;                   
+                        ncrQaToUpdate.ItemDefectPhotos = ncrQaDTO.ItemDefectPhotos;                   
 
                         _context.NcrQas.Update(ncrQaToUpdate);
                         await _context.SaveChangesAsync();
 
+                        TempData["SuccessMessage"] = "NCR edited successfully!";
                         int updateNcrQa = ncrQaToUpdate.NcrQaId;
                         return RedirectToAction("Details", new { id = updateNcrQa });
                     }
@@ -447,7 +452,7 @@ namespace HaverDevProject.Controllers
                     {
                         ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
                     }
-                }  
+                }     
             }
             PopulateDropDownLists();
             return View(ncrQaDTO);            
@@ -554,6 +559,8 @@ namespace HaverDevProject.Controllers
             }
         }
 
+               
+
         [HttpGet]
         public JsonResult GetItems(int SupplierId)
         {
@@ -593,12 +600,23 @@ namespace HaverDevProject.Controllers
                             ncrQaDTO.ItemDefectPhotos.Add(new ItemDefectPhoto
                             {
                                 ItemDefectPhotoContent = ResizeImage.shrinkImageWebp(pictureArray, 500, 600),
-                                ItemDefectPhotoMimeType = "image/webp"
+                                ItemDefectPhotoMimeType = "image/webp",
+                                FileName = picture.FileName                                
                             });
                         }
                     }
                 }
             }
+        }
+
+
+        public async Task<FileContentResult> Download(int id)
+        {
+            var theFile = await _context.ItemDefectPhotos
+                .Include(d => d.FileContent)
+                .Where(f => f.ItemDefectPhotoId == id)
+                .FirstOrDefaultAsync();
+            return File(theFile.ItemDefectPhotoContent, theFile.ItemDefectPhotoMimeType, theFile.FileName);
         }
 
         private bool NcrQaExists(int id)
