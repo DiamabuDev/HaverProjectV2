@@ -44,36 +44,23 @@
                 <dd class="col-sm-9">
                     @(Model.Supplier.SupplierStatus ? "Active" : "Inactive")
                 </dd>
-                <dt class="col-sm-3">
-                    Related NCRs
-                </dt>
-                <dd class="col-sm-9">
-                    @if (Model.RelatedNCRs != null && Model.RelatedNCRs.Any())
-                    {
-                        <h3>Related NCRs</h3>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>NCR ID</th>
-                                    <th>Defect Type</th>
-                                    <th>Defect Description</th>
+                @if (Model.RelatedNCRs != null && Model.RelatedNCRs.Any())
+                {
+                    <dt class="col-sm-3">
+                        Related NCRs
+                    </dt>
+                    <dd class="col-sm-9">
+                        <ul>
+                            @foreach (var ncr in Model.RelatedNCRs)
+                            {
+                                <li>
+                                    <a asp-action="SupplierReport" asp-route-id="@ncr.NcrId">@ncr.NcrNumber: @ncr.NcrQa.Item.ItemName</a>
+                                </li>
+                            }
+                        </ul>
+                    </dd>
+                }
 
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var ncr in Model.RelatedNCRs)
-                                {
-                                    <tr>
-                                        <td>@ncr.NcrId</td>
-                                        <td>@ncr.NcrQa.Item.ItemDefects.FirstOrDefault().Defect.DefectName</td>
-                                        <td>@ncr.NcrQa.Item.ItemDefects.FirstOrDefault().Defect.DefectDesription</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    }
-
-                </dd>
                 
             </dl>
         </div>
