@@ -2,52 +2,27 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using HaverDevProject.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace HaverDevProject.Models;
 
+[ModelMetadataType(typeof(NcrEngMetaData))]
 [Table("ncrEng")]
-public partial class NcrEng : Auditable
+public class NcrEng : Auditable
 {
-    [Key]
-    [Column("ncrEngId")]
-    public int NcrEngId { get; set; }
+	public int NcrEngId { get; set; }
+	public bool NcrEngCustomerNotification { get; set; } = false;
+	public string NcrEngDispositionDescription { get; set; }
+    public bool NcrEngStatusFlag { get; set; }
+	public int NcrEngUserId { get; set; }
+	public int EngDispositionTypeId { get; set; }
+	public EngDispositionType EngDispositionType { get; set; }
+	public int NcrId { get; set; }
+	public Ncr Ncr { get; set; }
+	public int DrawingId { get; set; }
+	public Drawing Drawing { get; set; }
 
-    [Display(Name = "Does Customer require notification of NCR")]
-    [Column("ncrEngCustomerNotification")]
-    public bool NcrEngCustomerNotification { get; set; } = false;
-
-    [Display(Name = "Disposition")]
-    [Column("ncrEngDispositionDescription")]
-    [StringLength(300, ErrorMessage = "Only 300 characters for disposition description.")]
-    [DataType(DataType.MultilineText)]
-    [Unicode(false)]
-    public string NcrEngDispositionDescription { get; set; }
-
-    [Display(Name = "Engineering")]
-    [Column("ncrEngUserId")]
-    public int NcrEngUserId { get; set; }
-
-    [Display(Name = "Disposition Type")]
-    [Column("engDispositionTypeId")]
-    public int EngDispositionTypeId { get; set; }
-
-    [Display(Name = "Review by HBC Engineering")]
-    [Required(ErrorMessage = "You must provide the Disposition Type.")]
-    [ForeignKey("EngDispositionTypeId")]
-    [InverseProperty("NcrEngs")]
-    public virtual EngDispositionType EngDispositionType { get; set; }
-
-    [Display(Name = "NCR")]
-    [Column("ncrId")]
-    public int NcrId { get; set; }
-
-    [Display(Name = "NCR")]
-    [Required(ErrorMessage = "You must provide the NCR.")]
-    [ForeignKey("NcrId")]
-    public virtual Ncr Ncr { get; set; }
-
-    [Display(Name = "Drawings")]
-    [InverseProperty("NcrEng")]
-    public virtual Drawing Drawing { get; set; }
 }

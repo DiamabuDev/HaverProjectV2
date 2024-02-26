@@ -44,7 +44,7 @@
                         @if (Model.ItemDefects.Any())
                         {
                         <div class="defects-container @(Model.ItemDefects.Count() > 5 ? "two-columns" : "")">
-                            <ul class="defect-row">                                
+                            <ul class="bullet-point">
                                     @foreach (var defect in Model.ItemDefects)
                                     {
                                     <li>@defect.Defect.DefectName</li>

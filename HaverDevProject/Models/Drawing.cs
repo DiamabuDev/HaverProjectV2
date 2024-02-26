@@ -7,11 +7,15 @@ using Microsoft.EntityFrameworkCore;
 namespace HaverDevProject.Models;
 
 [Table("drawing")]
-public partial class Drawing
+public partial class Drawing 
 {
     [Key]
     [Column("drawingId")]
     public int DrawingId { get; set; }
+
+    [Display(Name = "Check the box if drawing requires updating")]
+    [Column("DrawingRequireUpdating")]
+    public bool DrawingRequireUpdating { get; set; } = false;
 
     [Display(Name = "Original Rev. Number")]
     [Column("drawingOriginalRevNumber")]
@@ -23,7 +27,9 @@ public partial class Drawing
 
     [Display(Name = "Revision Date")]
     [Column("drawingRevDate", TypeName = "date")]
-    public DateTime DrawingRevDate { get; set; }
+    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+    [DataType(DataType.Date)]
+    public DateTime DrawingRevDate { get; set; } = DateTime.Now;
 
     [Display(Name = "Drawing User ID")]
     [Column("drawingUserId")]

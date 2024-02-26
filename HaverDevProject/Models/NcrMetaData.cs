@@ -36,7 +36,7 @@ public class NcrMetaData
     public virtual NcrEng NcrEng { get; set; }
 
     [Display(Name = "Purchasing")]
-    public virtual NcrPurchasing NcrPurchasing { get; set; }
+    public virtual NcrOperation NcrOperation { get; set; }
 
     [Display(Name = "Quality Representative")]
     public virtual NcrQa NcrQa { get; set; }
