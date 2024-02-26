@@ -88,20 +88,20 @@
                     <div class="form-group">
                         <label class="control-label">Supplier:</label>
                         <select class="form-control" id="SupplierId" name="SupplierId" asp-items="ViewBag.SupplierId" required>
-                            <option value="">Select Supplier</option>
+                            <option value="0">Select Supplier</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label asp-for="ItemId" class="control-label"></label>
                         <select asp-for="ItemId" class="form-control" asp-items="ViewBag.ItemId" required>
-                            <option value="">Select a Supplier First</option>
+                            <option value="0">Select a Supplier First</option>
                         </select>
                         <span asp-validation-for="ItemId" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="DefectId" class="control-label"></label>
                         <select asp-for="DefectId" class="form-control" id="DefectId" name="DefectId" asp-items="ViewBag.DefectId">
-                            <option value="">Select an Item First</option>
+                            <option value="0">Select an Item First</option>
                         </select>
                         <span asp-validation-for="DefectId" class="text-danger"></span>
                     </div>

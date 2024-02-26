@@ -1,89 +1,216 @@
-﻿@model HaverDevProject.Models.NcrQa
+﻿@model HaverDevProject.ViewModels.NcrQaDTO
 
 @{
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<div class="col-md-8 col-10 mx-auto">
+    <h1><i class="bi bi-caret-right-fill"></i>Quality Inspector</h1>
+</div>
 
-<h4>NcrQa</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="NcrQaId" />
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="NcrQaItemMarNonConforming" /> @Html.DisplayNameFor(model => model.NcrQaItemMarNonConforming)
-                </label>
+<div class="col-md-8 col-10 mx-auto">    
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="NcrQaId" />
+        <input type="hidden" asp-for="NcrId" />
+
+        <div class="card border-2">
+            <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
+                <div>
+                    <h2 class="m-0">Edit NCR</h2>
+                </div>
+                <div class="justify-content-end">
+                    <p class="m-0">Fields marked <span class="fw-bold text-danger">*</span> are required.</p>
+                </div>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="NcrQaProcessApplicable" /> @Html.DisplayNameFor(model => model.NcrQaProcessApplicable)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="NcrQacreationDate" class="control-label"></label>
-                <input asp-for="NcrQacreationDate" class="form-control" />
-                <span asp-validation-for="NcrQacreationDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NcrQaOrderNumber" class="control-label"></label>
-                <input asp-for="NcrQaOrderNumber" class="form-control" />
-                <span asp-validation-for="NcrQaOrderNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NcrQaSalesOrder" class="control-label"></label>
-                <input asp-for="NcrQaSalesOrder" class="form-control" />
-                <span asp-validation-for="NcrQaSalesOrder" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NcrQaQuanReceived" class="control-label"></label>
-                <input asp-for="NcrQaQuanReceived" class="form-control" />
-                <span asp-validation-for="NcrQaQuanReceived" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NcrQaQuanDefective" class="control-label"></label>
-                <input asp-for="NcrQaQuanDefective" class="form-control" />
-                <span asp-validation-for="NcrQaQuanDefective" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NcrQaDescriptionOfDefect" class="control-label"></label>
-                <textarea asp-for="NcrQaDescriptionOfDefect" class="form-control"></textarea>
-                <span asp-validation-for="NcrQaDescriptionOfDefect" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+            <div class="card-body col-lg-10 col-11 mx-auto">
+                <div class="row">
+                    <div class="col-6">                    
+                        <div class="form-group">
+                            <label asp-for="NcrNumber" class="control-label"></label>
+                            <input asp-for="NcrNumber" class="form-control" readonly/>
+                            <span asp-validation-for="NcrNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label asp-for="NcrQacreationDate" class="control-label"></label>
+                            <input asp-for="NcrQacreationDate" class="form-control" readonly/>
+                            <span asp-validation-for="NcrQacreationDate" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">       
+                    <div class="form-group">
+                        <label class="pb-3">Identify Process Applicable:</label>   
+                        <div class="text-center">
+                            <div class="form-check form-check-inline">
+                                <input type="radio" class="form-check-input" asp-for="NcrQaProcessApplicable" value="true" checked />
+                                <label class="form-check-label">Supplier or Rec-Insp</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" class="form-check-input" asp-for="NcrQaProcessApplicable" value="false" />
+                                <label class="form-check-label">WIP (Production Order)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">                
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label asp-for="NcrQaOrderNumber" class="control-label"></label>
+                            <input asp-for="NcrQaOrderNumber" class="form-control" />
+                            <span asp-validation-for="NcrQaOrderNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label asp-for="NcrQaSalesOrder" class="control-label"></label>
+                            <input asp-for="NcrQaSalesOrder" class="form-control" />
+                            <span asp-validation-for="NcrQaSalesOrder" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">               
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label asp-for="NcrQaQuanReceived" class="control-label"></label>
+                            <input asp-for="NcrQaQuanReceived" class="form-control" />
+                            <span asp-validation-for="NcrQaQuanReceived" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label asp-for="NcrQaQuanDefective" class="control-label"></label>
+                            <input asp-for="NcrQaQuanDefective" class="form-control" />
+                            <span asp-validation-for="NcrQaQuanDefective" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">     
+                    <div class="form-group">
+                        <label class="control-label">Supplier:</label>
+                        <select class="form-control" id="SupplierId" name="SupplierId" asp-items="ViewBag.SupplierId" asp-for="SupplierId" required>
+                            <option value="0">Select Supplier</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ItemId" class="control-label"></label>
+                        <select asp-for="ItemId" id="ItemId" class="form-control" asp-items="ViewBag.ItemId" required>
+                            <option value="0">Select a Supplier First</option>
+                        </select>
+                        <span asp-validation-for="ItemId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="DefectId" class="control-label"></label>
+                        <select asp-for="DefectId" class="form-control" id="DefectId" name="DefectId" asp-items="ViewBag.DefectId">
+                            <option value="0">Select an Item First</option>
+                        </select>
+                        <span asp-validation-for="DefectId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="NcrQaDescriptionOfDefect" class="control-label"></label>
+                        <textarea asp-for="NcrQaDescriptionOfDefect" class="form-control"></textarea>
+                        <span asp-validation-for="NcrQaDescriptionOfDefect" class="text-danger"></span>
+                    </div>
+                    @* <div class="form-group">
+                        <label class="control-label custom-file-label">Defect Photo File:</label>
+                        <div class="input-group mb-3">
+                            <input type="file" class="form-control" name="pictures" id="pictures">
+                        </div>
+                    </div> *@
+                    <div class="form-group">
+                        <label asp-for="ItemDefectPhotos" class="control-label"></label>
+                        <input type="file" name="Photos" multiple />
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="NcrQaDefectVideo" class="control-label"></label>
+                        <input asp-for="NcrQaDefectVideo" class="form-control" />
+                        <span asp-validation-for="NcrQaDefectVideo" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">                                           
+                        <div class="form-group">
+                            <label class="pb-3">Item marked Nonconforming:</label>
+                            <div class="text-center">
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrQaItemMarNonConforming" value="true" checked />
+                                    <label class="form-check-label">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrQaItemMarNonConforming" value="false" />
+                                    <label class="form-check-label">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label class="pb-3">Engineer Disposition Required?</label>
+                            <div class="text-center">
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrQaEngDispositionRequired" value="true" checked/>
+                                    <label class="form-check-label">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrQaEngDispositionRequired" value="false" />
+                                    <label class="form-check-label">No</label>
+                                </div>
+                            </div>                        
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <p>
+                        Completed NCR to be forwarded to HBC Purchasing Manager complete with any relevant documents attached (pictures, actual measurements, material certs, etc.)
+                    </p>   
+                @* <div class="form-group">
                 <label asp-for="NcrQauserId" class="control-label"></label>
                 <input asp-for="NcrQauserId" class="form-control" />
                 <span asp-validation-for="NcrQauserId" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="NcrQaEngDispositionRequired" /> @Html.DisplayNameFor(model => model.NcrQaEngDispositionRequired)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="NcrId" class="control-label"></label>
-                <select asp-for="NcrId" class="form-control" asp-items="ViewBag.NcrId"></select>
-                <span asp-validation-for="NcrId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ItemId" class="control-label"></label>
-                <select asp-for="ItemId" class="form-control" asp-items="ViewBag.ItemId"></select>
-                <span asp-validation-for="ItemId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
+                </div> *@
 
-<div>
-    <a asp-action="Index">Back to List</a>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="form-group d-flex justify-content-end mt-2">
+                    <div>
+                        <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn btn-primary ">
+                            <i class="bi bi-arrow-90deg-left"></i> Back to the @ViewData["ControllerName"] List
+                        </button>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary ms-4">
+                            <i class="bi bi-floppy"></i> Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>        
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/refreshDDL.js"></script>
+    <script type="text/javascript">
+        $('#SupplierId').change(function () {
+            var selectedSupplier = $("#SupplierId").val();
+            var URL = "/NcrQa/GetItems/?SupplierId=" + selectedSupplier;
+            refreshDDL('ItemId', URL, true, 'No items related with the supplier selected', true, "Select an item", true);
+
+            // Set the value of DefectId dropdown to an empty string
+            $('#DefectId').val('');
+        });
+    </script>
+    <script type="text/javascript">
+        $('#ItemId').change(function () {
+            var selectedItemId = $("#ItemId").val();
+            var URL = "/NcrQa/GetDefects/?ItemId=" + selectedItemId;
+            refreshDDL('DefectId', URL, true, 'No defects related with the item selected', false, null, true);
+        });
+    </script>
 }
