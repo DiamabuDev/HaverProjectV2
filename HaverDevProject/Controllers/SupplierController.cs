@@ -183,13 +183,13 @@ namespace HaverDevProject.Controllers
                 return NotFound();
             }
 
-            var viewModel = new SupplierDetailsViewModel
+            var supplierViewModel = new SupplierDetailsViewModel
             {
                 Supplier = supplier,
                 RelatedNCRs = supplier.Items.FirstOrDefault().NcrQas.Select(nqa => nqa.Ncr).ToList()
             };
 
-            return View(supplier);
+            return View(supplierViewModel);
         }
 
         // GET: Supplier/Create
