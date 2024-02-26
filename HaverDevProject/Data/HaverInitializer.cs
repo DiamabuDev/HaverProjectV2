@@ -31,6 +31,11 @@ namespace HaverDevProject.Data
                     context.Suppliers.AddRange(
                         new Supplier
                         {
+                            SupplierCode = "000000",
+                            SupplierName = "NO SUPPLIER PROVIDED"
+                        },
+                        new Supplier
+                        {
                             SupplierCode = "793254",
                             SupplierName = "INTEGRITY WOVEN WIRE",
                             SupplierEmail = "integritywire@example.com",

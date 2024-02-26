@@ -12,6 +12,8 @@ using HaverDevProject.CustomControllers;
 using HaverDevProject.Utilities;
 using Microsoft.EntityFrameworkCore.Storage;
 using HaverDevProject.ViewModels;
+using Microsoft.AspNetCore.Http.HttpResults;
+using OfficeOpenXml;
 
 namespace HaverDevProject.Controllers
 {
@@ -399,6 +401,73 @@ namespace HaverDevProject.Controllers
                     }
                 }
             }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Upload(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                TempData["ErrorMessage"] = "No file selected.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (file.ContentType != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            {
+                TempData["ErrorMessage"] = "Invalid file type. Please upload an Excel file (.xlsx).";
+                return RedirectToAction(nameof(Index));
+            }
+
+            using (var stream = new MemoryStream())
+            {
+                await file.CopyToAsync(stream);
+                using (var package = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    int rowCount = worksheet.Dimension.Rows;
+
+                    var defaultSupplier = await _context.Suppliers
+                                                 .FirstOrDefaultAsync(s => s.SupplierName.ToLower() == "no supplier provided".ToLower());
+
+                    if (defaultSupplier == null)
+                    {
+                        defaultSupplier = new Supplier
+                        {
+                            SupplierName = "NO SUPPLIER PROVIDED"
+                        };
+                        _context.Suppliers.Add(defaultSupplier);
+                        await _context.SaveChangesAsync(); 
+                    }
+
+                    int defaultSupplierId = defaultSupplier.SupplierId;
+
+                    for (int row = 2; row <= rowCount; row++)
+                    {
+                        var itemNumber = int.Parse(worksheet.Cells[row, 1].Value.ToString().Trim());
+                        var itemName = worksheet.Cells[row, 2].Value.ToString().Trim();
+
+                        var item = new Item
+                        {
+                            SupplierId = defaultSupplierId,
+                            ItemNumber = itemNumber,
+                            ItemName = itemName,
+                        };
+
+                        _context.Items.Add(item);
+                    }
+
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            TempData["SuccessMessage"] = "Items uploaded successfully!";
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult Upload()
+        {
+            return View("UploadExcel");
         }
 
         private bool ItemExists(int id)

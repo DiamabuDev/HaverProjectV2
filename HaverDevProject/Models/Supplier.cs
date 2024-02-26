@@ -30,7 +30,7 @@ public partial class Supplier
     [Column("supplierName")]
     [StringLength(45, ErrorMessage = "The Supplier Name cannot be more than 45 characters.")]
     [Unicode(false)]
-    public string SupplierName { get; set; }
+    public string SupplierName { get; set; } 
 
     [Display(Name = "Contact Name")]
     [Column("supplierContactName")]
