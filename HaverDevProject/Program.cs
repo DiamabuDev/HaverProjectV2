@@ -2,6 +2,7 @@ using HaverDevProject.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using OfficeOpenXml;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,9 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
 
 //To give access to IHttpContextAccesor for Audit Data with IAuditable
 builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();

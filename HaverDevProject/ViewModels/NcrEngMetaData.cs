@@ -60,22 +60,24 @@ public class NcrEngMetaData
 	public int NcrEngUserId { get; set; }
 
 	[Display(Name = "Disposition Type")]
-	[Column("engDispositionTypeId")]
+    [Required(ErrorMessage = "You must provide the Disposition Type.")]
+    [Column("engDispositionTypeId")]
 	public int EngDispositionTypeId { get; set; }
 
 	[Display(Name = "Disposition Type")]
-	[Required(ErrorMessage = "You must provide the Disposition Type.")]
+	//[Required(ErrorMessage = "You must provide the Disposition Type.")]
 	[ForeignKey("EngDispositionTypeId")]
 	//[InverseProperty("NcrEngs")]
 	public virtual EngDispositionType EngDispositionType { get; set; }
 
 	[Display(Name = "NCR")]
-	[Column("ncrId")]
+    [Required(ErrorMessage = "You must provide the NCR.")]
+    [Column("ncrId")]
 	public int NcrId { get; set; }
 
 	[Display(Name = "NCR")]
-	[Required(ErrorMessage = "You must provide the NCR.")]
-	[ForeignKey("NcrId")]
+    //[Required(ErrorMessage = "You must provide the NCR.")]
+    [ForeignKey("NcrId")]
 	public virtual Ncr Ncr { get; set; }
 
 	[Display(Name = "Drawings")]
@@ -103,4 +105,7 @@ public class NcrEngMetaData
     //[Display(Name = "Drawing User ID")]
     //[Column("drawingUserId")]
     //public int DrawingUserId { get; set; }
+
+    [Display(Name = "Engineer Photos")]
+    public ICollection<EngDefectPhoto> EngDefectPhotos { get; set; } = new HashSet<EngDefectPhoto>();
 }

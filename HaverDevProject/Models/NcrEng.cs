@@ -25,4 +25,6 @@ public class NcrEng : Auditable
 	public int DrawingId { get; set; }
 	public Drawing Drawing { get; set; }
 
+    public ICollection<EngDefectPhoto> EngDefectPhotos { get; set; } = new HashSet<EngDefectPhoto>();
+
 }

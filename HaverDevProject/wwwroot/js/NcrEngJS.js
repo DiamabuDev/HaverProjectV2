@@ -17,7 +17,7 @@ function GetNcrs() {
                     const ncrEng = response[i];
                     const $row = $('<tr>');
                     $row.append(`<td>${ncrEng.ncrNumber}</td>`);
-                    $row.append(`<td>${ncrEng.ncrEngDispositionDescription}</td>`);
+                    $row.append(`<td>${ncrEng.supplierName}</td>`);//Supplier
                     $row.append(`<td><button class="btn btn-success" onclick="startNcrOperation('${ncrEng.ncrNumber}')"><i class="bi bi-play-fill"></i> Start</button></td>`);
                     $('#tblBody').append($row);
                 }
@@ -30,7 +30,5 @@ function GetNcrs() {
 }
 
 function startNcrOperation(ncrNumber) {
-    // You can now use the ncrNumber to create the new NcrOperation
-    // For example, redirect to the Create action with the NcrNumber parameter
     window.location.href = '/NcrOperation/Create?ncrNumber=' + ncrNumber;
 }

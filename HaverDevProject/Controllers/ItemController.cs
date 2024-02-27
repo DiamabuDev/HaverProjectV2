@@ -12,6 +12,8 @@ using HaverDevProject.CustomControllers;
 using HaverDevProject.Utilities;
 using Microsoft.EntityFrameworkCore.Storage;
 using HaverDevProject.ViewModels;
+using Microsoft.AspNetCore.Http.HttpResults;
+using OfficeOpenXml;
 
 namespace HaverDevProject.Controllers
 {
@@ -399,6 +401,126 @@ namespace HaverDevProject.Controllers
                     }
                 }
             }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Upload(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                TempData["ErrorMessage"] = "No file selected.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (file.ContentType != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            {
+                TempData["ErrorMessage"] = "Invalid file type. Please upload an Excel file (.xlsx).";
+                return RedirectToAction(nameof(Index));
+            }
+
+            using (var stream = new MemoryStream())
+            {
+                await file.CopyToAsync(stream);
+                using (var package = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    int rowCount = worksheet.Dimension.Rows;
+
+                    for (int row = 2; row <= rowCount; row++)
+                    {
+                        var itemNumber = int.Parse(worksheet.Cells[row, 1].Value?.ToString().Trim());
+                        var itemName = worksheet.Cells[row, 2].Value?.ToString().Trim();
+                        var supplierInfo = worksheet.Cells[row, 3].Value?.ToString().Trim();
+                        var defectTypeName = worksheet.Cells[row, 4].Value?.ToString().Trim();
+
+                        string supplierCode = null;
+                        string supplierName = null;
+                        if (!string.IsNullOrWhiteSpace(supplierInfo))
+                        {
+                            var parts = supplierInfo.Split(new[] { ' ' }, 2);
+                            if (parts.Length == 2)
+                            {
+                                supplierCode = parts[0].Trim();
+                                supplierName = parts[1].Trim();
+                            }
+                            else
+                            {
+                                supplierName = parts[0].Trim(); 
+                            }
+                        }
+                        else
+                        {
+                            supplierName = "NO SUPPLIER PROVIDED";
+                        }
+
+                        Supplier supplier = null;
+                        if (supplierName == "NO SUPPLIER PROVIDED")
+                        {
+                            supplier = await _context.Suppliers
+                                                     .FirstOrDefaultAsync(s => s.SupplierName == supplierName)
+                                      ?? new Supplier { SupplierCode = "", SupplierName = supplierName };
+                        }
+                        else
+                        {
+                            supplier = await _context.Suppliers
+                                                     .FirstOrDefaultAsync(s => s.SupplierCode == supplierCode && s.SupplierName == supplierName)
+                                      ?? new Supplier { SupplierCode = supplierCode, SupplierName = supplierName };
+                        }
+
+                        if (supplier.SupplierId == 0) _context.Suppliers.Add(supplier);
+
+                        var existingItem = await _context.Items.FirstOrDefaultAsync(i => i.ItemNumber == itemNumber);
+                        if (existingItem != null)
+                        {
+                            continue;
+                        }                     
+
+                        Defect defect = null;
+                        if (!string.IsNullOrWhiteSpace(defectTypeName))
+                        {
+                            defect = await _context.Defects
+                                                   .FirstOrDefaultAsync(d => d.DefectName.ToLower() == defectTypeName.ToLower())
+                                    ?? new Defect { DefectName = defectTypeName };
+
+                            if (defect.DefectId == 0) _context.Defects.Add(defect);
+                        }
+
+                        await _context.SaveChangesAsync();
+
+                        var item = new Item
+                        {
+                            SupplierId = supplier.SupplierId,
+                            ItemNumber = itemNumber,
+                            ItemName = itemName,
+                        };
+
+                        _context.Items.Add(item);
+                        await _context.SaveChangesAsync();
+
+                        if (defect != null)
+                        {
+                            var itemDefect = new ItemDefect
+                            {
+                                ItemId = item.ItemId,
+                                DefectId = defect.DefectId
+                            };
+
+                            _context.ItemDefects.Add(itemDefect);
+                        }
+
+                        await _context.SaveChangesAsync();
+                    }
+                }
+            }
+
+            TempData["SuccessMessage"] = "Items uploaded successfully!";
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult Upload()
+        {
+            return View("UploadExcel");
         }
 
         private bool ItemExists(int id)

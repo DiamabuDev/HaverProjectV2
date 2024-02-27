@@ -56,6 +56,8 @@ public partial class HaverNiagaraContext : DbContext
 
     public virtual DbSet<ItemDefectPhoto> ItemDefectPhotos { get; set; }
 
+    public virtual DbSet<EngDefectPhoto> EngDefectPhotos { get; set; }
+
     public virtual DbSet<Ncr> Ncrs { get; set; }
 
     public virtual DbSet<NcrEng> NcrEngs { get; set; }
@@ -119,6 +121,15 @@ public partial class HaverNiagaraContext : DbContext
             entity.HasOne(d => d.NcrQa).WithMany(p => p.ItemDefectPhotos)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_itemDefectPhoto_itemDefect");
+        });
+
+        modelBuilder.Entity<EngDefectPhoto>(entity =>
+        {
+            entity.HasKey(e => e.EngDefectPhotoId).HasName("pk_engDefectPhoto_engDefectPhotoId");
+
+            entity.HasOne(d => d.NcrEng).WithMany(p => p.EngDefectPhotos)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_engDefectPhoto_itemDefect");
         });
 
         modelBuilder.Entity<Ncr>(entity =>
