@@ -13,6 +13,7 @@ namespace HaverDevProject.Models
 
         public ItemDefectPhoto ItemDefectPhoto { get; set; }
 
+
         //public ICollection<ItemDefectPhoto> ItemDefectPhoto { get; set; } = new HashSet<ItemDefectPhoto>();
     }
 }
