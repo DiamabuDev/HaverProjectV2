@@ -144,138 +144,170 @@ body {
     }
 }
 
-.custom-header-bg {
-    background-color: #345B91;
-    color: #fff;
+@media (min-width: 1440px) {
+
+    .dashboard-item {
+        width: 15vw;
+        height: 22vh;
+        background-color: #345B91;
+        color: #fff;
+        text-align: center;
+        padding: 1vw;
+        border-radius: 1vw;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.35);
+        cursor: pointer;
+        font-size: 1.2vw;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+        .dashboard-item i {
+            font-size: 3vw;
+        }
+
+        .dashboard-item p {
+            margin: 0;
+            font-weight: 500;
+            padding-top: 5px;
+        }
 }
 
-.custom-secondary-bg {
-    background-color: #516282;
-    color: #fff;
-}
 
-.custom-light-bg {
-    background-color: #A9C0D4;
-    color: #000;
-}
 
-.rounded {
-    border-radius: 10px;
-}
+    .custom-header-bg {
+        background-color: #345B91;
+        color: #fff;
+    }
 
-.table-hover tbody tr:hover {
-    background-color: #6B81AA;
-    color: #fff;
-}
-.table-hover tbody tr:hover .btn.text-primary i {    
-    color: #fff;
-}
+    .custom-secondary-bg {
+        background-color: #516282;
+        color: #fff;
+    }
 
-.btn-primary {
-    background-color: #1C335E;
-}
+    .custom-light-bg {
+        background-color: #A9C0D4;
+        color: #000;
+    }
 
-.bg-custom-color {
-    background-color: #E7EAEB;
-    border-color: #1C335E;
-}
+    .rounded {
+        border-radius: 10px;
+    }
 
-.card-header {
-    background-color: #ABB6CA;
-}
+    .table-hover tbody tr:hover {
+        background-color: #6B81AA;
+        color: #fff;
+    }
 
-.text-danger {
-    font-style: italic;
-}
+        .table-hover tbody tr:hover .btn.text-primary i {
+            color: #fff;
+        }
 
-.custom-tooltip {
-    font-size: 14px;
-}
+    .btn-primary {
+        background-color: #1C335E;
+    }
 
-.custom-bg-dashboard-item {
-    background-color: gray;
-}
+    .bg-custom-color {
+        background-color: #E7EAEB;
+        border-color: #1C335E;
+    }
 
-/* Provided by David S*/
-.form-group {
-    margin-bottom: 1rem
-}
+    .card-header {
+        background-color: #ABB6CA;
+    }
 
-/*Style for NCR List (Index.html)*/
+    .text-danger {
+        font-style: italic;
+    }
 
-.stillactive {
-    color: green
-}
+    .custom-tooltip {
+        font-size: 14px;
+    }
 
-.closed {
-    color: red;
-}
+    .custom-bg-dashboard-item {
+        background-color: gray;
+    }
 
-.standout, .closed, .stillactive {
-    font-weight: 600;
-}
+    /* Provided by David S*/
+    .form-group {
+        margin-bottom: 1rem
+    }
 
-.two-cols-1 {
-    width: 30%;
-}
+    /*Style for NCR List (Index.html)*/
 
-.two-cols {
-    width: 70%;
-}
+    .stillactive {
+        color: green
+    }
 
-.three-cols {
-    width: 20%;
-}
+    .closed {
+        color: red;
+    }
 
-.four-cols {
-    width: 25%;
-}
+    .standout, .closed, .stillactive {
+        font-weight: 600;
+    }
 
-.code-col {
-    width: 10%;
-}
+    .two-cols-1 {
+        width: 30%;
+    }
 
-.icon-drop {
-    justify-content: space-between;
-    width: 100%;
-    margin-bottom: 10px;
-}
+    .two-cols {
+        width: 70%;
+    }
 
-.custom-btn-text-start {
-    text-align: left;
-    padding-left: 0;
-}
+    .three-cols {
+        width: 20%;
+    }
 
-.custom-hover:hover .view-more {
-    color: white !important; 
-}
+    .four-cols {
+        width: 25%;
+    }
 
-.custom-hover ul {
-    padding-left: 1.5rem;
-}
+    .code-col {
+        width: 10%;
+    }
 
-.big-col {
-    width: 55%;
-}
+    .icon-drop {
+        justify-content: space-between;
+        width: 100%;
+        margin-bottom: 10px;
+    }
 
-.defects-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px; 
-}
+    .custom-btn-text-start {
+        text-align: left;
+        padding-left: 0;
+    }
 
-.bullet-point {
-    list-style-type: none; 
-    padding: 0; 
-}
+    .custom-hover:hover .view-more {
+        color: white !important;
+    }
 
-.two-columns {
-    column-count: 2;
-    column-gap: 20px; 
-}
+    .custom-hover ul {
+        padding-left: 1.5rem;
+    }
 
-.defects-container.two-columns {
-    display: block; 
-    column-count: 2;
-    column-gap: 20px;
-}
+    .big-col {
+        width: 55%;
+    }
+
+    .defects-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .bullet-point {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .two-columns {
+        column-count: 2;
+        column-gap: 20px;
+    }
+
+    .defects-container.two-columns {
+        display: block;
+        column-count: 2;
+        column-gap: 20px;
+    }
