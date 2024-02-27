@@ -373,8 +373,7 @@ namespace HaverDevProject.Data.QLMigrations
                 {
                     b.Property<int>("NcrProcurementId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("ncrProcurementId");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(256)
@@ -384,32 +383,31 @@ namespace HaverDevProject.Data.QLMigrations
                         .HasColumnType("TEXT");
 
                     b.Property<int>("NcrId")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("ncrId");
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("NcrProcCreditExpected")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("ncrProcCreditExpected");
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("NcrProcDisposedAllowed")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("ncrProcDisposedAllowed");
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("NcrProcExpectedDate")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("ncrProcExpectedDate");
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("NcrProcFlagStatus")
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("NcrProcSAPReturnCompleted")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("ncrProcSAPReturnCompleted");
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("NcrProcSupplierBilled")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("ncrProcSupplierBilled");
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("NcrProcSupplierReturnReq")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("ncrProcSupplierReturnReq");
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("NcrProcUserId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -428,7 +426,7 @@ namespace HaverDevProject.Data.QLMigrations
 
                     b.HasIndex("NcrId");
 
-                    b.ToTable("ncrProcurement");
+                    b.ToTable("NcrProcurements");
                 });
 
             modelBuilder.Entity("HaverDevProject.Models.NcrQa", b =>

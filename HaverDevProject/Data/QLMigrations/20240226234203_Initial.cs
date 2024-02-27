@@ -132,30 +132,32 @@ namespace HaverDevProject.Data.QLMigrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ncrProcurement",
+                name: "NcrProcurements",
                 columns: table => new
                 {
-                    ncrProcurementId = table.Column<int>(type: "INTEGER", nullable: false)
+                    NcrProcurementId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    ncrProcSupplierReturnReq = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ncrProcExpectedDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    ncrProcDisposedAllowed = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ncrProcSAPReturnCompleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ncrProcCreditExpected = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ncrProcSupplierBilled = table.Column<bool>(type: "INTEGER", nullable: false),
-                    RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true),
-                    ncrId = table.Column<int>(type: "INTEGER", nullable: false),
+                    NcrProcSupplierReturnReq = table.Column<bool>(type: "INTEGER", nullable: false),
+                    NcrProcExpectedDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    NcrProcDisposedAllowed = table.Column<bool>(type: "INTEGER", nullable: false),
+                    NcrProcSAPReturnCompleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    NcrProcCreditExpected = table.Column<bool>(type: "INTEGER", nullable: false),
+                    NcrProcSupplierBilled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    NcrProcFlagStatus = table.Column<bool>(type: "INTEGER", nullable: false),
+                    NcrProcUserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    NcrId = table.Column<int>(type: "INTEGER", nullable: false),
                     CreatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
                     UpdatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
-                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true)
+                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_ncrProcurement_ncrProcurementId", x => x.ncrProcurementId);
+                    table.PrimaryKey("pk_ncrProcurement_ncrProcurementId", x => x.NcrProcurementId);
                     table.ForeignKey(
-                        name: "FK_ncrProcurement_ncr_ncrId",
-                        column: x => x.ncrId,
+                        name: "FK_NcrProcurements_ncr_NcrId",
+                        column: x => x.NcrId,
                         principalTable: "ncr",
                         principalColumn: "NcrId",
                         onDelete: ReferentialAction.Cascade);
@@ -446,9 +448,9 @@ namespace HaverDevProject.Data.QLMigrations
                 column: "OpDispositionTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ncrProcurement_ncrId",
-                table: "ncrProcurement",
-                column: "ncrId");
+                name: "IX_NcrProcurements_NcrId",
+                table: "NcrProcurements",
+                column: "NcrId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ncrQA_DefectId",
@@ -492,7 +494,7 @@ namespace HaverDevProject.Data.QLMigrations
                 name: "itemDefectPhoto");
 
             migrationBuilder.DropTable(
-                name: "ncrProcurement");
+                name: "NcrProcurements");
 
             migrationBuilder.DropTable(
                 name: "ncrReInspect");
