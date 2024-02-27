@@ -9,29 +9,38 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="NcrReInspectId" />
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="NcrReInspectAcceptable" /> @Html.DisplayNameFor(model => model.NcrReInspectAcceptable)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="NcrReInspectNewNcrNumber" class="control-label"></label>
-                <input asp-for="NcrReInspectNewNcrNumber" class="form-control" />
-                <span asp-validation-for="NcrReInspectNewNcrNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NcrReInspectUserId" class="control-label"></label>
-                <input asp-for="NcrReInspectUserId" class="form-control" />
-                <span asp-validation-for="NcrReInspectUserId" class="text-danger"></span>
-            </div>
             <div class="form-group">
                 <label asp-for="NcrId" class="control-label"></label>
                 <select asp-for="NcrId" class="form-control" asp-items="ViewBag.NcrId" disabled></select>
                 <span asp-validation-for="NcrId" class="text-danger"></span>
             </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="NcrReInspectAcceptable" /> @Html.DisplayNameFor(model => model.NcrReInspectAcceptable)
+                </label>
+            </div>
+@*             <div class="form-group">
+                <label asp-for="NcrReInspectNewNcrNumber" class="control-label"></label>
+                <input asp-for="NcrReInspectNewNcrNumber" class="form-control" />
+                <span asp-validation-for="NcrReInspectNewNcrNumber" class="text-danger"></span>
+            </div> *@
+            <div class="form-group">
+                <label asp-for="NcrReInspectUserId" class="control-label"></label>
+                <input asp-for="NcrReInspectUserId" class="form-control" />
+                <span asp-validation-for="NcrReInspectUserId" class="text-danger"></span>
+            </div>
+@*             <div class="form-group">
+                <label asp-for="NcrReInspectPhotos" class="control-label"></label>
+                <input type="file" name="Photos" multiple />
+            </div>
+            <div class="form-group">
+                <label asp-for="NcrReInspectDefectVideo" class="control-label"></label>
+                <input asp-for="NcrReInspectDefectVideo" class="form-control" />
+                <span asp-validation-for="NcrReInspectDefectVideo" class="text-danger"></span>
+            </div> *@
             <div class="form-group">
                 <input type="submit" value="Save and Close" class="btn btn-primary" />
             </div>
@@ -47,12 +56,21 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
         var checkbox = document.getElementById("NcrReInspectAcceptable");
-        var textbox = document.getElementById("NcrReInspectNewNcrNumber");
 
         checkbox.addEventListener("change", function () {
-            textbox.disabled = checkbox.checked;
+            if (!checkbox.checked) {
+                // If checkbox is unchecked, show confirmation dialog
+                var confirmResult = confirm("Do you want to make a new NCR?");
+                if (!confirmResult) {
+                    // If user cancels, keep checkbox checked
+                    checkbox.checked = true;
+                }
+                else {
+                    window.location.href = "/NcrQa/Create";
+                }
+            } else {
+                textbox.disabled = false;
+            }
         });
-
-        textbox.disabled = checkbox.checked;
     </script>
 }
