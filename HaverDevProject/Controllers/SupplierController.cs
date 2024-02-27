@@ -11,6 +11,7 @@ using HaverDevProject.Utilities;
 using HaverDevProject.CustomControllers;
 using Microsoft.EntityFrameworkCore.Storage;
 using HaverDevProject.ViewModels;
+using OfficeOpenXml;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HaverDevProject.Controllers
@@ -203,7 +204,7 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("SupplierId,SupplierCode,SupplierName,SupplierEmail")] Supplier supplier)
+        public async Task<IActionResult> Create([Bind("SupplierId,SupplierCode,SupplierName,SupplierContactName,SupplierEmail")] Supplier supplier)
         {
             try
             {
@@ -211,7 +212,6 @@ namespace HaverDevProject.Controllers
                 {
                     _context.Add(supplier);
                     await _context.SaveChangesAsync();
-                    //return RedirectToAction(nameof(Index));
                     TempData["SuccessMessage"] = "Supplier created successfully!";
                     int newSupplierId = supplier.SupplierId;
                     return RedirectToAction("Details", new { id = newSupplierId});
@@ -270,7 +270,6 @@ namespace HaverDevProject.Controllers
                 {
                     _context.Update(supplier);
                     await _context.SaveChangesAsync();
-                    //return RedirectToAction(nameof(Index));
                     TempData["SuccessMessage"] = "Supplier updated successfully!";
                     int updateSupplierId = supplier.SupplierId;
                     return RedirectToAction("Details", new { id = updateSupplierId });
@@ -412,6 +411,73 @@ namespace HaverDevProject.Controllers
             return View("SupplierReport", reportDto);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Upload(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                TempData["ErrorMessage"] = "No file selected.";
+                return RedirectToAction(nameof(Index)); 
+            }
+
+            if (file.ContentType != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            {
+                TempData["ErrorMessage"] = "Invalid file type. Please upload an Excel file (.xlsx).";
+                return RedirectToAction(nameof(Index)); 
+            }
+
+            using (var stream = new MemoryStream())
+            {
+                await file.CopyToAsync(stream);
+                using (var package = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    int rowCount = worksheet.Dimension.Rows;
+
+                    for (int row = 2; row <= rowCount; row++)
+                    {
+                        var supplierInfo = worksheet.Cells[row, 1].Value?.ToString().Trim();
+                        var contactName = worksheet.Cells[row, 2].Value?.ToString().Trim();
+                        var email = worksheet.Cells[row, 3].Value?.ToString().Trim();
+                                                
+                        var parts = supplierInfo.Split(new[] { ' ' }, 2);
+                        var supplierCode = parts[0].Trim();
+                        var supplierName = parts.Length > 1 ? parts[1].Trim() : "";
+
+                        var existingSupplier = await _context.Suppliers
+                                                             .FirstOrDefaultAsync(s => s.SupplierCode == supplierCode);
+
+                        if (existingSupplier == null)
+                        {
+                            // Create new Supplier if it does not exist
+                            var newSupplier = new Supplier
+                            {
+                                SupplierCode = supplierCode,
+                                SupplierName = supplierName,
+                                SupplierContactName = string.IsNullOrWhiteSpace(contactName) ? null : contactName,
+                                SupplierEmail = string.IsNullOrWhiteSpace(email) ? null : email
+                            };
+                            _context.Suppliers.Add(newSupplier);
+                        }
+                        else
+                        {
+                            existingSupplier.SupplierContactName = string.IsNullOrWhiteSpace(contactName) ? existingSupplier.SupplierContactName : contactName;
+                            existingSupplier.SupplierEmail = string.IsNullOrWhiteSpace(email) ? existingSupplier.SupplierEmail : email;
+                        }
+                    }
+
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            TempData["SuccessMessage"] = "Suppliers uploaded successfully!";
+            return RedirectToAction(nameof(Index)); 
+        }
+        public IActionResult Upload()
+        {
+            return View("UploadExcel");
+        }
         private bool SupplierExists(int id)
         {
           return _context.Suppliers.Any(e => e.SupplierId == id);
