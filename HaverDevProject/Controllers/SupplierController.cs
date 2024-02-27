@@ -186,7 +186,7 @@ namespace HaverDevProject.Controllers
             var supplierViewModel = new SupplierDetailsViewModel
             {
                 Supplier = supplier,
-                RelatedNCRs = supplier.Items.FirstOrDefault().NcrQas.Select(nqa => nqa.Ncr).ToList()
+                RelatedNCRs = supplier.Items.FirstOrDefault()?.NcrQas?.Select(nqa => nqa.Ncr).ToList() ?? new List<Ncr>()
             };
 
             return View(supplierViewModel);
