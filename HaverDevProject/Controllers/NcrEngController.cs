@@ -212,7 +212,8 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects).ThenInclude(n=>n.Defect)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
 				.Include(n => n.Drawing)
-				.FirstOrDefaultAsync(m => m.NcrEngId == id);
+                .Include(n => n.EngDefectPhotos)
+                .FirstOrDefaultAsync(m => m.NcrEngId == id);
 
 			if (ncrEng == null)
 			{
@@ -235,7 +236,8 @@ namespace HaverDevProject.Controllers
 						.Include(ne => ne.Ncr)
   						.Include(ne => ne.EngDispositionType)
   						.Include(ne => ne.Drawing)
-						.FirstOrDefaultAsync(ne => ne.NcrId == id);
+                        .Include(n => n.EngDefectPhotos)
+                        .FirstOrDefaultAsync(ne => ne.NcrId == id);
 			//var ncrEng = await _context.NcrEngs.FindAsync(id);
 
             if (ncrEng == null)
@@ -260,8 +262,9 @@ namespace HaverDevProject.Controllers
 				DrawingOriginalRevNumber = ncrEng.Drawing.DrawingOriginalRevNumber,
 				DrawingUpdatedRevNumber = ncrEng.Drawing.DrawingUpdatedRevNumber,
 				DrawingRevDate = ncrEng.Drawing.DrawingRevDate,
-				DrawingUserId = ncrEng.Drawing.DrawingUserId
-			};
+				DrawingUserId = ncrEng.Drawing.DrawingUserId,
+                EngDefectPhotos = ncrEng.EngDefectPhotos
+            };
 
 			ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName", ncrEng.EngDispositionTypeId);
 			return View(ncrEngDTO);
@@ -270,7 +273,7 @@ namespace HaverDevProject.Controllers
         // POST: NcrEng/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, NcrEngDTO ncrEngDTO)
+        public async Task<IActionResult> Edit(int id, NcrEngDTO ncrEngDTO, List<IFormFile> Photos)
         {
 			ncrEngDTO.NcrId = id;
             if (id != ncrEngDTO.NcrId)
@@ -280,6 +283,7 @@ namespace HaverDevProject.Controllers
 
             if (ModelState.IsValid)
             {
+                await AddPictures(ncrEngDTO, Photos);
                 try
                 {
                     var ncrEng = await _context.NcrEngs
@@ -301,6 +305,7 @@ namespace HaverDevProject.Controllers
 					ncrEng.Drawing.DrawingUpdatedRevNumber = ncrEngDTO.DrawingUpdatedRevNumber;
 					ncrEng.Drawing.DrawingRevDate = ncrEngDTO.DrawingRevDate;
 					ncrEng.Drawing.DrawingUserId = ncrEngDTO.DrawingUserId;
+                    ncrEng.EngDefectPhotos = ncrEngDTO.EngDefectPhotos;
 
                     _context.Update(ncrEng);
                     await _context.SaveChangesAsync();
@@ -323,254 +328,293 @@ namespace HaverDevProject.Controllers
 
 
 
-  //      // GET: NcrEng/Edit/5
-  //      public async Task<IActionResult> Edit(int? id)
-		//{
+        //      // GET: NcrEng/Edit/5
+        //      public async Task<IActionResult> Edit(int? id)
+        //{
 
-  //          //if (id == null || _context.NcrEngs == null)
-  //          //{
-  //          //    return NotFound();
-  //          //}
+        //          //if (id == null || _context.NcrEngs == null)
+        //          //{
+        //          //    return NotFound();
+        //          //}
 
-  //          ////var ncrEng = await _context.NcrEngs.FindAsync(id);
-  //          //var ncrEng = await _context.NcrEngs
-  //          //    .Include(n => n.EngDispositionType)
-  //          //    .Include(n => n.Ncr)
-  //          //    .Include(n => n.Drawing)
-  //          //    .FirstOrDefaultAsync(m => m.NcrEngId == id);
-
-
-  //          //if (ncrEng == null)
-  //          //{
-  //          //    return NotFound();
-  //          //}
-  //          //ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName", ncrEng.EngDispositionTypeId);
-  //          //ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrEng.NcrId);
-  //          //return View(ncrEng);
-
-		//	if (id == null)
-		//	{
-		//		return NotFound();
-		//	}
-
-		//	var ncrEng = await _context.Ncrs
-		//		.Include(ne => ne.NcrEng)
-		//		.ThenInclude(ne => ne.EngDispositionType)
-		//		.Include(ne => ne.NcrEng)
-		//		.ThenInclude(ne => ne.Drawing)
-		//		.FirstOrDefaultAsync(ne => ne.NcrId == id);
-
-		//	if (ncrEng == null)
-		//	{
-		//		return NotFound();
-		//	}
-		//	var ncrEngDTO = new NcrEngDTO
-		//	{
-		//		NcrId = ncrEng.NcrId,
-		//		NcrEngCustomerNotification = ncrEng.NcrEng.NcrEngCustomerNotification,
-		//		NcrEngDispositionDescription = ncrEng.NcrEng.NcrEngDispositionDescription,
-		//		NcrEngUserId = ncrEng.NcrEng.NcrEngUserId,
-		//		DrawingUpdatedRevNumber = ncrEng.NcrEng.Drawing.DrawingUpdatedRevNumber,
-		//		DrawingOriginalRevNumber = ncrEng.NcrEng.Drawing.DrawingOriginalRevNumber,
-		//		DrawingRevDate = ncrEng.NcrEng.Drawing.DrawingRevDate,
-		//		DrawingUserId = ncrEng.NcrEng.Drawing.DrawingUserId,
-		//		DrawingRequireUpdating = ncrEng.NcrEng.Drawing.DrawingRequireUpdating,
-		//		EngDispositionTypeId = ncrEng.NcrEng.EngDispositionTypeId,
-		//		DrawingId = ncrEng.NcrEng.DrawingId,
-		//	};
-
-		//	ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName", ncrEng.NcrEng.EngDispositionTypeId);
-		//	ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrEng.NcrId);
-		//	return View(ncrEngDTO);
-		//}
+        //          ////var ncrEng = await _context.NcrEngs.FindAsync(id);
+        //          //var ncrEng = await _context.NcrEngs
+        //          //    .Include(n => n.EngDispositionType)
+        //          //    .Include(n => n.Ncr)
+        //          //    .Include(n => n.Drawing)
+        //          //    .FirstOrDefaultAsync(m => m.NcrEngId == id);
 
 
-		//// POST: NcrEng/Edit/5
-		//// To protect from overposting attacks, enable the specific properties you want to bind to.
-		//// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-		//[HttpPost]
-		//[ValidateAntiForgeryToken]
-  //      public async Task<IActionResult> Edit(int id, NcrEngDTO ncrEngDTO)
-  //      {
-		//	ncrEngDTO.NcrId = id;
-  //          if (id != ncrEngDTO.NcrId)
-  //          {
-		//		return NotFound();
-  //          }
-  //          //ncrEngDTO.EngDispositionType = await _context.EngDispositionTypes.FindAsync(ncrEngDTO.EngDispositionTypeId);
-  //  //        ncrEngDTO.EngDispositionType = await _context.EngDispositionTypes
-  //  //.FirstOrDefaultAsync(edt => edt.EngDispositionTypeId == ncrEngDTO.EngDispositionTypeId);
+        //          //if (ncrEng == null)
+        //          //{
+        //          //    return NotFound();
+        //          //}
+        //          //ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName", ncrEng.EngDispositionTypeId);
+        //          //ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrEng.NcrId);
+        //          //return View(ncrEng);
+
+        //	if (id == null)
+        //	{
+        //		return NotFound();
+        //	}
+
+        //	var ncrEng = await _context.Ncrs
+        //		.Include(ne => ne.NcrEng)
+        //		.ThenInclude(ne => ne.EngDispositionType)
+        //		.Include(ne => ne.NcrEng)
+        //		.ThenInclude(ne => ne.Drawing)
+        //		.FirstOrDefaultAsync(ne => ne.NcrId == id);
+
+        //	if (ncrEng == null)
+        //	{
+        //		return NotFound();
+        //	}
+        //	var ncrEngDTO = new NcrEngDTO
+        //	{
+        //		NcrId = ncrEng.NcrId,
+        //		NcrEngCustomerNotification = ncrEng.NcrEng.NcrEngCustomerNotification,
+        //		NcrEngDispositionDescription = ncrEng.NcrEng.NcrEngDispositionDescription,
+        //		NcrEngUserId = ncrEng.NcrEng.NcrEngUserId,
+        //		DrawingUpdatedRevNumber = ncrEng.NcrEng.Drawing.DrawingUpdatedRevNumber,
+        //		DrawingOriginalRevNumber = ncrEng.NcrEng.Drawing.DrawingOriginalRevNumber,
+        //		DrawingRevDate = ncrEng.NcrEng.Drawing.DrawingRevDate,
+        //		DrawingUserId = ncrEng.NcrEng.Drawing.DrawingUserId,
+        //		DrawingRequireUpdating = ncrEng.NcrEng.Drawing.DrawingRequireUpdating,
+        //		EngDispositionTypeId = ncrEng.NcrEng.EngDispositionTypeId,
+        //		DrawingId = ncrEng.NcrEng.DrawingId,
+        //	};
+
+        //	ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName", ncrEng.NcrEng.EngDispositionTypeId);
+        //	ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrEng.NcrId);
+        //	return View(ncrEngDTO);
+        //}
 
 
-  //          if (!ModelState.IsValid)
-		//	{
-  //              var booBoos = ModelState.Where(x => x.Value.Errors.Count > 0)
-  //          .Select(x => new { x.Key, x.Value.Errors });
-
-  //              foreach (var booBoo in booBoos)
-  //              {
-  //                  string key = booBoo.Key;
-  //                  foreach (var error in booBoo.Errors)
-  //                  {
-  //                      var errorMessage = error?.ErrorMessage;
-  //                      ModelState.AddModelError("", "For " + key + ": " + errorMessage);
-  //                  }
-  //              }
-  //          }
-
-  //          if (ModelState.IsValid)
-  //          {
-  //              try
-  //              {
-  //                  var ncrEng = await _context.NcrEngs
-  //                      .Include(ne => ne.Ncr)
-		//				.Include(ne => ne.EngDispositionType)
-		//				.Include(ne => ne.Drawing)
-  //                      .FirstOrDefaultAsync(ne => ne.NcrId == id);
-
-  //                  if (ncrEng == null)
-  //                  {
-  //                      return NotFound();
-  //                  }
-
-  //                  // Update the properties of ncrEng based on the properties of ncrEngDTO
-  //   //               ncrEng.Ncr = ncrEngDTO.Ncr;
-  //   //               ncrEng.NcrEngCustomerNotification = ncrEngDTO.NcrEngCustomerNotification;
-  //   //               ncrEng.NcrEngDispositionDescription = ncrEngDTO.NcrEngDispositionDescription;
-  //   //               ncrEng.NcrEngUserId = ncrEngDTO.NcrEngUserId;
-  //   //               ncrEng.EngDispositionTypeId = ncrEngDTO.EngDispositionTypeId;
-		//			//ncrEng.EngDispositionType = ncrEngDTO.EngDispositionType;
-  //   //               ncrEng.DrawingId = ncrEngDTO.DrawingId;
-
-  //                  _context.Update(ncrEng);
-  //                  await _context.SaveChangesAsync();
-  //              }
-  //              catch (DbUpdateConcurrencyException)
-  //              {
-  //                  if (!NcrEngExists(ncrEngDTO.NcrId))
-  //                  {
-		//				return NotFound();
-		//			}
-  //                  else
-  //                  {
-  //                      throw;
-  //                  }
-  //              }
-  //              return RedirectToAction(nameof(Index));
-  //          }
-  //          ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName", ncrEngDTO.EngDispositionTypeId);
-  //          ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrEngDTO.NcrId);
-  //          return View(ncrEngDTO);
-  //      }
+        //// POST: NcrEng/Edit/5
+        //// To protect from overposting attacks, enable the specific properties you want to bind to.
+        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //      public async Task<IActionResult> Edit(int id, NcrEngDTO ncrEngDTO)
+        //      {
+        //	ncrEngDTO.NcrId = id;
+        //          if (id != ncrEngDTO.NcrId)
+        //          {
+        //		return NotFound();
+        //          }
+        //          //ncrEngDTO.EngDispositionType = await _context.EngDispositionTypes.FindAsync(ncrEngDTO.EngDispositionTypeId);
+        //  //        ncrEngDTO.EngDispositionType = await _context.EngDispositionTypes
+        //  //.FirstOrDefaultAsync(edt => edt.EngDispositionTypeId == ncrEngDTO.EngDispositionTypeId);
 
 
+        //          if (!ModelState.IsValid)
+        //	{
+        //              var booBoos = ModelState.Where(x => x.Value.Errors.Count > 0)
+        //          .Select(x => new { x.Key, x.Value.Errors });
+
+        //              foreach (var booBoo in booBoos)
+        //              {
+        //                  string key = booBoo.Key;
+        //                  foreach (var error in booBoo.Errors)
+        //                  {
+        //                      var errorMessage = error?.ErrorMessage;
+        //                      ModelState.AddModelError("", "For " + key + ": " + errorMessage);
+        //                  }
+        //              }
+        //          }
+
+        //          if (ModelState.IsValid)
+        //          {
+        //              try
+        //              {
+        //                  var ncrEng = await _context.NcrEngs
+        //                      .Include(ne => ne.Ncr)
+        //				.Include(ne => ne.EngDispositionType)
+        //				.Include(ne => ne.Drawing)
+        //                      .FirstOrDefaultAsync(ne => ne.NcrId == id);
+
+        //                  if (ncrEng == null)
+        //                  {
+        //                      return NotFound();
+        //                  }
+
+        //                  // Update the properties of ncrEng based on the properties of ncrEngDTO
+        //   //               ncrEng.Ncr = ncrEngDTO.Ncr;
+        //   //               ncrEng.NcrEngCustomerNotification = ncrEngDTO.NcrEngCustomerNotification;
+        //   //               ncrEng.NcrEngDispositionDescription = ncrEngDTO.NcrEngDispositionDescription;
+        //   //               ncrEng.NcrEngUserId = ncrEngDTO.NcrEngUserId;
+        //   //               ncrEng.EngDispositionTypeId = ncrEngDTO.EngDispositionTypeId;
+        //			//ncrEng.EngDispositionType = ncrEngDTO.EngDispositionType;
+        //   //               ncrEng.DrawingId = ncrEngDTO.DrawingId;
+
+        //                  _context.Update(ncrEng);
+        //                  await _context.SaveChangesAsync();
+        //              }
+        //              catch (DbUpdateConcurrencyException)
+        //              {
+        //                  if (!NcrEngExists(ncrEngDTO.NcrId))
+        //                  {
+        //				return NotFound();
+        //			}
+        //                  else
+        //                  {
+        //                      throw;
+        //                  }
+        //              }
+        //              return RedirectToAction(nameof(Index));
+        //          }
+        //          ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName", ncrEngDTO.EngDispositionTypeId);
+        //          ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrEngDTO.NcrId);
+        //          return View(ncrEngDTO);
+        //      }
 
 
 
-  //      public async Task<IActionResult> Edit(int id, [Bind("NcrEngId,NcrEngCustomerNotification,NcrEngDispositionDescription,NcrEngUserId,EngDispositionTypeId,Drawing.DrawingRequireUpdating,Drawing.DrawingUpdatedRevNumber,Drawing.DrawingOriginalRevNumber,Drawing.DrawingRevDate")] NcrEngDTO ncrEngDTO)
-		//{
+
+
+        //      public async Task<IActionResult> Edit(int id, [Bind("NcrEngId,NcrEngCustomerNotification,NcrEngDispositionDescription,NcrEngUserId,EngDispositionTypeId,Drawing.DrawingRequireUpdating,Drawing.DrawingUpdatedRevNumber,Drawing.DrawingOriginalRevNumber,Drawing.DrawingRevDate")] NcrEngDTO ncrEngDTO)
+        //{
 
 
 
-		//	var ncrEngToUpdate = await _context.NcrEngs.FirstOrDefaultAsync(r => r.NcrId == id);
+        //	var ncrEngToUpdate = await _context.NcrEngs.FirstOrDefaultAsync(r => r.NcrId == id);
 
-		//	if (ncrEngToUpdate == null)
-		//	{
-		//		return NotFound();
-		//	}
+        //	if (ncrEngToUpdate == null)
+        //	{
+        //		return NotFound();
+        //	}
 
-		//	if (await TryUpdateModelAsync<NcrEng>(ncrEngToUpdate, "",
-		//		n => n.NcrEngCustomerNotification,
-		//		n => n.NcrEngDispositionDescription,
-		//		n => n.NcrEngUserId,
-		//		n => n.EngDispositionTypeId,
-		//		n => n.Drawing.DrawingRequireUpdating,
-		//		n => n.Drawing.DrawingUpdatedRevNumber,
-		//		n => n.Drawing.DrawingOriginalRevNumber,
-		//		n => n.Drawing.DrawingRevDate))
+        //	if (await TryUpdateModelAsync<NcrEng>(ncrEngToUpdate, "",
+        //		n => n.NcrEngCustomerNotification,
+        //		n => n.NcrEngDispositionDescription,
+        //		n => n.NcrEngUserId,
+        //		n => n.EngDispositionTypeId,
+        //		n => n.Drawing.DrawingRequireUpdating,
+        //		n => n.Drawing.DrawingUpdatedRevNumber,
+        //		n => n.Drawing.DrawingOriginalRevNumber,
+        //		n => n.Drawing.DrawingRevDate))
 
-		//	{
-		//		try
-		//		{
-		//			await _context.SaveChangesAsync();
-		//			return RedirectToAction(nameof(Index));
-		//		}
-		//		catch (DbUpdateConcurrencyException)
-		//		{
-		//			if (!NcrEngExists(ncrEngToUpdate.NcrId))
-		//			{
-		//				return NotFound();
-		//			}
-		//			else
-		//			{
-		//				throw;
-		//			}
-		//		}
-		//		catch (DbUpdateException)
-		//		{
-		//			ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
-		//		}
-		//	}
+        //	{
+        //		try
+        //		{
+        //			await _context.SaveChangesAsync();
+        //			return RedirectToAction(nameof(Index));
+        //		}
+        //		catch (DbUpdateConcurrencyException)
+        //		{
+        //			if (!NcrEngExists(ncrEngToUpdate.NcrId))
+        //			{
+        //				return NotFound();
+        //			}
+        //			else
+        //			{
+        //				throw;
+        //			}
+        //		}
+        //		catch (DbUpdateException)
+        //		{
+        //			ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+        //		}
+        //	}
 
-		//	else
-		//	{
-		//		//Debugging Approach: Not for production code.
-		//		//This code will list validation errors at the top of the View.
-		//		//Use it to diagnose when there seems to be a Validation Error
-		//		//that is going unreported.  Remove this code when you are
-		//		//finished debugging.
-		//		var booBoos = ModelState.Where(x => x.Value.Errors.Count > 0)
-		//			.Select(x => new { x.Key, x.Value.Errors });
+        //	else
+        //	{
+        //		//Debugging Approach: Not for production code.
+        //		//This code will list validation errors at the top of the View.
+        //		//Use it to diagnose when there seems to be a Validation Error
+        //		//that is going unreported.  Remove this code when you are
+        //		//finished debugging.
+        //		var booBoos = ModelState.Where(x => x.Value.Errors.Count > 0)
+        //			.Select(x => new { x.Key, x.Value.Errors });
 
-		//		foreach (var booBoo in booBoos)
-		//		{
-		//			string key = booBoo.Key;
-		//			foreach (var error in booBoo.Errors)
-		//			{
-		//				var errorMessage = error?.ErrorMessage;
-		//				ModelState.AddModelError("", "For " + key + ": " + errorMessage);
-		//			}
-		//		}
-		//	}
-
-
-		//	ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName");
-		//	ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrEngToUpdate.NcrId);
-		//	return View(ncrEngToUpdate);
-		//}
+        //		foreach (var booBoo in booBoos)
+        //		{
+        //			string key = booBoo.Key;
+        //			foreach (var error in booBoo.Errors)
+        //			{
+        //				var errorMessage = error?.ErrorMessage;
+        //				ModelState.AddModelError("", "For " + key + ": " + errorMessage);
+        //			}
+        //		}
+        //	}
 
 
-		//if (id != ncrEng.NcrEngId)
-		//{
-		//    return NotFound();
-		//}
-
-		//if (ModelState.IsValid)
-		//{
-		//    try
-		//    {
-		//        _context.Update(ncrEng);
-		//        await _context.SaveChangesAsync();
-		//    }
-		//    catch (DbUpdateConcurrencyException)
-		//    {
-		//        if (!NcrEngExists(ncrEng.NcrEngId))
-		//        {
-		//            return NotFound();
-		//        }
-		//        else
-		//        {
-		//            throw;
-		//        }
-		//    }
-		//    return RedirectToAction(nameof(Index));
-		//}
-		//ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName", ncrEng.EngDispositionTypeId);
-		//ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrEng.NcrId);
-		//return View(ncrEng);
+        //	ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName");
+        //	ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrEngToUpdate.NcrId);
+        //	return View(ncrEngToUpdate);
+        //}
 
 
-		private bool NcrEngExists(int id)
+        //if (id != ncrEng.NcrEngId)
+        //{
+        //    return NotFound();
+        //}
+
+        //if (ModelState.IsValid)
+        //{
+        //    try
+        //    {
+        //        _context.Update(ncrEng);
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!NcrEngExists(ncrEng.NcrEngId))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
+        //    return RedirectToAction(nameof(Index));
+        //}
+        //ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName", ncrEng.EngDispositionTypeId);
+        //ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrEng.NcrId);
+        //return View(ncrEng);
+
+        private async Task AddPictures(NcrEngDTO ncrEngDTO, List<IFormFile> pictures)
+        {
+            if (pictures != null && pictures.Any())
+            {
+                ncrEngDTO.EngDefectPhotos = new List<EngDefectPhoto>();
+
+                foreach (var picture in pictures)
+                {
+                    string mimeType = picture.ContentType;
+                    long fileLength = picture.Length;
+
+                    if (!(mimeType == "" || fileLength == 0))
+                    {
+                        if (mimeType.Contains("image"))
+                        {
+                            using var memoryStream = new MemoryStream();
+                            await picture.CopyToAsync(memoryStream);
+                            var pictureArray = memoryStream.ToArray();
+
+                            ncrEngDTO.EngDefectPhotos.Add(new EngDefectPhoto
+                            {
+                                EngDefectPhotoContent = ResizeImage.shrinkImageWebp(pictureArray, 500, 600),
+                                EngDefectPhotoMimeType = "image/webp",
+                                FileName = picture.FileName
+                            });
+                        }
+                    }
+                }
+            }
+        }
+
+        public async Task<FileContentResult> Download(int id)
+        {
+            var theFile = await _context.EngDefectPhotos
+                .Include(d => d.EngFileContent)
+                .Where(f => f.EngDefectPhotoId == id)
+                .FirstOrDefaultAsync();
+            return File(theFile.EngDefectPhotoContent, theFile.EngDefectPhotoMimeType, theFile.FileName);
+        }
+
+        private bool NcrEngExists(int id)
 		{
 			return _context.NcrEngs.Any(e => e.NcrEngId == id);
 		}

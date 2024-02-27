@@ -162,20 +162,20 @@
                         Images
                     </div>
 
-                    @* <div id="photoCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div id="photoCarousel" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-indicators">
-                    @if (Model.ItemDefectPhotos != null && Model.ItemDefectPhotos.Any())
+                            @if (Model.Ncr.NcrQa.ItemDefectPhotos != null && Model.Ncr.NcrQa.ItemDefectPhotos.Any())
                     {
-                    for (int i = 0; i < Model.ItemDefectPhotos.Count; i++)
+                                for (int i = 0; i < Model.Ncr.NcrQa.ItemDefectPhotos.Count; i++)
                     {
                     <button type="button" data-bs-target="#photoCarousel" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")" aria-current="true" aria-label="Slide @(i + 1)"></button>
                     }
                     }
                     </div>
                     <div class="carousel-inner">
-                    @if (Model.ItemDefectPhotos != null && Model.ItemDefectPhotos.Any())
+                            @if (Model.Ncr.NcrQa.ItemDefectPhotos != null && Model.Ncr.NcrQa.ItemDefectPhotos.Any())
                     {
-                    var defectPhotosList = Model.ItemDefectPhotos.ToList();
+                                var defectPhotosList = Model.Ncr.NcrQa.ItemDefectPhotos.ToList();
                     for (int i = 0; i < defectPhotosList.Count; i++)
                     {
                     var photo = defectPhotosList.ElementAt(i);
@@ -185,7 +185,7 @@
                     string imageSrc = string.Format("data:" + photo.ItemDefectPhotoMimeType + ";base64,{0}", imageBase64);
 
                     <div class="carousel-item @(i == 0 ? "active" : "")">
-                    <img src="@imageSrc" alt="Defect Photo of @Model.Defect.DefectName" title="Defect Photo of @Model.Defect.DefectName" class="d-block w-100 img-fluid rounded" />
+                                            <img src="@imageSrc" alt="Defect Photo of @Model.Ncr.NcrQa.Defect.DefectName" title="Defect Photo of @Model.Ncr.NcrQa.Defect.DefectName" class="d-block w-100 img-fluid rounded" />
                     </div>
                     }
                     }
@@ -199,7 +199,7 @@
                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Next</span>
                     </button>
-                    </div> *@
+                    </div>
 
                     <div class="card-body pb-0">
                         <div class="row">
@@ -246,18 +246,22 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th class="four-cols">Process Applicable</th>
-                                    <th class="four-cols">Supplier Name</th>
-                                    <th class="four-cols">PO or Prod. No.</th>
-                                    <th class="four-cols">Sales Order No.</th>
+                                    <th class="three-cols">Disposition</th>
+                                   
+                                    <th class="three-cols">Customer Notification</th>
+                                    <th class="three-cols">Drawing Require Updating</th>
+                                   
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td class="four-cols">@(Model.NcrEngCustomerNotification == true ? "Supplier or Rec-Insp" : "WIP (Production Order)")</td>
-                                    <td class="four-cols">@Model.NcrEngStatusFlag</td>
-                                    <td class="four-cols">@Model.NcrEngStatusFlag</td>
-                                    <td class="four-cols">@Model.NcrEngStatusFlag</td>
+                                    
+                                    <td class="three-cols">@Model.Ncr.NcrEng.EngDispositionType.EngDispositionTypeName</td>
+                                   
+                                    <td class="three-cols">@(Model.NcrEngCustomerNotification == true ? "Yes" : "No")</td>
+                                    <td class="three-cols">@(Model.Drawing.DrawingRequireUpdating == true ? "Yes" : "No")</td>
+    
+      
                                 </tr>
                             </tbody>
                         </table>
@@ -266,44 +270,45 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>Item Marked NonConforming</th>
-                                    <th>Engineer Disposition Required?</th>
+                                    <th>Disposition</th>
+                                    
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>@(Model.NcrEngCustomerNotification == true ? "Yes" : "No")</td>
-                                    <td>@(Model.NcrEngCustomerNotification == true ? "Yes" : "No")</td>
+                                    <td>@Model.Ncr.NcrEng.NcrEngDispositionDescription</td>
+                                
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                     <div class="card">
                         <div class="card-header">
-                            Item Information
+                            Drawing
                         </div>
                         <div class="card-body pb-0 pt-0">
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th class="four-cols">SAP No.</th>
-                                        <th class="four-cols">Description</th>
-                                        <th class="four-cols">Quantity Received</th>
-                                        <th class="four-cols">Quantity Defective</th>
+                                        <th class="four-cols">Original Rev. Number</th>
+                                        <th class="four-cols">Updated Rev. Number</th>
+                                        <th class="four-cols">Name of Engineer</th>
+                                        <th class="four-cols">Revision Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td class="four-cols">@Model.NcrEngStatusFlag</td>
-                                        <td class="four-cols">@Model.NcrEngStatusFlag</td>
-                                        <td class="four-cols">@Model.NcrEngStatusFlag</td>
-                                        <td class="four-cols">@Model.NcrEngStatusFlag</td>
+                                        <td class="four-cols">@Model.Drawing.DrawingOriginalRevNumber</td>
+                                        <td class="four-cols">@Model.Drawing.DrawingUpdatedRevNumber</td>
+                                        <td> J. Laferty</td>
+                                       @*  <td class="four-cols">@Model.Drawing.NcrEngId</td> *@
+                                        <td class="four-cols">@Model.Drawing.DrawingRevDate</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                    <div class="card">
+  @*                   <div class="card">
                         <div class="card-header">
                             Defect Information
                         </div>
@@ -323,21 +328,21 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
+                    </div> *@
                 </div>
                 <div class="card">
                     <div class="card-body pb-0">
                         <table class="table m-0">
                             <thead class="custom-light-bg">
                                 <tr>
-                                    <th class="three-cols">Quality Representative</th>
+                                    <th class="three-cols">Engineer</th>
                                     <th class="three-cols">Creation Date</th>
                                     <th class="three-cols">Last Updated</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td class="three-cols">R. May</td>
+                                    <td class="three-cols">B. Bastion</td>
                                     <td class="three-cols">@Model.Ncr.NcrLastUpdated.ToString("yyyy-MM-dd")</td>
                                     <td class="three-cols">
                                         @{
@@ -356,6 +361,9 @@
                         </table>
                     </div>
                 </div>
+
+
+
                 <button class="btn custom-secondary-bg icon-drop text-start" type="button" data-bs-toggle="collapse" data-bs-target="#additionalInfo" aria-expanded="false" aria-controls="additionalInfo">
                     Additional Information <i class="bi bi-chevron-down"></i>
                 </button>
@@ -364,30 +372,30 @@
                         Images
                     </div>
 
-                    @* <div id="photoCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div id="photoCarousel" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-indicators">
-                    @if (Model.ItemDefectPhotos != null && Model.ItemDefectPhotos.Any())
+                    @if (Model.EngDefectPhotos != null && Model.EngDefectPhotos.Any())
                     {
-                    for (int i = 0; i < Model.ItemDefectPhotos.Count; i++)
+                    for (int i = 0; i < Model.EngDefectPhotos.Count; i++)
                     {
                     <button type="button" data-bs-target="#photoCarousel" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")" aria-current="true" aria-label="Slide @(i + 1)"></button>
                     }
                     }
                     </div>
                     <div class="carousel-inner">
-                    @if (Model.ItemDefectPhotos != null && Model.ItemDefectPhotos.Any())
+                    @if (Model.EngDefectPhotos != null && Model.EngDefectPhotos.Any())
                     {
-                    var defectPhotosList = Model.ItemDefectPhotos.ToList();
+                    var defectPhotosList = Model.EngDefectPhotos.ToList();
                     for (int i = 0; i < defectPhotosList.Count; i++)
                     {
                     var photo = defectPhotosList.ElementAt(i);
-                    if (photo.ItemDefectPhotoContent != null)
+                    if (photo.EngDefectPhotoContent != null)
                     {
-                    string imageBase64 = Convert.ToBase64String(photo.ItemDefectPhotoContent);
-                    string imageSrc = string.Format("data:" + photo.ItemDefectPhotoMimeType + ";base64,{0}", imageBase64);
+                    string imageBase64 = Convert.ToBase64String(photo.EngDefectPhotoContent);
+                    string imageSrc = string.Format("data:" + photo.EngDefectPhotoMimeType + ";base64,{0}", imageBase64);
 
                     <div class="carousel-item @(i == 0 ? "active" : "")">
-                    <img src="@imageSrc" alt="Defect Photo of @Model.Defect.DefectName" title="Defect Photo of @Model.Defect.DefectName" class="d-block w-100 img-fluid rounded" />
+                                            <img src="@imageSrc" alt="Defect Photo of @Model.Ncr.NcrQa.Defect.DefectName" title="Defect Photo of @Model.Ncr.NcrQa.Defect.DefectName" class="d-block w-100 img-fluid rounded" />
                     </div>
                     }
                     }
@@ -401,22 +409,22 @@
                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Next</span>
                     </button>
-                    </div> *@
+                    </div> 
 
-                    @* <div class="card-body pb-0">
+                    <div class="card-body pb-0">
                     <div class="row">
                     @{
-                    if (Model.ItemDefectPhotos != null && Model.ItemDefectPhotos.Any())
+                    if (Model.EngDefectPhotos != null && Model.EngDefectPhotos.Any())
                     {
-                    foreach (var photo in Model.ItemDefectPhotos)
+                    foreach (var photo in Model.EngDefectPhotos)
                     {
-                    if (photo.ItemDefectPhotoContent != null)
+                    if (photo.EngDefectPhotoContent != null)
                     {
-                    string imageBase64 = Convert.ToBase64String(photo.ItemDefectPhotoContent);
-                    string imageSrc = string.Format("data:" + photo.ItemDefectPhotoMimeType + ";base64,{0}", imageBase64);
+                    string imageBase64 = Convert.ToBase64String(photo.EngDefectPhotoContent);
+                    string imageSrc = string.Format("data:" + photo.EngDefectPhotoMimeType + ";base64,{0}", imageBase64);
 
                     <div class="text-center pb-3 col-6">
-                    <img src="@imageSrc" alt="Defect Photo of @Model.Defect.DefectName" title="Defect Photo of @Model.Defect.DefectName" class="img-fluid rounded" />
+                                                <img src="@imageSrc" alt="Defect Photo of @Model.Ncr.NcrQa.Defect.DefectName" title="Defect Photo of @Model.Ncr.NcrQa.Defect.DefectName" class="img-fluid rounded" />
                     </div>
                     }
                     }
@@ -424,7 +432,7 @@
                     }
                     </div>
                     </div>
-                    <div class="card-header">
+                @*     <div class="card-header">
                     Attachments / Comments
                     </div>
                     <div class="card-body">
@@ -438,9 +446,11 @@
                 </div>
             </div>
                     
-            @* <button class="btn custom-header-bg icon-drop text-start" type="button" data-bs-toggle="collapse" data-bs-target="#engSection" aria-expanded="true" aria-controls="engSection">
+            
+                
+       @*      <button class="btn custom-header-bg icon-drop text-start" type="button" data-bs-toggle="collapse" data-bs-target="#engSection" aria-expanded="true" aria-controls="engSection">
                 Engineering <i class="bi bi-chevron-down"></i>
-            </button>  *@            
+            </button>              *@
 
             <div class="form-group d-flex justify-content-end mt-2">
                 <button class="btn btn-secondary me-4">
@@ -456,50 +466,3 @@
         </div>
     </div>
 </div>
-
-
-
-
-
-@* <h1>Details</h1>
-
-<div>
-    <h4>NcrEng</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NcrEngCustomerNotification)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NcrEngCustomerNotification)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NcrEngDispositionDescription)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NcrEngDispositionDescription)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NcrEngUserId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NcrEngUserId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EngDispositionType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EngDispositionType.EngDispositionTypeName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Ncr)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Ncr.NcrNumber)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.NcrEngId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div> *@
