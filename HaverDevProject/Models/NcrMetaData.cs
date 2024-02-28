@@ -41,6 +41,9 @@ public class NcrMetaData
     [Display(Name = "Quality Representative")]
     public virtual NcrQa NcrQa { get; set; }
 
+    [Display(Name = "Procurement")]
+    public virtual NcrProcurement NcrProcurement { get; set; }
+
     [Display(Name = "Re-Inspector")]
     public virtual NcrReInspect NcrReInspect { get; set; }    
 }

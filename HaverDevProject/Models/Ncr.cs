@@ -17,6 +17,7 @@ public class Ncr
     public bool NcrStatus { get; set; }    
     public virtual NcrEng NcrEng { get; set; }    
     public virtual NcrOperation NcrOperation { get; set; }    
-    public virtual NcrQa NcrQa { get; set; }    
+    public virtual NcrQa NcrQa { get; set; }
+    public virtual NcrProcurement NcrProcurement { get; set; }
     public virtual NcrReInspect NcrReInspect { get; set; }  
 }
