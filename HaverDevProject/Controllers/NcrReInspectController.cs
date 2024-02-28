@@ -249,7 +249,7 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(int id, List<IFormFile> Photos)
         {
             var ncrReInspectToUpdate = await _context.NcrReInspects
                 .Include(r => r.Ncr)
@@ -265,6 +265,8 @@ namespace HaverDevProject.Controllers
             {
                 try
                 {
+                    await AddReInspectPictures(ncrReInspectToUpdate, Photos);
+
                     await _context.SaveChangesAsync();
 
                     var ncrToUpdate = await _context.Ncrs.FindAsync(ncrReInspectToUpdate.NcrId);
@@ -365,11 +367,11 @@ namespace HaverDevProject.Controllers
             return View(ncrReInspect);
         }
 
-        private async Task AddReInspectPictures(NcrReInspectDTO ncrReInspectDTO, List<IFormFile> pictures)
+        private async Task AddReInspectPictures(NcrReInspect ncrReInspect, List<IFormFile> pictures)
         {
             if (pictures != null && pictures.Any())
             {
-                ncrReInspectDTO.NcrReInspectPhotos = new List<NcrReInspectPhoto>();
+                ncrReInspect.NcrReInspectPhotos = new List<NcrReInspectPhoto>();
 
                 foreach (var picture in pictures)
                 {
@@ -384,7 +386,7 @@ namespace HaverDevProject.Controllers
                             await picture.CopyToAsync(memoryStream);
                             var pictureArray = memoryStream.ToArray();
 
-                            ncrReInspectDTO.NcrReInspectPhotos.Add(new NcrReInspectPhoto
+                            ncrReInspect.NcrReInspectPhotos.Add(new NcrReInspectPhoto
                             {
                                 NcrReInspectPhotoContent = ResizeImage.shrinkImageWebp(pictureArray, 500, 600),
                                 NcrReInspectPhotoMimeType = "image/webp"
