@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HaverDevProject.Models
 {
@@ -53,6 +54,10 @@ namespace HaverDevProject.Models
         [Column("ncrProcUserId")]
         public int NcrProcUserId { get; set; }
 
+        [Display(Name = "Date")]
+        [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime NcrProcUpdate { get; set; }
+
         //[ScaffoldColumn(false)]
         //[Timestamp]
         //public Byte[] RowVersion { get; set; }//Added for concurrency
@@ -61,5 +66,25 @@ namespace HaverDevProject.Models
         [Column("ncrId")]
         public int NcrId { get; set; }
 
+        //[Display(Name = "Supplier Return")]
+        //[Column("supplierReturnId")]
+        //public int SupplierReturnId { get; set; }
+
+        //[Display(Name = "RMA Number")]
+        //[Required(ErrorMessage = "You must provide the RMA Number")]
+        //[Column("supplierReturnMANum")]
+        //public string SupplierReturnMANum { get; set; }
+
+        //[Display(Name = "Carrier Name")]
+        //[Required(ErrorMessage = "You must provide the Carrier Name")]
+        //[StringLength(45, ErrorMessage = "Only 45 characters for Carrier Name")]
+        //[Column("supplierReturnName")]
+        //public string SupplierReturnName { get; set; }
+
+        //[Display(Name = "Account Number")]
+        //[Required(ErrorMessage = "You must provide the Account Number")]
+        //[StringLength(45, ErrorMessage = "Only 45 characters for the Account Number")]
+        //[Column("supplierReturnAccount")]
+        //public string SupplierReturnAccount { get; set; }
     }
 }

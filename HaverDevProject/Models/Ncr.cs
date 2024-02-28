@@ -14,7 +14,8 @@ public class Ncr
     public int NcrId { get; set; }    
     public string NcrNumber { get; set; }      
     public DateTime NcrLastUpdated { get; set; }        
-    public bool NcrStatus { get; set; }    
+    public bool NcrStatus { get; set; }
+    public NcrPhase NcrPhase { get; set; }
     public virtual NcrEng NcrEng { get; set; }    
     public virtual NcrOperation NcrOperation { get; set; }    
     public virtual NcrQa NcrQa { get; set; }    

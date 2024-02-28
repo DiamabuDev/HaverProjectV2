@@ -1068,6 +1068,7 @@ namespace HaverDevProject.Data
                             NcrProcCreditExpected = true,
                             NcrProcSupplierBilled = true,
                             NcrProcUserId = 1, //need to make nullable
+                            NcrProcUpdate = DateTime.Parse("2024-02-20"),
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-137").NcrId
                         },
                         new NcrProcurement
@@ -1079,6 +1080,7 @@ namespace HaverDevProject.Data
                             NcrProcCreditExpected = true,
                             NcrProcSupplierBilled = true,
                             NcrProcUserId = 2, //need to make nullable
+                            NcrProcUpdate = DateTime.Parse("2024-02-20"),
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-138").NcrId
                         },
                         new NcrProcurement
@@ -1090,6 +1092,7 @@ namespace HaverDevProject.Data
                             NcrProcCreditExpected = true,
                             NcrProcSupplierBilled = true,
                             NcrProcUserId = 3, //need to make nullable
+                            NcrProcUpdate = DateTime.Parse("2024-02-20"),
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-139").NcrId
                         },
                         new NcrProcurement
@@ -1101,6 +1104,7 @@ namespace HaverDevProject.Data
                             NcrProcCreditExpected = true,
                             NcrProcSupplierBilled = true,
                             NcrProcUserId = 4, //need to make nullable
+                            NcrProcUpdate = DateTime.Parse("2024-02-20"),
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-140").NcrId
                         },
                         new NcrProcurement
@@ -1112,6 +1116,7 @@ namespace HaverDevProject.Data
                             NcrProcCreditExpected = true,
                             NcrProcSupplierBilled = true,
                             NcrProcUserId = 1, //need to make nullable
+                            NcrProcUpdate = DateTime.Parse("2024-02-20"),
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-141").NcrId
                         },
 
@@ -1124,6 +1129,7 @@ namespace HaverDevProject.Data
                             NcrProcCreditExpected = true,
                             NcrProcSupplierBilled = true,
                             NcrProcUserId = 2, //need to make nullable
+                            NcrProcUpdate = DateTime.Parse("2024-02-20"),
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-001").NcrId
                         },
                         new NcrProcurement
@@ -1135,6 +1141,7 @@ namespace HaverDevProject.Data
                             NcrProcCreditExpected = true,
                             NcrProcSupplierBilled = true,
                             NcrProcUserId = 3, //need to make nullable
+                            NcrProcUpdate = DateTime.Parse("2024-02-20"),
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-002").NcrId
                         },
                         new NcrProcurement
@@ -1146,6 +1153,7 @@ namespace HaverDevProject.Data
                             NcrProcCreditExpected = true,
                             NcrProcSupplierBilled = true,
                             NcrProcUserId = 4, //need to make nullable
+                            NcrProcUpdate = DateTime.Parse("2024-02-20"),
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-003").NcrId
                         },
                         new NcrProcurement
@@ -1157,6 +1165,7 @@ namespace HaverDevProject.Data
                             NcrProcCreditExpected = true,
                             NcrProcSupplierBilled = true,
                             NcrProcUserId = 1, //need to make nullable
+                            NcrProcUpdate = DateTime.Parse("2024-02-20"),
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-004").NcrId
                         },
                         new NcrProcurement
@@ -1168,6 +1177,7 @@ namespace HaverDevProject.Data
                             NcrProcCreditExpected = true,
                             NcrProcSupplierBilled = true,
                             NcrProcUserId = 2, //need to make nullable
+                            NcrProcUpdate = DateTime.Parse("2024-02-20"),
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-005").NcrId
                         },
                         new NcrProcurement
@@ -1179,6 +1189,7 @@ namespace HaverDevProject.Data
                             NcrProcCreditExpected = true,
                             NcrProcSupplierBilled = true,
                             NcrProcUserId = 3, //need to make nullable
+                            NcrProcUpdate = DateTime.Parse("2024-02-20"),
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-006").NcrId
                         },
                         new NcrProcurement
@@ -1190,7 +1201,85 @@ namespace HaverDevProject.Data
                             NcrProcCreditExpected = true,
                             NcrProcSupplierBilled = true,
                             NcrProcUserId = 4, //need to make nullable
+                            NcrProcUpdate = DateTime.Parse("2024-02-20"),
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-007").NcrId
+                        });
+                    context.SaveChanges();
+                }
+                if (!context.SupplierReturns.Any())
+                {
+                    context.SupplierReturns.AddRange(
+                        new SupplierReturn
+                        {
+                            SupplierReturnMANum = "11345",
+                            SupplierReturnName = "FEDEX",
+                            SupplierReturnAccount = "12345"
+                        },
+                        new SupplierReturn
+                        {
+                            SupplierReturnMANum = "11345",
+                            SupplierReturnName = "FEDEX",
+                            SupplierReturnAccount = "12345"
+                        },
+                        new SupplierReturn
+                        {
+                            SupplierReturnMANum = "11345",
+                            SupplierReturnName = "FEDEX",
+                            SupplierReturnAccount = "12345"
+                        },
+                        new SupplierReturn
+                        {
+                            SupplierReturnMANum = "11345",
+                            SupplierReturnName = "FEDEX",
+                            SupplierReturnAccount = "12345"
+                        },
+                        new SupplierReturn
+                        {
+                            SupplierReturnMANum = "11345",
+                            SupplierReturnName = "FEDEX",
+                            SupplierReturnAccount = "12345"
+                        },
+                        new SupplierReturn
+                        {
+                            SupplierReturnMANum = "11345",
+                            SupplierReturnName = "FEDEX",
+                            SupplierReturnAccount = "12345"
+                        },
+                        new SupplierReturn
+                        {
+                            SupplierReturnMANum = "11345",
+                            SupplierReturnName = "FEDEX",
+                            SupplierReturnAccount = "12345"
+                        },
+                        new SupplierReturn
+                        {
+                            SupplierReturnMANum = "123456",
+                            SupplierReturnName = "FEDEX",
+                            SupplierReturnAccount = "12345"
+                        },
+                        new SupplierReturn
+                        {
+                            SupplierReturnMANum = "45661",
+                            SupplierReturnName = "FEDEX",
+                            SupplierReturnAccount = "12345"
+                        },
+                        new SupplierReturn
+                        {
+                            SupplierReturnMANum = "12222",
+                            SupplierReturnName = "FEDEX",
+                            SupplierReturnAccount = "12345"
+                        },
+                        new SupplierReturn
+                        {
+                            SupplierReturnMANum = "11345",
+                            SupplierReturnName = "FEDEX",
+                            SupplierReturnAccount = "12345"
+                        },
+                        new SupplierReturn
+                        {
+                            SupplierReturnMANum = "11345",
+                            SupplierReturnName = "FEDEX",
+                            SupplierReturnAccount = "12345"
                         });
                     context.SaveChanges();
                 }

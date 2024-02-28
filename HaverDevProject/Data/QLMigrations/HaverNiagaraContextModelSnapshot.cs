@@ -230,6 +230,9 @@ namespace HaverDevProject.Data.QLMigrations
                     b.Property<string>("NcrNumber")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("NcrPhase")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("NcrStatus")
                         .HasColumnType("INTEGER");
 
@@ -406,6 +409,9 @@ namespace HaverDevProject.Data.QLMigrations
                     b.Property<bool>("NcrProcSupplierReturnReq")
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime>("NcrProcUpdate")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("NcrProcUserId")
                         .HasColumnType("INTEGER");
 
@@ -413,6 +419,9 @@ namespace HaverDevProject.Data.QLMigrations
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("BLOB");
+
+                    b.Property<int>("SupplierReturnId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("UpdatedBy")
                         .HasMaxLength(256)
@@ -623,6 +632,43 @@ namespace HaverDevProject.Data.QLMigrations
                     b.ToTable("supplier");
                 });
 
+            modelBuilder.Entity("HaverDevProject.Models.SupplierReturn", b =>
+                {
+                    b.Property<int>("SupplierReturnId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("supplierReturnId");
+
+                    b.Property<int>("NcrProcurementId")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("ncrProcurementId");
+
+                    b.Property<string>("SupplierReturnAccount")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("supplierReturnAccount");
+
+                    b.Property<string>("SupplierReturnMANum")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("supplierReturnMANum");
+
+                    b.Property<string>("SupplierReturnName")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("supplierReturnName");
+
+                    b.HasKey("SupplierReturnId")
+                        .HasName("pk_supplierReturn_supplierReturnId");
+
+                    b.HasIndex("NcrProcurementId")
+                        .IsUnique();
+
+                    b.ToTable("supplierReturn");
+                });
+
             modelBuilder.Entity("HaverDevProject.Models.Drawing", b =>
                 {
                     b.HasOne("HaverDevProject.Models.NcrEng", "NcrEng")
@@ -778,6 +824,17 @@ namespace HaverDevProject.Data.QLMigrations
                     b.Navigation("Ncr");
                 });
 
+            modelBuilder.Entity("HaverDevProject.Models.SupplierReturn", b =>
+                {
+                    b.HasOne("HaverDevProject.Models.NcrProcurement", "NcrProcurement")
+                        .WithOne("SupplierReturn")
+                        .HasForeignKey("HaverDevProject.Models.SupplierReturn", "NcrProcurementId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("NcrProcurement");
+                });
+
             modelBuilder.Entity("HaverDevProject.Models.Defect", b =>
                 {
                     b.Navigation("ItemDefects");
@@ -819,6 +876,11 @@ namespace HaverDevProject.Data.QLMigrations
             modelBuilder.Entity("HaverDevProject.Models.NcrOperation", b =>
                 {
                     b.Navigation("ItemDefectPhotos");
+                });
+
+            modelBuilder.Entity("HaverDevProject.Models.NcrProcurement", b =>
+                {
+                    b.Navigation("SupplierReturn");
                 });
 
             modelBuilder.Entity("HaverDevProject.Models.NcrQa", b =>

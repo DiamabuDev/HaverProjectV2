@@ -32,6 +32,8 @@ namespace HaverDevProject.Models
 
         public int NcrProcUserId { get; set; }
 
+        public DateTime NcrProcUpdate { get; set; }
+
         //[ScaffoldColumn(false)]
         //[Timestamp]
         //public Byte[] RowVersion { get; set; }//Added for concurrency
@@ -39,5 +41,15 @@ namespace HaverDevProject.Models
         public int NcrId { get; set; }
 
         public virtual Ncr Ncr { get; set; }
+
+        //public int SupplierReturnId { get; set; }
+
+        //public SupplierReturn SupplierReturn { get; set; }
+
+        //public string SupplierReturnMANum { get; set; }
+
+        //public string SupplierReturnName { get; set; }
+
+        //public string SupplierReturnAccount { get; set; }
     }
 }

@@ -40,6 +40,10 @@ namespace HaverDevProject.Models
         [Column("ncrProcUserId")]
         public int NcrProcUserId { get; set; }
 
+        [Display(Name = "Date")]
+        [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}")]
+        public DateTime NcrProcUpdate { get; set; }
+
         //[ScaffoldColumn(false)]
         //[Timestamp]
         //public Byte[] RowVersion { get; set; }//Added for concurrency
@@ -47,6 +51,11 @@ namespace HaverDevProject.Models
         [Display(Name = "NCR")]
         [Column("ncrId")]
         public int NcrId { get; set; }
+
+        //[ForeignKey("SupplierReturnId")]
+        //[Display(Name = "Supplier Return")]
+        ////[Column("supplierReturnId")]
+        //public int SupplierReturnId { get; set; }
 
     }
 }

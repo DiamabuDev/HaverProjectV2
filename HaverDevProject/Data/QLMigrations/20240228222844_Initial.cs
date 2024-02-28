@@ -59,7 +59,8 @@ namespace HaverDevProject.Data.QLMigrations
                         .Annotation("Sqlite:Autoincrement", true),
                     NcrNumber = table.Column<string>(type: "TEXT", nullable: true),
                     NcrLastUpdated = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    NcrStatus = table.Column<bool>(type: "INTEGER", nullable: false)
+                    NcrStatus = table.Column<bool>(type: "INTEGER", nullable: false),
+                    NcrPhase = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -145,7 +146,9 @@ namespace HaverDevProject.Data.QLMigrations
                     NcrProcSupplierBilled = table.Column<bool>(type: "INTEGER", nullable: false),
                     NcrProcFlagStatus = table.Column<bool>(type: "INTEGER", nullable: false),
                     NcrProcUserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    NcrProcUpdate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     NcrId = table.Column<int>(type: "INTEGER", nullable: false),
+                    SupplierReturnId = table.Column<int>(type: "INTEGER", nullable: false),
                     CreatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
                     UpdatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
@@ -282,6 +285,28 @@ namespace HaverDevProject.Data.QLMigrations
                         column: x => x.OpDispositionTypeId,
                         principalTable: "opDispositionType",
                         principalColumn: "OpDispositionTypeId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "supplierReturn",
+                columns: table => new
+                {
+                    supplierReturnId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    supplierReturnMANum = table.Column<string>(type: "TEXT", nullable: false),
+                    supplierReturnName = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
+                    supplierReturnAccount = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
+                    ncrProcurementId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_supplierReturn_supplierReturnId", x => x.supplierReturnId);
+                    table.ForeignKey(
+                        name: "FK_supplierReturn_NcrProcurements_ncrProcurementId",
+                        column: x => x.ncrProcurementId,
+                        principalTable: "NcrProcurements",
+                        principalColumn: "NcrProcurementId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -479,6 +504,12 @@ namespace HaverDevProject.Data.QLMigrations
                 table: "supplier",
                 column: "supplierCode",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_supplierReturn_ncrProcurementId",
+                table: "supplierReturn",
+                column: "ncrProcurementId",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -494,16 +525,19 @@ namespace HaverDevProject.Data.QLMigrations
                 name: "itemDefectPhoto");
 
             migrationBuilder.DropTable(
-                name: "NcrProcurements");
+                name: "ncrReInspect");
 
             migrationBuilder.DropTable(
-                name: "ncrReInspect");
+                name: "supplierReturn");
 
             migrationBuilder.DropTable(
                 name: "NcrOperations");
 
             migrationBuilder.DropTable(
                 name: "ncrQA");
+
+            migrationBuilder.DropTable(
+                name: "NcrProcurements");
 
             migrationBuilder.DropTable(
                 name: "followUpType");
