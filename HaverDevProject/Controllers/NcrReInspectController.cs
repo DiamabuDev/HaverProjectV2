@@ -55,6 +55,8 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
                 .AsNoTracking();
 
+            GetNcrs();
+
             //Filterig values            
             if (!System.String.IsNullOrEmpty(filter))
             {
@@ -397,6 +399,65 @@ namespace HaverDevProject.Controllers
             }
         }
 
+        public JsonResult GetNcrs()
+        {
+            // Get the list of NcrIds that already exist in NcrOperation
+            //List<int> ncrOpPending = _context.Ncrs
+            //    .Where(n => n.NcrPhase == NcrPhase.Operations)
+            //    .Select(n => n.NcrId)
+            //    .ToList();
+
+            //// Include related data in the query for NcrEng
+            //List<NcrEng> pendings = _context.NcrEngs
+            //    .Include(n => n.Ncr)
+            //        .ThenInclude(n => n.NcrQa)
+            //            .ThenInclude(n => n.Item)
+            //                .ThenInclude(n => n.Supplier) 
+            //    .Where(ncrEng => !existingNcrIds.Contains(ncrEng.NcrId))
+            //    .ToList();
+
+            List<Ncr> pendings = _context.Ncrs
+                .Include(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
+                .Where(n => n.NcrPhase == NcrPhase.ReInspection)
+                .ToList();
+
+
+
+            // Extract relevant data for the client-side
+            var ncrs = pendings.Select(ncr => new
+            {
+                NcrId = ncr.NcrId,
+                NcrNumber = ncr.NcrNumber,
+                SupplierName = ncr.NcrQa.Item.Supplier.SupplierName
+            }).ToList();
+
+            return Json(ncrs);
+        }
+
+        public JsonResult GetPendingCount()
+        {
+            // Get the list of NcrIds that already exist in NcrOperation
+            //List<int> existingNcrIds = _context.NcrOperations.Select(op => op.NcrId).ToList();
+
+            //List<int> ncrOpPending = _context.Ncrs
+            //    .Where(n => n.NcrPhase == NcrPhase.Operations)
+            //    .Select(n => n.NcrId)
+            //    .ToList();
+
+
+            //// Count only the unique NcrIds in NcrEngs
+            //int pendingCount = _context.NcrEngs
+            //    .Where(ncrEng => ncrOpPending.Contains(ncrEng.NcrId))
+            //    .Select(ncrEng => ncrEng.NcrId)
+            //    .Distinct()
+            //    .Count();
+
+            int pendingCount = _context.Ncrs
+                .Where(n => n.NcrPhase == NcrPhase.ReInspection)
+                .Count();
+
+            return Json(pendingCount);
+        }
         private bool NcrReInspectExists(int id)
         {
             return _context.NcrReInspects.Any(e => e.NcrReInspectId == id);
