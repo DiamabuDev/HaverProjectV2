@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using HaverDevProject.CustomControllers;
 using HaverDevProject.Utilities;
 using HaverDevProject.ViewModels;
+using NuGet.Protocol;
 
 namespace HaverDevProject.Controllers
 {
@@ -257,12 +258,12 @@ namespace HaverDevProject.Controllers
 				NcrEngUserId = ncrEng.NcrEngUserId,
 				EngDispositionTypeId = ncrEng.EngDispositionTypeId,
 				NcrId = ncrEng.NcrId,
-				DrawingId = ncrEng.DrawingId,
-				DrawingRequireUpdating = ncrEng.Drawing.DrawingRequireUpdating,
-				DrawingOriginalRevNumber = ncrEng.Drawing.DrawingOriginalRevNumber,
-				DrawingUpdatedRevNumber = ncrEng.Drawing.DrawingUpdatedRevNumber,
-				DrawingRevDate = ncrEng.Drawing.DrawingRevDate,
-				DrawingUserId = ncrEng.Drawing.DrawingUserId,
+				//DrawingId = ncrEng.DrawingId,
+				//DrawingRequireUpdating = ncrEng.Drawing.DrawingRequireUpdating,
+				//DrawingOriginalRevNumber = ncrEng.Drawing.DrawingOriginalRevNumber,
+				//DrawingUpdatedRevNumber = ncrEng.Drawing.DrawingUpdatedRevNumber,
+				//DrawingRevDate = ncrEng.Drawing.DrawingRevDate,
+				//DrawingUserId = ncrEng.Drawing.DrawingUserId,
                 EngDefectPhotos = ncrEng.EngDefectPhotos
             };
 
@@ -299,13 +300,15 @@ namespace HaverDevProject.Controllers
 					ncrEng.NcrEngUserId = ncrEngDTO.NcrEngUserId;
 					ncrEng.EngDispositionTypeId = ncrEngDTO.EngDispositionTypeId;
 					ncrEng.NcrId = ncrEngDTO.NcrId;
-					ncrEng.DrawingId = ncrEngDTO.DrawingId;
-					ncrEng.Drawing.DrawingRequireUpdating = ncrEngDTO.DrawingRequireUpdating;
-					ncrEng.Drawing.DrawingOriginalRevNumber = ncrEngDTO.DrawingOriginalRevNumber;
-					ncrEng.Drawing.DrawingUpdatedRevNumber = ncrEngDTO.DrawingUpdatedRevNumber;
-					ncrEng.Drawing.DrawingRevDate = ncrEngDTO.DrawingRevDate;
-					ncrEng.Drawing.DrawingUserId = ncrEngDTO.DrawingUserId;
+					//ncrEng.DrawingId = ncrEngDTO.DrawingId;
+					//ncrEng.Drawing.DrawingRequireUpdating = ncrEngDTO.DrawingRequireUpdating;
+					//ncrEng.Drawing.DrawingOriginalRevNumber = ncrEngDTO.DrawingOriginalRevNumber;
+					//ncrEng.Drawing.DrawingUpdatedRevNumber = ncrEngDTO.DrawingUpdatedRevNumber;
+					//ncrEng.Drawing.DrawingRevDate = ncrEngDTO.DrawingRevDate;
+					//ncrEng.Drawing.DrawingUserId = ncrEngDTO.DrawingUserId;
                     ncrEng.EngDefectPhotos = ncrEngDTO.EngDefectPhotos;
+                    ncrEng.NcrPhase = NcrPhase.Operations;
+
 
                     _context.Update(ncrEng);
                     await _context.SaveChangesAsync();
