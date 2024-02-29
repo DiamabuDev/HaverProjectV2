@@ -1213,73 +1213,74 @@ namespace HaverDevProject.Data
                         {
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
-                            SupplierReturnAccount = "12345"
+                            SupplierReturnAccount = "12345",
                         },
                         new SupplierReturn
                         {
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
-                            SupplierReturnAccount = "12345"
+                            SupplierReturnAccount = "12345",
                         },
                         new SupplierReturn
                         {
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
-                            SupplierReturnAccount = "12345"
+                            SupplierReturnAccount = "12345",
                         },
                         new SupplierReturn
                         {
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
-                            SupplierReturnAccount = "12345"
+                            SupplierReturnAccount = "12345",
                         },
                         new SupplierReturn
                         {
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
-                            SupplierReturnAccount = "12345"
+                            SupplierReturnAccount = "12345",
                         },
                         new SupplierReturn
                         {
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
-                            SupplierReturnAccount = "12345"
+                            SupplierReturnAccount = "12345",
                         },
                         new SupplierReturn
                         {
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
-                            SupplierReturnAccount = "12345"
+                            SupplierReturnAccount = "12345",
                         },
                         new SupplierReturn
                         {
                             SupplierReturnMANum = "123456",
                             SupplierReturnName = "FEDEX",
-                            SupplierReturnAccount = "12345"
+                            SupplierReturnAccount = "12345",
                         },
                         new SupplierReturn
                         {
                             SupplierReturnMANum = "45661",
                             SupplierReturnName = "FEDEX",
-                            SupplierReturnAccount = "12345"
+                            SupplierReturnAccount = "12345",
                         },
                         new SupplierReturn
                         {
                             SupplierReturnMANum = "12222",
                             SupplierReturnName = "FEDEX",
-                            SupplierReturnAccount = "12345"
+                            SupplierReturnAccount = "12345",
                         },
                         new SupplierReturn
                         {
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
-                            SupplierReturnAccount = "12345"
+                            SupplierReturnAccount = "12345",
                         },
                         new SupplierReturn
                         {
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
-                            SupplierReturnAccount = "12345"
+                            SupplierReturnAccount = "12345",
+
                         });
                     context.SaveChanges();
                 }

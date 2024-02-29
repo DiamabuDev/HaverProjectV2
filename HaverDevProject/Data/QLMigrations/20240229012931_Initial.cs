@@ -98,6 +98,19 @@ namespace HaverDevProject.Data.QLMigrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "test",
+                columns: table => new
+                {
+                    testId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    TestNum = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_test_testId", x => x.testId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ncrEng",
                 columns: table => new
                 {
@@ -148,7 +161,6 @@ namespace HaverDevProject.Data.QLMigrations
                     NcrProcUserId = table.Column<int>(type: "INTEGER", nullable: false),
                     NcrProcUpdate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     NcrId = table.Column<int>(type: "INTEGER", nullable: false),
-                    SupplierReturnId = table.Column<int>(type: "INTEGER", nullable: false),
                     CreatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
                     UpdatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
@@ -293,9 +305,9 @@ namespace HaverDevProject.Data.QLMigrations
                 {
                     supplierReturnId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    supplierReturnMANum = table.Column<string>(type: "TEXT", nullable: false),
-                    supplierReturnName = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
-                    supplierReturnAccount = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
+                    supplierReturnMANum = table.Column<string>(type: "TEXT", nullable: true),
+                    supplierReturnName = table.Column<string>(type: "TEXT", maxLength: 45, nullable: true),
+                    supplierReturnAccount = table.Column<string>(type: "TEXT", maxLength: 45, nullable: true),
                     ncrProcurementId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -475,7 +487,8 @@ namespace HaverDevProject.Data.QLMigrations
             migrationBuilder.CreateIndex(
                 name: "IX_NcrProcurements_NcrId",
                 table: "NcrProcurements",
-                column: "NcrId");
+                column: "NcrId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ncrQA_DefectId",
@@ -508,8 +521,7 @@ namespace HaverDevProject.Data.QLMigrations
             migrationBuilder.CreateIndex(
                 name: "IX_supplierReturn_ncrProcurementId",
                 table: "supplierReturn",
-                column: "ncrProcurementId",
-                unique: true);
+                column: "ncrProcurementId");
         }
 
         /// <inheritdoc />
@@ -529,6 +541,9 @@ namespace HaverDevProject.Data.QLMigrations
 
             migrationBuilder.DropTable(
                 name: "supplierReturn");
+
+            migrationBuilder.DropTable(
+                name: "test");
 
             migrationBuilder.DropTable(
                 name: "NcrOperations");

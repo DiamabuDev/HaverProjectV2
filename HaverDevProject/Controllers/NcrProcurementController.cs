@@ -30,11 +30,11 @@ namespace HaverDevProject.Controllers
             //Set the date range filer based on the values in the database
             if (EndDate == DateTime.MinValue)
             {
-                StartDate = _context.NcrQas
-                .Min(f => f.NcrQacreationDate.Date);
+                StartDate = _context.NcrProcurements
+                .Min(f => f.NcrProcUpdate.Date);
 
-                EndDate = _context.NcrQas
-                .Max(f => f.NcrQacreationDate.Date);
+                EndDate = _context.NcrProcurements
+                .Max(f => f.NcrProcUpdate.Date);
 
                 ViewData["StartDate"] = StartDate.ToString("yyyy-MM-dd");
                 ViewData["EndDate"] = EndDate.ToString("yyyy-MM-dd");
@@ -53,6 +53,7 @@ namespace HaverDevProject.Controllers
 
             var ncrProc = _context.NcrProcurements
                 .Include(n => n.Ncr)
+                //.Include(n => n.SupplierReturn)
                 .AsNoTracking();
 
             GetNcrs();
@@ -76,12 +77,12 @@ namespace HaverDevProject.Controllers
             }
             if (StartDate == EndDate)
             {
-                ncrProc = ncrProc.Where(n => n.Ncr.NcrQa.NcrQacreationDate == StartDate);
+                ncrProc = ncrProc.Where(n => n.NcrProcUpdate == StartDate);
             }
             else
             {
-                ncrProc = ncrProc.Where(n => n.Ncr.NcrQa.NcrQacreationDate >= StartDate &&
-                         n.Ncr.NcrQa.NcrQacreationDate <= EndDate);
+                ncrProc = ncrProc.Where(n => n.NcrProcUpdate >= StartDate &&
+                         n.NcrProcUpdate <= EndDate);
             }
 
             //Sorting columns
@@ -197,15 +198,22 @@ namespace HaverDevProject.Controllers
                 return NotFound();
             }
 
-            var ncrProcurement = await _context.NcrProcurements
+            var ncrProc = await _context.NcrProcurements
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
                 .Include(n => n.Ncr)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects).ThenInclude(n => n.Defect)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrEng).ThenInclude(n => n.Drawing)
                 .FirstOrDefaultAsync(m => m.NcrProcurementId == id);
-            if (ncrProcurement == null)
+
+            if (ncrProc == null)
             {
                 return NotFound();
             }
 
-            return View(ncrProcurement);
+            return View(ncrProc);
         }
 
         // GET: NcrProcurement/Create
@@ -249,7 +257,6 @@ namespace HaverDevProject.Controllers
                         NcrProcUserId = ncrProcDTO.NcrProcUserId,
                         NcrProcUpdate = ncrProcDTO.NcrProcUpdate,
                         NcrId = ncrProcDTO.NcrId,
-                        Ncr = ncrProcDTO.Ncr,
                         //SupplierReturnId = ncrProcDTO.SupplierReturnId,
                         //SupplierReturn = ncrProcDTO.SupplierReturn,
 
@@ -284,6 +291,7 @@ namespace HaverDevProject.Controllers
 
             var ncrProc = await _context.NcrProcurements
                 .Include(n => n.Ncr)
+                //.Include(n => n.SupplierReturn)
                 .FirstOrDefaultAsync(n => n.NcrId == id);
 
             if (ncrProc == null)
@@ -294,7 +302,6 @@ namespace HaverDevProject.Controllers
             var ncrProcDTO = new NcrProcurementDTO
             {
                 NcrNumber = ncrProc.Ncr.NcrNumber,
-                NcrStatus = ncrProc.Ncr.NcrStatus,
                 NcrProcurementId = ncrProc.NcrProcurementId,
                 NcrProcSupplierReturnReq = ncrProc.NcrProcSupplierReturnReq,
                 NcrProcExpectedDate = ncrProc.NcrProcExpectedDate,
@@ -306,7 +313,8 @@ namespace HaverDevProject.Controllers
                 NcrProcUserId = ncrProc.NcrProcUserId,
                 NcrProcUpdate = ncrProc.NcrProcUpdate,
                 NcrId = ncrProc.NcrId,
-
+                //SupplierReturnId = ncrProc.SupplierReturnId,
+                
             };
 
             ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrProc.NcrId);
@@ -334,6 +342,7 @@ namespace HaverDevProject.Controllers
                 try
                 {
                     var ncrProc = await _context.NcrProcurements
+                        //.Include(n => n.SupplierReturn)
                         .FirstOrDefaultAsync(n => n.NcrId == id);
 
                     ncrProc.NcrProcSupplierReturnReq = ncrProcDTO.NcrProcSupplierReturnReq;
@@ -346,6 +355,7 @@ namespace HaverDevProject.Controllers
                     ncrProc.NcrProcUserId = ncrProcDTO.NcrProcUserId;
                     ncrProc.NcrProcUpdate = DateTime.Now;
                     ncrProc.NcrId = ncrProcDTO.NcrId;
+                    //ncrProc.SupplierReturnId = ncrProcDTO.SupplierReturnId;
 
                     _context.Update(ncrProc);
                     await _context.SaveChangesAsync();

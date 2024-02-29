@@ -420,9 +420,6 @@ namespace HaverDevProject.Data.QLMigrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("BLOB");
 
-                    b.Property<int>("SupplierReturnId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("UpdatedBy")
                         .HasMaxLength(256)
                         .HasColumnType("TEXT");
@@ -433,7 +430,8 @@ namespace HaverDevProject.Data.QLMigrations
                     b.HasKey("NcrProcurementId")
                         .HasName("pk_ncrProcurement_ncrProcurementId");
 
-                    b.HasIndex("NcrId");
+                    b.HasIndex("NcrId")
+                        .IsUnique();
 
                     b.ToTable("NcrProcurements");
                 });
@@ -644,18 +642,15 @@ namespace HaverDevProject.Data.QLMigrations
                         .HasColumnName("ncrProcurementId");
 
                     b.Property<string>("SupplierReturnAccount")
-                        .IsRequired()
                         .HasMaxLength(45)
                         .HasColumnType("TEXT")
                         .HasColumnName("supplierReturnAccount");
 
                     b.Property<string>("SupplierReturnMANum")
-                        .IsRequired()
                         .HasColumnType("TEXT")
                         .HasColumnName("supplierReturnMANum");
 
                     b.Property<string>("SupplierReturnName")
-                        .IsRequired()
                         .HasMaxLength(45)
                         .HasColumnType("TEXT")
                         .HasColumnName("supplierReturnName");
@@ -663,10 +658,25 @@ namespace HaverDevProject.Data.QLMigrations
                     b.HasKey("SupplierReturnId")
                         .HasName("pk_supplierReturn_supplierReturnId");
 
-                    b.HasIndex("NcrProcurementId")
-                        .IsUnique();
+                    b.HasIndex("NcrProcurementId");
 
                     b.ToTable("supplierReturn");
+                });
+
+            modelBuilder.Entity("HaverDevProject.Models.Test", b =>
+                {
+                    b.Property<int>("TestId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("testId");
+
+                    b.Property<int>("TestNum")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("TestId")
+                        .HasName("pk_test_testId");
+
+                    b.ToTable("test");
                 });
 
             modelBuilder.Entity("HaverDevProject.Models.Drawing", b =>
@@ -778,8 +788,8 @@ namespace HaverDevProject.Data.QLMigrations
             modelBuilder.Entity("HaverDevProject.Models.NcrProcurement", b =>
                 {
                     b.HasOne("HaverDevProject.Models.Ncr", "Ncr")
-                        .WithMany()
-                        .HasForeignKey("NcrId")
+                        .WithOne("NcrProcurement")
+                        .HasForeignKey("HaverDevProject.Models.NcrProcurement", "NcrId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -827,8 +837,8 @@ namespace HaverDevProject.Data.QLMigrations
             modelBuilder.Entity("HaverDevProject.Models.SupplierReturn", b =>
                 {
                     b.HasOne("HaverDevProject.Models.NcrProcurement", "NcrProcurement")
-                        .WithOne("SupplierReturn")
-                        .HasForeignKey("HaverDevProject.Models.SupplierReturn", "NcrProcurementId")
+                        .WithMany()
+                        .HasForeignKey("NcrProcurementId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -863,6 +873,8 @@ namespace HaverDevProject.Data.QLMigrations
 
                     b.Navigation("NcrOperation");
 
+                    b.Navigation("NcrProcurement");
+
                     b.Navigation("NcrQa");
 
                     b.Navigation("NcrReInspect");
@@ -876,11 +888,6 @@ namespace HaverDevProject.Data.QLMigrations
             modelBuilder.Entity("HaverDevProject.Models.NcrOperation", b =>
                 {
                     b.Navigation("ItemDefectPhotos");
-                });
-
-            modelBuilder.Entity("HaverDevProject.Models.NcrProcurement", b =>
-                {
-                    b.Navigation("SupplierReturn");
                 });
 
             modelBuilder.Entity("HaverDevProject.Models.NcrQa", b =>

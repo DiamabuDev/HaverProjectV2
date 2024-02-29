@@ -58,10 +58,6 @@ namespace HaverDevProject.Models
         [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime NcrProcUpdate { get; set; }
 
-        //[ScaffoldColumn(false)]
-        //[Timestamp]
-        //public Byte[] RowVersion { get; set; }//Added for concurrency
-
         [Display(Name = "NCR")]
         [Column("ncrId")]
         public int NcrId { get; set; }
@@ -69,6 +65,10 @@ namespace HaverDevProject.Models
         //[Display(Name = "Supplier Return")]
         //[Column("supplierReturnId")]
         //public int SupplierReturnId { get; set; }
+
+        //[Display(Name = "SupplierReturn")]
+        //[ForeignKey("SupplierReturnId")]
+        //public virtual SupplierReturn SupplierReturn { get; set; }
 
         //[Display(Name = "RMA Number")]
         //[Required(ErrorMessage = "You must provide the RMA Number")]

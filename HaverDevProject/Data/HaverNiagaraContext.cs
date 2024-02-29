@@ -94,7 +94,6 @@ public partial class HaverNiagaraContext : DbContext
             entity.HasKey(e => e.SupplierReturnId).HasName("pk_supplierReturn_supplierReturnId");
         });
 
-
         modelBuilder.Entity<EngDispositionType>(entity =>
         {
             entity.HasKey(e => e.EngDispositionTypeId).HasName("pk_engDispoistionType_engDispositionTypeId");
