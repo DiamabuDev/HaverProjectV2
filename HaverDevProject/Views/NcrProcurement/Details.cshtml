@@ -493,7 +493,7 @@
                     </div>
                     </div> *@
                 </div>
-                
+
 
                 <button class="btn custom-secondary-bg icon-drop text-start" type="button" data-bs-toggle="collapse" data-bs-target="#additionalInfo" aria-expanded="false" aria-controls="additionalInfo">
                     Additional Information <i class="bi bi-chevron-down"></i>
@@ -634,7 +634,7 @@
 
                     <div class="card-body pb-0">
                         <div class="row">
-                             @{
+                            @{
                                 if (Model.Ncr.NcrQa.ItemDefectPhotos != null && Model.Ncr.NcrQa.ItemDefectPhotos.Any())
                                 {
                                     foreach (var photo in Model.Ncr.NcrQa.ItemDefectPhotos)
@@ -650,7 +650,7 @@
                                         }
                                     }
                                 }
-                            } 
+                            }
                         </div>
                     </div>
                     <div class="card-header">
@@ -661,27 +661,27 @@
                         @if (Model.Ncr.NcrQa.NcrQaDefectVideo != null)
                         {
                             <a href="@Model.Ncr.NcrQa.NcrQaDefectVideo" target="_blank">Video Link</a>
-                        } 
+                        }
                     </div>
                 </div>
             </div>
-            </div>
-
-            <div class="form-group d-flex justify-content-end mt-2">
-                <button class="btn btn-secondary me-4">
-                    <i class="bi bi-file-pdf"></i> Download PDF
-                </button>
-                <button class="btn btn-secondary me-4">
-                    <i class="bi bi-file-earmark-spreadsheet"></i> Download Excel File
-                </button>
-                <button type="button" onclick="location.href='@Url.Action("Index")'" class="btn btn-primary">
-                    <i class="bi bi-arrow-90deg-left"></i> Back to NCR Re-Inspection List
-                </button>
-            </div>
-
         </div>
+
+        <div class="form-group d-flex justify-content-end mt-2">
+            <button class="btn btn-secondary me-4">
+                <i class="bi bi-file-pdf"></i> Download PDF
+            </button>
+            <button class="btn btn-secondary me-4">
+                <i class="bi bi-file-earmark-spreadsheet"></i> Download Excel File
+            </button>
+            <button type="button" onclick="location.href='@Url.Action("Index")'" class="btn btn-primary">
+                <i class="bi bi-arrow-90deg-left"></i> Back to NCR Re-Inspection List
+            </button>
+        </div>
+
     </div>
 </div>
+
 
 
 
