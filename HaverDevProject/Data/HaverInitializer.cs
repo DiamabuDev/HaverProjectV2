@@ -384,7 +384,7 @@ namespace HaverDevProject.Data
                             NcrNumber = "2023-137",
                             NcrLastUpdated = DateTime.Parse("2023-12-18"),   
                             NcrStatus = false,
-                            NcrPhase = NcrPhase.Closed
+                            NcrPhase = NcrPhase.Engineer
                         },
                         new Ncr
                         {

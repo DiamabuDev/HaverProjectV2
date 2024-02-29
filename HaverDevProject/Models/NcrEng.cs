@@ -17,7 +17,9 @@ public class NcrEng : Auditable
 	public bool NcrEngCustomerNotification { get; set; } = false;
 	public string NcrEngDispositionDescription { get; set; }
     public bool NcrEngStatusFlag { get; set; }
-	public int NcrEngUserId { get; set; }
+
+    public NcrPhase NcrPhase { get; set; }
+    public int NcrEngUserId { get; set; }
 	public int EngDispositionTypeId { get; set; }
 	public EngDispositionType EngDispositionType { get; set; }
 	public int NcrId { get; set; }
