@@ -12,6 +12,7 @@ using HaverDevProject.Utilities;
 using HaverDevProject.ViewModels;
 using Microsoft.EntityFrameworkCore.Storage;
 using Defect = HaverDevProject.Models.Defect;
+using OfficeOpenXml;
 
 namespace HaverDevProject.Controllers
 {
@@ -350,6 +351,69 @@ namespace HaverDevProject.Controllers
         private void PopulateDropDownList(Item item = null)
         {
             ViewData["ItemID"] = ItemSelectList(item?.ItemId);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Upload(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                TempData["ErrorMessage"] = "No file selected.";
+                return RedirectToAction(nameof(Index)); 
+            }
+
+            if (file.ContentType != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            {
+                TempData["ErrorMessage"] = "Invalid file type. Please upload an Excel file (.xlsx).";
+                return RedirectToAction(nameof(Index)); 
+            }
+
+            using (var stream = new MemoryStream())
+            {
+                await file.CopyToAsync(stream);
+                using (var package = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    int rowCount = worksheet.Dimension.Rows;
+
+                    for (int row = 2; row <= rowCount; row++)
+                    {
+                        var defectName = worksheet.Cells[row, 1].Value?.ToString().Trim();
+                        var defectDescription = worksheet.Cells[row, 2].Value?.ToString().Trim();
+
+                        if (!string.IsNullOrWhiteSpace(defectName))
+                        {
+                            var existingDefectType = await _context.Defects
+                                                                    .FirstOrDefaultAsync(dt => dt.DefectName == defectName);
+
+                            if (existingDefectType == null)
+                            {
+                                var newDefectType = new Defect
+                                {
+                                    DefectName = defectName,
+                                    DefectDesription = string.IsNullOrWhiteSpace(defectDescription) ? null : defectDescription
+                                };
+                                _context.Defects.Add(newDefectType);
+                            }
+                            else
+                            {
+                                existingDefectType.DefectDesription = string.IsNullOrWhiteSpace(defectDescription) ? existingDefectType.DefectDesription : defectDescription;
+                            }
+                        }
+                    }
+
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            TempData["SuccessMessage"] = "Defect types uploaded successfully!";
+            return RedirectToAction(nameof(Index)); 
+        }
+
+        public IActionResult Upload()
+        {
+            return View("UploadExcel");
         }
 
         private bool DefectExists(int id)
