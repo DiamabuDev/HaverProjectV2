@@ -11,6 +11,8 @@ using HaverDevProject.CustomControllers;
 using HaverDevProject.Utilities;
 using HaverDevProject.ViewModels;
 using System.Numerics;
+using Microsoft.EntityFrameworkCore.Storage;
+//using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HaverDevProject.Controllers
 {
@@ -48,7 +50,7 @@ namespace HaverDevProject.Controllers
             }            
 
             //List of sort options.
-            string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "Defect", "PO Number" };
+            string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "Defect", "PO Number", "Phase"};
 
             PopulateDropDownLists();
 
@@ -168,19 +170,19 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:Created"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
-            else if (sortField == "Status")
+            else if (sortField == "Phase")
             {
                 if (sortDirection == "asc")
                 {
                     ncrQa = ncrQa
-                        .OrderBy(p => p.Ncr.NcrStatus);
-                    ViewData["filterApplied:Status"] = "<i class='bi bi-sort-up'></i>";
+                        .OrderBy(p => p.Ncr.NcrPhase); //.OrderBy(p => p.Ncr.NcrStatus);
+                    ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncrQa = ncrQa
-                        .OrderByDescending(p => p.Ncr.NcrStatus);
-                    ViewData["filterApplied:Status"] = "<i class='bi bi-sort-down'></i>";
+                        .OrderByDescending(p => p.Ncr.NcrPhase); //.OrderByDescending(p => p.Ncr.NcrStatus);
+                    ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
             else //(sortField == "PO Number")
@@ -256,11 +258,14 @@ namespace HaverDevProject.Controllers
         {
             if (ModelState.IsValid)
             {
+                bool engReq = ncrQaDTO.NcrQaEngDispositionRequired == true ? true : false;                
+
                 Ncr ncr = new Ncr
                 {
                     NcrNumber = ncrQaDTO.NcrNumber,
                     NcrLastUpdated = DateTime.Now,
-                    NcrStatus = ncrQaDTO.NcrStatus
+                    NcrStatus = ncrQaDTO.NcrStatus,
+                    NcrPhase = ncrQaDTO.NcrQaEngDispositionRequired == true ? NcrPhase.Engineer : NcrPhase.Operations
                 };
 
                 _context.Add(ncr);
@@ -272,8 +277,7 @@ namespace HaverDevProject.Controllers
                     .Select(n => n.NcrId)
                     .FirstOrDefault();
 
-                await AddPictures(ncrQaDTO, Photos);                
-
+                await AddPictures(ncrQaDTO, Photos);   
                 NcrQa ncrQa = new NcrQa
                 {
                     NcrQaItemMarNonConforming = ncrQaDTO.NcrQaItemMarNonConforming,
@@ -291,13 +295,19 @@ namespace HaverDevProject.Controllers
                     ItemId = ncrQaDTO.ItemId,
                     DefectId = ncrQaDTO.DefectId,
                     NcrQaEngDispositionRequired = ncrQaDTO.NcrQaEngDispositionRequired
-                };                
+                };               
                 
                 _context.NcrQas.Add(ncrQa);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));                
-            }            
-            PopulateDropDownLists(); 
+                await _context.SaveChangesAsync();                
+
+                TempData["SuccessMessage"] = "NCR created successfully!";
+                int ncrQaId = ncrQa.NcrQaId;
+                return RedirectToAction("Details", new { id = ncrQaId });                                
+            }           
+
+            ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierName", ncrQaDTO.SupplierId);
+            ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName", ncrQaDTO.ItemId);
+            ViewData["DefectId"] = new SelectList(_context.Defects, "DefectId", "DefectName", ncrQaDTO.DefectId);
             return View(ncrQaDTO);
         }
 
@@ -309,14 +319,43 @@ namespace HaverDevProject.Controllers
                 return NotFound();
             }
 
-            var ncrQa = await _context.NcrQas.FindAsync(id);
+            var ncrQa = await _context.NcrQas
+                .Include(n =>n.Ncr)
+                .Include(n =>n.Item).ThenInclude(n => n.Supplier)
+                .Include(n =>n.Defect)
+                .Include(n =>n.ItemDefectPhotos)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(n => n.NcrQaId == id);
+
             if (ncrQa == null)
             {
                 return NotFound();
             }
-            ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName", ncrQa.ItemId);
-            ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrQa.NcrId);
-            return View(ncrQa);
+
+            var ncrQaDTO = new NcrQaDTO
+            {
+                NcrQaId = ncrQa.NcrQaId,
+                NcrQaItemMarNonConforming = ncrQa.NcrQaItemMarNonConforming,
+                NcrQaProcessApplicable = ncrQa.NcrQaProcessApplicable,
+                NcrQacreationDate = ncrQa.NcrQacreationDate,
+                NcrQaOrderNumber = ncrQa.NcrQaOrderNumber,
+                NcrQaSalesOrder = ncrQa.NcrQaSalesOrder,
+                NcrQaQuanReceived = ncrQa.NcrQaQuanReceived,
+                NcrQaQuanDefective = ncrQa.NcrQaQuanDefective,
+                NcrQaDescriptionOfDefect = ncrQa.NcrQaDescriptionOfDefect,
+                NcrId = ncrQa.NcrId,                
+                SupplierId = ncrQa.Item.SupplierId,
+                NcrNumber = ncrQa.Ncr.NcrNumber,
+                ItemId = ncrQa.ItemId,
+                DefectId = ncrQa.DefectId,
+                NcrQaEngDispositionRequired = ncrQa.NcrQaEngDispositionRequired,
+                NcrQaDefectVideo = ncrQa.NcrQaDefectVideo,
+                ItemDefectPhotos = ncrQa.ItemDefectPhotos
+            };
+            ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierName", ncrQa.Item.SupplierId);
+            ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName", ncrQa.Item.ItemId);
+            ViewData["DefectId"] = new SelectList(_context.Defects, "DefectId", "DefectName", ncrQa.Defect.DefectId);            
+            return View(ncrQaDTO);
         }
 
         // POST: NcrQa/Edit/5
@@ -324,36 +363,81 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("NcrQaId,NcrQaItemMarNonConforming,NcrQaProcessApplicable,NcrQacreationDate,NcrQaOrderNumber,NcrQaSalesOrder,NcrQaQuanReceived,NcrQaQuanDefective,NcrQaDescriptionOfDefect,NcrQauserId,NcrQaEngDispositionRequired,NcrId,ItemId")] NcrQa ncrQa)
+        public async Task<IActionResult> Edit(int NcrQaId, int NcrId, NcrQaDTO ncrQaDTO, List<IFormFile> Photos)
         {
-            if (id != ncrQa.NcrQaId)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
-                try
+                var ncrToUpdate = await _context.Ncrs
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(n =>n.NcrId == NcrId);
+
+                if (ncrToUpdate == null)
                 {
-                    _context.Update(ncrQa);
+                    return NotFound();
+                }
+                else
+                {                    
+                    ncrToUpdate.NcrPhase = ncrQaDTO.NcrQaEngDispositionRequired ? NcrPhase.Engineer : NcrPhase.Operations;
+
+                    _context.Ncrs.Update(ncrToUpdate);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+
+                // Go get the ncrQa to update
+                var ncrQaToUpdate = await _context.NcrQas
+                    .Include(n => n.Item)
+                    .Include(n => n.Item).ThenInclude(n => n.Supplier)
+                    .Include(n => n.Defect)
+                    .Include(n => n.ItemDefectPhotos)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(n => n.NcrQaId == NcrQaId);
+
+                // Check that we got the function or exit with a not found error
+                if (ncrQaToUpdate == null)
                 {
-                    if (!NcrQaExists(ncrQa.NcrQaId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return NotFound();
                 }
-                return RedirectToAction(nameof(Index));
+                else
+                {
+                    await AddPictures(ncrQaDTO, Photos);
+                    try
+                    {
+                        ncrQaToUpdate.NcrQaItemMarNonConforming = ncrQaDTO.NcrQaItemMarNonConforming;
+                        ncrQaToUpdate.NcrQaProcessApplicable = ncrQaDTO.NcrQaProcessApplicable;
+                        ncrQaToUpdate.NcrQacreationDate = ncrQaDTO.NcrQacreationDate; //checar
+                        ncrQaToUpdate.NcrQaOrderNumber = ncrQaDTO.NcrQaOrderNumber;
+                        ncrQaToUpdate.NcrQaSalesOrder = ncrQaDTO.NcrQaSalesOrder;
+                        ncrQaToUpdate.NcrQaQuanReceived = ncrQaDTO.NcrQaQuanReceived;
+                        ncrQaToUpdate.NcrQaQuanDefective = ncrQaDTO.NcrQaQuanDefective;
+                        //pendiente userId
+                        ncrQaToUpdate.NcrQaDescriptionOfDefect = ncrQaDTO.NcrQaDescriptionOfDefect;
+                        ncrQaToUpdate.NcrQaDefectVideo = ncrQaDTO.NcrQaDefectVideo;                        
+                        ncrQaToUpdate.ItemId = ncrQaDTO.ItemId;
+                        ncrQaToUpdate.Item = null;
+                        ncrQaToUpdate.DefectId = ncrQaDTO.DefectId;
+                        ncrQaToUpdate.Defect = null;
+                        ncrQaToUpdate.NcrQaEngDispositionRequired = ncrQaDTO.NcrQaEngDispositionRequired;
+                        ncrQaToUpdate.ItemDefectPhotos = ncrQaDTO.ItemDefectPhotos;                   
+
+                        _context.NcrQas.Update(ncrQaToUpdate);
+                        await _context.SaveChangesAsync();
+
+                        TempData["SuccessMessage"] = "NCR edited successfully!";
+                        int updateNcrQa = ncrQaToUpdate.NcrQaId;
+                        return RedirectToAction("Details", new { id = updateNcrQa });
+                    }
+                    catch (RetryLimitExceededException)
+                    {
+                        ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
+                    }
+                    catch (DbUpdateException)
+                    {
+                        ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                    }
+                }     
             }
-            ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName", ncrQa.ItemId);
-            ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrQa.NcrId);
-            return View(ncrQa);
+            PopulateDropDownLists();
+            return View(ncrQaDTO);            
         }
 
         // GET: NcrQa/Delete/5
@@ -429,13 +513,7 @@ namespace HaverDevProject.Controllers
         {
             return new SelectList(_context.Suppliers
                 .OrderBy(s => s.SupplierName), "SupplierId", "SupplierName", selectedId);
-        }
-
-        //private SelectList ItemSelectList(int? selectedId)
-        //{
-        //    return new SelectList(_context.Items
-        //        .OrderBy(i => i.ItemName), "ItemId", "ItemName", selectedId);            
-        //}
+        }        
 
         private SelectList ItemSelectList(int? SupplierID, int? selectedId)
         {
@@ -461,7 +539,7 @@ namespace HaverDevProject.Controllers
                 ViewData["SupplierId"] = SupplierSelectList(null);
                 ViewData["ItemId"] = ItemSelectList(null, null);
             }
-        }
+        }               
 
         [HttpGet]
         public JsonResult GetItems(int SupplierId)
@@ -502,12 +580,23 @@ namespace HaverDevProject.Controllers
                             ncrQaDTO.ItemDefectPhotos.Add(new ItemDefectPhoto
                             {
                                 ItemDefectPhotoContent = ResizeImage.shrinkImageWebp(pictureArray, 500, 600),
-                                ItemDefectPhotoMimeType = "image/webp"
+                                ItemDefectPhotoMimeType = "image/webp",
+                                FileName = picture.FileName                                
                             });
                         }
                     }
                 }
             }
+        }
+
+
+        public async Task<FileContentResult> Download(int id)
+        {
+            var theFile = await _context.ItemDefectPhotos
+                .Include(d => d.FileContent)
+                .Where(f => f.ItemDefectPhotoId == id)
+                .FirstOrDefaultAsync();
+            return File(theFile.ItemDefectPhotoContent, theFile.ItemDefectPhotoMimeType, theFile.FileName);
         }
 
         private bool NcrQaExists(int id)

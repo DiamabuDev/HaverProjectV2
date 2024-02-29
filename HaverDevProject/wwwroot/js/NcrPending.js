@@ -4,7 +4,7 @@
 
 function GetNcrs() {
     $.ajax({
-        url: '/NcrOperation/GetNcrs',
+        url: '/'+section+'/GetNcrs',
         type: 'GET',
         dataType: 'json',
         contentType: 'application/json;charset=utf-8',
@@ -14,11 +14,11 @@ function GetNcrs() {
             } else {
                 $('#tblBody').empty(); // Clear existing rows
                 for (let i = 0; i < response.length; i++) {
-                    const ncrEng = response[i];
+                    const ncr = response[i];
                     const $row = $('<tr>');
-                    $row.append(`<td>${ncrEng.ncrNumber}</td>`);
-                    $row.append(`<td>${ncrEng.supplierName}</td>`);//Supplier
-                    $row.append(`<td><button class="btn btn-success" onclick="startNcrOperation('${ncrEng.ncrNumber}')"><i class="bi bi-play-fill"></i> Start</button></td>`);
+                    $row.append(`<td>${ncr.ncrNumber}</td>`);
+                    $row.append(`<td>${ncr.supplierName}</td>`);//Supplier
+                    $row.append(`<td><button class="btn btn-success" onclick="start('${ncr.ncrNumber}')"><i class="bi bi-play-fill"></i> Start</button></td>`);
                     $('#tblBody').append($row);
                 }
             }
@@ -29,6 +29,8 @@ function GetNcrs() {
     });
 }
 
-function startNcrOperation(ncrNumber) {
-    window.location.href = '/NcrOperation/Create?ncrNumber=' + ncrNumber;
+function start(ncrNumber) {
+    window.location.href = '/'+section+'/Create?ncrNumber=' + ncrNumber;
+
 }
+

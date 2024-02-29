@@ -17,12 +17,16 @@ public class NcrEng : Auditable
 	public bool NcrEngCustomerNotification { get; set; } = false;
 	public string NcrEngDispositionDescription { get; set; }
     public bool NcrEngStatusFlag { get; set; }
-	public int NcrEngUserId { get; set; }
+
+    public NcrPhase NcrPhase { get; set; }
+    public int NcrEngUserId { get; set; }
 	public int EngDispositionTypeId { get; set; }
 	public EngDispositionType EngDispositionType { get; set; }
 	public int NcrId { get; set; }
 	public Ncr Ncr { get; set; }
 	public int DrawingId { get; set; }
 	public Drawing Drawing { get; set; }
+
+    public ICollection<EngDefectPhoto> EngDefectPhotos { get; set; } = new HashSet<EngDefectPhoto>();
 
 }

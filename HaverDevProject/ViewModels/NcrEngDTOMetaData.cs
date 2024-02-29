@@ -39,7 +39,9 @@ public class NcrEngDTOMetaData
 
     public bool NcrEngStatusFlag { get; set; }
 
-	[Display(Name = "Engineering")]
+    public NcrPhase NcrPhase { get; set; }
+
+    [Display(Name = "Engineering")]
 	[Column("ncrEngUserId")]
 	public int NcrEngUserId { get; set; }
 
@@ -76,4 +78,7 @@ public class NcrEngDTOMetaData
     [Display(Name = "Drawing User ID")]
     [Column("drawingUserId")]
     public int DrawingUserId { get; set; }
+
+    [Display(Name = "Engineer Photos")]
+    public ICollection<EngDefectPhoto> EngDefectPhotos { get; set; } = new HashSet<EngDefectPhoto>();
 }

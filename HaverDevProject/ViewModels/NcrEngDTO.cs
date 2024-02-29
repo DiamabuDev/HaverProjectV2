@@ -19,7 +19,8 @@ public class NcrEngDTO : Auditable
     public bool NcrEngCustomerNotification { get; set; } = false;
 	public string NcrEngDispositionDescription { get; set; }
     public bool NcrEngStatusFlag { get; set; }
-	public int NcrEngUserId { get; set; }
+    public NcrPhase NcrPhase { get; set; }
+    public int NcrEngUserId { get; set; }
 	public int EngDispositionTypeId { get; set; }
 	public int NcrId { get; set; }
 	public int DrawingId { get; set; }
@@ -28,4 +29,5 @@ public class NcrEngDTO : Auditable
 	public int DrawingUpdatedRevNumber { get; set; }
 	public DateTime DrawingRevDate { get; set; }
 	public int DrawingUserId { get; set; }
+    public ICollection<EngDefectPhoto> EngDefectPhotos { get; set; } = new HashSet<EngDefectPhoto>();
 }

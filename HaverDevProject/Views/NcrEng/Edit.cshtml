@@ -32,7 +32,8 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="form-group form-drop">
-                            <label asp-for="EngDispositionTypeId" class="control-label"></label>
+                            <label class="pb-3">Review by HBC Engineering: (indicate disposition by selecting one of the following)</label>
+                           @*  <label asp-for="EngDispositionTypeId" class="control-label"></label> *@
                             <select asp-for="EngDispositionTypeId" class="form-control"
                                     asp-items="ViewBag.EngDispositionTypeId"></select>
                         </div>
@@ -42,8 +43,11 @@
                     <div class="col-12">
                         <div class="form-group form-check">
                             <label class="form-check-label">
+                                
                                 <input class="form-check-input" asp-for="NcrEngCustomerNotification" />
-                                @Html.DisplayNameFor(model => model.NcrEngCustomerNotification)
+                                @* @Html.DisplayNameFor(model => model.NcrEngCustomerNotification) *@
+                           
+                                Check the box if customer requires notification of NCR (if checked, raise message to customer detailing issues)
                             </label>
                         </div>
                     </div>
@@ -51,63 +55,76 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="form-group">
-                            <label asp-for="NcrEngDispositionDescription" class="control-label"></label>
+                            Disposition (Sequence of work steps required when 'repair' or 'rework' indicated)
+                            @* <label asp-for="NcrEngDispositionDescription" class="control-label"></label> *@
                             <textarea asp-for="NcrEngDispositionDescription" class="form-control"></textarea>
                             <span asp-validation-for="NcrEngDispositionDescription" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
-                <div class="row">
+
+
+                <div class="form-group">
+                    <label class="control-label custom-file-label">Upload Engineer Photos:</label>
+                    <div class="input-group mb-3">
+                        <input type="file" class="form-control" name="Photos" multiple="multiple" />
+                    </div>
+
+                </div>
+
+       
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group form-check">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" asp-for="DrawingRequireUpdating" />
+                                    @Html.DisplayNameFor(model => model.DrawingRequireUpdating)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                <div id="drawingConditional" class="row hidden">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label asp-for="DrawingOriginalRevNumber" class="control-label"></label>
+                                <input asp-for="DrawingOriginalRevNumber" class="form-control" />
+                                <span asp-validation-for="DrawingOriginalRevNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label asp-for="DrawingUserId" class="control-label"></label>
+                                <input asp-for="DrawingUserId" class="form-control" />
+                                <span asp-validation-for="DrawingUserId" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label asp-for="DrawingUpdatedRevNumber" class="control-label"></label>
+                                <input asp-for="DrawingUpdatedRevNumber" class="form-control" />
+                                <span asp-validation-for="DrawingUpdatedRevNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label asp-for="NcrEngUserId" class="control-label"></label>
+                                <input asp-for="NcrEngUserId" class="form-control" />
+                                <span asp-validation-for="NcrEngUserId" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="col-12">
-                        <div class="form-group form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" asp-for="DrawingRequireUpdating" />
-                                @Html.DisplayNameFor(model => model.DrawingRequireUpdating)
-                            </label>
+                        <div class="form-group">
+                            <label asp-for="DrawingRevDate" class="control-label"></label>
+                            <input asp-for="DrawingRevDate" class="form-control" />
+                            <span asp-validation-for="DrawingRevDate" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-6">
-                        <div class="form-group">
-                            <label asp-for="DrawingOriginalRevNumber" class="control-label"></label>
-                            <input asp-for="DrawingOriginalRevNumber" class="form-control" />
-                            <span asp-validation-for="DrawingOriginalRevNumber" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="form-group">
-                            <label asp-for="DrawingUserId" class="control-label"></label>
-                            <input asp-for="DrawingUserId" class="form-control" />
-                            <span asp-validation-for="DrawingUserId" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-6">
-                        <div class="form-group">
-                            <label asp-for="DrawingUpdatedRevNumber" class="control-label"></label>
-                            <input asp-for="DrawingUpdatedRevNumber" class="form-control" />
-                            <span asp-validation-for="DrawingUpdatedRevNumber" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="form-group">
-                            <label asp-for="NcrEngUserId" class="control-label"></label>
-                            <input asp-for="NcrEngUserId" class="form-control" />
-                            <span asp-validation-for="NcrEngUserId" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-12">
-                    <div class="form-group">
-                        <label asp-for="DrawingRevDate" class="control-label"></label>
-                        <input asp-for="DrawingRevDate" class="form-control" />
-                        <span asp-validation-for="DrawingRevDate" class="text-danger"></span>
-                    </div>
-                </div>
-
             </div>
             <div class="card-footer">
                 <div class="form-group d-flex justify-content-end mt-2">
@@ -134,4 +151,17 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        $(document).ready(function () {
+            // Listen for changes to the checkbox
+            $('#DrawingRequireUpdating').change(function () {
+                if (this.checked) {
+                    $('#drawingConditional').removeClass('hidden');
+                } else {
+                    $('#drawingConditional').addClass('hidden');
+                }
+            });
+        });
+    </script>
 }

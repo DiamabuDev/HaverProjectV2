@@ -427,37 +427,90 @@ namespace HaverDevProject.Controllers
                     ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
                     int rowCount = worksheet.Dimension.Rows;
 
-                    var defaultSupplier = await _context.Suppliers
-                                                 .FirstOrDefaultAsync(s => s.SupplierName.ToLower() == "no supplier provided".ToLower());
-
-                    if (defaultSupplier == null)
-                    {
-                        defaultSupplier = new Supplier
-                        {
-                            SupplierName = "NO SUPPLIER PROVIDED"
-                        };
-                        _context.Suppliers.Add(defaultSupplier);
-                        await _context.SaveChangesAsync(); 
-                    }
-
-                    int defaultSupplierId = defaultSupplier.SupplierId;
-
                     for (int row = 2; row <= rowCount; row++)
                     {
-                        var itemNumber = int.Parse(worksheet.Cells[row, 1].Value.ToString().Trim());
-                        var itemName = worksheet.Cells[row, 2].Value.ToString().Trim();
+                        var itemNumber = int.Parse(worksheet.Cells[row, 1].Value?.ToString().Trim());
+                        var itemName = worksheet.Cells[row, 2].Value?.ToString().Trim();
+                        var supplierInfo = worksheet.Cells[row, 3].Value?.ToString().Trim();
+                        var defectTypeName = worksheet.Cells[row, 4].Value?.ToString().Trim();
+
+                        string supplierCode = null;
+                        string supplierName = null;
+                        if (!string.IsNullOrWhiteSpace(supplierInfo))
+                        {
+                            var parts = supplierInfo.Split(new[] { ' ' }, 2);
+                            if (parts.Length == 2)
+                            {
+                                supplierCode = parts[0].Trim();
+                                supplierName = parts[1].Trim();
+                            }
+                            else
+                            {
+                                supplierName = parts[0].Trim(); 
+                            }
+                        }
+                        else
+                        {
+                            supplierName = "NO SUPPLIER PROVIDED";
+                        }
+
+                        Supplier supplier = null;
+                        if (supplierName == "NO SUPPLIER PROVIDED")
+                        {
+                            supplier = await _context.Suppliers
+                                                     .FirstOrDefaultAsync(s => s.SupplierName == supplierName)
+                                      ?? new Supplier { SupplierCode = "", SupplierName = supplierName };
+                        }
+                        else
+                        {
+                            supplier = await _context.Suppliers
+                                                     .FirstOrDefaultAsync(s => s.SupplierCode == supplierCode && s.SupplierName == supplierName)
+                                      ?? new Supplier { SupplierCode = supplierCode, SupplierName = supplierName };
+                        }
+
+                        if (supplier.SupplierId == 0) _context.Suppliers.Add(supplier);
+
+                        var existingItem = await _context.Items.FirstOrDefaultAsync(i => i.ItemNumber == itemNumber);
+                        if (existingItem != null)
+                        {
+                            continue;
+                        }                     
+
+                        Defect defect = null;
+                        if (!string.IsNullOrWhiteSpace(defectTypeName))
+                        {
+                            defect = await _context.Defects
+                                                   .FirstOrDefaultAsync(d => d.DefectName.ToLower() == defectTypeName.ToLower())
+                                    ?? new Defect { DefectName = defectTypeName };
+
+                            if (defect.DefectId == 0) _context.Defects.Add(defect);
+                        }
+
+                        await _context.SaveChangesAsync();
 
                         var item = new Item
                         {
-                            SupplierId = defaultSupplierId,
+                            SupplierId = supplier.SupplierId,
                             ItemNumber = itemNumber,
                             ItemName = itemName,
                         };
 
                         _context.Items.Add(item);
-                    }
+                        await _context.SaveChangesAsync();
 
-                    await _context.SaveChangesAsync();
+                        if (defect != null)
+                        {
+                            var itemDefect = new ItemDefect
+                            {
+                                ItemId = item.ItemId,
+                                DefectId = defect.DefectId
+                            };
+
+                            _context.ItemDefects.Add(itemDefect);
+                        }
+
+                        await _context.SaveChangesAsync();
+                    }
                 }
             }
 
