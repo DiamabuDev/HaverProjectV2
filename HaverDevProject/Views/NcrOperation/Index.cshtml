@@ -162,7 +162,7 @@
 @section Scripts {
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-    <script src="~/js/ncrengjs.js"></script>
+    <script src="~/js/ncrpending.js"></script>
     <script type="text/javascript">
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
@@ -177,16 +177,18 @@
             });
         });
     </script>
+
     <script>
+        const section = "NcrOperation"
         // Function to update the pending count indicator
-        function updatePendingCountIndicator() {
+        function updatePendingCountIndicator(section) {
             // Use AJAX to fetch the count from the server
             $.ajax({
-                url: '@Url.Action("GetPendingCount", "NcrOperation")',
+                url: '@Url.Action("GetPendingCount","NcrOperation")',
                 type: 'GET',
                 success: function (data) {
                     // Update the content of the indicator
-                    $('#pendingCountIndicator').html('<i class="bi bi-bell-fill"></i> Pending Ncrs:  ' + data );
+                    $('#pendingCountIndicator').html('<i class="bi bi-bell-fill"></i> Pending Ncrs:  ' + data);
                 },
                 error: function () {
                     console.error('Error fetching pending count');

@@ -306,8 +306,12 @@ body {
         column-gap: 20px;
     }
 
-    .defects-container.two-columns {
-        display: block;
-        column-count: 2;
-        column-gap: 20px;
-    }
+.defects-container.two-columns {
+    display: block; 
+    column-count: 2;
+    column-gap: 20px;
+}
+
+.hidden {
+    display: none;
+}
