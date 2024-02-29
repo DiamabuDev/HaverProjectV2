@@ -298,25 +298,7 @@ namespace HaverDevProject.Controllers
                 };               
                 
                 _context.NcrQas.Add(ncrQa);
-                await _context.SaveChangesAsync();
-
-                if(engReq == true)
-                {
-                    NcrEng ncrEng = new NcrEng
-                    {
-                        NcrEngStatusFlag = true,
-                        NcrId = ncrIdObt,
-                        EngDispositionTypeId = 1 //Default Value
-                    };
-
-                    _context.NcrEngs.Add(ncrEng);
-                    await _context.SaveChangesAsync();
-                }
-
-                //else --cambios pendientes Jorge
-                //{
-                //    ncr
-                //}
+                await _context.SaveChangesAsync();                
 
                 TempData["SuccessMessage"] = "NCR created successfully!";
                 int ncrQaId = ncrQa.NcrQaId;
@@ -557,9 +539,7 @@ namespace HaverDevProject.Controllers
                 ViewData["SupplierId"] = SupplierSelectList(null);
                 ViewData["ItemId"] = ItemSelectList(null, null);
             }
-        }
-
-               
+        }               
 
         [HttpGet]
         public JsonResult GetItems(int SupplierId)
