@@ -184,6 +184,7 @@ namespace HaverDevProject.Controllers
             var ncrReInspect = await _context.NcrReInspects
                 .Include(n => n.Ncr)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
+                .Include(n => n.NcrReInspectPhotos)
                 .FirstOrDefaultAsync(m => m.NcrReInspectId == id);
             if (ncrReInspect == null)
             {
@@ -255,6 +256,7 @@ namespace HaverDevProject.Controllers
         {
             var ncrReInspectToUpdate = await _context.NcrReInspects
                 .Include(r => r.Ncr)
+                .Include(r => r.NcrReInspectPhotos)
                 .FirstOrDefaultAsync(r => r.NcrReInspectId == id);
 
             if (ncrReInspectToUpdate == null)
@@ -269,7 +271,7 @@ namespace HaverDevProject.Controllers
                 {
                     await AddReInspectPictures(ncrReInspectToUpdate, Photos);
 
-                    await _context.SaveChangesAsync();
+                    //await _context.SaveChangesAsync();
 
                     var ncrToUpdate = await _context.Ncrs.FindAsync(ncrReInspectToUpdate.NcrId);
                     if (ncrToUpdate != null)

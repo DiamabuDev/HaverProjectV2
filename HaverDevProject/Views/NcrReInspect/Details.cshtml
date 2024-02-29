@@ -335,6 +335,10 @@
                                         {
                                             string imageBase64 = Convert.ToBase64String(photo.NcrReInspectPhotoContent);
                                             string imageSrc = string.Format("data:" + photo.NcrReInspectPhotoMimeType + ";base64,{0}", imageBase64);
+
+                                            <div class="text-center pb-3 col-6">
+                                                <img src="@imageSrc" alt="" title="" class="img-fluid rounded" />
+                                            </div>
                                         }
                                     }
                                 }
