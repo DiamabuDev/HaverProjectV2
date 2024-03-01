@@ -17,215 +17,215 @@ using NuGet.Protocol;
 
 namespace HaverDevProject.Controllers
 {
-	public class NcrEngController : ElephantController
-	{
-		private readonly HaverNiagaraContext _context;
+    public class NcrEngController : ElephantController
+    {
+        private readonly HaverNiagaraContext _context;
 
-		public NcrEngController(HaverNiagaraContext context)
-		{
-			_context = context;
-		}
+        public NcrEngController(HaverNiagaraContext context)
+        {
+            _context = context;
+        }
 
 
-		// GET: NcrEng
-		public async Task<IActionResult> Index(string SearchCode, /*int? SupplierID, */DateTime StartDate, DateTime EndDate,
-			int? page, int? pageSizeID, string actionButton, string sortDirection = "desc", string sortField = "Created", string filter = "Active")
-		{
-			//Set the date range filer based on the values in the database
-			if (EndDate == DateTime.MinValue)
-			{
-				StartDate = _context.NcrQas
-				.Min(f => f.NcrQacreationDate.Date);
+        // GET: NcrEng
+        public async Task<IActionResult> Index(string SearchCode, /*int? SupplierID, */DateTime StartDate, DateTime EndDate,
+            int? page, int? pageSizeID, string actionButton, string sortDirection = "desc", string sortField = "Created", string filter = "Active")
+        {
+            //Set the date range filer based on the values in the database
+            if (EndDate == DateTime.MinValue)
+            {
+                StartDate = _context.NcrQas
+                .Min(f => f.NcrQacreationDate.Date);
 
-				EndDate = _context.NcrQas
-				.Max(f => f.NcrQacreationDate.Date);
+                EndDate = _context.NcrQas
+                .Max(f => f.NcrQacreationDate.Date);
 
-				ViewData["StartDate"] = StartDate.ToString("yyyy-MM-dd");
-				ViewData["EndDate"] = EndDate.ToString("yyyy-MM-dd");
-			}
-			//Check the order of the dates and swap them if required
-			if (EndDate < StartDate)
-			{
-				DateTime temp = EndDate;
-				EndDate = StartDate;
-				StartDate = temp;
-			}
+                ViewData["StartDate"] = StartDate.ToString("yyyy-MM-dd");
+                ViewData["EndDate"] = EndDate.ToString("yyyy-MM-dd");
+            }
+            //Check the order of the dates and swap them if required
+            if (EndDate < StartDate)
+            {
+                DateTime temp = EndDate;
+                EndDate = StartDate;
+                StartDate = temp;
+            }
 
-			//List of sort options.
-			string[] sortOptions = new[] { "Created", "NCR #", "Disposition", "Description" };
+            //List of sort options.
+            string[] sortOptions = new[] { "Created", "NCR #", "Disposition", "Description" };
 
-			PopulateDropDownLists();
+            PopulateDropDownLists();
 
-			var ncrEng = _context.NcrEngs
-				.Include(n => n.EngDispositionType)
-				.Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
-				.Include(n => n.Ncr)
-                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n =>n.Item)
+            var ncrEng = _context.NcrEngs
+                .Include(n => n.EngDispositionType)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
+                .Include(n => n.Ncr)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
                 .Include(n => n.Drawing)
-                .Where(n=>n.Ncr.NcrPhase == NcrPhase.Engineer)
-				.AsNoTracking();
+                .Where(n => n.Ncr.NcrPhase == NcrPhase.Engineer)
+                .AsNoTracking();
 
             GetNcrs();
 
-			//Filterig values            
-			if (!String.IsNullOrEmpty(filter))
-			{
-				if (filter == "Active")
-				{
-					ncrEng = ncrEng.Where(n => n.Ncr.NcrStatus == true);
-				}
-				else //(filter == "Closed")
-				{
+            //Filterig values            
+            if (!String.IsNullOrEmpty(filter))
+            {
+                if (filter == "Active")
+                {
+                    ncrEng = ncrEng.Where(n => n.Ncr.NcrStatus == true);
+                }
+                else //(filter == "Closed")
+                {
 
-					ncrEng = ncrEng.Where(n => n.Ncr.NcrStatus == false);
-				}
-			}
-			if (!String.IsNullOrEmpty(SearchCode))
-			{
-				ncrEng = ncrEng.Where(s => s.Ncr.NcrNumber.ToUpper().Contains(SearchCode.ToUpper()));
-			}
-			if (StartDate == EndDate)
-			{
-				ncrEng = ncrEng.Where(n => n.Ncr.NcrQa.NcrQacreationDate == StartDate);
-			}
-			else
-			{
-				ncrEng = ncrEng.Where(n => n.Ncr.NcrQa.NcrQacreationDate >= StartDate &&
-						 n.Ncr.NcrQa.NcrQacreationDate <= EndDate);
-			}
+                    ncrEng = ncrEng.Where(n => n.Ncr.NcrStatus == false);
+                }
+            }
+            if (!String.IsNullOrEmpty(SearchCode))
+            {
+                ncrEng = ncrEng.Where(s => s.Ncr.NcrNumber.ToUpper().Contains(SearchCode.ToUpper()));
+            }
+            if (StartDate == EndDate)
+            {
+                ncrEng = ncrEng.Where(n => n.Ncr.NcrQa.NcrQacreationDate == StartDate);
+            }
+            else
+            {
+                ncrEng = ncrEng.Where(n => n.Ncr.NcrQa.NcrQacreationDate >= StartDate &&
+                         n.Ncr.NcrQa.NcrQacreationDate <= EndDate);
+            }
 
-			//Sorting columns
-			if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
-			{
-				page = 1;//Reset page to start
+            //Sorting columns
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                page = 1;//Reset page to start
 
-				if (sortOptions.Contains(actionButton))//Change of sort is requested
-				{
-					if (actionButton == sortField) //Reverse order on same field
-					{
-						sortDirection = sortDirection == "asc" ? "desc" : "asc";
-					}
-					sortField = actionButton;//Sort by the button clicked
-				}
-			}
+                if (sortOptions.Contains(actionButton))//Change of sort is requested
+                {
+                    if (actionButton == sortField) //Reverse order on same field
+                    {
+                        sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                    }
+                    sortField = actionButton;//Sort by the button clicked
+                }
+            }
 
-			if (sortField == "NCR #")
-			{
-				if (sortDirection == "asc")
-				{
-					ncrEng = ncrEng
-						.OrderBy(p => p.Ncr.NcrNumber);
-					ViewData["filterApplied:NcrNumber"] = "<i class='bi bi-sort-up'></i>";
-				}
-				else
-				{
-					ncrEng = ncrEng
-						.OrderByDescending(p => p.Ncr.NcrNumber);
-					ViewData["filterApplied:NcrNumber"] = "<i class='bi bi-sort-down'></i>";
-				}
-			}
-			else if (sortField == "Disposition")
-			{
-				if (sortDirection == "asc")
-				{
-					ncrEng = ncrEng
-						.OrderBy(p => p.Ncr.NcrEng.EngDispositionType.EngDispositionTypeName);
-					ViewData["filterApplied:Disposition"] = "<i class='bi bi-sort-up'></i>";
-				}
-				else
-				{
-					ncrEng = ncrEng
-						.OrderByDescending(p => p.Ncr.NcrEng.EngDispositionType.EngDispositionTypeName);
-					ViewData["filterApplied:Disposition"] = "<i class='bi bi-sort-down'></i>";
-				}
-			}
-			else if (sortField == "Description")
-			{
-				if (sortDirection == "asc")
-				{
-					ncrEng = ncrEng
-						.OrderBy(p => p.Ncr.NcrEng.NcrEngDispositionDescription);
-					ViewData["filterApplied:Description"] = "<i class='bi bi-sort-up'></i>";
-				}
-				else
-				{
-					ncrEng = ncrEng
-						.OrderByDescending(p => p.Ncr.NcrEng.NcrEngDispositionDescription);
-					ViewData["filterApplied:Description"] = "<i class='bi bi-sort-down'></i>";
-				}
-			}
-			else if (sortField == "Created")
-			{
-				if (sortDirection == "desc") //desc by default
-				{
-					ncrEng = ncrEng
-						.OrderBy(p => p.Ncr.NcrQa.NcrQacreationDate);
+            if (sortField == "NCR #")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncrEng = ncrEng
+                        .OrderBy(p => p.Ncr.NcrNumber);
+                    ViewData["filterApplied:NcrNumber"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrEng = ncrEng
+                        .OrderByDescending(p => p.Ncr.NcrNumber);
+                    ViewData["filterApplied:NcrNumber"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Disposition")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncrEng = ncrEng
+                        .OrderBy(p => p.Ncr.NcrEng.EngDispositionType.EngDispositionTypeName);
+                    ViewData["filterApplied:Disposition"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrEng = ncrEng
+                        .OrderByDescending(p => p.Ncr.NcrEng.EngDispositionType.EngDispositionTypeName);
+                    ViewData["filterApplied:Disposition"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Description")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncrEng = ncrEng
+                        .OrderBy(p => p.Ncr.NcrEng.NcrEngDispositionDescription);
+                    ViewData["filterApplied:Description"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrEng = ncrEng
+                        .OrderByDescending(p => p.Ncr.NcrEng.NcrEngDispositionDescription);
+                    ViewData["filterApplied:Description"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Created")
+            {
+                if (sortDirection == "desc") //desc by default
+                {
+                    ncrEng = ncrEng
+                        .OrderBy(p => p.Ncr.NcrQa.NcrQacreationDate);
 
-					ViewData["filterApplied:Created"] = "<i class='bi bi-sort-up'></i>";
-				}
-				else
-				{
-					ncrEng = ncrEng
-						.OrderByDescending(p => p.Ncr.NcrQa.NcrQacreationDate);
+                    ViewData["filterApplied:Created"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrEng = ncrEng
+                        .OrderByDescending(p => p.Ncr.NcrQa.NcrQacreationDate);
 
-					ViewData["filterApplied:Created"] = "<i class='bi bi-sort-down'></i>";
-				}
-			}
-			else //(sortField == "Status")
-			{
-				if (sortDirection == "asc")
-				{
-					ncrEng = ncrEng
-						.OrderBy(p => p.Ncr.NcrStatus);
-					ViewData["filterApplied:Status"] = "<i class='bi bi-sort-up'></i>";
-				}
-				else
-				{
-					ncrEng = ncrEng
-						.OrderByDescending(p => p.Ncr.NcrStatus);
-					ViewData["filterApplied:Status"] = "<i class='bi bi-sort-down'></i>";
-				}
-			}
+                    ViewData["filterApplied:Created"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else //(sortField == "Status")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncrEng = ncrEng
+                        .OrderBy(p => p.Ncr.NcrStatus);
+                    ViewData["filterApplied:Status"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrEng = ncrEng
+                        .OrderByDescending(p => p.Ncr.NcrStatus);
+                    ViewData["filterApplied:Status"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
 
 
-			ViewData["sortField"] = sortField;
-			ViewData["sortDirection"] = sortDirection;
+            ViewData["sortField"] = sortField;
+            ViewData["sortDirection"] = sortDirection;
 
-			int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, ControllerName());
-			ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
-			var pagedData = await PaginatedList<NcrEng>.CreateAsync(ncrEng.AsNoTracking(), page ?? 1, pageSize);
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, ControllerName());
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+            var pagedData = await PaginatedList<NcrEng>.CreateAsync(ncrEng.AsNoTracking(), page ?? 1, pageSize);
 
-			return View(pagedData);
-		}
+            return View(pagedData);
+        }
 
-		// GET: NcrEng/Details/5
-		public async Task<IActionResult> Details(int? id)
-		{
-			if (id == null || _context.NcrEngs == null)
-			{
-				return NotFound();
-			}
+        // GET: NcrEng/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null || _context.NcrEngs == null)
+            {
+                return NotFound();
+            }
 
             var ncrEng = await _context.NcrEngs
-				.Include(n => n.EngDispositionType)
-				.Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
-				.Include(n => n.Ncr)
-				.Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
-			    .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects)
-                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects).ThenInclude(n=>n.Defect)
+                .Include(n => n.EngDispositionType)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
+                .Include(n => n.Ncr)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects).ThenInclude(n => n.Defect)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
-				.Include(n => n.Drawing)
+                .Include(n => n.Drawing)
                 .Include(n => n.EngDefectPhotos)
                 .FirstOrDefaultAsync(m => m.NcrEngId == id);
 
-			if (ncrEng == null)
-			{
-				return NotFound();
-			}
+            if (ncrEng == null)
+            {
+                return NotFound();
+            }
 
-			return View(ncrEng);
-		}
+            return View(ncrEng);
+        }
 
 
         // GET: NcrOperation/Create
@@ -264,24 +264,32 @@ namespace HaverDevProject.Controllers
 
                     NcrEng ncrEng = new NcrEng
                     {
-                    NcrId = ncrIdObt, // Assign the NcrId from the found Ncr entity
-                    NcrEngCustomerNotification = ncrEngDTO.NcrEngCustomerNotification,
-                    NcrEngDispositionDescription = ncrEngDTO.NcrEngDispositionDescription,
-                    NcrEngStatusFlag = ncrEngDTO.NcrEngStatusFlag,
-                    NcrEngUserId = 1,
-                    EngDispositionTypeId = ncrEngDTO.EngDispositionTypeId,
-                    DrawingId = ncrEngDTO.DrawingId,
-                    DrawingRequireUpdating = false,
-                    DrawingOriginalRevNumber = ncrEngDTO.DrawingOriginalRevNumber,
-                    DrawingUpdatedRevNumber = ncrEngDTO.DrawingUpdatedRevNumber,
-                    DrawingRevDate = DateTime.Now,
-                    DrawingUserId = ncrEngDTO.DrawingUserId,
-                    EngDefectPhotos = ncrEngDTO.EngDefectPhotos,
-                    NcrPhase = NcrPhase.Operations
-                };
-
+                        NcrId = ncrIdObt, // Assign the NcrId from the found Ncr entity
+                        NcrEngCustomerNotification = ncrEngDTO.NcrEngCustomerNotification,
+                        NcrEngDispositionDescription = ncrEngDTO.NcrEngDispositionDescription,
+                        NcrEngStatusFlag = ncrEngDTO.NcrEngStatusFlag,
+                        NcrEngUserId = 1,
+                        EngDispositionTypeId = ncrEngDTO.EngDispositionTypeId,
+                        DrawingId = ncrEngDTO.DrawingId,
+                        DrawingRequireUpdating = false,
+                        DrawingOriginalRevNumber = ncrEngDTO.DrawingOriginalRevNumber,
+                        DrawingUpdatedRevNumber = ncrEngDTO.DrawingUpdatedRevNumber,
+                        DrawingRevDate = DateTime.Now,
+                        DrawingUserId = ncrEngDTO.DrawingUserId,
+                        EngDefectPhotos = ncrEngDTO.EngDefectPhotos,
+                        NcrEngDefectVideo = ncrEngDTO.NcrEngDefectVideo,
+                        NcrPhase = NcrPhase.Operations
+                    };
                     _context.NcrEngs.Add(ncrEng);
                     await _context.SaveChangesAsync();
+
+                    //update ncr 
+                    var ncr = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrIdObt);
+                    ncr.NcrPhase = NcrPhase.Operations;
+                    _context.Ncrs.Update(ncr);
+                    await _context.SaveChangesAsync();
+
+
 
                     TempData["SuccessMessage"] = "NCR saved successfully!";
                     int ncrEngId = ncrEng.NcrEngId;
@@ -328,17 +336,17 @@ namespace HaverDevProject.Controllers
             }
 
 
-			var ncrEngDTO = new NcrEngDTO
-			{
-				NcrEngId = ncrEng.NcrEngId,
-				NcrNumber = ncrEng.Ncr.NcrNumber,
-				//NcrStatus = ncrEng.Ncr.NcrStatus,
-				NcrEngCustomerNotification = ncrEng.NcrEngCustomerNotification,
-				NcrEngDispositionDescription = ncrEng.NcrEngDispositionDescription,
-				NcrEngStatusFlag = ncrEng.NcrEngStatusFlag,
-				NcrEngUserId = ncrEng.NcrEngUserId,
-				EngDispositionTypeId = ncrEng.EngDispositionTypeId,
-				NcrId = ncrEng.NcrId,
+            var ncrEngDTO = new NcrEngDTO
+            {
+                NcrEngId = ncrEng.NcrEngId,
+                NcrNumber = ncrEng.Ncr.NcrNumber,
+                //NcrStatus = ncrEng.Ncr.NcrStatus,
+                NcrEngCustomerNotification = ncrEng.NcrEngCustomerNotification,
+                NcrEngDispositionDescription = ncrEng.NcrEngDispositionDescription,
+                NcrEngStatusFlag = ncrEng.NcrEngStatusFlag,
+                NcrEngUserId = ncrEng.NcrEngUserId,
+                EngDispositionTypeId = ncrEng.EngDispositionTypeId,
+                NcrId = ncrEng.NcrId,
                 DrawingId = ncrEng.DrawingId,
                 DrawingRequireUpdating = ncrEng.DrawingRequireUpdating,
                 DrawingOriginalRevNumber = ncrEng.DrawingOriginalRevNumber,
@@ -346,13 +354,14 @@ namespace HaverDevProject.Controllers
                 DrawingRevDate = ncrEng.DrawingRevDate,
                 DrawingUserId = ncrEng.DrawingUserId,
                 EngDefectPhotos = ncrEng.EngDefectPhotos,
+                NcrEngDefectVideo = ncrEng.NcrEngDefectVideo,
                 NcrPhase = ncrEng.NcrPhase
-                
+
             };
 
-            
-			ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName", ncrEng.EngDispositionTypeId);
-			return View(ncrEngDTO);
+
+            ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName", ncrEng.EngDispositionTypeId);
+            return View(ncrEngDTO);
         }
 
         // POST: NcrEng/Edit/5
@@ -360,7 +369,7 @@ namespace HaverDevProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, NcrEngDTO ncrEngDTO, List<IFormFile> Photos)
         {
-			ncrEngDTO.NcrId = id;
+            ncrEngDTO.NcrId = id;
             if (id != ncrEngDTO.NcrId)
             {
                 return NotFound();
@@ -372,18 +381,18 @@ namespace HaverDevProject.Controllers
                 try
                 {
                     var ncrEng = await _context.NcrEngs
-						.Include(ne => ne.Drawing)
-						.FirstOrDefaultAsync(ne => ne.NcrId == id);
+                        .Include(ne => ne.Drawing)
+                        .FirstOrDefaultAsync(ne => ne.NcrId == id);
 
                     //ncrEng.NcrEngId = ncrEngDTO.NcrEngId;
                     //ncrEng.Ncr.NcrNumber = ncrEngDTO.NcrNumber;
                     //ncrEng.Ncr.NcrStatus = ncrEngDTO.NcrStatus;
                     ncrEng.NcrEngCustomerNotification = ncrEngDTO.NcrEngCustomerNotification;
-					ncrEng.NcrEngDispositionDescription = ncrEngDTO.NcrEngDispositionDescription;
-					ncrEng.NcrEngStatusFlag = ncrEngDTO.NcrEngStatusFlag;
-					ncrEng.NcrEngUserId = ncrEngDTO.NcrEngUserId;
-					ncrEng.EngDispositionTypeId = ncrEngDTO.EngDispositionTypeId;
-					ncrEng.NcrId = ncrEngDTO.NcrId;
+                    ncrEng.NcrEngDispositionDescription = ncrEngDTO.NcrEngDispositionDescription;
+                    ncrEng.NcrEngStatusFlag = ncrEngDTO.NcrEngStatusFlag;
+                    ncrEng.NcrEngUserId = ncrEngDTO.NcrEngUserId;
+                    ncrEng.EngDispositionTypeId = ncrEngDTO.EngDispositionTypeId;
+                    ncrEng.NcrId = ncrEngDTO.NcrId;
                     ncrEng.DrawingId = ncrEngDTO.DrawingId;
                     ncrEng.DrawingRequireUpdating = ncrEngDTO.DrawingRequireUpdating;
                     ncrEng.DrawingOriginalRevNumber = ncrEngDTO.DrawingOriginalRevNumber;
@@ -391,9 +400,12 @@ namespace HaverDevProject.Controllers
                     ncrEng.DrawingRevDate = ncrEngDTO.DrawingRevDate;
                     ncrEng.DrawingUserId = ncrEngDTO.DrawingUserId;
                     ncrEng.EngDefectPhotos = ncrEngDTO.EngDefectPhotos;
+                    ncrEng.NcrEngDefectVideo = ncrEngDTO.NcrEngDefectVideo;
                     ncrEng.NcrPhase = NcrPhase.Operations;
 
 
+                    await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrEng.NcrId);
+                    ncrEng.NcrPhase = NcrPhase.Operations;
                     _context.Update(ncrEng);
                     await _context.SaveChangesAsync();
                 }
@@ -515,10 +527,11 @@ namespace HaverDevProject.Controllers
             return File(theFile.EngDefectPhotoContent, theFile.EngDefectPhotoMimeType, theFile.FileName);
         }
 
+
         private bool NcrEngExists(int id)
-		{
-			return _context.NcrEngs.Any(e => e.NcrEngId == id);
-		}
+        {
+            return _context.NcrEngs.Any(e => e.NcrEngId == id);
+        }
 
         private SelectList EngDispositionTypeSelectList(int? selectedId)
         {
