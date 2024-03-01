@@ -185,6 +185,17 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
                 .Include(n => n.NcrReInspectPhotos)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects).ThenInclude(n => n.Defect)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrEng)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrEng).ThenInclude(n => n.EngDispositionType)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrEng).ThenInclude(n => n.Drawing)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrOperation)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrOperation).ThenInclude(n => n.OpDispositionType)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrOperation).ThenInclude(n => n.FollowUpType)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrProcurement)
                 .FirstOrDefaultAsync(m => m.NcrReInspectId == id);
             if (ncrReInspect == null)
             {
@@ -206,15 +217,21 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("NcrReInspectId,NcrReInspectAcceptable,NcrReInspectNewNcrNumber,NcrReInspectUserId,NcrId")] NcrReInspect ncrReInspect)
+        public async Task<IActionResult> Create([Bind("NcrReInspectId,NcrReInspectAcceptable,NcrReInspectNewNcrNumber,NcrReInspectUserId,NcrId")] NcrReInspect ncrReInspect, List<IFormFile> Photos)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
                     _context.Add(ncrReInspect);
+
+                    await AddReInspectPictures(ncrReInspect, Photos);
+
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+
+                    TempData["SuccessMessage"] = "NCR created successfully!";
+                    int ncrReInspectId = ncrReInspect.NcrReInspectId;
+                    return RedirectToAction("Details", new { id = ncrReInspectId });
                 }
             }
             catch (RetryLimitExceededException)
@@ -281,7 +298,9 @@ namespace HaverDevProject.Controllers
                         await _context.SaveChangesAsync();
                     }
 
-                    return RedirectToAction(nameof(Index));
+                    TempData["SuccessMessage"] = "NCR edited successfully!";
+                    int updateNcrReInspect = ncrReInspectToUpdate.NcrReInspectId;
+                    return RedirectToAction("Details", new { id = updateNcrReInspect });
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -460,6 +479,16 @@ namespace HaverDevProject.Controllers
 
             return Json(pendingCount);
         }
+
+        //public async Task<FileContentResult> Download(int id)
+        //{
+        //    var theFile = await _context.NcrReInspectPhotos
+        //        .Include(d => d.FileContent)
+        //        .Where(f => f.NcrReInspectPhotoId == id)
+        //        .FirstOrDefaultAsync();
+        //    return File(theFile.NcrReInspectPhotoContent, theFile.NcrReInspectPhotoMimeType, theFile.FileName);
+        //}
+
         private bool NcrReInspectExists(int id)
         {
             return _context.NcrReInspects.Any(e => e.NcrReInspectId == id);
