@@ -195,7 +195,7 @@
 @section Scripts {
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-    <script src="~/js/ncrprocjs.js"></script>
+    <script src="~/js/NcrPending.js"></script>
 
     <script type="text/javascript">
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
@@ -234,8 +234,9 @@
     </script>
 
     <script>
+        const section = "NcrReInspect"
         // Function to update the pending count indicator
-        function updatePendingCountIndicator() {
+        function updatePendingCountIndicator(section) {
             // Use AJAX to fetch the count from the server
             $.ajax({
                 url: '@Url.Action("GetPendingCount", "NcrReInspect")',

@@ -15,9 +15,9 @@
                 <div>
                     <h2 class="m-0">Create NCR Re-Inspection</h2>
                 </div>
-                <div class="justify-content-end">
+@*                 <div class="justify-content-end">
                     <p class="m-0">Fields marked <span class="fw-bold text-danger">*</span> are required.</p>
-                </div>
+                </div> *@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             </div>
             <div class="card-body col-lg-10 col-11 mx-auto">
@@ -25,7 +25,7 @@
                     <div class="col-6">
                         <div class="form-group form-check">
                             <label class="form-check-label">
-                                <input class="form-check-input" asp-for="NcrReInspectAcceptable" /> @Html.DisplayNameFor(model => model.NcrReInspectAcceptable)
+                                <input class="form-check-input" checked="checked" asp-for="NcrReInspectAcceptable" /> @Html.DisplayNameFor(model => model.NcrReInspectAcceptable)
                             </label>
                         </div>
                     </div>
@@ -122,7 +122,7 @@
                 var confirmResult = confirm("Do you want to make a new NCR?");
                 if (!confirmResult) {
                     // If user cancels, keep checkbox checked
-                    checkbox.checked = false;
+                    checkbox.checked = true;
                 }
                 else {
                     window.location.href = "/NcrQa/Create";
