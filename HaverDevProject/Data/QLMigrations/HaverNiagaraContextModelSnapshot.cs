@@ -83,6 +83,47 @@ namespace HaverDevProject.Data.QLMigrations
                     b.ToTable("drawing");
                 });
 
+            modelBuilder.Entity("HaverDevProject.Models.EngDefectPhoto", b =>
+                {
+                    b.Property<int>("EngDefectPhotoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("engDefectPhotoId");
+
+                    b.Property<byte[]>("EngDefectPhotoContent")
+                        .IsRequired()
+                        .HasColumnType("BLOB")
+                        .HasColumnName("engDefectPhotoContent");
+
+                    b.Property<string>("EngDefectPhotoDescription")
+                        .HasMaxLength(300)
+                        .IsUnicode(false)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("engDefectPhotoDescription");
+
+                    b.Property<string>("EngDefectPhotoMimeType")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .IsUnicode(false)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("engDefectPhotoMimeType");
+
+                    b.Property<string>("FileName")
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("NcrEngId")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("ncrEngId");
+
+                    b.HasKey("EngDefectPhotoId")
+                        .HasName("pk_engDefectPhoto_engDefectPhotoId");
+
+                    b.HasIndex("NcrEngId");
+
+                    b.ToTable("engDefectPhoto");
+                });
+
             modelBuilder.Entity("HaverDevProject.Models.EngDispositionType", b =>
                 {
                     b.Property<int>("EngDispositionTypeId")
@@ -101,6 +142,32 @@ namespace HaverDevProject.Data.QLMigrations
                         .HasName("pk_engDispoistionType_engDispositionTypeId");
 
                     b.ToTable("engDispositionType");
+                });
+
+            modelBuilder.Entity("HaverDevProject.Models.EngFileContent", b =>
+                {
+                    b.Property<int>("EngFileContentID")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte[]>("Content")
+                        .HasColumnType("BLOB");
+
+                    b.HasKey("EngFileContentID");
+
+                    b.ToTable("EngFileContent");
+                });
+
+            modelBuilder.Entity("HaverDevProject.Models.FileContent", b =>
+                {
+                    b.Property<int>("FileContentID")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte[]>("Content")
+                        .HasColumnType("BLOB");
+
+                    b.HasKey("FileContentID");
+
+                    b.ToTable("FileContent");
                 });
 
             modelBuilder.Entity("HaverDevProject.Models.FollowUpType", b =>
@@ -183,6 +250,10 @@ namespace HaverDevProject.Data.QLMigrations
                         .HasColumnType("INTEGER")
                         .HasColumnName("itemDefectPhotoId");
 
+                    b.Property<string>("FileName")
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
                     b.Property<byte[]>("ItemDefectPhotoContent")
                         .IsRequired()
                         .HasColumnType("BLOB")
@@ -230,6 +301,9 @@ namespace HaverDevProject.Data.QLMigrations
                     b.Property<string>("NcrNumber")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("NcrPhase")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("NcrStatus")
                         .HasColumnType("INTEGER");
 
@@ -255,6 +329,21 @@ namespace HaverDevProject.Data.QLMigrations
                     b.Property<int>("DrawingId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("DrawingOriginalRevNumber")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("DrawingRequireUpdating")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("DrawingRevDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("DrawingUpdatedRevNumber")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DrawingUserId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("EngDispositionTypeId")
                         .HasColumnType("INTEGER");
 
@@ -271,6 +360,9 @@ namespace HaverDevProject.Data.QLMigrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("NcrId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("NcrPhase")
                         .HasColumnType("INTEGER");
 
                     b.Property<byte[]>("RowVersion")
@@ -424,7 +516,8 @@ namespace HaverDevProject.Data.QLMigrations
                     b.HasKey("NcrProcurementId")
                         .HasName("pk_ncrProcurement_ncrProcurementId");
 
-                    b.HasIndex("NcrId");
+                    b.HasIndex("NcrId")
+                        .IsUnique();
 
                     b.ToTable("NcrProcurements");
                 });
@@ -478,6 +571,9 @@ namespace HaverDevProject.Data.QLMigrations
                     b.Property<string>("NcrQaSalesOrder")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("NcrQaStatusFlag")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("NcrQacreationDate")
                         .HasColumnType("TEXT");
 
@@ -513,8 +609,7 @@ namespace HaverDevProject.Data.QLMigrations
                 {
                     b.Property<int>("NcrReInspectId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("ncrReInspectId");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(256)
@@ -524,20 +619,22 @@ namespace HaverDevProject.Data.QLMigrations
                         .HasColumnType("TEXT");
 
                     b.Property<int>("NcrId")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("ncrId");
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("NcrQaStatusFlag")
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("NcrReInspectAcceptable")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("ncrReInspectAcceptable");
+                        .HasColumnType("INTEGER");
 
-                    b.Property<int?>("NcrReInspectNewNcrNumber")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("ncrReInspectNewNcrNumber");
+                    b.Property<string>("NcrReInspectDefectVideo")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NcrReInspectNewNcrNumber")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("NcrReInspectUserId")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("ncrReInspectUserId");
+                        .HasColumnType("INTEGER");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -557,7 +654,44 @@ namespace HaverDevProject.Data.QLMigrations
                     b.HasIndex("NcrId")
                         .IsUnique();
 
-                    b.ToTable("ncrReInspect");
+                    b.ToTable("NcrReInspects");
+                });
+
+            modelBuilder.Entity("HaverDevProject.Models.NcrReInspectPhoto", b =>
+                {
+                    b.Property<int>("NcrReInspectPhotoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("ncrReInspectPhotoId");
+
+                    b.Property<int>("NcrReInspectId")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("ncrReInspectId");
+
+                    b.Property<byte[]>("NcrReInspectPhotoContent")
+                        .IsRequired()
+                        .HasColumnType("BLOB")
+                        .HasColumnName("ncrReInspectPhotoContent");
+
+                    b.Property<string>("NcrReInspectPhotoDescription")
+                        .HasMaxLength(300)
+                        .IsUnicode(false)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("ncrReInspectPhotoDescription");
+
+                    b.Property<string>("NcrReInspectPhotoMimeType")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .IsUnicode(false)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("ncrReInspectPhotoMimeType");
+
+                    b.HasKey("NcrReInspectPhotoId")
+                        .HasName("pk_ncrReInspectPhoto_ncrReInspectPhotoId");
+
+                    b.HasIndex("NcrReInspectId");
+
+                    b.ToTable("ncrReInspectPhoto");
                 });
 
             modelBuilder.Entity("HaverDevProject.Models.OpDispositionType", b =>
@@ -632,6 +766,39 @@ namespace HaverDevProject.Data.QLMigrations
                         .IsRequired();
 
                     b.Navigation("NcrEng");
+                });
+
+            modelBuilder.Entity("HaverDevProject.Models.EngDefectPhoto", b =>
+                {
+                    b.HasOne("HaverDevProject.Models.NcrEng", "NcrEng")
+                        .WithMany("EngDefectPhotos")
+                        .HasForeignKey("NcrEngId")
+                        .IsRequired()
+                        .HasConstraintName("fk_engDefectPhoto_itemDefect");
+
+                    b.Navigation("NcrEng");
+                });
+
+            modelBuilder.Entity("HaverDevProject.Models.EngFileContent", b =>
+                {
+                    b.HasOne("HaverDevProject.Models.EngDefectPhoto", "EngDefectPhoto")
+                        .WithOne("EngFileContent")
+                        .HasForeignKey("HaverDevProject.Models.EngFileContent", "EngFileContentID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EngDefectPhoto");
+                });
+
+            modelBuilder.Entity("HaverDevProject.Models.FileContent", b =>
+                {
+                    b.HasOne("HaverDevProject.Models.ItemDefectPhoto", "ItemDefectPhoto")
+                        .WithOne("FileContent")
+                        .HasForeignKey("HaverDevProject.Models.FileContent", "FileContentID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ItemDefectPhoto");
                 });
 
             modelBuilder.Entity("HaverDevProject.Models.Item", b =>
@@ -732,8 +899,8 @@ namespace HaverDevProject.Data.QLMigrations
             modelBuilder.Entity("HaverDevProject.Models.NcrProcurement", b =>
                 {
                     b.HasOne("HaverDevProject.Models.Ncr", "Ncr")
-                        .WithMany()
-                        .HasForeignKey("NcrId")
+                        .WithOne("NcrProcurement")
+                        .HasForeignKey("HaverDevProject.Models.NcrProcurement", "NcrId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -778,9 +945,24 @@ namespace HaverDevProject.Data.QLMigrations
                     b.Navigation("Ncr");
                 });
 
+            modelBuilder.Entity("HaverDevProject.Models.NcrReInspectPhoto", b =>
+                {
+                    b.HasOne("HaverDevProject.Models.NcrReInspect", "NcrReInspect")
+                        .WithMany("NcrReInspectPhotos")
+                        .HasForeignKey("NcrReInspectId")
+                        .IsRequired();
+
+                    b.Navigation("NcrReInspect");
+                });
+
             modelBuilder.Entity("HaverDevProject.Models.Defect", b =>
                 {
                     b.Navigation("ItemDefects");
+                });
+
+            modelBuilder.Entity("HaverDevProject.Models.EngDefectPhoto", b =>
+                {
+                    b.Navigation("EngFileContent");
                 });
 
             modelBuilder.Entity("HaverDevProject.Models.EngDispositionType", b =>
@@ -800,11 +982,18 @@ namespace HaverDevProject.Data.QLMigrations
                     b.Navigation("NcrQas");
                 });
 
+            modelBuilder.Entity("HaverDevProject.Models.ItemDefectPhoto", b =>
+                {
+                    b.Navigation("FileContent");
+                });
+
             modelBuilder.Entity("HaverDevProject.Models.Ncr", b =>
                 {
                     b.Navigation("NcrEng");
 
                     b.Navigation("NcrOperation");
+
+                    b.Navigation("NcrProcurement");
 
                     b.Navigation("NcrQa");
 
@@ -814,6 +1003,8 @@ namespace HaverDevProject.Data.QLMigrations
             modelBuilder.Entity("HaverDevProject.Models.NcrEng", b =>
                 {
                     b.Navigation("Drawing");
+
+                    b.Navigation("EngDefectPhotos");
                 });
 
             modelBuilder.Entity("HaverDevProject.Models.NcrOperation", b =>
@@ -824,6 +1015,11 @@ namespace HaverDevProject.Data.QLMigrations
             modelBuilder.Entity("HaverDevProject.Models.NcrQa", b =>
                 {
                     b.Navigation("ItemDefectPhotos");
+                });
+
+            modelBuilder.Entity("HaverDevProject.Models.NcrReInspect", b =>
+                {
+                    b.Navigation("NcrReInspectPhotos");
                 });
 
             modelBuilder.Entity("HaverDevProject.Models.OpDispositionType", b =>

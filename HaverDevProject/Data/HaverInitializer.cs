@@ -461,7 +461,8 @@ namespace HaverDevProject.Data
                         {
                             NcrNumber = "2024-007",
                             NcrLastUpdated = DateTime.Parse("2024-01-23"),
-                            NcrStatus = true
+                            NcrStatus = true,
+                            NcrPhase = NcrPhase.ReInspection
                         });
                     context.SaveChanges();
                 }
@@ -995,87 +996,77 @@ namespace HaverDevProject.Data
                         new NcrReInspect
                         {
                             NcrReInspectAcceptable = true,
-                            NcrReInspectNewNcrNumber = null,
                             NcrReInspectUserId = 1, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-137").NcrId
                         },
                         new NcrReInspect
                         {
                             NcrReInspectAcceptable = true,
-                            NcrReInspectNewNcrNumber = null,
                             NcrReInspectUserId = 2, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-138").NcrId
                         },
                         new NcrReInspect
                         {
                             NcrReInspectAcceptable = true,
-                            NcrReInspectNewNcrNumber = null,
                             NcrReInspectUserId = 3, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-139").NcrId
                         },
                         new NcrReInspect
                         {
                             NcrReInspectAcceptable = true,
-                            NcrReInspectNewNcrNumber = null,
                             NcrReInspectUserId = 4, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-140").NcrId
                         },
                         new NcrReInspect
                         {
                             NcrReInspectAcceptable = true,
-                            NcrReInspectNewNcrNumber = null,
                             NcrReInspectUserId = 1, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-141").NcrId
                         },
                         new NcrReInspect
                         {
                             NcrReInspectAcceptable = true,
-                            NcrReInspectNewNcrNumber = null,
                             NcrReInspectUserId = 2, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-001").NcrId
                         },
                         new NcrReInspect
                         {
                             NcrReInspectAcceptable = true,
-                            NcrReInspectNewNcrNumber = null,
                             NcrReInspectUserId = 3, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-002").NcrId
                         },
                         new NcrReInspect
                         {
                             NcrReInspectAcceptable = true,
-                            NcrReInspectNewNcrNumber = null,
                             NcrReInspectUserId = 4, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-003").NcrId
                         },
                         new NcrReInspect
                         {
                             NcrReInspectAcceptable = true,
-                            NcrReInspectNewNcrNumber = null,
                             NcrReInspectUserId = 1, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-004").NcrId
                         },
                         new NcrReInspect
                         {
                             NcrReInspectAcceptable = true,
-                            NcrReInspectNewNcrNumber = null,
                             NcrReInspectUserId = 2, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-005").NcrId
                         },
                         new NcrReInspect
                         {
                             NcrReInspectAcceptable = true,
-                            NcrReInspectNewNcrNumber = null,
                             NcrReInspectUserId = 3, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-006").NcrId
-                        },
-                        new NcrReInspect
-                        {
-                            NcrReInspectAcceptable = true,
-                            NcrReInspectNewNcrNumber = null,
-                            NcrReInspectUserId = 4, //need to make nullable
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-007").NcrId
-                        });
+                        }//,
+                        //new NcrReInspect
+                        //{
+                        //    NcrReInspectAcceptable = true,
+                        //    NcrReInspectNewNcrNumber = null,
+                        //    NcrReInspectUserId = 4, //need to make nullable
+                        //    NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-007").NcrId
+                        //}
+                        );
                     context.SaveChanges();
                 }
                 if (!context.NcrProcurements.Any())

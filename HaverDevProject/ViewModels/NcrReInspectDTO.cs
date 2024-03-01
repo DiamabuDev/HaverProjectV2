@@ -14,7 +14,7 @@ public class NcrReInspectDTO
 
     public bool NcrReInspectAcceptable { get; set; } = false;
 
-    public int? NcrReInspectNewNcrNumber { get; set; }
+    public string NcrReInspectNewNcrNumber { get; set; }
 
     public int NcrReInspectUserId { get; set; }
 

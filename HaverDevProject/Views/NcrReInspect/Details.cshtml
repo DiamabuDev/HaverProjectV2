@@ -398,7 +398,7 @@
             <button class="btn custom-header-bg icon-drop text-start" type="button" data-bs-toggle="collapse" data-bs-target="#operationsSection" aria-expanded="true" aria-controls="operationsSection">
                 Operations <i class="bi bi-chevron-down"></i>
             </button>
-            <div class="collapse" id="operationsSection">
+@*             <div class="collapse" id="operationsSection">
                 <div class="card">
                     <div class="card-body pb-0 pt-0">
                         <table class="table">
@@ -466,7 +466,7 @@
                             </table>
                         </div>
                     </div>
-                    @*                   <div class="card">
+                                       <div class="card">
                     <div class="card-header">
                     Defect Information
                     </div>
@@ -486,7 +486,7 @@
                     </tbody>
                     </table>
                     </div>
-                    </div> *@
+                    </div> 
                 </div>
 
 
@@ -522,7 +522,7 @@
 
                 </div>
             </div>
-
+ *@
             @*Procurement*@
             <button class="btn custom-header-bg icon-drop text-start" type="button" data-bs-toggle="collapse" data-bs-target="#procurementSection" aria-expanded="true" aria-controls="procurementSection">
                 Procurement <i class="bi bi-chevron-down"></i>
@@ -762,9 +762,9 @@
                     </div>
                     <div class="card-body">
 
-                        @if (Model.Ncr.NcrReInspect.NcrReInspectDefectVideo != null)
+                        @if (Model.NcrReInspectDefectVideo != null)
                         {
-                            <a href="@Model.Ncr.NcrReInspect.NcrReInspectDefectVideo" target="_blank">Video Link</a>
+                            <a href="@Model.NcrReInspectDefectVideo" target="_blank">Video Link</a>
                         }
                     </div>
                 </div>

@@ -206,10 +206,14 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: NcrReInspect/Create
-        public IActionResult Create()
+        public IActionResult Create(string ncrNumber)
         {
-            ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber");
-            return View();
+            int ncrId = _context.Ncrs.Where(n=>n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
+            NcrReInspect ncr = new NcrReInspect();
+            ncr.NcrId = ncrId; // Set the NcrNumber from the parameter           
+
+            //ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName");
+            return View(ncr);
         }
 
         // POST: NcrReInspect/Create
@@ -217,21 +221,48 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("NcrReInspectId,NcrReInspectAcceptable,NcrReInspectNewNcrNumber,NcrReInspectUserId,NcrId")] NcrReInspect ncrReInspect, List<IFormFile> Photos)
+        public async Task<IActionResult> Create([Bind("NcrReInspectId,NcrReInspectAcceptable,NcrReInspectNewNcrNumber,NcrReInspectUserId,NcrReInspectDefectVideo,NcrId")] NcrReInspect ncrReInspect, List<IFormFile> Photos)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    _context.Add(ncrReInspect);
-
                     await AddReInspectPictures(ncrReInspect, Photos);
 
+                    ncrReInspect.NcrReInspectNewNcrNumber = GetNcrNumber();
+                    _context.Add(ncrReInspect);
+
+                    await _context.SaveChangesAsync();
+
+                    var ncrToUpdate = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n=>n.NcrId == ncrReInspect.NcrId);
+
+                    ncrToUpdate.NcrPhase = NcrPhase.Closed;
+                    _context.Ncrs.Update(ncrToUpdate);
                     await _context.SaveChangesAsync();
 
                     TempData["SuccessMessage"] = "NCR created successfully!";
                     int ncrReInspectId = ncrReInspect.NcrReInspectId;
                     return RedirectToAction("Details", new { id = ncrReInspectId });
+                }
+                else
+                {
+                    //Debugging Approach: Not for production code.
+                    //This code will list validation errors at the top of the View.
+                    //Use it to diagnose when there seems to be a Validation Error
+                    //that is going unreported.  Remove this code when you are
+                    //finished debugging.
+                    var booBoos = ModelState.Where(x => x.Value.Errors.Count > 0)
+                        .Select(x => new { x.Key, x.Value.Errors });
+
+                    foreach (var booBoo in booBoos)
+                    {
+                        string key = booBoo.Key;
+                        foreach (var error in booBoo.Errors)
+                        {
+                            var errorMessage = error?.ErrorMessage;
+                            ModelState.AddModelError("", "For " + key + ": " + errorMessage);
+                        }
+                    }
                 }
             }
             catch (RetryLimitExceededException)
@@ -282,7 +313,7 @@ namespace HaverDevProject.Controllers
             }
 
             if (await TryUpdateModelAsync<NcrReInspect>(ncrReInspectToUpdate, "",
-                r => r.NcrReInspectAcceptable, r => r.NcrReInspectNewNcrNumber, r => r.NcrReInspectUserId, r => r.NcrId))
+                r => r.NcrReInspectAcceptable, r => r.NcrReInspectNewNcrNumber, r => r.NcrReInspectUserId, r => r.NcrId, r => r.NcrReInspectDefectVideo))
             {
                 try
                 {
@@ -488,6 +519,36 @@ namespace HaverDevProject.Controllers
         //        .FirstOrDefaultAsync();
         //    return File(theFile.NcrReInspectPhotoContent, theFile.NcrReInspectPhotoMimeType, theFile.FileName);
         //}
+
+        public string GetNcrNumber()
+        {
+            string lastNcrNumber = _context.Ncrs
+                .OrderByDescending(n => n.NcrNumber)
+                .Select(n => n.NcrNumber)
+                .FirstOrDefault();
+
+            if (lastNcrNumber != null)
+            {
+                string lastYear = lastNcrNumber.Substring(0, 4);
+                string lastConsecutiveNumber = lastNcrNumber.Substring(5);
+
+                if (lastYear == DateTime.Today.Year.ToString())
+                {
+                    int nextNumber = int.Parse(lastConsecutiveNumber) + 1;
+                    string nextNumberString = nextNumber.ToString("000");
+
+                    //Ncr Format
+                    return $"{lastYear}-{nextNumberString}";
+                }
+            }
+
+            string currentYear = DateTime.Today.Year.ToString();
+            int nextConsecutiveNumber = 1;
+            string nextConsecutiveNumberString = nextConsecutiveNumber.ToString("000");
+
+            //Ncr Format
+            return $"{currentYear}-{nextConsecutiveNumberString}";
+        }
 
         private bool NcrReInspectExists(int id)
         {

@@ -34,7 +34,7 @@
                     <div class="col-6">
                         <div class="form-group">
                             <label asp-for="NcrId" class="control-label"></label>
-                            <select asp-for="NcrId" class="form-control" asp-items="ViewBag.NcrId" disabled></select>
+                            <input asp-for="NcrId" class="form-control" readonly />
                             <span asp-validation-for="NcrId" class="text-danger"></span>
                         </div>
                     </div>
