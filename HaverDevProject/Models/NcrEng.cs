@@ -26,6 +26,11 @@ public class NcrEng : Auditable
 	public Ncr Ncr { get; set; }
 	public int DrawingId { get; set; }
 	public Drawing Drawing { get; set; }
+    public bool DrawingRequireUpdating { get; set; } = false;
+    public int DrawingOriginalRevNumber { get; set; }
+    public int DrawingUpdatedRevNumber { get; set; }
+    public DateTime DrawingRevDate { get; set; }
+    public int DrawingUserId { get; set; }
 
     public ICollection<EngDefectPhoto> EngDefectPhotos { get; set; } = new HashSet<EngDefectPhoto>();
 
