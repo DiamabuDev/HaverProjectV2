@@ -1,0 +1,80 @@
+﻿@model HaverDevProject.Models.NcrOperation
+
+<button class="btn custom-header-bg icon-drop text-start" type="button" data-bs-toggle="collapse" data-bs-target="#purchSection" aria-expanded="@ViewBag.IsNCROpView.ToString().ToLower()" aria-controls="purchSection">
+    Operations <i class="bi bi-chevron-down"></i>
+</button>
+
+<div class="collapse @(ViewBag.IsNCROpView? "show" : "")" id="purchSection">
+    <div class="card">
+        <div class="card-body pb-0 pt-0">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="two-cols-1">Diposition</th>
+                        <th class="two-cols">Disposition Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td class="two-cols-1">@Model.Ncr.NcrOperation.OpDispositionType.OpDispositionTypeName</td>
+                        <td class="two-cols">@Model.Ncr.NcrOperation.NcrPurchasingDescription</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="card-body pb-0 pt-0">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Was CAR raised?</th>
+                        <th>@(Model.Ncr.NcrOperation.Car ? "Car Number" : "")</th>
+                        <th>Follow Up Required?</th>
+                        <th>@(Model.Ncr.NcrOperation.FollowUp ? "Follow Up Type" : "")</th>
+                        <th>@(Model.Ncr.NcrOperation.FollowUp ? "Follow Up Expected Date" : "")</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@(Model.Ncr.NcrOperation.Car ? "Yes" : "No")</td>
+                        <td>@Model.Ncr.NcrOperation.CarNumber</td>
+                        <td>@(Model.Ncr.NcrOperation.FollowUp ? "Yes" : "No")</td>
+                        <td>@Model.Ncr.NcrOperation.FollowUpType.FollowUpTypeName</td>
+                        <td>@(Model.Ncr.NcrOperation.ExpectedDate?.ToString("yyyy-MM-dd") ?? "")</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="card-body pb-0 pt-0">
+            <table class="table">
+                <thead class="custom-light-bg">
+                    <tr>
+                        <th class="three-cols">Operations Manager</th>
+                        <th class="three-cols">Creation Date</th>
+                        <th class="three-cols">Last Updated</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td class="three-cols">L. Pentland</td>
+                        <td class="three-cols">@Model.Ncr.NcrLastUpdated.ToString("yyyy-MM-dd")</td>
+                        <td class="three-cols">
+                            @{
+                                if (Model.UpdatedOn.HasValue)
+                                {
+                                    DateTime localUpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(Model.UpdatedOn.Value, TimeZoneInfo.Local);
+                                    @localUpdatedOn.ToString("yyyy-MM-dd HH:mm:ss")
+                                }
+                                else
+                                {
+                                    @("Not available")
+                                }
+                            }
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
