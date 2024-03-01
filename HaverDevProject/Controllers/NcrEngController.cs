@@ -52,7 +52,7 @@ namespace HaverDevProject.Controllers
             }
 
             //List of sort options.
-            string[] sortOptions = new[] { "Created", "NCR #", "Disposition", "Description" };
+            string[] sortOptions = new[] { "Created", "NCR #", "Disposition", "Description", "Phase" };
 
             PopulateDropDownLists();
 
@@ -63,7 +63,7 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
                 .Include(n => n.Drawing)
-                .Where(n => n.Ncr.NcrPhase == NcrPhase.Engineer)
+                //.Where(n => n.Ncr.NcrPhase == NcrPhase.Engineer)
                 .AsNoTracking();
 
             GetNcrs();
@@ -170,6 +170,23 @@ namespace HaverDevProject.Controllers
                         .OrderByDescending(p => p.Ncr.NcrQa.NcrQacreationDate);
 
                     ViewData["filterApplied:Created"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Phase")
+            {
+                if (sortDirection == "desc") //desc by default
+                {
+                    ncrEng = ncrEng
+                        .OrderBy(p => p.Ncr.NcrPhase);
+
+                    ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrEng = ncrEng
+                        .OrderByDescending(p => p.Ncr.NcrPhase);
+
+                    ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
             else //(sortField == "Status")
