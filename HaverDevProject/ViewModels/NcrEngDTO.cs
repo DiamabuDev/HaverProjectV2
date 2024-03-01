@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HaverDevProject.ViewModels;
 
-[ModelMetadataType(typeof(NcrEngDTOMetaData))]
+[ModelMetadataType(typeof(NcrEngMetaData))]
 public class NcrEngDTO : Auditable
 {
 
