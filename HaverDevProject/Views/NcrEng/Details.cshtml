@@ -21,13 +21,20 @@
                         @(Model.Ncr.NcrStatus == true ? "Active" : "Closed")
                     </span>
                 </div>
-                @if (Model.Ncr.NcrStatus == false)
+@*                 @if (Model.Ncr.NcrStatus == false)
                 {
                     <div class="col-auto">
-                        <span class="fw-bold">Engineering Department:</span>
+                        <span class="fw-bold">Engineer </span>
                         <span> [Department Name]</span>
                     </div>
-                }
+                } *@
+@*                 @if (Model.Ncr.NcrStatus == true)
+                {
+                    <div class="col-auto">
+                        <span class="fw-bold">Phase:</span>
+                        <span class="btn text-white bg-secondary" style="cursor: default;"> @Model.Ncr.NcrPhase </span>
+                    </div>
+                } *@
                 <div class="col-auto">
                     <span class="fw-bold">Last Updated:</span>
                     <span> @Model.Ncr.NcrLastUpdated.ToString("yyyy-MM-dd")</span>
@@ -260,7 +267,7 @@
                                    
                                     <td class="three-cols">@(Model.NcrEngCustomerNotification == true ? "Yes" : "No")</td>
 
-                                    <td class="three-cols">@(Model.Drawing.DrawingRequireUpdating == true ? "Yes" : "No")</td>
+                                    <td class="three-cols">@(Model.DrawingRequireUpdating == true ? "Yes" : "No")</td>
     
       
                                 </tr>
@@ -299,11 +306,11 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td class="four-cols">@Model.Drawing.DrawingOriginalRevNumber</td>
-                                        <td class="four-cols">@Model.Drawing.DrawingUpdatedRevNumber</td>
+                                        <td class="four-cols">@Model.DrawingOriginalRevNumber</td>
+                                        <td class="four-cols">@Model.DrawingUpdatedRevNumber</td>
                                         <td> J. Laferty</td>
                                        @*  <td class="four-cols">@Model.Drawing.NcrEngId</td> *@
-                                        <td class="four-cols">@Model.Drawing.DrawingRevDate</td>
+                                        <td class="four-cols">@Model.DrawingRevDate</td>
                                     </tr>
                                 </tbody>
                             </table>

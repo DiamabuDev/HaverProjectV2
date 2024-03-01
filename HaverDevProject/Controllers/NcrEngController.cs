@@ -236,7 +236,7 @@ namespace HaverDevProject.Controllers
             ncr.DrawingRevDate = DateTime.Now;
             ncr.DrawingRequireUpdating = false;
             ncr.NcrEngCustomerNotification = false;
-            ncr.NcrStatus = true; // Active
+            //ncr.NcrStatus = true; // Active
 
             PopulateDropDownLists();
             //ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName");
@@ -248,7 +248,7 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(NcrEngDTO ncrEngDTO, int EngDispositionTypeId)
+        public async Task<IActionResult> Create(NcrEngDTO ncrEngDTO, List<IFormFile> Photos)
         {
             try
             {
@@ -259,6 +259,8 @@ namespace HaverDevProject.Controllers
                         .Where(n => n.NcrNumber == ncrEngDTO.NcrNumber)
                         .Select(n => n.NcrId)
                         .FirstOrDefault();
+
+                    await AddPictures(ncrEngDTO, Photos);
 
                     NcrEng ncrEng = new NcrEng
                     {
@@ -280,7 +282,12 @@ namespace HaverDevProject.Controllers
 
                     _context.NcrEngs.Add(ncrEng);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+
+                    TempData["SuccessMessage"] = "NCR saved successfully!";
+                    int ncrEngId = ncrEng.NcrEngId;
+                    return RedirectToAction("Details", new { id = ncrEngId });
+
+                    //return RedirectToAction(nameof(Index));
                 }
 
             }
@@ -307,12 +314,13 @@ namespace HaverDevProject.Controllers
             }
 
             var ncrEng = await _context.NcrEngs
-						.Include(ne => ne.Ncr)
-  						.Include(ne => ne.EngDispositionType)
-  						.Include(ne => ne.Drawing)
+                        .Include(ne => ne.Ncr)
+                          .Include(ne => ne.EngDispositionType)
+                          .Include(ne => ne.Drawing)
                         .Include(n => n.EngDefectPhotos)
+                        .AsNoTracking()
                         .FirstOrDefaultAsync(ne => ne.NcrId == id);
-			//var ncrEng = await _context.NcrEngs.FindAsync(id);
+            //var ncrEng = await _context.NcrEngs.FindAsync(id);
 
             if (ncrEng == null)
             {
@@ -324,7 +332,7 @@ namespace HaverDevProject.Controllers
 			{
 				NcrEngId = ncrEng.NcrEngId,
 				NcrNumber = ncrEng.Ncr.NcrNumber,
-				NcrStatus = ncrEng.Ncr.NcrStatus,
+				//NcrStatus = ncrEng.Ncr.NcrStatus,
 				NcrEngCustomerNotification = ncrEng.NcrEngCustomerNotification,
 				NcrEngDispositionDescription = ncrEng.NcrEngDispositionDescription,
 				NcrEngStatusFlag = ncrEng.NcrEngStatusFlag,
@@ -332,16 +340,18 @@ namespace HaverDevProject.Controllers
 				EngDispositionTypeId = ncrEng.EngDispositionTypeId,
 				NcrId = ncrEng.NcrId,
                 DrawingId = ncrEng.DrawingId,
-                DrawingRequireUpdating = ncrEng.Drawing.DrawingRequireUpdating,
-                DrawingOriginalRevNumber = ncrEng.Drawing.DrawingOriginalRevNumber,
-                DrawingUpdatedRevNumber = ncrEng.Drawing.DrawingUpdatedRevNumber,
-                DrawingRevDate = ncrEng.Drawing.DrawingRevDate,
-                DrawingUserId = ncrEng.Drawing.DrawingUserId,
-                EngDefectPhotos = ncrEng.EngDefectPhotos
+                DrawingRequireUpdating = ncrEng.DrawingRequireUpdating,
+                DrawingOriginalRevNumber = ncrEng.DrawingOriginalRevNumber,
+                DrawingUpdatedRevNumber = ncrEng.DrawingUpdatedRevNumber,
+                DrawingRevDate = ncrEng.DrawingRevDate,
+                DrawingUserId = ncrEng.DrawingUserId,
+                EngDefectPhotos = ncrEng.EngDefectPhotos,
+                NcrPhase = ncrEng.NcrPhase
+                
             };
 
-            PopulateDropDownLists();
-			//ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName", ncrEng.EngDispositionTypeId);
+            
+			ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName", ncrEng.EngDispositionTypeId);
 			return View(ncrEngDTO);
         }
 
@@ -375,11 +385,11 @@ namespace HaverDevProject.Controllers
 					ncrEng.EngDispositionTypeId = ncrEngDTO.EngDispositionTypeId;
 					ncrEng.NcrId = ncrEngDTO.NcrId;
                     ncrEng.DrawingId = ncrEngDTO.DrawingId;
-                    ncrEng.Drawing.DrawingRequireUpdating = ncrEngDTO.DrawingRequireUpdating;
-                    ncrEng.Drawing.DrawingOriginalRevNumber = ncrEngDTO.DrawingOriginalRevNumber;
-                    ncrEng.Drawing.DrawingUpdatedRevNumber = ncrEngDTO.DrawingUpdatedRevNumber;
-                    ncrEng.Drawing.DrawingRevDate = ncrEngDTO.DrawingRevDate;
-                    ncrEng.Drawing.DrawingUserId = ncrEngDTO.DrawingUserId;
+                    ncrEng.DrawingRequireUpdating = ncrEngDTO.DrawingRequireUpdating;
+                    ncrEng.DrawingOriginalRevNumber = ncrEngDTO.DrawingOriginalRevNumber;
+                    ncrEng.DrawingUpdatedRevNumber = ncrEngDTO.DrawingUpdatedRevNumber;
+                    ncrEng.DrawingRevDate = ncrEngDTO.DrawingRevDate;
+                    ncrEng.DrawingUserId = ncrEngDTO.DrawingUserId;
                     ncrEng.EngDefectPhotos = ncrEngDTO.EngDefectPhotos;
                     ncrEng.NcrPhase = NcrPhase.Operations;
 
