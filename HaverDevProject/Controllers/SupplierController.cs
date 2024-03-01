@@ -418,13 +418,13 @@ namespace HaverDevProject.Controllers
             if (file == null || file.Length == 0)
             {
                 TempData["ErrorMessage"] = "No file selected.";
-                return RedirectToAction(nameof(Index)); 
+                return RedirectToAction(nameof(Index));
             }
 
             if (file.ContentType != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             {
                 TempData["ErrorMessage"] = "Invalid file type. Please upload an Excel file (.xlsx).";
-                return RedirectToAction(nameof(Index)); 
+                return RedirectToAction(nameof(Index));
             }
 
             using (var stream = new MemoryStream())
@@ -434,23 +434,31 @@ namespace HaverDevProject.Controllers
                 {
                     ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
                     int rowCount = worksheet.Dimension.Rows;
+                    var codes = new HashSet<string>(); 
 
                     for (int row = 2; row <= rowCount; row++)
                     {
-                        var supplierInfo = worksheet.Cells[row, 1].Value?.ToString().Trim();
-                        var contactName = worksheet.Cells[row, 2].Value?.ToString().Trim();
-                        var email = worksheet.Cells[row, 3].Value?.ToString().Trim();
-                                                
-                        var parts = supplierInfo.Split(new[] { ' ' }, 2);
-                        var supplierCode = parts[0].Trim();
-                        var supplierName = parts.Length > 1 ? parts[1].Trim() : "";
+                        var supplierCode = worksheet.Cells[row, 1].Value?.ToString().Trim(); 
+                        var supplierName = worksheet.Cells[row, 2].Value?.ToString().Trim(); 
+                        var contactName = worksheet.Cells[row, 3].Value?.ToString().Trim(); 
+                        var email = worksheet.Cells[row, 4].Value?.ToString().Trim(); 
+
+                        if (string.IsNullOrWhiteSpace(supplierCode))
+                        {
+                            TempData["ErrorMessage"] = $"Row {row}: Supplier code is empty.";
+                            return RedirectToAction(nameof(Index));
+                        }
+                        if (!codes.Add(supplierCode))
+                        {
+                            TempData["ErrorMessage"] = $"Row {row}: Supplier code '{supplierCode}' is not unique.";
+                            return RedirectToAction(nameof(Index));
+                        }
 
                         var existingSupplier = await _context.Suppliers
                                                              .FirstOrDefaultAsync(s => s.SupplierCode == supplierCode);
 
                         if (existingSupplier == null)
                         {
-                            // Create new Supplier if it does not exist
                             var newSupplier = new Supplier
                             {
                                 SupplierCode = supplierCode,
@@ -462,18 +470,18 @@ namespace HaverDevProject.Controllers
                         }
                         else
                         {
-                            existingSupplier.SupplierContactName = string.IsNullOrWhiteSpace(contactName) ? existingSupplier.SupplierContactName : contactName;
-                            existingSupplier.SupplierEmail = string.IsNullOrWhiteSpace(email) ? existingSupplier.SupplierEmail : email;
+                            TempData["ErrorMessage"] = $"Supplier with code '{supplierCode}' already exists.";
+                            return RedirectToAction(nameof(Index));
                         }
                     }
-
                     await _context.SaveChangesAsync();
                 }
             }
 
             TempData["SuccessMessage"] = "Suppliers uploaded successfully!";
-            return RedirectToAction(nameof(Index)); 
+            return RedirectToAction(nameof(Index));
         }
+
         public IActionResult Upload()
         {
             return View("UploadExcel");
