@@ -527,6 +527,7 @@ namespace HaverDevProject.Controllers
             return File(theFile.EngDefectPhotoContent, theFile.EngDefectPhotoMimeType, theFile.FileName);
         }
 
+
         private bool NcrEngExists(int id)
         {
             return _context.NcrEngs.Any(e => e.NcrEngId == id);

@@ -69,6 +69,7 @@ public class NcrEngDTOMetaData
     [Column("drawingUpdatedRevNumber")]
     public int DrawingUpdatedRevNumber { get; set; }
 
+
     [Display(Name = "Revision Date")]
     [Column("drawingRevDate", TypeName = "date")]
     [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
