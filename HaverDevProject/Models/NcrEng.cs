@@ -13,19 +13,19 @@ namespace HaverDevProject.Models;
 [Table("ncrEng")]
 public class NcrEng : Auditable
 {
-	public int NcrEngId { get; set; }
-	public bool NcrEngCustomerNotification { get; set; } = false;
-	public string NcrEngDispositionDescription { get; set; }
+    public int NcrEngId { get; set; }
+    public bool NcrEngCustomerNotification { get; set; } = false;
+    public string NcrEngDispositionDescription { get; set; }
     public bool NcrEngStatusFlag { get; set; }
 
     public NcrPhase NcrPhase { get; set; }
     public int NcrEngUserId { get; set; }
-	public int EngDispositionTypeId { get; set; }
-	public EngDispositionType EngDispositionType { get; set; }
-	public int NcrId { get; set; }
-	public Ncr Ncr { get; set; }
-	public int DrawingId { get; set; }
-	public Drawing Drawing { get; set; }
+    public int EngDispositionTypeId { get; set; }
+    public EngDispositionType EngDispositionType { get; set; }
+    public int NcrId { get; set; }
+    public Ncr Ncr { get; set; }
+    public int DrawingId { get; set; }
+    public Drawing Drawing { get; set; }
     public bool DrawingRequireUpdating { get; set; } = false;
     public int DrawingOriginalRevNumber { get; set; }
     public int DrawingUpdatedRevNumber { get; set; }

@@ -13,22 +13,22 @@ namespace HaverDevProject.ViewModels;
 public class NcrEngDTO : Auditable
 {
 
-	public int NcrEngId { get; set; }
+    public int NcrEngId { get; set; }
     public string NcrNumber { get; set; }
     public bool NcrStatus { get; set; } = true;
     public bool NcrEngCustomerNotification { get; set; } = false;
-	public string NcrEngDispositionDescription { get; set; }
+    public string NcrEngDispositionDescription { get; set; }
     public bool NcrEngStatusFlag { get; set; }
     public NcrPhase NcrPhase { get; set; }
     public int NcrEngUserId { get; set; }
-	public int EngDispositionTypeId { get; set; }
-	public int NcrId { get; set; }
-	public int DrawingId { get; set; }
-	public bool DrawingRequireUpdating { get; set; } = false;
-	public int DrawingOriginalRevNumber { get; set; }
-	public int DrawingUpdatedRevNumber { get; set; }
-	public DateTime DrawingRevDate { get; set; }
-	public int DrawingUserId { get; set; }
+    public int EngDispositionTypeId { get; set; }
+    public int NcrId { get; set; }
+    public int DrawingId { get; set; }
+    public bool DrawingRequireUpdating { get; set; } = false;
+    public int DrawingOriginalRevNumber { get; set; }
+    public int DrawingUpdatedRevNumber { get; set; }
+    public DateTime DrawingRevDate { get; set; }
+    public int DrawingUserId { get; set; }
     public string NcrEngDefectVideo { get; set; }
     public ICollection<EngDefectPhoto> EngDefectPhotos { get; set; } = new HashSet<EngDefectPhoto>();
 }

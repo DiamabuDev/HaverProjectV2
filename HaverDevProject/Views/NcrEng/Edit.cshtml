@@ -32,8 +32,11 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="form-group form-drop">
-                            <label class="pb-3">Review by HBC Engineering: (indicate disposition by selecting one of the following)</label>
-                           @*  <label asp-for="EngDispositionTypeId" class="control-label"></label> *@
+                            <label class="pb-3">
+                                Review by HBC Engineering: (indicate disposition by selecting one of the
+                                following)
+                            </label>
+                            @* <label asp-for="EngDispositionTypeId" class="control-label"></label> *@
                             <select asp-for="EngDispositionTypeId" class="form-control"
                                     asp-items="ViewBag.EngDispositionTypeId"></select>
                         </div>
@@ -43,11 +46,12 @@
                     <div class="col-12">
                         <div class="form-group form-check">
                             <label class="form-check-label">
-                                
+
                                 <input class="form-check-input" asp-for="NcrEngCustomerNotification" />
                                 @* @Html.DisplayNameFor(model => model.NcrEngCustomerNotification) *@
-                           
-                                Check the box if customer requires notification of NCR (if checked, raise message to customer detailing issues)
+
+                                Check the box if customer requires notification of NCR (if checked, raise message to
+                                customer detailing issues)
                             </label>
                         </div>
                     </div>
@@ -73,21 +77,24 @@
                                 var firstFile = Model.EngDefectPhotos.FirstOrDefault(); ;
                                 if (fileCount > 1)
                                 {
-                                    <a class="" role="button" data-bs-toggle="collapse" href="#collapsePhotos@(Model.NcrEngId)" aria-expanded="false" aria-controls="collapsePhotos@(Model.NcrEngId)">
+                                    <a class="" role="button" data-bs-toggle="collapse" href="#collapsePhotos@(Model.NcrEngId)"
+                                       aria-expanded="false" aria-controls="collapsePhotos@(Model.NcrEngId)">
                                         <span class="badge bg-info">@fileCount</span> Photos...
                                     </a>
                                     <div class="collapse" id="collapsePhotos@(Model.NcrEngId)">
                                         @{
                                             foreach (var d in Model.EngDefectPhotos)
                                             {
-                                                <a asp-controller="NcrEng" asp-action="Download" asp-route-id="@d.EngDefectPhotoId">@d.FileName</a> <br />
+                                                <a asp-controller="NcrEng" asp-action="Download"
+                                                   asp-route-id="@d.EngDefectPhotoId">@d.FileName</a> <br />
                                             }
                                         }
                                     </div>
                                 }
                                 else
                                 {
-                                    <a asp-controller="NcrEng" asp-action="Download" asp-route-id="@firstFile.EngDefectPhotoId">@firstFile.FileName</a>
+                                    <a asp-controller="NcrEng" asp-action="Download"
+                                       asp-route-id="@firstFile.EngDefectPhotoId">@firstFile.FileName</a>
                                 }
                             }
                         }
@@ -110,17 +117,17 @@
                 </div>
 
 
-       
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="form-group form-check">
-                                <label class="form-check-label">
-                                    <input class="form-check-input" asp-for="DrawingRequireUpdating" />
-                                    @Html.DisplayNameFor(model => model.DrawingRequireUpdating)
-                                </label>
-                            </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" asp-for="DrawingRequireUpdating" />
+                                @Html.DisplayNameFor(model => model.DrawingRequireUpdating)
+                            </label>
                         </div>
                     </div>
+                </div>
                 <div id="drawingConditional" class="row hidden">
                     <div class="row">
                         <div class="col-6">
@@ -166,11 +173,11 @@
             </div>
             <div class="card-footer">
                 <div class="form-group d-flex justify-content-end mt-2">
-@*                     <div>
-                        <button type="button" onclick="location.href='@ViewData[" returnURL"]'"
-                                class="btn btn-primary ">
-                            <i class="bi bi-arrow-90deg-left"></i> Back to the @ViewData["ControllerName"] List
-                        </button>
+                    @* <div>
+                    <button type="button" onclick="location.href='@ViewData[" returnURL"]'"
+                    class="btn btn-primary ">
+                    <i class="bi bi-arrow-90deg-left"></i> Back to the @ViewData["ControllerName"] List
+                    </button>
                     </div> *@
                     <div>
                         <button type="submit" class="btn btn-primary ms-4">

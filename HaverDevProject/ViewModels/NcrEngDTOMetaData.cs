@@ -11,9 +11,9 @@ public class NcrEngDTOMetaData
 {
 
 
-	[Key]
-	[Column("ncrEngId")]
-	public int NcrEngId { get; set; }
+    [Key]
+    [Column("ncrEngId")]
+    public int NcrEngId { get; set; }
 
     [Display(Name = "NCR No.")]
     [Required(ErrorMessage = "You must provide the NCR Number.")]
@@ -27,31 +27,31 @@ public class NcrEngDTOMetaData
     public bool NcrStatus { get; set; }
 
     [Display(Name = "Customer Notification")]
-	[Column("ncrEngCustomerNotification")]
-	public bool NcrEngCustomerNotification { get; set; } = false;
+    [Column("ncrEngCustomerNotification")]
+    public bool NcrEngCustomerNotification { get; set; } = false;
 
-	[Display(Name = "Disposition")]
-	[Column("ncrEngDispositionDescription")]
-	[StringLength(300, ErrorMessage = "Only 300 characters for disposition description.")]
-	[DataType(DataType.MultilineText)]
-	[Unicode(false)]
-	public string NcrEngDispositionDescription { get; set; }
+    [Display(Name = "Disposition")]
+    [Column("ncrEngDispositionDescription")]
+    [StringLength(300, ErrorMessage = "Only 300 characters for disposition description.")]
+    [DataType(DataType.MultilineText)]
+    [Unicode(false)]
+    public string NcrEngDispositionDescription { get; set; }
 
     public bool NcrEngStatusFlag { get; set; }
 
     public NcrPhase NcrPhase { get; set; }
 
     [Display(Name = "Engineering")]
-	[Column("ncrEngUserId")]
-	public int NcrEngUserId { get; set; }
+    [Column("ncrEngUserId")]
+    public int NcrEngUserId { get; set; }
 
-	[Display(Name = "Disposition Type")]
-	[Column("engDispositionTypeId")]
-	public int EngDispositionTypeId { get; set; }
+    [Display(Name = "Disposition Type")]
+    [Column("engDispositionTypeId")]
+    public int EngDispositionTypeId { get; set; }
 
-	[Display(Name = "NCR")]
-	[Column("ncrId")]
-	public int NcrId { get; set; }
+    [Display(Name = "NCR")]
+    [Column("ncrId")]
+    public int NcrId { get; set; }
 
     [Key]
     [Column("drawingId")]
