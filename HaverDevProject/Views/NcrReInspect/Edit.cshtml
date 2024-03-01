@@ -4,24 +4,137 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<div class="col-md-8 col-10 mx-auto">
+    <h1><i class="bi bi-caret-right-fill"></i>Re-Inspection</h1>
+</div>
 
-<h4>NcrReInspect</h4>
+<div class="col-md-8 col-10 mx-auto">
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="NcrReInspectId" />
+        <input type="hidden" asp-for="NcrId" />
+
+        <div class="card border-2">
+            <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
+                <div>
+                    <h2 class="m-0">Edit NCR</h2>
+                </div>
+@*                 <div class="justify-content-end">
+                    <p class="m-0">Fields marked <span class="fw-bold text-danger">*</span> are required.</p>
+                </div> *@
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            </div>
+            <div class="card-body col-lg-10 col-11 mx-auto">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" asp-for="NcrReInspectAcceptable" /> @Html.DisplayNameFor(model => model.NcrReInspectAcceptable)
+                            </label>
+                        </div>
+                    </div>
+                    @* <div class="col-6">
+                    <div class="form-group">
+                    <label asp-for="NcrReInspectPhotos" class="control-label"></label>
+                    <input type="file" name="Photos" multiple />
+                    </div>
+                    </div> *@
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label asp-for="NcrId" class="control-label"></label>
+                            <select asp-for="NcrId" class="form-control" asp-items="ViewBag.NcrId" disabled></select>
+                            <span asp-validation-for="NcrId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label asp-for="NcrReInspectUserId" class="control-label"></label>
+                            <input asp-for="NcrReInspectUserId" class="form-control" />
+                            <span asp-validation-for="NcrReInspectUserId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                </div>
+               
+                @* <div class="form-group">
+                    <label class="control-label"> Current Photos:</label>
+                    <div class="ml-md-3">
+                        @{
+                            int fileCount = Model.NcrReInspectPhotos.Count;
+                            if (fileCount > 0)
+                            {
+                                var firstFile = Model.NcrReInspectPhotos.FirstOrDefault(); ;
+                                if (fileCount > 1)
+                                {
+                                    <a class="" role="button" data-bs-toggle="collapse" href="#collapsePhotos@(Model.NcrReInspectId)" aria-expanded="false" aria-controls="collapsePhotos@(Model.NcrReInspectId)">
+                                        <span class="badge bg-info">@fileCount</span> Photos...
+                                    </a>
+                                    <div class="collapse" id="collapsePhotos@(Model.NcrReInspectId)">
+                                        @{
+                                            foreach (var d in Model.NcrReInspectPhotos)
+                                            {
+                                                <a asp-controller="NcrReInspect" asp-action="Download" asp-route-id="@d.NcrReInspectPhotoId">@d.FileName</a> <br />
+                                            }
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <a asp-controller="NcrReInspect" asp-action="Download" asp-route-id="@firstFile.NcrReInspectPhotoId">@firstFile.FileName</a>
+                                }
+                            }
+                        }
+                    </div>
+                </div> *@
+                <div class="form-group">
+                    <label class="control-label custom-file-label">Upload Additional Photos:</label>
+                    <input type="file" class="form-control" name="Photos" multiple="multiple" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="NcrReInspectDefectVideo" class="control-label"></label>
+                    <input asp-for="NcrReInspectDefectVideo" class="form-control" />
+                    <span asp-validation-for="NcrReInspectDefectVideo" class="text-danger"></span>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="card-footer">
+            <div class="form-group d-flex justify-content-end mt-2">
+                <div>
+                    <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn btn-primary ">
+                        <i class="bi bi-arrow-90deg-left"></i> Back to the @ViewData["ControllerName"] List
+                    </button>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary ms-4">
+                        <i class="bi bi-floppy"></i> Save and Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@* <h1>Edit</h1>
+
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="NcrReInspectId" />
+            <div class="form-group">
+                <label asp-for="NcrId" class="control-label"></label>
+                <select asp-for="NcrId" class="form-control" asp-items="ViewBag.NcrId" disabled></select>
+                <span asp-validation-for="NcrId" class="text-danger"></span>
+            </div>
             <div class="form-group form-check">
                 <label class="form-check-label">
                     <input class="form-check-input" asp-for="NcrReInspectAcceptable" /> @Html.DisplayNameFor(model => model.NcrReInspectAcceptable)
                 </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="NcrReInspectNewNcrNumber" class="control-label"></label>
-                <input asp-for="NcrReInspectNewNcrNumber" class="form-control" />
-                <span asp-validation-for="NcrReInspectNewNcrNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="NcrReInspectUserId" class="control-label"></label>
@@ -29,12 +142,16 @@
                 <span asp-validation-for="NcrReInspectUserId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="NcrId" class="control-label"></label>
-                <select asp-for="NcrId" class="form-control" asp-items="ViewBag.NcrId"></select>
-                <span asp-validation-for="NcrId" class="text-danger"></span>
+                <label asp-for="NcrReInspectPhotos" class="control-label"></label>
+                <input type="file" name="Photos" multiple />
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <label asp-for="NcrReInspectDefectVideo" class="control-label"></label>
+                <input asp-for="NcrReInspectDefectVideo" class="form-control" />
+                <span asp-validation-for="NcrReInspectDefectVideo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save and Close" class="btn btn-primary" />
             </div>
         </form>
     </div>
@@ -42,8 +159,27 @@
 
 <div>
     <a asp-action="Index">Back to List</a>
-</div>
+</div> *@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        var checkbox = document.getElementById("NcrReInspectAcceptable");
+
+        checkbox.addEventListener("change", function () {
+            if (!checkbox.checked) {
+                // If checkbox is unchecked, show confirmation dialog
+                var confirmResult = confirm("Do you want to make a new NCR?");
+                if (!confirmResult) {
+                    // If user cancels, keep checkbox checked
+                    checkbox.checked = true;
+                }
+                else {
+                    window.location.href = "/NcrQa/Create";
+                }
+            } else {
+                textbox.disabled = false;
+            }
+        });
+    </script>
 }
