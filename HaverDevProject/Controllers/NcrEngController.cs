@@ -224,7 +224,9 @@ namespace HaverDevProject.Controllers
 				return NotFound();
 			}
 
-			return View(ncrEng);
+            ViewBag.IsNCRQaView = false;
+            ViewBag.IsNCREngView = true;
+            return View(ncrEng);
 		}
 
 

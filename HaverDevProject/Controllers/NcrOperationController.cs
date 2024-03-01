@@ -205,9 +205,6 @@ namespace HaverDevProject.Controllers
             return View(pagedData);
         }
 
-    
-
-
     // GET: NcrOperation/Details/5
     public async Task<IActionResult> Details(int? id)
         {
@@ -225,7 +222,9 @@ namespace HaverDevProject.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.IsNCRQaView = false;
+            ViewBag.IsNCREngView = false;
+            ViewBag.IsNCROpView = true;
             return View(ncrOperation);
         }
 

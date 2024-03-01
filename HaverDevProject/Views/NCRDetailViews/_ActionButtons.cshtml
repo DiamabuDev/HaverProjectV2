@@ -1,0 +1,19 @@
+﻿<div class="container mt-3">
+    <div class="row">
+        <div class="col-md-10 mx-auto">
+            <div class="form-group d-flex justify-content-end mt-2">
+                <button class="btn btn-secondary me-4">
+                    <i class="bi bi-file-pdf"></i> Download PDF
+                </button>
+                <button type="button" onclick="location.href='@Url.Action("Index")'" class="btn btn-primary">
+                    <i class="bi bi-arrow-90deg-left"></i> Back to NCR List
+                </button>
+                <div>
+                    <a type="button" class="btn btn-primary ms-4" asp-action="Edit" asp-route-id="@Model?.NcrId">
+                        <i class="bi bi-pencil-square"></i> Edit
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
