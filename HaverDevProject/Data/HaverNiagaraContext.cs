@@ -76,6 +76,8 @@ public partial class HaverNiagaraContext : DbContext
 
     public virtual DbSet<NcrReInspectPhoto> NcrReInspectPhotos { get; set; }
 
+    public virtual DbSet<ProcDefectPhoto> ProcDefectPhotos { get; set; }
+
 
     //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     //    => optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=HaverNiagara;Trusted_Connection=SSPI;encrypt=false;");
@@ -130,6 +132,15 @@ public partial class HaverNiagaraContext : DbContext
             entity.HasOne(d => d.NcrEng).WithMany(p => p.EngDefectPhotos)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_engDefectPhoto_itemDefect");
+        });
+
+        modelBuilder.Entity<ProcDefectPhoto>(entity =>
+        {
+            entity.HasKey(e => e.ProcDefectPhotoId).HasName("pk_engDefectPhoto_engDefectPhotoId");
+
+            entity.HasOne(d => d.NcrProcurement).WithMany(p => p.ProcDefectPhotos)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_procDefectPhoto_itemDefect");
         });
 
         modelBuilder.Entity<Ncr>(entity =>

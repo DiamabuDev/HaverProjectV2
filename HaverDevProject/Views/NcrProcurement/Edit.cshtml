@@ -4,60 +4,185 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
 
-<h4>NcrProcurement</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="NcrProcurementId" />
-            <div class="form-group">
-                <label asp-for="NcrNumber" class="control-label"></label>
-                <input asp-for="NcrNumber" class="form-control" readonly />
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="NcrProcSupplierReturnReq" /> @Html.DisplayNameFor(model => model.NcrProcSupplierReturnReq)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="NcrProcExpectedDate" class="control-label"></label>
-                <input asp-for="NcrProcExpectedDate" class="form-control" />
-                <span asp-validation-for="NcrProcExpectedDate" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="NcrProcDisposedAllowed" /> @Html.DisplayNameFor(model => model.NcrProcDisposedAllowed)
-                </label>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="NcrProcSAPReturnCompleted" /> @Html.DisplayNameFor(model => model.NcrProcSAPReturnCompleted)
-                </label>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="NcrProcCreditExpected" /> @Html.DisplayNameFor(model => model.NcrProcCreditExpected)
-                </label>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="NcrProcSupplierBilled" /> @Html.DisplayNameFor(model => model.NcrProcSupplierBilled)
-                </label>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="col-md-8 col-10 mx-auto">
+    <form asp-action="Edit">
+        <div class="card border-2">
+            <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
+                <div>
+                    <h2 class="m-0">Edit NCR</h2>
+                </div>
+                <div class="justify-content-end">
+                    <p class="m-0">Fields marked <span class="fw-bold text-danger">*</span> are required.</p>
+                </div>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            </div>
+            <div class="card-body col-lg-10 col-11 mx-auto">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label asp-for="NcrNumber" class="control-label"></label>
+                            <input asp-for="NcrNumber" class="form-control" readonly />
+                            <span asp-validation-for="NcrNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                    @* <div class="col-6">
+                    <div class="form-group">
+                    <label asp-for="NcrQa.NcrQacreationDate" class="control-label"></label>
+                    <input asp-for="NcrQa.NcrQacreationDate" class="form-control" readonly />
+                    <span asp-validation-for="NcrQa.NcrQacreationDate" class="text-danger"></span>
+                    </div>
+                    </div> *@
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label class="pb-3">Supplier Return Request:</label>
+                            <div class="text-center">
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrProcSupplierReturnReq" value="true" checked />
+                                    <label class="form-check-label">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrProcSupplierReturnReq" value="false" />
+                                    <label class="form-check-label">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label class="pb-3">Dispose on Site?</label>
+                            <div class="text-center">
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrProcDisposedAllowed" value="true" checked />
+                                    <label class="form-check-label">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrProcDisposedAllowed" value="false" />
+                                    <label class="form-check-label">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label asp-for="SupplierReturnMANum" class="control-label"></label>
+                            <input asp-for="SupplierReturnMANum" class="form-control" />
+                            <span asp-validation-for="SupplierReturnMANum" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label asp-for="SupplierReturnName" class="control-label"></label>
+                            <input asp-for="SupplierReturnName" class="form-control" />
+                            <span asp-validation-for="SupplierReturnName" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label asp-for="NcrProcExpectedDate" class="control-label"></label>
+                        <input asp-for="NcrProcExpectedDate" class="form-control" type="date" value="@Model.NcrProcExpectedDate.ToString("yyyy-MM-dd")" />
+                        <span asp-validation-for="NcrProcExpectedDate" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label asp-for="SupplierReturnAccount" class="control-label"></label>
+                        <input asp-for="SupplierReturnAccount" class="form-control" />
+                        <span asp-validation-for="SupplierReturnAccount" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label class="pb-3">Supplier Billed:</label>
+                            <div class="text-center">
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrProcSupplierBilled" value="true" checked />
+                                    <label class="form-check-label">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrProcSupplierBilled" value="false" />
+                                    <label class="form-check-label">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label class="pb-3">Supplier Credit Expected?</label>
+                            <div class="text-center">
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrProcCreditExpected" value="true" checked />
+                                    <label class="form-check-label">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrProcCreditExpected" value="false" />
+                                    <label class="form-check-label">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label class="pb-3">SAP Return Completed:</label>
+                        <div class="text-center">
+                            <div class="form-check form-check-inline">
+                                <input type="radio" class="form-check-input" asp-for="NcrProcSAPReturnCompleted" value="true" checked />
+                                <label class="form-check-label">Yes</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" class="form-check-input" asp-for="NcrProcSAPReturnCompleted" value="false" />
+                                <label class="form-check-label">No</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label custom-file-label">Upload Procurement Photos:</label>
+                    <div class="input-group mb-3">
+                        <input type="file" class="form-control" name="Photos" multiple="multiple" />
+                    </div>
+
+                </div>
+            </div>
+            <div class="row">
+                <p>
+                    Completed NCR to be forwarded to HBC Purchasing Manager complete with any relevant documents attached (pictures, actual measurements, material certs, etc.)
+                </p>
+                @* <div class="form-group">
+                <label asp-for="NcrQauserId" class="control-label"></label>
+                <input asp-for="NcrQauserId" class="form-control" />
+                <span asp-validation-for="NcrQauserId" class="text-danger"></span>
+                </div> *@
+
+            </div>
+            <div class="card-footer">
+                <div class="form-group d-flex justify-content-end mt-2">
+                    <div>
+                        <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn btn-primary ">
+                            <i class="bi bi-arrow-90deg-left"></i> Back to the @ViewData["ControllerName"] List
+                        </button>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary ms-4">
+                            <i class='bi-plus-square-dotted'></i> Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
