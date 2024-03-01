@@ -1041,18 +1041,18 @@ namespace HaverDevProject.Data
                             NcrReInspectUserId = 4, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-003").NcrId
                         },
-                        new NcrReInspect
-                        {
-                            NcrReInspectAcceptable = true,
-                            NcrReInspectUserId = 1, //need to make nullable
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-004").NcrId
-                        },
-                        new NcrReInspect
-                        {
-                            NcrReInspectAcceptable = true,
-                            NcrReInspectUserId = 2, //need to make nullable
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-005").NcrId
-                        },
+                        //new NcrReInspect
+                        //{
+                        //    NcrReInspectAcceptable = true,
+                        //    NcrReInspectUserId = 1, //need to make nullable
+                        //    NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-004").NcrId
+                        //},
+                        //new NcrReInspect
+                        //{
+                        //    NcrReInspectAcceptable = true,
+                        //    NcrReInspectUserId = 2, //need to make nullable
+                        //    NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-005").NcrId
+                        //},
                         new NcrReInspect
                         {
                             NcrReInspectAcceptable = true,

@@ -53,23 +53,25 @@ namespace HaverDevProject.Controllers
             var ncrReInspect = _context.NcrReInspects
                 .Include(n => n.Ncr)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
+                //.Where(n => n.Ncr.NcrPhase == NcrPhase.ReInspection)
+                .Where(n => n.Ncr.NcrPhase == NcrPhase.Closed)
                 .AsNoTracking();
 
             GetNcrs();
 
             //Filterig values            
-            if (!System.String.IsNullOrEmpty(filter))
-            {
-                if (filter == "Active")
-                {
-                    ncrReInspect = ncrReInspect.Where(n => n.Ncr.NcrStatus == true);
-                }
-                else //(filter == "Closed")
-                {
+            //if (!System.String.IsNullOrEmpty(filter))
+            //{
+            //    if (filter == "Closed")
+            //    {
+            //        ncrReInspect = ncrReInspect.Where(n => n.Ncr.NcrStatus == true);
+            //    }
+            //    else //(filter == "Closed")
+            //    {
 
-                    ncrReInspect = ncrReInspect.Where(n => n.Ncr.NcrStatus == false);
-                }
-            }
+            //        ncrReInspect = ncrReInspect.Where(n => n.Ncr.NcrStatus == false);
+            //    }
+            //}
 
             if (!System.String.IsNullOrEmpty(SearchCode))
             {
@@ -208,7 +210,7 @@ namespace HaverDevProject.Controllers
         // GET: NcrReInspect/Create
         public IActionResult Create(string ncrNumber)
         {
-            int ncrId = _context.Ncrs.Where(n=>n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
+            int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
             NcrReInspect ncr = new NcrReInspect();
             ncr.NcrId = ncrId; // Set the NcrNumber from the parameter           
 
@@ -237,6 +239,8 @@ namespace HaverDevProject.Controllers
                     var ncrToUpdate = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n=>n.NcrId == ncrReInspect.NcrId);
 
                     ncrToUpdate.NcrPhase = NcrPhase.Closed;
+                    ncrToUpdate.NcrStatus = false;
+                    ncrToUpdate.NcrLastUpdated = DateTime.Today;
                     _context.Ncrs.Update(ncrToUpdate);
                     await _context.SaveChangesAsync();
 
