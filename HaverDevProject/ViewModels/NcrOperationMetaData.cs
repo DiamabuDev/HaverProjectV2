@@ -45,22 +45,27 @@ namespace HaverDevProject.ViewModels
 
         [Column("ncrExpectedDate")]
         [Display(Name = "Expected Date")]
+        [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}", ApplyFormatInEditMode = true)]
-        public DateTime ExpectedDate { get; set; }
+        public DateTime? ExpectedDate { get; set; }
 
         [Column("ncrFollowUpType")]
-        [Display(Name = "Follow-Up type")]
+        [Display(Name = "If \"Yes\" indicate type & expected date")]
         public int? FollowUpTypeId { get; set; }
 
-        [Display(Name = "Follow-Up type")]
+        [Display(Name = "If \"Yes\" indicate type & expected date" )]
         public FollowUpType FollowUpType { get; set; }
 
         [Display(Name = "Date")]
+        [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime UpdateOp { get; set; }
 
         [Column("ncrOperationUserId")]
         [Display(Name = "Operation Manager")]
         public int NcrPurchasingUserId { get; set; }
+
+        [Display(Name = " Link video ")]
+        public string NcrOperationVideo { get; set; }
     }
 }
