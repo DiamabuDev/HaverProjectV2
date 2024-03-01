@@ -229,8 +229,9 @@ namespace HaverDevProject.Controllers
             if (ncrQa == null)
             {
                 return NotFound();
-            }            
+            }
 
+            ViewBag.IsNCRQaView = true;
             return View(ncrQa);
         }
 
