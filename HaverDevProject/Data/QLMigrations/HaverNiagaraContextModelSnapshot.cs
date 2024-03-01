@@ -422,6 +422,9 @@ namespace HaverDevProject.Data.QLMigrations
                     b.Property<int>("NcrId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("NcrOperationVideo")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("NcrPurchasingDescription")
                         .HasColumnType("TEXT");
 

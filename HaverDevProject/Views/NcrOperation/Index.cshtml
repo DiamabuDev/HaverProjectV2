@@ -101,21 +101,15 @@
                     </button>
                 </th>
                 <th class="col-3">
-                    <button type="submit" name="actionButton" value="Disposition Type" class="btn text-light custom-btn-text-start">
-                        Disposition Type
-                        @Html.Raw(ViewData["filterApplied:DispositionType"])
+                    <button type="submit" name="actionButton" value="Supplier" class="btn text-light custom-btn-text-start">
+                        Supplier
+                        @Html.Raw(ViewData["filterApplied:Supplier"])
                     </button>
                 </th>
                 <th class="d-none d-md-table-cell">
-                    <button type="submit" name="actionButton" value="FollowUp" class="btn text-light custom-btn-text-start">
-                        Follow-up Required?
-                        @Html.Raw(ViewData["filterApplied:FollowUp"])
-                    </button>
-                </th>
-                <th class="d-none d-md-table-cell">
-                    <button type="submit" name="actionButton" value="Car" class="btn text-light custom-btn-text-start">
-                        Was a CAR raised?
-                        @Html.Raw(ViewData["filterApplied:Car"])
+                    <button type="submit" name="actionButton" value="Phase" class="btn text-light custom-btn-text-start">
+                        Phase
+                        @Html.Raw(ViewData["filterApplied:Pahse"])
                     </button>
                 </th>
                 <th></th>
@@ -136,18 +130,11 @@
                         @Html.DisplayFor(modelItem => item.Ncr.NcrNumber)
                     </td>
                     <td class="col-3">
-                        @Html.DisplayFor(modelItem => item.OpDispositionType.OpDispositionTypeName)
+                        @Html.DisplayFor(modelItem => item.Ncr.NcrQa.Item.Supplier.SupplierName)
                     </td>
                     <td class="d-none d-md-table-cell">
-                        @Html.DisplayFor(modelItem => item.FollowUp)
+                        @Html.DisplayFor(modelItem => item.Ncr.NcrPhase)
                     </td>
-                    <td class="d-none d-md-table-cell">
-                        @Html.DisplayFor(modelItem => item.Car)
-                    </td>
-                    @* <td class="@((item.Ncr.NcrStatus == true) ? "stillactive" : "closed")">
-                @Html.DisplayFor(modelItem => item.Ncr.NcrStatus)
-                </td> *@
-
                     <td>
                         <a asp-action="Edit" asp-route-id="@item.NcrOpId" class="btn text-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
                         <a asp-action="Details" asp-route-id="@item.NcrOpId" class="btn text-primary" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
