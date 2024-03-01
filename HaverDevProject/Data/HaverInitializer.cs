@@ -1078,6 +1078,144 @@ namespace HaverDevProject.Data
                         });
                     context.SaveChanges();
                 }
+                if (!context.NcrProcurements.Any())
+                {
+                    context.NcrProcurements.AddRange(
+                        new NcrProcurement
+                        {
+                            NcrProcSupplierReturnReq = true,
+                            NcrProcExpectedDate = DateTime.Parse("2023-12-07"),
+                            NcrProcDisposedAllowed = false,
+                            NcrProcSAPReturnCompleted = true,
+                            NcrProcCreditExpected = true,
+                            NcrProcSupplierBilled = true,
+                            NcrProcUserId = 1, //need to make nullable
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-137").NcrId
+                        },
+                        new NcrProcurement
+                        {
+                            NcrProcSupplierReturnReq = true,
+                            NcrProcExpectedDate = DateTime.Parse("2023-10-17"),
+                            NcrProcDisposedAllowed = false,
+                            NcrProcSAPReturnCompleted = true,
+                            NcrProcCreditExpected = true,
+                            NcrProcSupplierBilled = true,
+                            NcrProcUserId = 2, //need to make nullable
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-138").NcrId
+                        },
+                        new NcrProcurement
+                        {
+                            NcrProcSupplierReturnReq = true,
+                            NcrProcExpectedDate = DateTime.Parse("2024-01-07"),
+                            NcrProcDisposedAllowed = false,
+                            NcrProcSAPReturnCompleted = true,
+                            NcrProcCreditExpected = true,
+                            NcrProcSupplierBilled = true,
+                            NcrProcUserId = 3, //need to make nullable
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-139").NcrId
+                        },
+                        new NcrProcurement
+                        {
+                            NcrProcSupplierReturnReq = true,
+                            NcrProcExpectedDate = DateTime.Parse("2024-01-09"),
+                            NcrProcDisposedAllowed = false,
+                            NcrProcSAPReturnCompleted = true,
+                            NcrProcCreditExpected = true,
+                            NcrProcSupplierBilled = true,
+                            NcrProcUserId = 4, //need to make nullable
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-140").NcrId
+                        },
+                        new NcrProcurement
+                        {
+                            NcrProcSupplierReturnReq = true,
+                            NcrProcExpectedDate = DateTime.Parse("2024-01-10"),
+                            NcrProcDisposedAllowed = false,
+                            NcrProcSAPReturnCompleted = true,
+                            NcrProcCreditExpected = true,
+                            NcrProcSupplierBilled = true,
+                            NcrProcUserId = 1, //need to make nullable
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-141").NcrId
+                        },
+
+                        new NcrProcurement
+                        {
+                            NcrProcSupplierReturnReq = true,
+                            NcrProcExpectedDate = DateTime.Parse("2024-01-13"),
+                            NcrProcDisposedAllowed = false,
+                            NcrProcSAPReturnCompleted = true,
+                            NcrProcCreditExpected = true,
+                            NcrProcSupplierBilled = true,
+                            NcrProcUserId = 2, //need to make nullable
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-001").NcrId
+                        },
+                        new NcrProcurement
+                        {
+                            NcrProcSupplierReturnReq = true,
+                            NcrProcExpectedDate = DateTime.Parse("2024-01-17"),
+                            NcrProcDisposedAllowed = false,
+                            NcrProcSAPReturnCompleted = true,
+                            NcrProcCreditExpected = true,
+                            NcrProcSupplierBilled = true,
+                            NcrProcUserId = 3, //need to make nullable
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-002").NcrId
+                        },
+                        new NcrProcurement
+                        {
+                            NcrProcSupplierReturnReq = true,
+                            NcrProcExpectedDate = DateTime.Parse("2024-01-20"),
+                            NcrProcDisposedAllowed = false,
+                            NcrProcSAPReturnCompleted = true,
+                            NcrProcCreditExpected = true,
+                            NcrProcSupplierBilled = true,
+                            NcrProcUserId = 4, //need to make nullable
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-003").NcrId
+                        },
+                        new NcrProcurement
+                        {
+                            NcrProcSupplierReturnReq = true,
+                            NcrProcExpectedDate = DateTime.Parse("2024-01-22"),
+                            NcrProcDisposedAllowed = false,
+                            NcrProcSAPReturnCompleted = true,
+                            NcrProcCreditExpected = true,
+                            NcrProcSupplierBilled = true,
+                            NcrProcUserId = 1, //need to make nullable
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-004").NcrId
+                        },
+                        new NcrProcurement
+                        {
+                            NcrProcSupplierReturnReq = true,
+                            NcrProcExpectedDate = DateTime.Parse("2024-01-25"),
+                            NcrProcDisposedAllowed = false,
+                            NcrProcSAPReturnCompleted = true,
+                            NcrProcCreditExpected = true,
+                            NcrProcSupplierBilled = true,
+                            NcrProcUserId = 2, //need to make nullable
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-005").NcrId
+                        },
+                        new NcrProcurement
+                        {
+                            NcrProcSupplierReturnReq = true,
+                            NcrProcExpectedDate = DateTime.Parse("2024-01-30"),
+                            NcrProcDisposedAllowed = false,
+                            NcrProcSAPReturnCompleted = true,
+                            NcrProcCreditExpected = true,
+                            NcrProcSupplierBilled = true,
+                            NcrProcUserId = 3, //need to make nullable
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-006").NcrId
+                        },
+                        new NcrProcurement
+                        {
+                            NcrProcSupplierReturnReq = true,
+                            NcrProcExpectedDate = DateTime.Parse("2024-02-03"),
+                            NcrProcDisposedAllowed = false,
+                            NcrProcSAPReturnCompleted = true,
+                            NcrProcCreditExpected = true,
+                            NcrProcSupplierBilled = true,
+                            NcrProcUserId = 4, //need to make nullable
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-007").NcrId
+                        });
+                    context.SaveChanges();
+                }
             }
             catch (Exception ex)
             {
