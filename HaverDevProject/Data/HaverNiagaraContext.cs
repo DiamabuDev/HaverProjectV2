@@ -74,6 +74,9 @@ public partial class HaverNiagaraContext : DbContext
 
     public virtual DbSet<NcrProcurement> NcrProcurements { get; set; }
 
+    public virtual DbSet<NcrReInspectPhoto> NcrReInspectPhotos { get; set; }
+
+
     //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     //    => optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=HaverNiagara;Trusted_Connection=SSPI;encrypt=false;");
 
@@ -176,7 +179,15 @@ public partial class HaverNiagaraContext : DbContext
         {
             entity.HasKey(e => e.OpDispositionTypeId).HasName("pk_opDispositionType_opDispositionTypeId");
         });
-               
+
+        modelBuilder.Entity<NcrReInspectPhoto>(entity =>
+        {
+            entity.HasKey(e => e.NcrReInspectPhotoId).HasName("pk_ncrReInspectPhoto_ncrReInspectPhotoId");
+
+            entity.HasOne(d => d.NcrReInspect).WithMany(p => p.NcrReInspectPhotos)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+        });
+
 
         modelBuilder.Entity<Item>()
             .HasIndex(i => i.ItemNumber)

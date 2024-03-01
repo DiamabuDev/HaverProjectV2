@@ -28,7 +28,7 @@ namespace HaverDevProject.Controllers
 
 
 		// GET: NcrEng
-		public async Task<IActionResult> Index(string SearchCode, int? SupplierID, DateTime StartDate, DateTime EndDate,
+		public async Task<IActionResult> Index(string SearchCode, /*int? SupplierID, */DateTime StartDate, DateTime EndDate,
 			int? page, int? pageSizeID, string actionButton, string sortDirection = "desc", string sortField = "Created", string filter = "Active")
 		{
 			//Set the date range filer based on the values in the database
@@ -54,7 +54,7 @@ namespace HaverDevProject.Controllers
 			//List of sort options.
 			string[] sortOptions = new[] { "Created", "NCR #", "Disposition", "Description" };
 
-			//PopulateDropDownLists();
+			PopulateDropDownLists();
 
 			var ncrEng = _context.NcrEngs
 				.Include(n => n.EngDispositionType)
@@ -63,7 +63,10 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n =>n.Item)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
                 .Include(n => n.Drawing)
+                .Where(n=>n.Ncr.NcrPhase == NcrPhase.Engineer)
 				.AsNoTracking();
+
+            GetNcrs();
 
 			//Filterig values            
 			if (!String.IsNullOrEmpty(filter))
@@ -230,9 +233,13 @@ namespace HaverDevProject.Controllers
         {
             NcrEngDTO ncr = new NcrEngDTO();
             ncr.NcrNumber = ncrNumber; // Set the NcrNumber from the parameter
+            ncr.DrawingRevDate = DateTime.Now;
+            ncr.DrawingRequireUpdating = false;
+            ncr.NcrEngCustomerNotification = false;
             ncr.NcrStatus = true; // Active
 
-            ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName");
+            PopulateDropDownLists();
+            //ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName");
             return View(ncr);
         }
 
@@ -241,7 +248,7 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(NcrEngDTO ncrEngDTO)
+        public async Task<IActionResult> Create(NcrEngDTO ncrEngDTO, int EngDispositionTypeId)
         {
             try
             {
@@ -256,20 +263,17 @@ namespace HaverDevProject.Controllers
                     NcrEng ncrEng = new NcrEng
                     {
                     NcrId = ncrIdObt, // Assign the NcrId from the found Ncr entity
-                    //ncrEng.NcrEngId = ncrEngDTO.NcrEngId;
-                    //ncrEng.Ncr.NcrNumber = ncrEngDTO.NcrNumber;
-                    //ncrEng.Ncr.NcrStatus = ncrEngDTO.NcrStatus;
                     NcrEngCustomerNotification = ncrEngDTO.NcrEngCustomerNotification,
                     NcrEngDispositionDescription = ncrEngDTO.NcrEngDispositionDescription,
                     NcrEngStatusFlag = ncrEngDTO.NcrEngStatusFlag,
-                    NcrEngUserId = ncrEngDTO.NcrEngUserId,
+                    NcrEngUserId = 1,
                     EngDispositionTypeId = ncrEngDTO.EngDispositionTypeId,
-                    //ncrEng.DrawingId = ncrEngDTO.DrawingId;
-                    //ncrEng.Drawing.DrawingRequireUpdating = ncrEngDTO.DrawingRequireUpdating;
-                    //ncrEng.Drawing.DrawingOriginalRevNumber = ncrEngDTO.DrawingOriginalRevNumber;
-                    //ncrEng.Drawing.DrawingUpdatedRevNumber = ncrEngDTO.DrawingUpdatedRevNumber;
-                    //ncrEng.Drawing.DrawingRevDate = ncrEngDTO.DrawingRevDate;
-                    //ncrEng.Drawing.DrawingUserId = ncrEngDTO.DrawingUserId;
+                    DrawingId = ncrEngDTO.DrawingId,
+                    DrawingRequireUpdating = false,
+                    DrawingOriginalRevNumber = ncrEngDTO.DrawingOriginalRevNumber,
+                    DrawingUpdatedRevNumber = ncrEngDTO.DrawingUpdatedRevNumber,
+                    DrawingRevDate = DateTime.Now,
+                    DrawingUserId = ncrEngDTO.DrawingUserId,
                     EngDefectPhotos = ncrEngDTO.EngDefectPhotos,
                     NcrPhase = NcrPhase.Operations
                 };
@@ -278,6 +282,7 @@ namespace HaverDevProject.Controllers
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
+
             }
             catch (RetryLimitExceededException /* dex */)
             {
@@ -288,6 +293,8 @@ namespace HaverDevProject.Controllers
                 ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
             }
 
+            PopulateDropDownLists();
+            //ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName", ncrEngDTO.EngDispositionTypeId);
             return View(ncrEngDTO);
         }
 
@@ -324,16 +331,17 @@ namespace HaverDevProject.Controllers
 				NcrEngUserId = ncrEng.NcrEngUserId,
 				EngDispositionTypeId = ncrEng.EngDispositionTypeId,
 				NcrId = ncrEng.NcrId,
-				//DrawingId = ncrEng.DrawingId,
-				//DrawingRequireUpdating = ncrEng.Drawing.DrawingRequireUpdating,
-				//DrawingOriginalRevNumber = ncrEng.Drawing.DrawingOriginalRevNumber,
-				//DrawingUpdatedRevNumber = ncrEng.Drawing.DrawingUpdatedRevNumber,
-				//DrawingRevDate = ncrEng.Drawing.DrawingRevDate,
-				//DrawingUserId = ncrEng.Drawing.DrawingUserId,
+                DrawingId = ncrEng.DrawingId,
+                DrawingRequireUpdating = ncrEng.Drawing.DrawingRequireUpdating,
+                DrawingOriginalRevNumber = ncrEng.Drawing.DrawingOriginalRevNumber,
+                DrawingUpdatedRevNumber = ncrEng.Drawing.DrawingUpdatedRevNumber,
+                DrawingRevDate = ncrEng.Drawing.DrawingRevDate,
+                DrawingUserId = ncrEng.Drawing.DrawingUserId,
                 EngDefectPhotos = ncrEng.EngDefectPhotos
             };
 
-			ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName", ncrEng.EngDispositionTypeId);
+            PopulateDropDownLists();
+			//ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName", ncrEng.EngDispositionTypeId);
 			return View(ncrEngDTO);
         }
 
@@ -366,12 +374,12 @@ namespace HaverDevProject.Controllers
 					ncrEng.NcrEngUserId = ncrEngDTO.NcrEngUserId;
 					ncrEng.EngDispositionTypeId = ncrEngDTO.EngDispositionTypeId;
 					ncrEng.NcrId = ncrEngDTO.NcrId;
-					//ncrEng.DrawingId = ncrEngDTO.DrawingId;
-					//ncrEng.Drawing.DrawingRequireUpdating = ncrEngDTO.DrawingRequireUpdating;
-					//ncrEng.Drawing.DrawingOriginalRevNumber = ncrEngDTO.DrawingOriginalRevNumber;
-					//ncrEng.Drawing.DrawingUpdatedRevNumber = ncrEngDTO.DrawingUpdatedRevNumber;
-					//ncrEng.Drawing.DrawingRevDate = ncrEngDTO.DrawingRevDate;
-					//ncrEng.Drawing.DrawingUserId = ncrEngDTO.DrawingUserId;
+                    ncrEng.DrawingId = ncrEngDTO.DrawingId;
+                    ncrEng.Drawing.DrawingRequireUpdating = ncrEngDTO.DrawingRequireUpdating;
+                    ncrEng.Drawing.DrawingOriginalRevNumber = ncrEngDTO.DrawingOriginalRevNumber;
+                    ncrEng.Drawing.DrawingUpdatedRevNumber = ncrEngDTO.DrawingUpdatedRevNumber;
+                    ncrEng.Drawing.DrawingRevDate = ncrEngDTO.DrawingRevDate;
+                    ncrEng.Drawing.DrawingUserId = ncrEngDTO.DrawingUserId;
                     ncrEng.EngDefectPhotos = ncrEngDTO.EngDefectPhotos;
                     ncrEng.NcrPhase = NcrPhase.Operations;
 
@@ -501,5 +509,26 @@ namespace HaverDevProject.Controllers
 		{
 			return _context.NcrEngs.Any(e => e.NcrEngId == id);
 		}
-	}
+
+        private SelectList EngDispositionTypeSelectList(int? selectedId)
+        {
+            return new SelectList(_context.EngDispositionTypes
+                .OrderBy(s => s.EngDispositionTypeName), "EngDispositionTypeId", "EngDispositionTypeName", selectedId);
+        }
+        private void PopulateDropDownLists(NcrEng ncrEng = null)
+        {
+            if ((ncrEng?.EngDispositionTypeId).HasValue)
+            {
+                if (ncrEng.EngDispositionType == null)
+                {
+                    ncrEng.EngDispositionType = _context.EngDispositionTypes.Find(ncrEng.EngDispositionTypeId);
+                }
+                ViewData["EngDispositionTypeId"] = EngDispositionTypeSelectList(ncrEng?.EngDispositionTypeId);
+            }
+            else
+            {
+                ViewData["EngDispositionTypeId"] = EngDispositionTypeSelectList(null);
+            }
+        }
+    }
 }
