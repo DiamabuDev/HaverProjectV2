@@ -444,16 +444,16 @@
 
 
 
-                @*     <div class="card-header">
+                    <div class="card-header">
                     Attachments / Comments
                     </div>
                     <div class="card-body">
 
-                    @if (Model.NcrQaDefectVideo != null)
+                    @if (Model.NcrEngDefectVideo != null)
                     {
-                    <a href="@Model.NcrQaDefectVideo" target="_blank">Video Link</a>
+                    <a href="@Model.NcrEngDefectVideo" target="_blank">Video Link</a>
                     }
-                    </div> *@
+                    </div>
 
                 </div>
             </div>
@@ -474,6 +474,11 @@
                 <button type="button" onclick="location.href='@Url.Action("Index")'" class="btn btn-primary">
                     <i class="bi bi-arrow-90deg-left"></i> Back to NCR List
                 </button>
+                <div>
+                    <a type="button" class="btn btn-primary ms-4" asp-action="Edit" asp-route-id="@Model?.NcrId">
+                        <i class="bi bi-pencil-square"></i> Edit
+                    </a>
+                </div>
             </div>
         </div>
     </div>

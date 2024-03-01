@@ -297,6 +297,7 @@ namespace HaverDevProject.Controllers
                     NcrQaEngDispositionRequired = ncrQaDTO.NcrQaEngDispositionRequired
                 };               
                 
+
                 _context.NcrQas.Add(ncrQa);
                 await _context.SaveChangesAsync();                
 

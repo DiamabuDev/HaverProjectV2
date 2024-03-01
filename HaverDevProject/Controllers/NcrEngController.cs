@@ -277,11 +277,19 @@ namespace HaverDevProject.Controllers
                     DrawingRevDate = DateTime.Now,
                     DrawingUserId = ncrEngDTO.DrawingUserId,
                     EngDefectPhotos = ncrEngDTO.EngDefectPhotos,
+                    NcrEngDefectVideo = ncrEngDTO.NcrEngDefectVideo,
                     NcrPhase = NcrPhase.Operations
                 };
-
                     _context.NcrEngs.Add(ncrEng);
                     await _context.SaveChangesAsync();
+
+                    //update ncr 
+                    var ncr = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrIdObt);
+                    ncr.NcrPhase = NcrPhase.Operations;
+                    _context.Ncrs.Update(ncr);
+                    await _context.SaveChangesAsync();
+
+              
 
                     TempData["SuccessMessage"] = "NCR saved successfully!";
                     int ncrEngId = ncrEng.NcrEngId;
@@ -346,6 +354,7 @@ namespace HaverDevProject.Controllers
                 DrawingRevDate = ncrEng.DrawingRevDate,
                 DrawingUserId = ncrEng.DrawingUserId,
                 EngDefectPhotos = ncrEng.EngDefectPhotos,
+                NcrEngDefectVideo = ncrEng.NcrEngDefectVideo,
                 NcrPhase = ncrEng.NcrPhase
                 
             };
@@ -391,9 +400,12 @@ namespace HaverDevProject.Controllers
                     ncrEng.DrawingRevDate = ncrEngDTO.DrawingRevDate;
                     ncrEng.DrawingUserId = ncrEngDTO.DrawingUserId;
                     ncrEng.EngDefectPhotos = ncrEngDTO.EngDefectPhotos;
+                    ncrEng.NcrEngDefectVideo = ncrEngDTO.NcrEngDefectVideo;
                     ncrEng.NcrPhase = NcrPhase.Operations;
 
 
+                    await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrEng.NcrId);
+                    ncrEng.NcrPhase = NcrPhase.Operations;
                     _context.Update(ncrEng);
                     await _context.SaveChangesAsync();
                 }

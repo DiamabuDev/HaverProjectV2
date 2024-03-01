@@ -29,5 +29,6 @@ public class NcrEngDTO : Auditable
 	public int DrawingUpdatedRevNumber { get; set; }
 	public DateTime DrawingRevDate { get; set; }
 	public int DrawingUserId { get; set; }
+    public string NcrEngDefectVideo { get; set; }
     public ICollection<EngDefectPhoto> EngDefectPhotos { get; set; } = new HashSet<EngDefectPhoto>();
 }

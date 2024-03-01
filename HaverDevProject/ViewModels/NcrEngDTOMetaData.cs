@@ -79,6 +79,10 @@ public class NcrEngDTOMetaData
     [Column("drawingUserId")]
     public int DrawingUserId { get; set; }
 
+    [Display(Name = "Video Link")]
+    [StringLength(100, ErrorMessage = "Video link cannot be more than 100 characters.")]
+    public string NcrEngDefectVideo { get; set; }
+
     [Display(Name = "Engineer Photos")]
     public ICollection<EngDefectPhoto> EngDefectPhotos { get; set; } = new HashSet<EngDefectPhoto>();
 }
