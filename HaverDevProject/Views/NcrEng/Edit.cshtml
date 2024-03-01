@@ -63,6 +63,36 @@
                     </div>
                 </div>
 
+                <div class="form-group">
+                    <label class="control-label"> Current Photos:</label>
+                    <div class="ml-md-3">
+                        @{
+                            int fileCount = Model.EngDefectPhotos.Count;
+                            if (fileCount > 0)
+                            {
+                                var firstFile = Model.EngDefectPhotos.FirstOrDefault(); ;
+                                if (fileCount > 1)
+                                {
+                                    <a class="" role="button" data-bs-toggle="collapse" href="#collapsePhotos@(Model.NcrEngId)" aria-expanded="false" aria-controls="collapsePhotos@(Model.NcrEngId)">
+                                        <span class="badge bg-info">@fileCount</span> Photos...
+                                    </a>
+                                    <div class="collapse" id="collapsePhotos@(Model.NcrEngId)">
+                                        @{
+                                            foreach (var d in Model.EngDefectPhotos)
+                                            {
+                                                <a asp-controller="NcrEng" asp-action="Download" asp-route-id="@d.EngDefectPhotoId">@d.FileName</a> <br />
+                                            }
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <a asp-controller="NcrEng" asp-action="Download" asp-route-id="@firstFile.EngDefectPhotoId">@firstFile.FileName</a>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
 
                 <div class="form-group">
                     <label class="control-label custom-file-label">Upload Engineer Photos:</label>
