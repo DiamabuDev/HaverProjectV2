@@ -1,7 +1,7 @@
-﻿@model HaverDevProject.Models.NcrQa
+﻿@model HaverDevProject.Models.NcrEng
 
-@await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", Model)
+@await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", Model.Ncr.NcrQa)
 
-@await Html.PartialAsync("~/Views/NCRDetailViews/_NCREngDetailsPartial.cshtml", Model.Ncr.NcrEng)
+@await Html.PartialAsync("~/Views/NCRDetailViews/_NCREngDetailsPartial.cshtml", Model)
 
 @await Html.PartialAsync("~/Views/NCRDetailViews/_ActionButtons.cshtml", Model)
