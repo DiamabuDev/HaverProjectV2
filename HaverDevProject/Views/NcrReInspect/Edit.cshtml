@@ -26,10 +26,16 @@
             <div class="card-body col-lg-10 col-11 mx-auto">
                 <div class="row">
                     <div class="col-6">
-                        <div class="form-group form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" asp-for="NcrReInspectAcceptable" /> @Html.DisplayNameFor(model => model.NcrReInspectAcceptable)
-                            </label>
+                        <label class="pb-3">Reinspection Acceptable?</label>
+                        <div class="text-left">
+                            <div class="form-check form-check-inline">
+                                <input type="radio" class="form-check-input" asp-for="NcrReInspectAcceptable" value="true" />
+                                <label class="form-check-label">Yes</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" class="form-check-input" asp-for="NcrReInspectAcceptable" value="false" />
+                                <label class="form-check-label">No</label>
+                            </div>
                         </div>
                     </div>
                     @* <div class="col-6">
@@ -169,22 +175,32 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
-        var checkbox = document.getElementById("NcrReInspectAcceptable");
+        document.addEventListener("DOMContentLoaded", function () {
+            var radioButtons = document.getElementsByName("NcrReInspectAcceptable");
 
-        checkbox.addEventListener("change", function () {
-            if (!checkbox.checked) {
-                // If checkbox is unchecked, show confirmation dialog
-                var confirmResult = confirm("Do you want to make a new NCR?");
-                if (!confirmResult) {
-                    // If user cancels, keep checkbox checked
-                    checkbox.checked = true;
-                }
-                else {
-                    window.location.href = "/NcrQa/Create";
-                }
-            } else {
-                textbox.disabled = false;
-            }
+            // Loop through each radio button
+            radioButtons.forEach(function (radio) {
+                // Add change event listener to each radio button
+                radio.addEventListener("change", function () {
+                    if (this.value === "false") {
+                        // If "No" radio button is selected, show confirmation dialog
+                        var confirmResult = confirm("Do you want to make a new NCR?");
+                        if (!confirmResult) {
+                            // If user cancels, keep "Yes" radio button selected
+                            document.querySelector('input[value="true"]').checked = true;
+                        } else {
+                            window.location.href = "/NcrQa/Create";
+                            // const urlParams = new URLSearchParams(window.location.search);
+                            // const value = urlParams.get('NcrNumber');
+
+                            // window.history.back();
+
+                        }
+                    } else {
+                        // If "Yes" radio button is selected, do nothing
+                    }
+                });
+            });
         });
     </script>
 }
