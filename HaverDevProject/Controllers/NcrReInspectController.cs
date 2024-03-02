@@ -48,28 +48,30 @@ namespace HaverDevProject.Controllers
                 StartDate = temp;
             }
 
-            string[] sortOptions = new[] { "Created", "Acceptable", "Inspected By", "NCR #" };
+            string[] sortOptions = new[] { "Updated", "Acceptable", "Inspected By", "NCR #" };
 
             var ncrReInspect = _context.NcrReInspects
                 .Include(n => n.Ncr)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
+                //.Where(n => n.Ncr.NcrPhase == NcrPhase.ReInspection)
+                .Where(n => n.Ncr.NcrPhase == NcrPhase.Closed)
                 .AsNoTracking();
 
             GetNcrs();
 
             //Filterig values            
-            if (!System.String.IsNullOrEmpty(filter))
-            {
-                if (filter == "Active")
-                {
-                    ncrReInspect = ncrReInspect.Where(n => n.Ncr.NcrStatus == true);
-                }
-                else //(filter == "Closed")
-                {
+            //if (!System.String.IsNullOrEmpty(filter))
+            //{
+            //    if (filter == "Closed")
+            //    {
+            //        ncrReInspect = ncrReInspect.Where(n => n.Ncr.NcrStatus == true);
+            //    }
+            //    else //(filter == "Closed")
+            //    {
 
-                    ncrReInspect = ncrReInspect.Where(n => n.Ncr.NcrStatus == false);
-                }
-            }
+            //        ncrReInspect = ncrReInspect.Where(n => n.Ncr.NcrStatus == false);
+            //    }
+            //}
 
             if (!System.String.IsNullOrEmpty(SearchCode))
             {
@@ -100,21 +102,21 @@ namespace HaverDevProject.Controllers
                 }
             }
 
-            if (sortField == "Created")
+            if (sortField == "Updated")
             {
                 if (sortDirection == "desc") //desc by default
                 {
                     ncrReInspect = ncrReInspect
                         .OrderBy(p => p.Ncr.NcrQa.NcrQacreationDate);
 
-                    ViewData["filterApplied:Created"] = "<i class='bi bi-sort-up'></i>";
+                    ViewData["filterApplied:NcrLastUpdated"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncrReInspect = ncrReInspect
                         .OrderByDescending(p => p.Ncr.NcrQa.NcrQacreationDate);
 
-                    ViewData["filterApplied:Created"] = "<i class='bi bi-sort-down'></i>";
+                    ViewData["filterApplied:NcrLastUpdated"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
             else if (sortField == "Acceptable")
@@ -202,14 +204,22 @@ namespace HaverDevProject.Controllers
                 return NotFound();
             }
 
+            ViewBag.IsNCRQaView = false;
+            ViewBag.IsNCREngView = false;
+            ViewBag.IsNCROpView = false;
+            ViewBag.IsNCRReInspView = true;
             return View(ncrReInspect);
         }
 
         // GET: NcrReInspect/Create
-        public IActionResult Create()
+        public IActionResult Create(string ncrNumber)
         {
-            ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber");
-            return View();
+            int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
+            NcrReInspect ncr = new NcrReInspect();
+            ncr.NcrId = ncrId; // Set the NcrNumber from the parameter
+
+            //ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName");
+            return View(ncr);
         }
 
         // POST: NcrReInspect/Create
@@ -217,21 +227,50 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("NcrReInspectId,NcrReInspectAcceptable,NcrReInspectNewNcrNumber,NcrReInspectUserId,NcrId")] NcrReInspect ncrReInspect, List<IFormFile> Photos)
+        public async Task<IActionResult> Create([Bind("NcrReInspectId,NcrReInspectAcceptable,NcrReInspectNewNcrNumber,NcrReInspectUserId,NcrReInspectDefectVideo,NcrId")] NcrReInspect ncrReInspect, List<IFormFile> Photos)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    _context.Add(ncrReInspect);
-
                     await AddReInspectPictures(ncrReInspect, Photos);
 
+                    ncrReInspect.NcrReInspectNewNcrNumber = GetNcrNumber();
+                    _context.Add(ncrReInspect);
+
+                    await _context.SaveChangesAsync();
+
+                    var ncrToUpdate = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n=>n.NcrId == ncrReInspect.NcrId);
+
+                    ncrToUpdate.NcrPhase = NcrPhase.Closed;
+                    ncrToUpdate.NcrStatus = false;
+                    ncrToUpdate.NcrLastUpdated = DateTime.Today;
+                    _context.Ncrs.Update(ncrToUpdate);
                     await _context.SaveChangesAsync();
 
                     TempData["SuccessMessage"] = "NCR created successfully!";
                     int ncrReInspectId = ncrReInspect.NcrReInspectId;
                     return RedirectToAction("Details", new { id = ncrReInspectId });
+                }
+                else
+                {
+                    //Debugging Approach: Not for production code.
+                    //This code will list validation errors at the top of the View.
+                    //Use it to diagnose when there seems to be a Validation Error
+                    //that is going unreported.  Remove this code when you are
+                    //finished debugging.
+                    var booBoos = ModelState.Where(x => x.Value.Errors.Count > 0)
+                        .Select(x => new { x.Key, x.Value.Errors });
+
+                    foreach (var booBoo in booBoos)
+                    {
+                        string key = booBoo.Key;
+                        foreach (var error in booBoo.Errors)
+                        {
+                            var errorMessage = error?.ErrorMessage;
+                            ModelState.AddModelError("", "For " + key + ": " + errorMessage);
+                        }
+                    }
                 }
             }
             catch (RetryLimitExceededException)
@@ -255,7 +294,10 @@ namespace HaverDevProject.Controllers
                 return NotFound();
             }
 
-            var ncrReInspect = await _context.NcrReInspects.FindAsync(id);
+            var ncrReInspect = await _context.NcrReInspects
+                .Include(n => n.NcrReInspectPhotos)
+                .FirstOrDefaultAsync(n=>n.NcrReInspectId == id);
+
             if (ncrReInspect == null)
             {
                 return NotFound();
@@ -282,7 +324,7 @@ namespace HaverDevProject.Controllers
             }
 
             if (await TryUpdateModelAsync<NcrReInspect>(ncrReInspectToUpdate, "",
-                r => r.NcrReInspectAcceptable, r => r.NcrReInspectNewNcrNumber, r => r.NcrReInspectUserId, r => r.NcrId))
+                r => r.NcrReInspectAcceptable, r => r.NcrReInspectNewNcrNumber, r => r.NcrReInspectUserId, r => r.NcrId, r => r.NcrReInspectDefectVideo, r => r.NcrReInspectPhotos))
             {
                 try
                 {
@@ -394,7 +436,11 @@ namespace HaverDevProject.Controllers
         {
             if (pictures != null && pictures.Any())
             {
-                ncrReInspect.NcrReInspectPhotos = new List<NcrReInspectPhoto>();
+                // If the NcrReInspect already has some photos, keep them
+                if (ncrReInspect.NcrReInspectPhotos == null)
+                {
+                    ncrReInspect.NcrReInspectPhotos = new List<NcrReInspectPhoto>();
+                }
 
                 foreach (var picture in pictures)
                 {
@@ -412,12 +458,22 @@ namespace HaverDevProject.Controllers
                             ncrReInspect.NcrReInspectPhotos.Add(new NcrReInspectPhoto
                             {
                                 NcrReInspectPhotoContent = ResizeImage.shrinkImageWebp(pictureArray, 500, 600),
-                                NcrReInspectPhotoMimeType = "image/webp"
+                                NcrReInspectPhotoMimeType = "image/webp",
+                                FileName = picture.FileName
                             });
                         }
                     }
                 }
             }
+        }
+
+        public async Task<FileContentResult> Download(int id)
+        {
+            var theFile = await _context.NcrReInspectPhotos
+                .Include(d => d.ReInspectFileContent)
+                .Where(f => f.NcrReInspectPhotoId == id)
+                .FirstOrDefaultAsync();
+            return File(theFile.NcrReInspectPhotoContent, theFile.NcrReInspectPhotoMimeType, theFile.FileName);
         }
 
         public JsonResult GetNcrs()
@@ -488,6 +544,36 @@ namespace HaverDevProject.Controllers
         //        .FirstOrDefaultAsync();
         //    return File(theFile.NcrReInspectPhotoContent, theFile.NcrReInspectPhotoMimeType, theFile.FileName);
         //}
+
+        public string GetNcrNumber()
+        {
+            string lastNcrNumber = _context.Ncrs
+                .OrderByDescending(n => n.NcrNumber)
+                .Select(n => n.NcrNumber)
+                .FirstOrDefault();
+
+            if (lastNcrNumber != null)
+            {
+                string lastYear = lastNcrNumber.Substring(0, 4);
+                string lastConsecutiveNumber = lastNcrNumber.Substring(5);
+
+                if (lastYear == DateTime.Today.Year.ToString())
+                {
+                    int nextNumber = int.Parse(lastConsecutiveNumber) + 1;
+                    string nextNumberString = nextNumber.ToString("000");
+
+                    //Ncr Format
+                    return $"{lastYear}-{nextNumberString}";
+                }
+            }
+
+            string currentYear = DateTime.Today.Year.ToString();
+            int nextConsecutiveNumber = 1;
+            string nextConsecutiveNumberString = nextConsecutiveNumber.ToString("000");
+
+            //Ncr Format
+            return $"{currentYear}-{nextConsecutiveNumberString}";
+        }
 
         private bool NcrReInspectExists(int id)
         {

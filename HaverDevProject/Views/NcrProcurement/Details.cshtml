@@ -257,7 +257,7 @@
                                     <td class="three-cols">@Model.Ncr.NcrEng.EngDispositionType.EngDispositionTypeName</td>
 
                                     <td class="three-cols">@(Model.Ncr.NcrEng.NcrEngCustomerNotification == true ? "Yes" : "No")</td>
-                                    <td class="three-cols">@(Model.Ncr.NcrEng.Drawing.DrawingRequireUpdating == true ? "Yes" : "No")</td>
+                                    <td class="three-cols">@(Model.Ncr.NcrEng.DrawingRequireUpdating == true ? "Yes" : "No")</td>
 
 
                                 </tr>
@@ -296,11 +296,11 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td class="four-cols">@Model.Ncr.NcrEng.Drawing.DrawingOriginalRevNumber</td>
-                                        <td class="four-cols">@Model.Ncr.NcrEng.Drawing.DrawingUpdatedRevNumber</td>
+                                        <td class="four-cols">@Model.Ncr.NcrEng.DrawingOriginalRevNumber</td>
+                                        <td class="four-cols">@Model.Ncr.NcrEng.DrawingUpdatedRevNumber</td>
                                         <td> J. Laferty</td>
                                         @*  <td class="four-cols">@Model.Drawing.NcrEngId</td> *@
-                                        <td class="four-cols">@Model.Ncr.NcrEng.Drawing.DrawingRevDate</td>
+                                        <td class="four-cols">@Model.Ncr.NcrEng.DrawingRevDate</td>
                                     </tr>
                                 </tbody>
                             </table>

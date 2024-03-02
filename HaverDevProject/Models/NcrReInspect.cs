@@ -11,8 +11,8 @@ namespace HaverDevProject.Models;
 public class NcrReInspect : Auditable
 {
     public int NcrReInspectId { get; set; }
-    public bool NcrReInspectAcceptable { get; set; } = false;
-    public int? NcrReInspectNewNcrNumber { get; set; }
+    public bool NcrReInspectAcceptable { get; set; } = true;
+    public string NcrReInspectNewNcrNumber { get; set; }
     public int NcrReInspectUserId { get; set; }
     public bool NcrQaStatusFlag { get; set; }
     public string NcrReInspectDefectVideo { get; set; }

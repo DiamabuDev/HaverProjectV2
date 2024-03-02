@@ -77,6 +77,8 @@ public partial class HaverNiagaraContext : DbContext
 
     public virtual DbSet<NcrReInspectPhoto> NcrReInspectPhotos { get; set; }
 
+    public virtual DbSet<ProcDefectPhoto> ProcDefectPhotos { get; set; }
+
 
     //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     //    => optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=HaverNiagara;Trusted_Connection=SSPI;encrypt=false;");
@@ -131,6 +133,24 @@ public partial class HaverNiagaraContext : DbContext
             entity.HasOne(d => d.NcrEng).WithMany(p => p.EngDefectPhotos)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_engDefectPhoto_itemDefect");
+        });
+
+        modelBuilder.Entity<ProcDefectPhoto>(entity =>
+        {
+            entity.HasKey(e => e.ProcDefectPhotoId).HasName("pk_engDefectPhoto_engDefectPhotoId");
+
+            entity.HasOne(d => d.NcrProcurement).WithMany(p => p.ProcDefectPhotos)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_procDefectPhoto_itemDefect");
+        });
+
+        modelBuilder.Entity<NcrReInspectPhoto>(entity =>
+        {
+            entity.HasKey(e => e.NcrReInspectPhotoId).HasName("pk_ncrReInspectPhoto_ncrReInspectPhotoId");
+
+            entity.HasOne(d => d.NcrReInspect).WithMany(p => p.NcrReInspectPhotos)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_ncrReInspectPhoto_itemDefect");
         });
 
         modelBuilder.Entity<OpDefectPhoto>(entity =>
@@ -190,13 +210,13 @@ public partial class HaverNiagaraContext : DbContext
             entity.HasKey(e => e.OpDispositionTypeId).HasName("pk_opDispositionType_opDispositionTypeId");
         });
 
-        modelBuilder.Entity<NcrReInspectPhoto>(entity =>
-        {
-            entity.HasKey(e => e.NcrReInspectPhotoId).HasName("pk_ncrReInspectPhoto_ncrReInspectPhotoId");
+        //modelBuilder.Entity<NcrReInspectPhoto>(entity =>
+        //{
+        //    entity.HasKey(e => e.NcrReInspectPhotoId).HasName("pk_ncrReInspectPhoto_ncrReInspectPhotoId");
 
-            entity.HasOne(d => d.NcrReInspect).WithMany(p => p.NcrReInspectPhotos)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-        });
+        //    entity.HasOne(d => d.NcrReInspect).WithMany(p => p.NcrReInspectPhotos)
+        //        .OnDelete(DeleteBehavior.ClientSetNull);
+        //});
 
 
         modelBuilder.Entity<Item>()

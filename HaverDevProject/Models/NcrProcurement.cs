@@ -20,10 +20,16 @@ namespace HaverDevProject.Models
         public bool NcrProcSupplierBilled { get; set; }
         public bool NcrProcFlagStatus { get; set; }
         public int NcrProcUserId { get; set; }
-        //[ScaffoldColumn(false)]
-        //[Timestamp]
-        //public Byte[] RowVersion { get; set; }//Added for concurrency
+        public DateTime NcrProcUpdate { get; set; }
+        public int SupplierReturnId { get; set; }
+        public SupplierReturn SupplierReturn { get; set; }
+        public string SupplierReturnMANum { get; set; }
+        public string SupplierReturnName { get; set; }
+        public string SupplierReturnAccount { get; set; }
         public int NcrId { get; set; }
         public virtual Ncr Ncr { get; set; }
+
+        public ICollection<ProcDefectPhoto> ProcDefectPhotos { get; set; } = new HashSet<ProcDefectPhoto>();
+
     }
 }
