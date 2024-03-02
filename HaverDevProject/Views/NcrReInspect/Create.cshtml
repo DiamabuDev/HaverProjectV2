@@ -46,6 +46,13 @@
                             <span asp-validation-for="NcrId" class="text-danger"></span>
                         </div>
                     </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label asp-for="NcrReInspectUserId" class="control-label"></label>
+                            <input asp-for="NcrReInspectUserId" class="form-control" />
+                            <span asp-validation-for="NcrReInspectUserId" class="text-danger"></span>
+                        </div>
+                    </div>
                     @* <div class="col-6">
                         <div class="form-group">
                             <label asp-for="Ncr.NcrQa.NcrQacreationDate" class="control-label"></label>
@@ -55,27 +62,22 @@
                     </div> *@
 
                 </div>
-                <div class="row">
-                    <div class="col-6">
-                        <div class="form-group">
-                            <label asp-for="NcrReInspectUserId" class="control-label"></label>
-                            <input asp-for="NcrReInspectUserId" class="form-control" />
-                            <span asp-validation-for="NcrReInspectUserId" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="form-group">
-                            <label asp-for="NcrReInspectDefectVideo" class="control-label"></label>
-                            <input asp-for="NcrReInspectDefectVideo" class="form-control" />
-                            <span asp-validation-for="NcrReInspectDefectVideo" class="text-danger"></span>
-                        </div>
-                    </div>                 
-                </div>
+@*                 <div class="row">
+                 
+                                    
+                </div> *@
                 <div class="form-group">
                     <label class="control-label custom-file-label">Upload Additional Photos:</label>
                     <input type="file" class="form-control" name="Photos" multiple="multiple" />
-                </div>            
-                
+                </div>      
+                <div class="form-group">
+                    <div class="form-group">
+                        <label asp-for="NcrReInspectDefectVideo" class="control-label"></label>
+                        <input asp-for="NcrReInspectDefectVideo" class="form-control" />
+                        <span asp-validation-for="NcrReInspectDefectVideo" class="text-danger"></span>
+                    </div>
+                </div>
+
             </div>
             <div class="card-footer">
                 <div class="form-group d-flex justify-content-end mt-2">
