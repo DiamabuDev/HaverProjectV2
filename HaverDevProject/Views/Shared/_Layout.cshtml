@@ -81,6 +81,13 @@
         </div>
     }
 
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -103,6 +110,11 @@
     $(document).ready(function () {
         setTimeout(function () {
             $(".alert-success").fadeOut('slow');
-        }, 3000); // Adjust the time according to your needs
+        }, 3000);
+    });
+    $(document).ready(function () {
+        setTimeout(function () {
+            $(".alert-danger").fadeOut('slow');
+        }, 12000);
     });
 </script>

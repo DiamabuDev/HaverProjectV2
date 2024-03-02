@@ -357,17 +357,14 @@ namespace HaverDevProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Upload(IFormFile file)
         {
-            if (file == null || file.Length == 0)
-            {
-                TempData["ErrorMessage"] = "No file selected.";
-                return RedirectToAction(nameof(Index)); 
-            }
 
             if (file.ContentType != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             {
                 TempData["ErrorMessage"] = "Invalid file type. Please upload an Excel file (.xlsx).";
-                return RedirectToAction(nameof(Index)); 
+                return RedirectToAction(nameof(Index));
             }
+
+            var errorMessages = new List<string>();
 
             using (var stream = new MemoryStream())
             {
@@ -379,36 +376,55 @@ namespace HaverDevProject.Controllers
 
                     for (int row = 2; row <= rowCount; row++)
                     {
-                        var defectName = worksheet.Cells[row, 1].Value?.ToString().Trim();
-                        var defectDescription = worksheet.Cells[row, 2].Value?.ToString().Trim();
+                        var transaction = _context.Database.BeginTransaction();
 
-                        if (!string.IsNullOrWhiteSpace(defectName))
+                        try
                         {
-                            var existingDefectType = await _context.Defects
-                                                                    .FirstOrDefaultAsync(dt => dt.DefectName == defectName);
+                            var defectName = worksheet.Cells[row, 1].Value?.ToString().Trim();
+                            var defectDescription = worksheet.Cells[row, 2].Value?.ToString().Trim();
 
-                            if (existingDefectType == null)
+                            if (string.IsNullOrWhiteSpace(defectName))
                             {
-                                var newDefectType = new Defect
-                                {
-                                    DefectName = defectName,
-                                    DefectDesription = string.IsNullOrWhiteSpace(defectDescription) ? null : defectDescription
-                                };
-                                _context.Defects.Add(newDefectType);
+                                errorMessages.Add($"Row {row}: Defect Name is required.");
                             }
-                            else
+
+                            var existingDefectType = await _context.Defects
+                                                                    .AsNoTracking()
+                                                                    .FirstOrDefaultAsync(dt => dt.DefectName == defectName);
+                            if (existingDefectType != null)
                             {
-                                existingDefectType.DefectDesription = string.IsNullOrWhiteSpace(defectDescription) ? existingDefectType.DefectDesription : defectDescription;
+                                errorMessages.Add($"Row {row}: Defect with Defect Name {defectName} already exists.");
                             }
+
+                            var newDefect = new Defect
+                            {
+                                DefectName = defectName,
+                                DefectDesription = defectDescription,
+                            };
+
+                            _context.Defects.Add(newDefect);
+                            await _context.SaveChangesAsync();
+
+                            transaction.Commit();
+
+                        }
+                        catch (Exception)
+                        {
+                            transaction.Rollback(); // Rollback transaction on error
                         }
                     }
-
-                    await _context.SaveChangesAsync();
                 }
             }
 
-            TempData["SuccessMessage"] = "Defect types uploaded successfully!";
-            return RedirectToAction(nameof(Index)); 
+            if (errorMessages.Any())
+            {
+                TempData["ErrorMessage"] = $"Fix error(s) and try to upload again: {string.Join(" ", errorMessages)}";
+            }
+            else
+            {
+                TempData["SuccessMessage"] = "File uploaded successfully.";
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Upload()
