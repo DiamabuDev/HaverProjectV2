@@ -887,6 +887,10 @@ namespace HaverDevProject.Data
                     context.FollowUpTypes.AddRange(
                         new FollowUpType
                         {
+                            FollowUpTypeName = "N/A"
+                        },
+                        new FollowUpType
+                        {
                             FollowUpTypeName = "Resolution"
                         },
                         new FollowUpType

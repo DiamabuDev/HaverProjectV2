@@ -219,6 +219,14 @@ namespace HaverDevProject.Controllers
             var ncrOperation = await _context.NcrOperations
                 .Include(n => n.FollowUpType)
                 .Include(n => n.Ncr)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects).ThenInclude(n => n.Defect)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrEng)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrEng).ThenInclude(n => n.EngDispositionType)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrEng).ThenInclude(n => n.Drawing)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrEng).ThenInclude(n => n.EngDefectPhotos)
                 .Include(n => n.OpDispositionType)
                 .FirstOrDefaultAsync(m => m.NcrOpId == id);
             if (ncrOperation == null)
@@ -273,14 +281,24 @@ namespace HaverDevProject.Controllers
                         FollowUp = ncrOperationDTO.FollowUp,
                         ExpectedDate = ncrOperationDTO.ExpectedDate,
                         FollowUpTypeId = ncrOperationDTO.FollowUpTypeId,
-                        UpdateOp = DateTime.Now,
+                        UpdateOp = DateTime.Today,
                         NcrPurchasingUserId = 1,
                         ItemDefectPhotos = ncrOperationDTO.ItemDefectPhotos,
                     };
-
                     _context.NcrOperations.Add(ncrOperation);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+
+                    //update ncr 
+                    var ncr = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrIdObt);
+                    ncr.NcrPhase = NcrPhase.ReInspection;
+                    _context.Ncrs.Update(ncr);
+                    await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "NCR saved successfully!";
+                    int ncrOpId = ncrOperation.NcrOpId;
+                    return RedirectToAction("Details", new { id = ncrOpId });
+
+                    //return RedirectToAction(nameof(Index));
                 }
             }
             catch (RetryLimitExceededException /* dex */)
@@ -486,12 +504,6 @@ namespace HaverDevProject.Controllers
                 .OrderBy(s => s.FollowUpTypeName), "FollowUpTypeId", "FollowUpTypeName", selectedId);
         }
 
-        //public PartialViewResult All()
-        //{
-        //    List<NcrEng> model = _context.NcrEngs.ToList();
-        //    return PartialView("_NcrEng", model);
-        //}
-
         public JsonResult GetNcrs()
         {
             // Get the list of NcrIds that already exist in NcrOperation
@@ -564,7 +576,7 @@ namespace HaverDevProject.Controllers
             //List<int> existingNcrIds = _context.NcrOperations.Select(op => op.NcrId).ToList();
 
             //List<int> ncrOpPending = _context.Ncrs
-            //    .Where(n => n.NcrPhase == NcrPhase.Operations)
+            //    .Where(n => n.NcrPhase == NcrPhase.Engineer)
             //    .Select(n => n.NcrId)
             //    .ToList();
 

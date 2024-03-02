@@ -12,7 +12,6 @@ public partial class FollowUpType
     public int FollowUpTypeId { get; set; }
 
     [Display(Name = "Follow Up Type")]
-    [Required]
     [StringLength(45)]
     public string FollowUpTypeName { get; set; }
 
