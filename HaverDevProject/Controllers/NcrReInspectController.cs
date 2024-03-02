@@ -209,6 +209,7 @@ namespace HaverDevProject.Controllers
             ViewBag.IsNCRQaView = false;
             ViewBag.IsNCREngView = false;
             ViewBag.IsNCROpView = false;
+            ViewBag.IsNCRProcView = false;
             ViewBag.IsNCRReInspView = true;
             return View(ncrReInspect);
         }
