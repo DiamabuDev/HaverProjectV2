@@ -132,20 +132,20 @@
             </div>
             <div class="card-footer">
                 <div class="form-group d-flex justify-content-end mt-2">
-                    @*                     <div>
-                    <button type="button" onclick="location.href='@ViewData[" returnURL"]'"
-                    class="btn btn-primary ">
-                    <i class="bi bi-arrow-90deg-left"></i> Back to the @ViewData["ControllerName"] List
-                    </button>
-                    </div> *@
                     <div>
-                        <button type="submit" class="btn btn-primary ms-4">
-                            <i class='bi-plus-square-dotted'></i> Save
+                        <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn btn-primary ">
+                            <i class="bi bi-arrow-90deg-left"></i> Back to the @ViewData["ControllerName"] List
                         </button>
+                    </div>
+                    <div>
+                        <div>
+                            <button type="submit" class="btn btn-primary ms-4">
+                                <i class='bi-plus-square-dotted'></i> Save
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
     </form>
 </div>
