@@ -106,6 +106,12 @@
                         @Html.Raw(ViewData["filterApplied:Supplier"])
                     </button>
                 </th>
+                <th class="col-3">
+                    <button type="submit" name="actionButton" value="DispositionType" class="btn text-light custom-btn-text-start">
+                        Disposition
+                        @Html.Raw(ViewData["filterApplied:DispositionType"])
+                    </button>
+                </th>
                 <th class="d-none d-md-table-cell">
                     <button type="submit" name="actionButton" value="Phase" class="btn text-light custom-btn-text-start">
                         Phase
@@ -132,6 +138,9 @@
                     <td class="col-3">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrQa.Item.Supplier.SupplierName)
                     </td>
+                    <td class="col-3">
+                        @Html.DisplayFor(modelItem => item.OpDispositionType.OpDispositionTypeName)
+                    </td>
                     <td class="d-none d-md-table-cell">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrPhase)
                     </td>
@@ -149,7 +158,8 @@
 @section Scripts {
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-    <script src="~/js/ncrpending.js"></script>
+    <script src="~/js/NcrPending.js"></script>
+
     <script type="text/javascript">
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {

@@ -4,7 +4,8 @@
     ViewData["Title"] = "Index";
 }
 
-<h1><i class="bi bi-caret-right-fill"></i> Non-Conformance Reports For Re-Inspection</h1>
+<h1><i class="bi bi-caret-right-fill"></i> Non-Conformance Reports For Reinspection</h1>
+
 
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -36,6 +37,7 @@
     </div>
 </div>
 
+
 <form id="ncrForm" asp-action="Index" method="get">
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
     <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
@@ -43,10 +45,10 @@
     <div class="row mt-3 mb-2">
         <div class="col-8">
             <div class="d-flex justify-content-start">
-                <input type="radio" class="btn-check btn-filter" name="filter" id="Active" autocomplete="off" checked value="Active" data-filter="Active">
-                <label class="btn btn-success me-2" for="Active">Active NCRs</label>
+@*                 <input type="radio" class="btn-check btn-filter" name="filter" id="Active" autocomplete="off" checked value="Active" data-filter="Active">
+                <label class="btn btn-success me-2" for="Active">Active NCRs</label> *@
 
-                <input type="radio" class="btn-check btn-filter" name="filter" id="Closed" autocomplete="off" value="Closed" data-filter="Closed">
+                <input type="radio" class="btn-check btn-filter" name="filter" id="Closed" autocomplete="off" value="Closed" data-filter="Closed" disabled>
                 <label class="btn btn-danger me-2" for="Closed">Closed NCRs </label>
 
                 <button type="button" id="pendingCountIndicator" class="btn btn-warning btn-block" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></button>
@@ -89,22 +91,34 @@
                         @Html.Raw(ViewData["filterApplied:Created"])
                     </button>
                 </th>
-                <th class="d-none d-md-table-cell col-3">
+                <th>
                     <button type="submit" name="actionButton" value="NCR #" class="btn text-light custom-btn-text-start">
                         NCR #
                         @Html.Raw(ViewData["filterApplied:Ncr"])
                     </button>
                 </th>
-                <th>
+                <th class="col-3">
+                    <button type="submit" name="actionButton" value="Supplier" class="btn text-light custom-btn-text-start">
+                        Supplier
+                        @Html.Raw(ViewData["filterApplied:Supplier"])
+                    </button>
+                </th>
+                <th class="d-none d-md-table-cell">
                     <button type="submit" name="actionButton" value="Acceptable" class="btn text-light custom-btn-text-start">
                         Acceptable
                         @Html.Raw(ViewData["filterApplied:NcrReInspectAcceptable"])
                     </button>
                 </th>
-                <th class="col-3">
+@*                 <th class="d-none d-md-table-cell">
                     <button type="submit" name="actionButton" value="Inspected By" class="btn text-light custom-btn-text-start">
                         Inspected By
                         @Html.Raw(ViewData["filterApplied:NcrReInspectUserId"])
+                    </button>
+                </th> *@
+                <th class="d-none d-xxl-table-cell">
+                    <button type="submit" name="actionButton" value="Phase" class="btn text-light custom-btn-text-start">
+                        Phase
+                        @Html.Raw(ViewData["filterApplied:Phase"])
                     </button>
                 </th>
 @*                 <th>
@@ -132,13 +146,16 @@
                     <td class="d-none d-md-table-cell">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrQa.NcrQacreationDate)
                     </td>
-                    <td class="standout col-3">
+                    <td class="standout">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrNumber)
                     </td>
                     @* <td>
                         @Html.DisplayFor(modelItem => item.NcrReInspectAcceptable)
                     </td> *@
-                    <td>
+                    <td class="col-3">
+                        @Html.DisplayFor(modelItem => item.Ncr.NcrQa.Item.Supplier.SupplierName)
+                    </td>
+                    <td class="d-none d-md-table-cell col-3">
                         @if (item.NcrReInspectAcceptable)
                         {
                             <text>Yes</text>
@@ -151,7 +168,7 @@
                     @* <td class="col-1">
                         @Html.DisplayFor(modelItem => item.NcrReInspectUserId)
                     </td> *@
-                    <td>
+@*                     <td class="d-none d-md-table-cell col-3">
                         @if (item.NcrReInspectUserId == 1)
                         {
                             <text>Bob</text>
@@ -169,6 +186,9 @@
                             <text>Dave</text>
                         }
                     </td>
+ *@                    <td class="d-none d-xxl-table-cell">
+                        @Html.DisplayFor(modelItem => item.Ncr.NcrPhase)
+                    </td>
 @*                     <td>
                         @Html.DisplayFor(modelItem => item.NcrReInspectAcceptable)
                     </td>
@@ -181,7 +201,8 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Ncr.NcrNumber)
                     </td>
- *@                    <td>
+                *@
+                    <td>
                         <a asp-action="Edit" asp-route-id="@item.NcrReInspectId" class="btn text-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
                         <a asp-action="Details" asp-route-id="@item.NcrReInspectId" class="btn text-primary" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
                     </td>

@@ -1,0 +1,154 @@
+﻿@model HaverDevProject.Models.NcrProcurement
+
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-md-10 mx-auto">
+            <button class="btn custom-header-bg icon-drop text-start mb-0" type="button" data-bs-toggle="collapse" data-bs-target="#procurementSection" aria-expanded="@ViewBag.IsNCRProcView.ToString().ToLower()" aria-controls="procurementSection">
+                Procurement <i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="collapse @(ViewBag.IsNCRProcView? "show" : "")" id="procurementSection">
+                <div class="card">
+                    <div class="card-body pb-0 pt-0">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="four-cols">Supplier Return Request</th>
+                                    <th class="four-cols">Expected Date</th>
+                                    <th class="four-cols">Dispose on Site</th>
+                                    <th class="four-cols">Supplier Return Completed</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="card-body pb-0 pt-0">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td class="four-cols">
+                                        @if (Model.Ncr.NcrProcurement.NcrProcSupplierReturnReq == true)
+                                        {
+                                            <text>Yes</text>
+                                        }
+                                        else
+                                        {
+                                            <text>No</text>
+                                        }
+                                    </td>
+                                    <td class="four-cols">@Model.Ncr.NcrProcurement.NcrProcExpectedDate</td>
+                                    <td class="four-cols">
+                                        @if (Model.Ncr.NcrProcurement.NcrProcDisposedAllowed == true)
+                                        {
+                                            <text>Yes</text>
+                                        }
+                                        else
+                                        {
+                                            <text>No</text>
+                                        }
+                                    </td>
+                                    <td class="four-cols">
+                                        @if (Model.Ncr.NcrProcurement.NcrProcSAPReturnCompleted == true)
+                                        {
+                                            <text>Yes</text>
+                                        }
+                                        else
+                                        {
+                                            <text>No</text>
+                                        }
+                                    </td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+                    </div>
+                    <div class="card-body pb-0 pt-0">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="two-cols-2">Supplier Credit</th>
+                                    <th class="two-cols-2">Supplier Billed</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="four-cols">
+                                        @if (Model.Ncr.NcrProcurement.NcrProcCreditExpected == true)
+                                        {
+                                            <text>Yes</text>
+                                        }
+                                        else
+                                        {
+                                            <text>No</text>
+                                        }
+                                    </td>
+                                    <td class="two-cols">
+                                        @if (Model.Ncr.NcrProcurement.NcrProcSupplierBilled == true)
+                                        {
+                                            <text>Yes</text>
+                                        }
+                                        else
+                                        {
+                                            <text>No</text>
+                                        }
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                @{
+                    bool hasImages = Model.ProcDefectPhotos != null && Model.ProcDefectPhotos.Any(p => p.ProcDefectPhotoContent != null);
+                    bool hasVideos = Model.Ncr.NcrQa.NcrQaDefectVideo != null;
+                }
+                @if (hasImages || hasVideos)
+                {
+                    <button class="btn custom-secondary-bg icon-drop text-start" type="button" data-bs-toggle="collapse" data-bs-target="#additionalInfo" aria-expanded="false" aria-controls="additionalInfo">
+                        Additional Information <i class="bi bi-chevron-down"></i>
+                    </button>
+                    <div class="collapse" id="additionalInfo">
+                        @if (hasImages)
+                        {
+                            <div class="card-header">
+                                Images
+                            </div>
+                            <div class="card-body pb-0">
+                                <div class="row">
+                                    @{
+                                        if (Model.ProcDefectPhotos != null && Model.ProcDefectPhotos.Any())
+                                        {
+                                            foreach (var photo in Model.ProcDefectPhotos)
+                                            {
+                                                if (photo.ProcDefectPhotoContent != null)
+                                                {
+                                                    string imageBase64 = Convert.ToBase64String(photo.ProcDefectPhotoContent);
+                                                    string imageSrc = string.Format("data:" + photo.ProcDefectPhotoMimeType + ";base64,{0}", imageBase64);
+
+                                                    <div class="text-center pb-3 col-6">
+                                                        <img src="@imageSrc" alt="Photo of @Model.Ncr.NcrQa.NcrId" class="img-fluid rounded" />
+                                                    </div>
+                                                }
+                                            }
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        }
+                        @if (hasVideos)
+                        {
+                            <div class="card-header">
+                                Videos
+                            </div>
+                            @* <div class="card-body">
+
+                    @if (Model.video != null)
+                    {
+                    <a href="@Model.Ncr.NcrQa.NcrQaDefectVideo" target="_blank">Video Link</a>
+                    }
+                    </div> *@
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

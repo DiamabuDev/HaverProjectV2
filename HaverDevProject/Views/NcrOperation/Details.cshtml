@@ -1,78 +1,9 @@
 ﻿@model HaverDevProject.Models.NcrOperation
 
-@{
-    ViewData["Title"] = "Details";
-}
+@await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", Model.Ncr.NcrQa)
 
-<h1>Details</h1>
+@await Html.PartialAsync("~/Views/NCRDetailViews/_NCREngDetailsPartial.cshtml", Model.Ncr.NcrEng)
 
-<div>
-    <h4>NcrOperation</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Ncr)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Ncr.NcrNumber)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OpDispositionType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OpDispositionType.OpDispositionTypeName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NcrPurchasingDescription)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NcrPurchasingDescription)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Car)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Car)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CarNumber)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CarNumber)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FollowUp)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FollowUp)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ExpectedDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ExpectedDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FollowUpType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FollowUpType.FollowUpTypeName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UpdateOp)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UpdateOp)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NcrPurchasingUserId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NcrPurchasingUserId)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.NcrOpId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+@await Html.PartialAsync("~/Views/NCRDetailViews/_NCROpDetailsPartial.cshtml", Model)
+
+@await Html.PartialAsync("~/Views/NCRDetailViews/_ActionButtons.cshtml", Model)

@@ -28,7 +28,7 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: NcrOperation
-        public async Task<IActionResult> Index(string SearchCode, DateTime StartDate, DateTime EndDate,
+        public async Task<IActionResult> Index(string SearchCode, int? OpDispositionTypeId, DateTime StartDate, DateTime EndDate,
             int? page, int? pageSizeID, string actionButton, string sortDirection = "desc", string sortField = "Created", string filter = "Active")
         {
             
@@ -55,7 +55,7 @@ namespace HaverDevProject.Controllers
             }
 
             //List of sort options.
-            string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "Phase"};
+            string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "DispositionType", "Phase" };
 
             PopulateDropDownLists();
 
@@ -88,6 +88,10 @@ namespace HaverDevProject.Controllers
             if (!String.IsNullOrEmpty(SearchCode))
             {
                 ncrOperation = ncrOperation.Where(s => s.Ncr.NcrNumber.ToUpper().Contains(SearchCode.ToUpper()));
+            }
+            if (OpDispositionTypeId.HasValue)
+            {
+                ncrOperation = ncrOperation.Where(n => n.OpDispositionType.OpDispositionTypeId == OpDispositionTypeId);
             }
             if (StartDate == EndDate)
             {
@@ -176,6 +180,21 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:Status"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
+            else if (sortField == "DispositionType")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncrOperation = ncrOperation
+                        .OrderBy(p => p.OpDispositionType.OpDispositionTypeName);
+                    ViewData["filterApplied:DispositionType"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrOperation = ncrOperation
+                        .OrderByDescending(p => p.OpDispositionType.OpDispositionTypeName);
+                    ViewData["filterApplied:DispositionType"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
             else //(sortField == "Phase")
             {
                 if (sortDirection == "asc")
@@ -219,6 +238,14 @@ namespace HaverDevProject.Controllers
             var ncrOperation = await _context.NcrOperations
                 .Include(n => n.FollowUpType)
                 .Include(n => n.Ncr)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects).ThenInclude(n => n.Defect)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrEng)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrEng).ThenInclude(n => n.EngDispositionType)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrEng).ThenInclude(n => n.Drawing)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrEng).ThenInclude(n => n.EngDefectPhotos)
                 .Include(n => n.OpDispositionType)
                 .FirstOrDefaultAsync(m => m.NcrOpId == id);
             if (ncrOperation == null)
@@ -226,6 +253,9 @@ namespace HaverDevProject.Controllers
                 return NotFound();
             }
 
+            ViewBag.IsNCRQaView = false;
+            ViewBag.IsNCREngView = false;
+            ViewBag.IsNCROpView = true;
             return View(ncrOperation);
         }
 
@@ -247,7 +277,7 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(NcrOperationDTO ncrOperationDTO, int FollowUpTypeId, int OpDispositionTypeId, List<IFormFile> Photos)
+        public async Task<IActionResult> Create(NcrOperationDTO ncrOperationDTO, int OpDispositionTypeId, List<IFormFile> Photos)
         {
             try
             {
@@ -269,15 +299,28 @@ namespace HaverDevProject.Controllers
                         CarNumber = ncrOperationDTO.CarNumber,
                         FollowUp = ncrOperationDTO.FollowUp,
                         ExpectedDate = ncrOperationDTO.ExpectedDate,
-                        FollowUpTypeId = ncrOperationDTO.FollowUpTypeId,
-                        UpdateOp = DateTime.Now,
-                        NcrPurchasingUserId = 1,
-                        ItemDefectPhotos = ncrOperationDTO.ItemDefectPhotos,
-                    };
 
+                        FollowUpTypeId = ncrOperationDTO.FollowUpTypeId,
+                        UpdateOp = DateTime.Today,
+                        NcrPurchasingUserId = 1,
+                        OpDefectPhotos = ncrOperationDTO.OpDefectPhotos,
+                        NcrOperationVideo = ncrOperationDTO.NcrOperationVideo
+
+                    };
                     _context.NcrOperations.Add(ncrOperation);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+
+                    //update ncr 
+                    var ncr = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrIdObt);
+                    ncr.NcrPhase = NcrPhase.Procurement;
+                    _context.Ncrs.Update(ncr);
+                    await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "NCR saved successfully!";
+                    int ncrOpId = ncrOperation.NcrOpId;
+                    return RedirectToAction("Details", new { id = ncrOpId });
+
+                    //return RedirectToAction(nameof(Index));
                 }
             }
             catch (RetryLimitExceededException /* dex */)
@@ -320,6 +363,7 @@ namespace HaverDevProject.Controllers
             var ncrOperationDTO = new NcrOperationDTO
             {
                 NcrOpId = ncrOperation.NcrOpId,
+                NcrNumber = ncrOperation.Ncr.NcrNumber,
                 NcrId = ncrOperation.NcrId,
                 Ncr = ncrOperation.Ncr,
                 OpDispositionTypeId = ncrOperation.OpDispositionTypeId,
@@ -329,13 +373,13 @@ namespace HaverDevProject.Controllers
                 CarNumber = ncrOperation.CarNumber,
                 FollowUp = ncrOperation.FollowUp,
                 ExpectedDate = ncrOperation.ExpectedDate,
-                FollowUpTypeId = ncrOperation.FollowUpTypeId,
-                FollowUpType = ncrOperation.FollowUpType,
+                FollowUpTypeId = ncrOperation.FollowUpType.FollowUpTypeId,
+
                 UpdateOp = ncrOperation.UpdateOp,
                 NcrPurchasingUserId = ncrOperation.NcrPurchasingUserId,
                 NcrEng = ncrOperation.NcrEng,
                 NcrOperationVideo = ncrOperation.NcrOperationVideo,
-                ItemDefectPhotos = ncrOperation.ItemDefectPhotos
+                OpDefectPhotos = ncrOperation.OpDefectPhotos
             };
 
             ViewData["FollowUpTypeId"] = new SelectList(_context.FollowUpTypes, "FollowUpTypeId", "FollowUpTypeName", ncrOperation.FollowUpTypeId);
@@ -379,6 +423,7 @@ namespace HaverDevProject.Controllers
                                 .ThenInclude(n => n.Supplier)
                 .Include(n => n.OpDispositionType)
                 .Include(n => n.FollowUpType)
+                .Include(n => n.OpDefectPhotos)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(n => n.NcrOpId == NcrOpId);
 
@@ -402,7 +447,7 @@ namespace HaverDevProject.Controllers
                         ncrOperationToUpdate.UpdateOp = DateTime.Today;
                         ncrOperationToUpdate.NcrPurchasingUserId = ncrOperation.NcrPurchasingUserId;
                         ncrOperationToUpdate.NcrOperationVideo = ncrOperation.NcrOperationVideo;
-                        ncrOperationToUpdate.ItemDefectPhotos = ncrOperation.ItemDefectPhotos;
+                        ncrOperationToUpdate.OpDefectPhotos = ncrOperation.OpDefectPhotos;
 
                         _context.NcrOperations.Update(ncrOperationToUpdate);
                         await _context.SaveChangesAsync();
@@ -483,12 +528,6 @@ namespace HaverDevProject.Controllers
                 .OrderBy(s => s.FollowUpTypeName), "FollowUpTypeId", "FollowUpTypeName", selectedId);
         }
 
-        //public PartialViewResult All()
-        //{
-        //    List<NcrEng> model = _context.NcrEngs.ToList();
-        //    return PartialView("_NcrEng", model);
-        //}
-
         public JsonResult GetNcrs()
         {
             // Get the list of NcrIds that already exist in NcrOperation
@@ -528,7 +567,7 @@ namespace HaverDevProject.Controllers
         {
             if (pictures != null && pictures.Any())
             {
-                ncrOperationDTO.ItemDefectPhotos = new List<ItemDefectPhoto>();
+                ncrOperationDTO.OpDefectPhotos = new List<OpDefectPhoto>();
 
                 foreach (var picture in pictures)
                 {
@@ -543,10 +582,10 @@ namespace HaverDevProject.Controllers
                             await picture.CopyToAsync(memoryStream);
                             var pictureArray = memoryStream.ToArray();
 
-                            ncrOperationDTO.ItemDefectPhotos.Add(new ItemDefectPhoto
+                            ncrOperationDTO.OpDefectPhotos.Add(new OpDefectPhoto
                             {
-                                ItemDefectPhotoContent = ResizeImage.shrinkImageWebp(pictureArray, 500, 600),
-                                ItemDefectPhotoMimeType = "image/webp",
+                                OpDefectPhotoContent = ResizeImage.shrinkImageWebp(pictureArray, 500, 600),
+                                OpDefectPhotoMimeType = "image/webp",
                                 FileName = picture.FileName
                             });
                         }
@@ -561,7 +600,7 @@ namespace HaverDevProject.Controllers
             //List<int> existingNcrIds = _context.NcrOperations.Select(op => op.NcrId).ToList();
 
             //List<int> ncrOpPending = _context.Ncrs
-            //    .Where(n => n.NcrPhase == NcrPhase.Operations)
+            //    .Where(n => n.NcrPhase == NcrPhase.Engineer)
             //    .Select(n => n.NcrId)
             //    .ToList();
 

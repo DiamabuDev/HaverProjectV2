@@ -40,7 +40,6 @@ namespace HaverDevProject.ViewModels
         public string CarNumber { get; set; }
 
         [Display(Name = "Follow-up Required?")]
-        [Required(ErrorMessage = "You select an option if a Follow-Up is Required.")]
         public bool FollowUp { get; set; }
 
         [Column("ncrExpectedDate")]
@@ -65,7 +64,9 @@ namespace HaverDevProject.ViewModels
         [Display(Name = "Operation Manager")]
         public int NcrPurchasingUserId { get; set; }
 
-        [Display(Name = " Link video ")]
+        [Display(Name = "Video Link")]
         public string NcrOperationVideo { get; set; }
+        [Display(Name = "Operations Photos")]
+        public ICollection<OpDefectPhoto> OpDefectPhotos { get; set; } = new HashSet<OpDefectPhoto>();
     }
 }

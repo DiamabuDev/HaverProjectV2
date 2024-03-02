@@ -415,17 +415,13 @@ namespace HaverDevProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Upload(IFormFile file)
         {
-            if (file == null || file.Length == 0)
-            {
-                TempData["ErrorMessage"] = "No file selected.";
-                return RedirectToAction(nameof(Index)); 
-            }
-
             if (file.ContentType != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             {
                 TempData["ErrorMessage"] = "Invalid file type. Please upload an Excel file (.xlsx).";
-                return RedirectToAction(nameof(Index)); 
+                return RedirectToAction(nameof(Index));
             }
+
+            var errorMessages = new List<string>(); // Initialize a list to store error messages
 
             using (var stream = new MemoryStream())
             {
@@ -437,42 +433,68 @@ namespace HaverDevProject.Controllers
 
                     for (int row = 2; row <= rowCount; row++)
                     {
-                        var supplierInfo = worksheet.Cells[row, 1].Value?.ToString().Trim();
-                        var contactName = worksheet.Cells[row, 2].Value?.ToString().Trim();
-                        var email = worksheet.Cells[row, 3].Value?.ToString().Trim();
-                                                
-                        var parts = supplierInfo.Split(new[] { ' ' }, 2);
-                        var supplierCode = parts[0].Trim();
-                        var supplierName = parts.Length > 1 ? parts[1].Trim() : "";
+                        var transaction = _context.Database.BeginTransaction(); // Start transaction for each row
 
-                        var existingSupplier = await _context.Suppliers
-                                                             .FirstOrDefaultAsync(s => s.SupplierCode == supplierCode);
-
-                        if (existingSupplier == null)
+                        try
                         {
-                            // Create new Supplier if it does not exist
+                            var supplierCodeStr = worksheet.Cells[row, 1].Value?.ToString().Trim();
+                            var supplierName = worksheet.Cells[row, 2].Value?.ToString().Trim();
+                            var contactName = worksheet.Cells[row, 3].Value?.ToString().Trim();
+                            var email = worksheet.Cells[row, 4].Value?.ToString().Trim();
+
+                            // Supplier Code and Supplier Name are required
+                            if (string.IsNullOrWhiteSpace(supplierCodeStr) || string.IsNullOrWhiteSpace(supplierName))
+                            {
+                                errorMessages.Add($"Row {row}: Supplier Code and Supplier Name are required.");
+                            }
+
+                            // Check if Supplier Code is a number
+                            if (!int.TryParse(supplierCodeStr, out int supplierCode))
+                            {
+                                errorMessages.Add($"Row {row}: Supplier Code must be a number.");
+                            }
+
+                            var existingSupplier = await _context.Suppliers
+                                                                 .AsNoTracking() // Use AsNoTracking for read-only query
+                                                                 .FirstOrDefaultAsync(s => s.SupplierCode == supplierCodeStr && s.SupplierName == supplierName);
+
+                            if (existingSupplier != null)
+                            {
+                                errorMessages.Add($"Row {row}: Supplier with Supplier Code {supplierCodeStr} and Supplier Name {supplierName} already exists.");
+                            }
+
+                            // Create new Supplier
                             var newSupplier = new Supplier
                             {
-                                SupplierCode = supplierCode,
+                                SupplierCode = supplierCodeStr,
                                 SupplierName = supplierName,
                                 SupplierContactName = string.IsNullOrWhiteSpace(contactName) ? null : contactName,
                                 SupplierEmail = string.IsNullOrWhiteSpace(email) ? null : email
                             };
+
                             _context.Suppliers.Add(newSupplier);
+                            await _context.SaveChangesAsync();
+
+                            transaction.Commit(); // Commit transaction if all operations succeed
                         }
-                        else
+                        catch (Exception)
                         {
-                            existingSupplier.SupplierContactName = string.IsNullOrWhiteSpace(contactName) ? existingSupplier.SupplierContactName : contactName;
-                            existingSupplier.SupplierEmail = string.IsNullOrWhiteSpace(email) ? existingSupplier.SupplierEmail : email;
+                            transaction.Rollback(); // Rollback transaction on error
                         }
                     }
-
-                    await _context.SaveChangesAsync();
                 }
             }
 
-            TempData["SuccessMessage"] = "Suppliers uploaded successfully!";
-            return RedirectToAction(nameof(Index)); 
+            if (errorMessages.Any())
+            {
+                TempData["ErrorMessage"] = $"Fix error(s) and try to upload again: {string.Join(" ", errorMessages)}";
+            }
+            else
+            {
+                TempData["SuccessMessage"] = "File uploaded successfully.";
+
+            }
+            return RedirectToAction(nameof(Index));
         }
         public IActionResult Upload()
         {

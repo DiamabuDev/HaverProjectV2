@@ -28,20 +28,23 @@
                         <li class="nav-item">
                             <a class="nav-link text-light" asp-area="" asp-controller="NcrQa" asp-action="Create">New NCR</a>
                         </li>
-                        <li class="nav-item">
+ @*                        <li class="nav-item">
                             <a class="nav-link text-light" asp-area="" asp-controller="Ncr" asp-action="Index">NCR List</a>
+                        </li> *@
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-controller="NcrQa" asp-action="Index">QA</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="NcrQa" asp-action="Index">NCR QA List</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="NcrEng" asp-action="Index">Engineer</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="NcrEng" asp-action="Index">NCR Eng List</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="NcrOperation" asp-action="Index">Operations</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="NcrOperation" asp-action="Index">NCR Op List</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="NcrProcurement" asp-action="Index">Procurement</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="NcrReInspect" asp-action="Index">NCR ReInspect List</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="NcrReInspect" asp-action="Index">ReInspect</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-light" asp-area="" asp-controller="Supplier" asp-action="Index">Suppliers</a>
@@ -78,6 +81,13 @@
         </div>
     }
 
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -100,6 +110,11 @@
     $(document).ready(function () {
         setTimeout(function () {
             $(".alert-success").fadeOut('slow');
-        }, 3000); // Adjust the time according to your needs
+        }, 3000);
+    });
+    $(document).ready(function () {
+        setTimeout(function () {
+            $(".alert-danger").fadeOut('slow');
+        }, 12000);
     });
 </script>

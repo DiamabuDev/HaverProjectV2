@@ -27,5 +27,5 @@ public class NcrOperation : Auditable
     public int NcrPurchasingUserId { get; set; }
     public NcrEng NcrEng { get; set; }
     public string NcrOperationVideo { get; set; }
-    public ICollection<ItemDefectPhoto> ItemDefectPhotos { get; set; } = new HashSet<ItemDefectPhoto>();
+    public ICollection<OpDefectPhoto> OpDefectPhotos { get; set; } = new HashSet<OpDefectPhoto>();
 }

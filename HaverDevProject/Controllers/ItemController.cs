@@ -407,17 +407,12 @@ namespace HaverDevProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Upload(IFormFile file)
         {
-            if (file == null || file.Length == 0)
-            {
-                TempData["ErrorMessage"] = "No file selected.";
-                return RedirectToAction(nameof(Index));
-            }
-
             if (file.ContentType != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             {
-                TempData["ErrorMessage"] = "Invalid file type. Please upload an Excel file (.xlsx).";
+                TempData["ErrorMessage"] = "Invalid file type. Please upload an Excel file (.xlsx). \n";
                 return RedirectToAction(nameof(Index));
             }
+            var errorMessages = new List<string>();
 
             using (var stream = new MemoryStream())
             {
@@ -429,92 +424,107 @@ namespace HaverDevProject.Controllers
 
                     for (int row = 2; row <= rowCount; row++)
                     {
-                        var itemNumber = int.Parse(worksheet.Cells[row, 1].Value?.ToString().Trim());
-                        var itemName = worksheet.Cells[row, 2].Value?.ToString().Trim();
-                        var supplierInfo = worksheet.Cells[row, 3].Value?.ToString().Trim();
-                        var defectTypeName = worksheet.Cells[row, 4].Value?.ToString().Trim();
-
-                        string supplierCode = null;
-                        string supplierName = null;
-                        if (!string.IsNullOrWhiteSpace(supplierInfo))
+                        var transaction = _context.Database.BeginTransaction(); // Start transaction for each row
+                        try
                         {
-                            var parts = supplierInfo.Split(new[] { ' ' }, 2);
-                            if (parts.Length == 2)
+                            var itemNumber = worksheet.Cells[row, 1].Value?.ToString().Trim();
+                            var itemName = worksheet.Cells[row, 2].Value?.ToString().Trim();
+                            var supplierCode = worksheet.Cells[row, 3].Value?.ToString().Trim();
+                            var supplierName = worksheet.Cells[row, 4].Value?.ToString().Trim();
+                            var defectTypeName = worksheet.Cells[row, 5].Value?.ToString().Trim();
+
+                            if (string.IsNullOrEmpty(itemNumber) || string.IsNullOrEmpty(itemName))
                             {
-                                supplierCode = parts[0].Trim();
-                                supplierName = parts[1].Trim();
+                                errorMessages.Add($"Item Number and Item Name are required. \n");
+                            }
+
+                            var existingItem = await _context.Items.FirstOrDefaultAsync(i => i.ItemNumber.ToString() == itemNumber);
+                            if (existingItem != null)
+                            {
+                                errorMessages.Add($"Item with Item Number {itemNumber} already exists. \n");
+                            }
+
+                            int supplierId = 0;
+                            if (!string.IsNullOrEmpty(supplierCode) && !string.IsNullOrEmpty(supplierName))
+                            {
+                                var supplier = await _context.Suppliers
+                                                              .FirstOrDefaultAsync(s => s.SupplierCode == supplierCode && s.SupplierName == supplierName);
+                                if (supplier == null)
+                                {
+                                    supplier = new Supplier { SupplierCode = supplierCode, SupplierName = supplierName };
+                                    _context.Suppliers.Add(supplier);
+                                    await _context.SaveChangesAsync(); // Ensure SupplierId is generated
+                                }
+                                supplierId = supplier.SupplierId;
+                            }
+                            else if (!string.IsNullOrEmpty(supplierCode) || !string.IsNullOrEmpty(supplierName))
+                            {
+                                errorMessages.Add($"Both Supplier Code and Supplier Name are required. \n");
                             }
                             else
                             {
-                                supplierName = parts[0].Trim(); 
+                                // Handle "NO SUPPLIER PROVIDED" case
+                                var defaultSupplier = await _context.Suppliers
+                                                                     .FirstOrDefaultAsync(s => s.SupplierName == "NO SUPPLIER PROVIDED");
+                                if (defaultSupplier == null)
+                                {
+                                    defaultSupplier = new Supplier { SupplierName = "NO SUPPLIER PROVIDED" };
+                                    _context.Suppliers.Add(defaultSupplier);
+                                    await _context.SaveChangesAsync();
+                                }
+                                supplierId = defaultSupplier.SupplierId;
                             }
-                        }
-                        else
-                        {
-                            supplierName = "NO SUPPLIER PROVIDED";
-                        }
 
-                        Supplier supplier = null;
-                        if (supplierName == "NO SUPPLIER PROVIDED")
-                        {
-                            supplier = await _context.Suppliers
-                                                     .FirstOrDefaultAsync(s => s.SupplierName == supplierName)
-                                      ?? new Supplier { SupplierCode = "", SupplierName = supplierName };
-                        }
-                        else
-                        {
-                            supplier = await _context.Suppliers
-                                                     .FirstOrDefaultAsync(s => s.SupplierCode == supplierCode && s.SupplierName == supplierName)
-                                      ?? new Supplier { SupplierCode = supplierCode, SupplierName = supplierName };
-                        }
-
-                        if (supplier.SupplierId == 0) _context.Suppliers.Add(supplier);
-
-                        var existingItem = await _context.Items.FirstOrDefaultAsync(i => i.ItemNumber == itemNumber);
-                        if (existingItem != null)
-                        {
-                            continue;
-                        }                     
-
-                        Defect defect = null;
-                        if (!string.IsNullOrWhiteSpace(defectTypeName))
-                        {
-                            defect = await _context.Defects
-                                                   .FirstOrDefaultAsync(d => d.DefectName.ToLower() == defectTypeName.ToLower())
-                                    ?? new Defect { DefectName = defectTypeName };
-
-                            if (defect.DefectId == 0) _context.Defects.Add(defect);
-                        }
-
-                        await _context.SaveChangesAsync();
-
-                        var item = new Item
-                        {
-                            SupplierId = supplier.SupplierId,
-                            ItemNumber = itemNumber,
-                            ItemName = itemName,
-                        };
-
-                        _context.Items.Add(item);
-                        await _context.SaveChangesAsync();
-
-                        if (defect != null)
-                        {
-                            var itemDefect = new ItemDefect
+                            var item = new Item
                             {
-                                ItemId = item.ItemId,
-                                DefectId = defect.DefectId
+                                ItemNumber = Int32.Parse(itemNumber),
+                                ItemName = itemName,
+                                SupplierId = supplierId
                             };
 
-                            _context.ItemDefects.Add(itemDefect);
-                        }
+                            _context.Items.Add(item);
+                            await _context.SaveChangesAsync();
 
-                        await _context.SaveChangesAsync();
+                            if (!string.IsNullOrEmpty(defectTypeName))
+                            {
+                                var defect = await _context.Defects.FirstOrDefaultAsync(d => d.DefectName == defectTypeName);
+                                if (defect == null)
+                                {
+                                    defect = new Defect { DefectName = defectTypeName };
+                                    _context.Defects.Add(defect);
+                                    await _context.SaveChangesAsync();
+                                }
+
+                                var itemDefect = new ItemDefect
+                                {
+                                    ItemId = item.ItemId,
+                                    DefectId = defect.DefectId
+                                };
+
+                                _context.ItemDefects.Add(itemDefect);
+                                await _context.SaveChangesAsync();
+                            }
+
+                            transaction.Commit(); // Commit transaction if all operations succeed
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback(); // Rollback transaction on error
+                            errorMessages.Add($"Row {row}: {ex.Message}");
+                        }
                     }
                 }
             }
 
-            TempData["SuccessMessage"] = "Items uploaded successfully!";
+            if (errorMessages.Any())
+            {
+                TempData["ErrorMessage"] = $"Fix error(s) and try to upload again: {string.Join(" ", errorMessages)}";
+            }
+            else
+            {
+                TempData["SuccessMessage"] = "File uploaded successfully.";
+
+            }
             return RedirectToAction(nameof(Index));
         }
 

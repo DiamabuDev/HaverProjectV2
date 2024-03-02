@@ -1,0 +1,139 @@
+﻿@model HaverDevProject.Models.NcrOperation
+
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-md-10 mx-auto">
+            <button class="btn custom-header-bg icon-drop text-start mb-0" type="button" data-bs-toggle="collapse" data-bs-target="#purchSection" aria-expanded="@ViewBag.IsNCROpView.ToString().ToLower()" aria-controls="purchSection">
+                Operations <i class="bi bi-chevron-down"></i>
+            </button>
+
+            <div class="collapse @(ViewBag.IsNCROpView? "show" : "")" id="purchSection">
+                <div class="card">
+                    <div class="card-body pb-0 pt-0">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="two-cols-1">Diposition</th>
+                                    <th class="two-cols">Disposition Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr>
+                                    <td class="two-cols-1">@Model.Ncr.NcrOperation.OpDispositionType.OpDispositionTypeName</td>
+                                    <td class="two-cols">@Model.Ncr.NcrOperation.NcrPurchasingDescription</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-body pb-0 pt-0">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Was CAR raised?</th>
+                                    <th>@(Model.Ncr.NcrOperation.Car ? "Car Number" : "")</th>
+                                    <th>Follow Up Required?</th>
+                                    <th>@(Model.Ncr.NcrOperation.FollowUp ? "Follow Up Type" : "")</th>
+                                    <th>@(Model.Ncr.NcrOperation.FollowUp ? "Follow Up Expected Date" : "")</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>@(Model.Ncr.NcrOperation.Car ? "Yes" : "No")</td>
+                                    <td>@Model.Ncr.NcrOperation.CarNumber</td>
+                                    <td>@(Model.Ncr.NcrOperation.FollowUp ? "Yes" : "No")</td>
+                                    <td>@Model.Ncr.NcrOperation.FollowUpType.FollowUpTypeName</td>
+                                    <td>@(Model.Ncr.NcrOperation.ExpectedDate?.ToString("yyyy-MM-dd") ?? "")</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-body pb-0 pt-0">
+                        <table class="table">
+                            <thead class="custom-light-bg">
+                                <tr>
+                                    <th class="three-cols">Operations Manager</th>
+                                    <th class="three-cols">Creation Date</th>
+                                    <th class="three-cols">Last Updated</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr>
+                                    <td class="three-cols">L. Pentland</td>
+                                    <td class="three-cols">@Model.Ncr.NcrLastUpdated.ToString("yyyy-MM-dd")</td>
+                                    <td class="three-cols">
+                                        @{
+                                            if (Model.UpdatedOn.HasValue)
+                                            {
+                                                DateTime localUpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(Model.UpdatedOn.Value, TimeZoneInfo.Local);
+                                                @localUpdatedOn.ToString("yyyy-MM-dd HH:mm:ss")
+                                            }
+                                            else
+                                            {
+                                                @("Not available")
+                                            }
+                                        }
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    @{
+                        bool hasImages = Model.OpDefectPhotos != null && Model.OpDefectPhotos.Any(p => p.OpDefectPhotoContent != null);
+                        bool hasVideos = Model.NcrOperationVideo != null;
+                    }
+                    @if (hasImages || hasVideos)
+                    {
+                        <button class="btn custom-secondary-bg icon-drop text-start" type="button" data-bs-toggle="collapse" data-bs-target="#additionalInfo" aria-expanded="false" aria-controls="additionalInfo">
+                            Additional Information <i class="bi bi-chevron-down"></i>
+                        </button>
+
+                        <div class="collapse" id="additionalInfo">
+                            @if (hasImages)
+                            {
+                                <div class="card-header">
+                                    Images
+                                </div>
+
+                                <div class="card-body pb-0">
+                                    <div class="row">
+                                        @{
+                                            if (Model.OpDefectPhotos != null && Model.OpDefectPhotos.Any())
+                                            {
+                                                foreach (var photo in Model.OpDefectPhotos)
+                                                {
+                                                    if (photo.OpDefectPhotoContent != null)
+                                                    {
+                                                        string imageBase64 = Convert.ToBase64String(photo.OpDefectPhotoContent);
+                                                        string imageSrc = string.Format("data:" + photo.OpDefectPhotoContent + ";base64,{0}", imageBase64);
+
+                                                        <div class="text-center pb-3 col-6">
+                                                            <img src="@imageSrc" alt="Photo of @Model.Ncr.NcrQa.NcrId" class="img-fluid rounded" />
+                                                        </div>
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            @if (hasVideos)
+                            {
+                                <div class="card-header">
+                                    Videos
+                                </div>
+                                <div class="card-body">
+
+                                    @if (Model.NcrOperationVideo != null)
+                                    {
+                                        <a href="@Model.NcrOperationVideo" target="_blank">Video Link</a>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

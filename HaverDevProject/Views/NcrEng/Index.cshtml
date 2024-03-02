@@ -50,17 +50,17 @@
 
                 <input type="radio" class="btn-check btn-filter" name="filter" id="Closed" autocomplete="off" value="Closed" data-filter="Closed">
                 <label class="btn btn-danger me-2" for="Closed">Closed NCRs </label>
-                 <button type="button" id="pendingCountIndicator" class="btn btn-warning btn-block" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></button> 
+                <button type="button" id="pendingCountIndicator" class="btn btn-warning btn-block" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></button>
             </div>
         </div>
     </div>
     <div class="form-horizontal">
         <div class="card card-body bg-custom-color mb-2">
             <div class="row d-flex justify-content-center align-items-center">
-                @*                 <div class="form-group col-lg-3 col-md-5 col-sm-10 col-10">
+                <div class="form-group col-lg-3 col-md-5 col-sm-10 col-10">
                 <label class="control-label">Filter by Disposition Type:</label>
-                @Html.DropDownList("EngDispositionType", null, "Disposition Type", htmlAttributes: new { @class = "form-control" })
-                </div> *@
+                    @Html.DropDownList("EngDispositionTypeId", null, "All Disposition Types", htmlAttributes: new { @class = "form-control" })
+                </div>
                 <div class="form-group col-lg-2">
                     <label class="control-label">Start Date:</label>
                     @Html.TextBox("StartDate", @ViewData["StartDate"], new { @class = "form-control", type = "date" })
@@ -71,7 +71,7 @@
                     @Html.TextBox("EndDate", @ViewData["EndDate"], new { @class = "form-control", type = "date" })
                 </div>
                 <div class="form-group col-lg-3 col-md-5 col-sm-10 col-10">
-                    <label class="control-label mb-1">Find by NCR :</label>
+                    <label class="control-label mb-1">Find by NCR #:</label>
                     @Html.TextBox("SearchCode", null, new { @class = "form-control" })
                 </div>
                 <div class="form-group col-lg-2 col-md-7 col-sm-10 col-10 align-self-end">
@@ -87,46 +87,35 @@
                 <th></th>
                 <th class="d-none d-md-table-cell">
                     <button type="submit" name="actionButton" value="Created" class="btn text-light custom-btn-text-start">
-                        Created
+                        Last Updated
                         @Html.Raw(ViewData["filterApplied:Created"])
                     </button>
                 </th>
                 <th>
+               @*  <th> *@
                     <button type="submit" name="actionButton" value="NCR #" class="btn text-light custom-btn-text-start">
                         NCR #
                         @Html.Raw(ViewData["filterApplied:NcrNumber"])
                     </button>
                 </th>
-                @*                 <th class="col-3">
-                <button type="submit" name="actionButton" value="Supplier" class="btn text-light custom-btn-text-start">
-                Supplier
-                @Html.Raw(ViewData["filterApplied:Supplier"])
-                </button>
-                </th> *@
-                <th class="d-none d-md-table-cell col-3">
+                <th>
+                    <button type="submit" name="actionButton" value="Supplier" class="btn text-light custom-btn-text-start">
+                        Supplier
+                        @Html.Raw(ViewData["filterApplied:Supplier"])
+                    </button>
+                </th>
+                <th>
                     <button type="submit" name="actionButton" value="Disposition" class="btn text-light custom-btn-text-start">
                         Disposition
                         @Html.Raw(ViewData["filterApplied:Disposition"])
                     </button>
                 </th>
-                <th class="d-none d-md-table-cell col-3">
-                    <button type="submit" name="actionButton" value="Disposition" class="btn text-light custom-btn-text-start">
-                        Description
-                        @Html.Raw(ViewData["filterApplied:Description"])
+                <th>
+                    <button type="submit" name="actionButton" value="Phase" class="btn text-light custom-btn-text-start">
+                        Phase
+                        @Html.Raw(ViewData["filterApplied:Phase"])
                     </button>
                 </th>
-                @*                 <th class="d-none d-md-table-cell">
-                <button type="submit" name="actionButton" value="PO Number" class="btn text-light custom-btn-text-start">
-                PO Number
-                @Html.Raw(ViewData["filterApplied:PONumber"])
-                </button>
-                </th> *@
-                @* <th>
-                <button type="submit" name="actionButton" value="Status" class="btn text-light custom-btn-text-start">
-                Status
-                @Html.Raw(ViewData["filterApplied:Status"])
-                </button>
-                </th> *@
                 <th></th>
             </tr>
         </thead>
@@ -137,17 +126,20 @@
                     <td class="ps-1 @((item.Ncr.NcrStatus == true) ? "stillactive" : "closed" )">
                         <i class="bi bi-circle-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="@((item.Ncr.NcrStatus == true) ? "Active" : "Closed")"></i>
                     </td>
-                    <td class="d-none d-md-table-cell">
-                        @Html.DisplayFor(modelItem => item.Ncr.NcrQa.NcrQacreationDate)
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Ncr.NcrLastUpdated)
                     </td>
                     <td class="standout">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrNumber)
                     </td>
-                    <td class="col-3">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Ncr.NcrQa.Item.Supplier.SupplierName)
+                    </td>
+                    <td class="d-none d-md-table-cell">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrEng.EngDispositionType.EngDispositionTypeName)
                     </td>
-                    <td class="d-none d-md-table-cell col-3">
-                        @Html.DisplayFor(modelItem => item.Ncr.NcrEng.NcrEngDispositionDescription)
+                    <td class="d-none d-md-table-cell">
+                        @Html.DisplayFor(modelItem => item.Ncr.NcrPhase)
                     </td>
                     @*                     <td class="d-none d-md-table-cell">
                 @Html.DisplayFor(modelItem => item.Ncr.NcrEng.UpdatedOn)
