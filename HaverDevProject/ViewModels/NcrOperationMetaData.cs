@@ -65,7 +65,7 @@ namespace HaverDevProject.ViewModels
         [Display(Name = "Operation Manager")]
         public int NcrPurchasingUserId { get; set; }
 
-        [Display(Name = " Link video ")]
+        [Display(Name = "Video Link")]
         public string NcrOperationVideo { get; set; }
     }
 }
