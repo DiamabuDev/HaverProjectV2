@@ -48,11 +48,13 @@ namespace HaverDevProject.Controllers
                 StartDate = temp;
             }
 
-            string[] sortOptions = new[] { "Updated", "Acceptable", "Inspected By", "NCR #" };
+            string[] sortOptions = new[] { "Created", "Acceptable", "Supplier", "NCR #" };
 
             var ncrReInspect = _context.NcrReInspects
                 .Include(n => n.Ncr)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
                 //.Where(n => n.Ncr.NcrPhase == NcrPhase.ReInspection)
                 .Where(n => n.Ncr.NcrPhase == NcrPhase.Closed)
                 .AsNoTracking();
@@ -102,21 +104,21 @@ namespace HaverDevProject.Controllers
                 }
             }
 
-            if (sortField == "Updated")
+            if (sortField == "Created")
             {
                 if (sortDirection == "desc") //desc by default
                 {
                     ncrReInspect = ncrReInspect
                         .OrderBy(p => p.Ncr.NcrQa.NcrQacreationDate);
 
-                    ViewData["filterApplied:NcrLastUpdated"] = "<i class='bi bi-sort-up'></i>";
+                    ViewData["filterApplied:Created"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncrReInspect = ncrReInspect
                         .OrderByDescending(p => p.Ncr.NcrQa.NcrQacreationDate);
 
-                    ViewData["filterApplied:NcrLastUpdated"] = "<i class='bi bi-sort-down'></i>";
+                    ViewData["filterApplied:Created"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
             else if (sortField == "Acceptable")
@@ -134,19 +136,19 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:NcrReInspectAcceptable"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
-            else if (sortField == "Inspected By")
+            else if (sortField == "Supplier")
             {
                 if (sortDirection == "asc")
                 {
                     ncrReInspect = ncrReInspect
-                        .OrderBy(p => p.NcrReInspectUserId);
-                    ViewData["filterApplied:NcrReInspectUserId"] = "<i class='bi bi-sort-up'></i>";
+                        .OrderBy(p => p.Ncr.NcrQa.Item.Supplier.SupplierName);
+                    ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncrReInspect = ncrReInspect
-                        .OrderByDescending(p => p.NcrReInspectUserId);
-                    ViewData["filterApplied:NcrReInspectUserId"] = "<i class='bi bi-sort-down'></i>";
+                        .OrderByDescending(p => p.Ncr.NcrQa.Item.Supplier.SupplierName);
+                    ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
             else
