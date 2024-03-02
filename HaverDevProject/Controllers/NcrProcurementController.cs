@@ -219,6 +219,10 @@ namespace HaverDevProject.Controllers
                 return NotFound();
             }
 
+            ViewBag.IsNCRQaView = false;
+            ViewBag.IsNCREngView = false;
+            ViewBag.IsNCROpView = false;
+            ViewBag.IsNCRProcView = true;
             return View(ncrProcurement);
         }
 
