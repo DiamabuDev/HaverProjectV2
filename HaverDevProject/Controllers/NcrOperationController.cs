@@ -341,6 +341,7 @@ namespace HaverDevProject.Controllers
             var ncrOperationDTO = new NcrOperationDTO
             {
                 NcrOpId = ncrOperation.NcrOpId,
+                NcrNumber = ncrOperation.Ncr.NcrNumber,
                 NcrId = ncrOperation.NcrId,
                 Ncr = ncrOperation.Ncr,
                 OpDispositionTypeId = ncrOperation.OpDispositionTypeId,
