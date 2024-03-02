@@ -90,22 +90,28 @@
                         @Html.Raw(ViewData["filterApplied:Created"])
                     </button>
                 </th>
-                <th>
+                <th style="padding-right: 50px;">
                     <button type="submit" name="actionButton" value="NCR #" class="btn text-light custom-btn-text-start">
                         NCR #
                         @Html.Raw(ViewData["filterApplied:NcrNumber"])
                     </button>
                 </th>
-                <th class="col-3">
+                <th style="padding-right: 50px;">
+                    <button type="submit" name="actionButton" value="Supplier" class="btn text-light custom-btn-text-start">
+                        Supplier
+                        @Html.Raw(ViewData["filterApplied:Supplier"])
+                    </button>
+                </th>
+                <th>
                     <button type="submit" name="actionButton" value="Supplier Return" class="btn text-light custom-btn-text-start">
                         Supplier Return
                         @Html.Raw(ViewData["filterApplied:SupplierReturn"])
                     </button>
                 </th>
-                <th class="d-none d-md-table-cell col-3">
-                    <button type="submit" name="actionButton" value="ExpectedDate" class="btn text-light custom-btn-text-start">
-                        Expected Date
-                        @Html.Raw(ViewData["filterApplied:ExpectedDate"])
+                <th>
+                    <button type="submit" name="actionButton" value="Phase" class="btn text-light custom-btn-text-start">
+                        Phase
+                        @Html.Raw(ViewData["filterApplied:Phase"])
                     </button>
                 </th>
                 @* <th>
@@ -125,17 +131,21 @@
                         <i class="bi bi-circle-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="@((item.Ncr.NcrStatus == true) ? "Active" : "Closed")"></i>
                     </td>
                     <td class="d-none d-md-table-cell">
-                        @Html.DisplayFor(modelItem => item.NcrProcUpdate)
+                        @Html.DisplayFor(modelItem => item.Ncr.NcrLastUpdated)
                     </td>
-                    <td class="standout">
+                    <td class="standout" style="padding-right: 50px;">
 
                         @Html.DisplayFor(modelItem => item.Ncr.NcrNumber)
+                    </td>
+                    <td class="standout" style="padding-right: 50px;">
+
+                        @Html.DisplayFor(modelItem => item.Ncr.NcrQa.Item.Supplier.SupplierName)
                     </td>
                     <td class="col-3" style="padding-left: 50px;">
                         @Html.Raw(item.NcrProcSupplierReturnReq ? "Yes" : "No")
                     </td>
                     <td class="d-none d-md-table-cell col-3">
-                        @Html.DisplayFor(modelItem => item.NcrProcExpectedDate)
+                        @Html.DisplayFor(modelItem => item.Ncr.NcrPhase)
                     </td>
                     @* <td class="@((item.Ncr.NcrStatus == true) ? "stillactive" : "closed")">
                 @Html.DisplayFor(modelItem => item.Ncr.NcrStatus)
@@ -196,7 +206,7 @@
             });
         });
     </script>
-    
+
     <script>
         $(document).ready(function () {
             $("#StartDate, #EndDate").change(function () {
@@ -217,4 +227,3 @@
         });
     </script>
 }
-

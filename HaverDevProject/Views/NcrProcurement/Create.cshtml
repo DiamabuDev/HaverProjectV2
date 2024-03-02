@@ -3,13 +3,29 @@
 @{
     ViewData["Title"] = "Create";
 }
+<head>
+    <!-- Other head elements, such as meta tags, title, and other stylesheets -->
+    <!-- Add the <style> block for CSS transitions -->
+    <style>
+        /* Add CSS transition for smooth hide/show effect */
+        .supplier-return-fields {
+            max-height: 1000px; /* Set a sufficiently large max-height */
+            transition: max-height 0.5s ease-out; /* Adjust the duration and easing as needed */
+            overflow: hidden;
+        }
+    </style>
+
+</head>
+<div class="col-md-8 col-10 mx-auto">
+    <h1><i class="bi bi-caret-right-fill"></i>Procurement</h1>
+</div>
 
 <div class="col-md-8 col-10 mx-auto">
-    <form asp-action="Create">
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
         <div class="card border-2">
             <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
                 <div>
-                    <h2 class="m-0">Procurement</h2>
+                    <h2 class="m-0">Add to NCR</h2>
                 </div>
                 <div class="justify-content-end">
                     <p class="m-0">Fields marked <span class="fw-bold text-danger">*</span> are required.</p>
@@ -65,7 +81,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row supplier-return-fields">
                     <div class="col-6">
                         <div class="form-group">
                             <label asp-for="SupplierReturnMANum" class="control-label"></label>
@@ -81,14 +97,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row  supplier-return-fields">
                     <div class="form-group">
                         <label asp-for="NcrProcExpectedDate" class="control-label"></label>
                         <input asp-for="NcrProcExpectedDate" class="form-control" type="date" />
                         <span asp-validation-for="NcrProcExpectedDate" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row supplier-return-fields">
                     <div class="form-group">
                         <label asp-for="SupplierReturnAccount" class="control-label"></label>
                         <input asp-for="SupplierReturnAccount" class="form-control" />
@@ -180,7 +196,44 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <script>
+        $(document).ready(function () {
+            // Function to show/hide elements and manage validation based on SupplierReturnRequest value
+            function toggleSupplierReturnFields() {
+                var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
+
+                // Check the value of SupplierReturnRequest and toggle the max-height accordingly
+                if (supplierReturnRequest === 'true') {
+                    $('.supplier-return-fields').css('max-height', '1000px'); // Set a sufficiently large max-height
+
+                    // Enable validation for fields by adding data-val attributes
+                    $('.supplier-return-fields [data-val="true"]').each(function () {
+                        $(this).attr('data-val', 'true');
+                    });
+                } else {
+                    $('.supplier-return-fields').css('max-height', '0');
+
+                    // Disable validation for fields by removing data-val attributes
+                    $('.supplier-return-fields [data-val="true"]').each(function () {
+                        $(this).attr('data-val', 'false');
+                    });
+                }
+            }
+
+            // Call the function on page load
+            toggleSupplierReturnFields();
+
+            // Bind the function to the change event of SupplierReturnRequest radio buttons
+            $('input[name="NcrProcSupplierReturnReq"]').change(function () {
+                toggleSupplierReturnFields();
+            });
+        });
+    </script>
+    <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    </script>
+
 }
