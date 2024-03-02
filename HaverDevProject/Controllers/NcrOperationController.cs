@@ -28,7 +28,7 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: NcrOperation
-        public async Task<IActionResult> Index(string SearchCode, DateTime StartDate, DateTime EndDate,
+        public async Task<IActionResult> Index(string SearchCode, int? OpDispositionTypeId, DateTime StartDate, DateTime EndDate,
             int? page, int? pageSizeID, string actionButton, string sortDirection = "desc", string sortField = "Created", string filter = "Active")
         {
             
@@ -55,7 +55,7 @@ namespace HaverDevProject.Controllers
             }
 
             //List of sort options.
-            string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "Phase"};
+            string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "DispositionType", "Phase" };
 
             PopulateDropDownLists();
 
@@ -88,6 +88,10 @@ namespace HaverDevProject.Controllers
             if (!String.IsNullOrEmpty(SearchCode))
             {
                 ncrOperation = ncrOperation.Where(s => s.Ncr.NcrNumber.ToUpper().Contains(SearchCode.ToUpper()));
+            }
+            if (OpDispositionTypeId.HasValue)
+            {
+                ncrOperation = ncrOperation.Where(n => n.OpDispositionType.OpDispositionTypeId == OpDispositionTypeId);
             }
             if (StartDate == EndDate)
             {
@@ -174,6 +178,21 @@ namespace HaverDevProject.Controllers
                     ncrOperation = ncrOperation
                         .OrderByDescending(p => p.Ncr.NcrStatus);
                     ViewData["filterApplied:Status"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "DispositionType")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncrOperation = ncrOperation
+                        .OrderBy(p => p.OpDispositionType.OpDispositionTypeName);
+                    ViewData["filterApplied:DispositionType"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrOperation = ncrOperation
+                        .OrderByDescending(p => p.OpDispositionType.OpDispositionTypeName);
+                    ViewData["filterApplied:DispositionType"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
             else //(sortField == "Phase")
@@ -283,14 +302,16 @@ namespace HaverDevProject.Controllers
                         FollowUpTypeId = ncrOperationDTO.FollowUpTypeId,
                         UpdateOp = DateTime.Today,
                         NcrPurchasingUserId = 1,
-                        ItemDefectPhotos = ncrOperationDTO.ItemDefectPhotos,
+                        OpDefectPhotos = ncrOperationDTO.OpDefectPhotos,
+                        NcrOperationVideo = ncrOperationDTO.NcrOperationVideo
+
                     };
                     _context.NcrOperations.Add(ncrOperation);
                     await _context.SaveChangesAsync();
 
                     //update ncr 
                     var ncr = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrIdObt);
-                    ncr.NcrPhase = NcrPhase.ReInspection;
+                    ncr.NcrPhase = NcrPhase.Procurement;
                     _context.Ncrs.Update(ncr);
                     await _context.SaveChangesAsync();
 
@@ -357,7 +378,7 @@ namespace HaverDevProject.Controllers
                 NcrPurchasingUserId = ncrOperation.NcrPurchasingUserId,
                 NcrEng = ncrOperation.NcrEng,
                 NcrOperationVideo = ncrOperation.NcrOperationVideo,
-                ItemDefectPhotos = ncrOperation.ItemDefectPhotos
+                OpDefectPhotos = ncrOperation.OpDefectPhotos
             };
 
             ViewData["FollowUpTypeId"] = new SelectList(_context.FollowUpTypes, "FollowUpTypeId", "FollowUpTypeName", ncrOperation.FollowUpTypeId);
@@ -401,6 +422,7 @@ namespace HaverDevProject.Controllers
                                 .ThenInclude(n => n.Supplier)
                 .Include(n => n.OpDispositionType)
                 .Include(n => n.FollowUpType)
+                .Include(n => n.OpDefectPhotos)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(n => n.NcrOpId == NcrOpId);
 
@@ -424,7 +446,7 @@ namespace HaverDevProject.Controllers
                         ncrOperationToUpdate.UpdateOp = DateTime.Today;
                         ncrOperationToUpdate.NcrPurchasingUserId = ncrOperation.NcrPurchasingUserId;
                         ncrOperationToUpdate.NcrOperationVideo = ncrOperation.NcrOperationVideo;
-                        ncrOperationToUpdate.ItemDefectPhotos = ncrOperation.ItemDefectPhotos;
+                        ncrOperationToUpdate.OpDefectPhotos = ncrOperation.OpDefectPhotos;
 
                         _context.NcrOperations.Update(ncrOperationToUpdate);
                         await _context.SaveChangesAsync();
@@ -544,7 +566,7 @@ namespace HaverDevProject.Controllers
         {
             if (pictures != null && pictures.Any())
             {
-                ncrOperationDTO.ItemDefectPhotos = new List<ItemDefectPhoto>();
+                ncrOperationDTO.OpDefectPhotos = new List<OpDefectPhoto>();
 
                 foreach (var picture in pictures)
                 {
@@ -559,10 +581,10 @@ namespace HaverDevProject.Controllers
                             await picture.CopyToAsync(memoryStream);
                             var pictureArray = memoryStream.ToArray();
 
-                            ncrOperationDTO.ItemDefectPhotos.Add(new ItemDefectPhoto
+                            ncrOperationDTO.OpDefectPhotos.Add(new OpDefectPhoto
                             {
-                                ItemDefectPhotoContent = ResizeImage.shrinkImageWebp(pictureArray, 500, 600),
-                                ItemDefectPhotoMimeType = "image/webp",
+                                OpDefectPhotoContent = ResizeImage.shrinkImageWebp(pictureArray, 500, 600),
+                                OpDefectPhotoMimeType = "image/webp",
                                 FileName = picture.FileName
                             });
                         }
