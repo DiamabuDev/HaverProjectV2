@@ -229,8 +229,9 @@ namespace HaverDevProject.Controllers
             if (ncrQa == null)
             {
                 return NotFound();
-            }            
+            }
 
+            ViewBag.IsNCRQaView = true;
             return View(ncrQa);
         }
 
@@ -297,6 +298,7 @@ namespace HaverDevProject.Controllers
                     NcrQaEngDispositionRequired = ncrQaDTO.NcrQaEngDispositionRequired
                 };               
                 
+
                 _context.NcrQas.Add(ncrQa);
                 await _context.SaveChangesAsync();                
 

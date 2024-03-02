@@ -50,7 +50,7 @@
 
                 <input type="radio" class="btn-check btn-filter" name="filter" id="Closed" autocomplete="off" value="Closed" data-filter="Closed">
                 <label class="btn btn-danger me-2" for="Closed">Closed NCRs </label>
-                 <button type="button" id="pendingCountIndicator" class="btn btn-warning btn-block" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></button> 
+                <button type="button" id="pendingCountIndicator" class="btn btn-warning btn-block" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></button>
             </div>
         </div>
     </div>
@@ -115,6 +115,12 @@
                         @Html.Raw(ViewData["filterApplied:Description"])
                     </button>
                 </th>
+                <th class="d-none d-md-table-cell col-3">
+                    <button type="submit" name="actionButton" value="Phase" class="btn text-light custom-btn-text-start">
+                        Phase
+                        @Html.Raw(ViewData["filterApplied:Phase"])
+                    </button>
+                </th>
                 @*                 <th class="d-none d-md-table-cell">
                 <button type="submit" name="actionButton" value="PO Number" class="btn text-light custom-btn-text-start">
                 PO Number
@@ -148,6 +154,9 @@
                     </td>
                     <td class="d-none d-md-table-cell col-3">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrEng.NcrEngDispositionDescription)
+                    </td>
+                    <td class="d-none d-md-table-cell col-3">
+                        @Html.DisplayFor(modelItem => item.Ncr.NcrPhase)
                     </td>
                     @*                     <td class="d-none d-md-table-cell">
                 @Html.DisplayFor(modelItem => item.Ncr.NcrEng.UpdatedOn)
