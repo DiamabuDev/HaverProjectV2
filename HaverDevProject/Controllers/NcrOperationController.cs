@@ -277,7 +277,7 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(NcrOperationDTO ncrOperationDTO, int FollowUpTypeId, int OpDispositionTypeId, List<IFormFile> Photos)
+        public async Task<IActionResult> Create(NcrOperationDTO ncrOperationDTO, int OpDispositionTypeId, List<IFormFile> Photos)
         {
             try
             {
@@ -299,6 +299,7 @@ namespace HaverDevProject.Controllers
                         CarNumber = ncrOperationDTO.CarNumber,
                         FollowUp = ncrOperationDTO.FollowUp,
                         ExpectedDate = ncrOperationDTO.ExpectedDate,
+
                         FollowUpTypeId = ncrOperationDTO.FollowUpTypeId,
                         UpdateOp = DateTime.Today,
                         NcrPurchasingUserId = 1,
@@ -372,8 +373,8 @@ namespace HaverDevProject.Controllers
                 CarNumber = ncrOperation.CarNumber,
                 FollowUp = ncrOperation.FollowUp,
                 ExpectedDate = ncrOperation.ExpectedDate,
-                FollowUpTypeId = ncrOperation.FollowUpTypeId,
-                FollowUpType = ncrOperation.FollowUpType,
+                FollowUpTypeId = ncrOperation.FollowUpType.FollowUpTypeId,
+
                 UpdateOp = ncrOperation.UpdateOp,
                 NcrPurchasingUserId = ncrOperation.NcrPurchasingUserId,
                 NcrEng = ncrOperation.NcrEng,

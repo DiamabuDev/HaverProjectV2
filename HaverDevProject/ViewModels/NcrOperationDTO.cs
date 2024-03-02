@@ -19,7 +19,7 @@ namespace HaverDevProject.ViewModels
         public string CarNumber { get; set; }
         public bool FollowUp { get; set; }
         public DateTime? ExpectedDate { get; set; }
-        public int FollowUpTypeId { get; set; }
+        public int? FollowUpTypeId { get; set; }
         public FollowUpType FollowUpType { get; set; }
         public DateTime UpdateOp { get; set; }
         public int NcrPurchasingUserId { get; set; }
