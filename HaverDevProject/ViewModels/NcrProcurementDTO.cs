@@ -18,7 +18,7 @@ namespace HaverDevProject.Models
 
         public bool NcrProcSupplierReturnReq { get; set; }
 
-        public DateTime NcrProcExpectedDate { get; set; }
+        public DateTime? NcrProcExpectedDate { get; set; }
 
         public bool NcrProcDisposedAllowed { get; set; }
 

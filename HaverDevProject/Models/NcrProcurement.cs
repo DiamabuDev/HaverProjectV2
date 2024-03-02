@@ -13,7 +13,7 @@ namespace HaverDevProject.Models
 
         public int NcrProcurementId { get; set; }
         public bool NcrProcSupplierReturnReq { get; set; }
-        public DateTime NcrProcExpectedDate { get; set; }
+        public DateTime? NcrProcExpectedDate { get; set; }
         public bool NcrProcDisposedAllowed { get; set; }
         public bool NcrProcSAPReturnCompleted { get; set; }
         public bool NcrProcCreditExpected { get; set; }
