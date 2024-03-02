@@ -54,7 +54,7 @@
                                 <label class="form-check-label" data-bs-toggle="collapse" data-bs-target="#car-number-input">Yes</label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input type="radio" class="form-check-input" asp-for="Car" value="false" checked id="car-raised-no" />
+                                <input type="radio" class="form-check-input" asp-for="Car" value="false" id="car-raised-no" />
                                 <label class="form-check-label">No</label>
                             </div>
                         </div>
@@ -75,11 +75,11 @@
                             <label class="pb-3">Follow-Up Requiered?</label>
                             <div class="text-left">
                                 <div class="form-check form-check-inline">
-                                    <input type="radio" class="form-check-input" asp-for="FollowUp" value="true" checked id="follow-no" />
+                                    <input type="radio" class="form-check-input" asp-for="FollowUp" value="true" id="follow-no" />
                                     <label class="form-check-label" data-bs-toggle="collapse" data-bs-target="#Follow-input">Yes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input type="radio" class="form-check-input" asp-for="FollowUp" value="false" checked id="follow-no" />
+                                    <input type="radio" class="form-check-input" asp-for="FollowUp" value="false" id="follow-no" />
                                     <label class="form-check-label">No</label>
                                 </div>
                             </div>
@@ -108,9 +108,40 @@
                         </div>
                     </div>
                 </div>
+                <div class="form-group">
+                    <label class="control-label"> Current Photos:</label>
+                    <div class="ml-md-3">
+                        @{
+                            int fileCount = Model.OpDefectPhotos.Count;
+                            if (fileCount > 0)
+                            {
+                                var firstFile = Model.OpDefectPhotos.FirstOrDefault(); ;
+                                if (fileCount > 1)
+                                {
+                                    <a class="" role="button" data-bs-toggle="collapse" href="#collapsePhotos@(Model.NcrOpId)"
+                                       aria-expanded="false" aria-controls="collapsePhotos@(Model.NcrOpId)">
+                                        <span class="badge bg-info">@fileCount</span> Photos...
+                                    </a>
+                                    <div class="collapse" id="collapsePhotos@(Model.NcrOpId)">
+                                        @{
+                                            foreach (var d in Model.OpDefectPhotos)
+                                            {
+                                                <a asp-controller="NcrOperation" asp-action="Download" asp-route-id="@d.OpDefectPhotoId">@d.FileName</a> <br />
+                                            }
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <a asp-controller="NcrOperation" asp-action="Download" asp-route-id="@firstFile.OpDefectPhotoId">@firstFile.FileName</a>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
                 <div class="row">
                     <div class="form-group">
-                        <label class="control-label custom-file-label">Upload Photos:</label>
+                        <label class="control-label custom-file-label">Upload Operations Photos:</label>
                         <div class="input-group mb-3">
                             <input type="file" class="form-control" name="Photos" multiple="multiple" />
                         </div>
@@ -146,6 +177,79 @@
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
+
+        <script>
+            $(document).ready(function () {
+                $('input[name="Car"]').change(function () {
+                    var carRaised = $(this).val();
+                    var carNumberField = $('input[name="CarNumber"]');
+
+                    if (carRaised === "true") {
+                        carNumberField.prop('disabled', false);
+                        carNumberField.val('');
+                    } else {
+                        carNumberField.prop('disabled', true);
+                        carNumberField.val('');
+                    }
+                });
+            });
+        </script>
+
+        <script>
+            $(document).ready(function () {
+                $('input[name="FollowUp"]').change(function () {
+                    var followUpRequired = $(this).val();
+                    var followUpTypeIdField = $('select[name="FollowUpTypeId"]');
+                    var expectedDateField = $('input[name="ExpectedDate"]');
+
+                    if (followUpRequired === "true") {
+                        followUpTypeIdField.prop('disabled', false);
+                        expectedDateField.prop('disabled', false);
+                        followUpTypeIdField.val('');
+                        expectedDateField.val('');
+                    } else {
+                        followUpTypeIdField.prop('disabled', true);
+                        expectedDateField.prop('disabled', true);
+                        followUpTypeIdField.val('');
+                        expectedDateField.val('');
+                    }
+                });
+            });
+        </script>
+
+        <script>
+            document.getElementById("car-number-input").style.display = "none";
+
+            // Toggle visibility when radio buttons change
+            const carRaisedRadios = document.querySelectorAll('input[name="Car"]');
+            carRaisedRadios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    const carNumberInput = document.getElementById("car-number-input");
+                    if (radio.value === "true") {
+                        carNumberInput.style.display = "block";
+                    } else {
+                        carNumberInput.style.display = "none";
+                    }
+                });
+            });
+        </script>
+
+        <script>
+            document.getElementById("Follow-input").style.display = "none";
+
+            // Toggle visibility when radio buttons change
+            const followRadios = document.querySelectorAll('input[name="FollowUp"]');
+            followRadios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    const followInput = document.getElementById("Follow-input");
+                    if (radio.value === "true") {
+                        followInput.style.display = "block";
+                    } else {
+                        followInput.style.display = "none";
+                    }
+                });
+            });
+        </script>
     }
 
 
