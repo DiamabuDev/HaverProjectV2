@@ -221,7 +221,7 @@ namespace HaverDevProject.Controllers
             NcrReInspect ncr = new NcrReInspect();
             ncr.NcrId = ncrId; // Set the NcrNumber from the parameter
 
-            //ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName");
+            //ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncr.NcrId);
             return View(ncr);
         }
 
@@ -240,10 +240,9 @@ namespace HaverDevProject.Controllers
 
                     ncrReInspect.NcrReInspectNewNcrNumber = GetNcrNumber();
                     _context.Add(ncrReInspect);
-
                     await _context.SaveChangesAsync();
 
-                    var ncrToUpdate = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n=>n.NcrId == ncrReInspect.NcrId);
+                    var ncrToUpdate = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrReInspect.NcrId);
 
                     ncrToUpdate.NcrPhase = NcrPhase.Closed;
                     ncrToUpdate.NcrStatus = false;
@@ -286,6 +285,7 @@ namespace HaverDevProject.Controllers
             }
 
             ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrReInspect.NcrId);
+
             return View(ncrReInspect);
         } //,RowVersion
 
