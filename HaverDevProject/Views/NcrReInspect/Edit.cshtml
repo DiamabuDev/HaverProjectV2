@@ -5,7 +5,7 @@
 }
 
 <div class="col-md-8 col-10 mx-auto">
-    <h1><i class="bi bi-caret-right-fill"></i>Re-Inspection</h1>
+    <h1><i class="bi bi-caret-right-fill"></i>Reinspection</h1>
 </div>
 
 <div class="col-md-8 col-10 mx-auto">
@@ -57,7 +57,7 @@
                     
                 </div>
                
-                @* <div class="form-group">
+                <div class="form-group">
                     <label class="control-label"> Current Photos:</label>
                     <div class="ml-md-3">
                         @{
@@ -67,29 +67,34 @@
                                 var firstFile = Model.NcrReInspectPhotos.FirstOrDefault(); ;
                                 if (fileCount > 1)
                                 {
-                                    <a class="" role="button" data-bs-toggle="collapse" href="#collapsePhotos@(Model.NcrReInspectId)" aria-expanded="false" aria-controls="collapsePhotos@(Model.NcrReInspectId)">
+                                    <a class="" role="button" data-bs-toggle="collapse" href="#collapsePhotos@(Model.NcrReInspectId)" 
+                                        aria-expanded="false" aria-controls="collapsePhotos@(Model.NcrReInspectId)">
                                         <span class="badge bg-info">@fileCount</span> Photos...
                                     </a>
                                     <div class="collapse" id="collapsePhotos@(Model.NcrReInspectId)">
                                         @{
                                             foreach (var d in Model.NcrReInspectPhotos)
                                             {
-                                                <a asp-controller="NcrReInspect" asp-action="Download" asp-route-id="@d.NcrReInspectPhotoId">@d.FileName</a> <br />
+                                                <a asp-controller="NcrReInspect" asp-action="Download" 
+                                                    asp-route-id="@d.NcrReInspectPhotoId">@d.FileName</a> <br />
                                             }
                                         }
                                     </div>
                                 }
                                 else
                                 {
-                                    <a asp-controller="NcrReInspect" asp-action="Download" asp-route-id="@firstFile.NcrReInspectPhotoId">@firstFile.FileName</a>
+                                    <a asp-controller="NcrReInspect" asp-action="Download" 
+                                        asp-route-id="@firstFile.NcrReInspectPhotoId">@firstFile.FileName</a>
                                 }
                             }
                         }
                     </div>
-                </div> *@
+                </div>
                 <div class="form-group">
                     <label class="control-label custom-file-label">Upload Additional Photos:</label>
-                    <input type="file" class="form-control" name="Photos" multiple="multiple" />
+                    <div class="input-group mb-3">
+                        <input type="file" class="form-control" name="Photos" multiple="multiple" />
+                    </div>
                 </div>
 
                 <div class="form-group">
