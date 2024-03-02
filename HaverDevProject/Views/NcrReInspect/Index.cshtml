@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1><i class="bi bi-caret-right-fill"></i> Non-Conformance Reports For Re-Inspection</h1>
+<h1><i class="bi bi-caret-right-fill"></i> Non-Conformance Reports For Reinspection</h1>
 
 
 <!-- Modal -->
@@ -86,27 +86,33 @@
             <tr>
                 <th></th>
                 <th class="d-none d-md-table-cell">
-                    <button type="submit" name="actionButton" value="Created" class="btn text-light custom-btn-text-start">
-                        Created
-                        @Html.Raw(ViewData["filterApplied:Created"])
+                    <button type="submit" name="actionButton" value="Updated" class="btn text-light custom-btn-text-start">
+                        Updated
+                        @Html.Raw(ViewData["filterApplied:NcrLastUpdated"])
                     </button>
                 </th>
-                <th class="d-none d-md-table-cell col-3">
+                <th>
                     <button type="submit" name="actionButton" value="NCR #" class="btn text-light custom-btn-text-start">
                         NCR #
                         @Html.Raw(ViewData["filterApplied:Ncr"])
                     </button>
                 </th>
-                <th>
+                <th class="col-3">
                     <button type="submit" name="actionButton" value="Acceptable" class="btn text-light custom-btn-text-start">
                         Acceptable
                         @Html.Raw(ViewData["filterApplied:NcrReInspectAcceptable"])
                     </button>
                 </th>
-                <th class="col-3">
+                <th class="d-none d-md-table-cell">
                     <button type="submit" name="actionButton" value="Inspected By" class="btn text-light custom-btn-text-start">
                         Inspected By
                         @Html.Raw(ViewData["filterApplied:NcrReInspectUserId"])
+                    </button>
+                </th>
+                <th class="d-none d-xxl-table-cell">
+                    <button type="submit" name="actionButton" value="Phase" class="btn text-light custom-btn-text-start">
+                        Phase
+                        @Html.Raw(ViewData["filterApplied:Phase"])
                     </button>
                 </th>
 @*                 <th>
@@ -132,15 +138,15 @@
                         <i class="bi bi-circle-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="@((item.Ncr.NcrStatus == true) ? "Active" : "Closed")"></i>
                     </td>
                     <td class="d-none d-md-table-cell">
-                        @Html.DisplayFor(modelItem => item.Ncr.NcrQa.NcrQacreationDate)
+                        @Html.DisplayFor(modelItem => item.Ncr.NcrLastUpdated)
                     </td>
-                    <td class="standout col-3">
+                    <td class="standout">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrNumber)
                     </td>
                     @* <td>
                         @Html.DisplayFor(modelItem => item.NcrReInspectAcceptable)
                     </td> *@
-                    <td>
+                    <td class="col-3">
                         @if (item.NcrReInspectAcceptable)
                         {
                             <text>Yes</text>
@@ -153,7 +159,7 @@
                     @* <td class="col-1">
                         @Html.DisplayFor(modelItem => item.NcrReInspectUserId)
                     </td> *@
-                    <td>
+                    <td class="d-none d-md-table-cell col-3">
                         @if (item.NcrReInspectUserId == 1)
                         {
                             <text>Bob</text>
@@ -171,6 +177,9 @@
                             <text>Dave</text>
                         }
                     </td>
+                    <td class="d-none d-xxl-table-cell">
+                        @Html.DisplayFor(modelItem => item.Ncr.NcrPhase)
+                    </td>
 @*                     <td>
                         @Html.DisplayFor(modelItem => item.NcrReInspectAcceptable)
                     </td>
@@ -183,7 +192,8 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Ncr.NcrNumber)
                     </td>
- *@                    <td>
+                *@
+                    <td>
                         <a asp-action="Edit" asp-route-id="@item.NcrReInspectId" class="btn text-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
                         <a asp-action="Details" asp-route-id="@item.NcrReInspectId" class="btn text-primary" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
                     </td>

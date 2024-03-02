@@ -143,6 +143,15 @@ public partial class HaverNiagaraContext : DbContext
                 .HasConstraintName("fk_procDefectPhoto_itemDefect");
         });
 
+        modelBuilder.Entity<NcrReInspectPhoto>(entity =>
+        {
+            entity.HasKey(e => e.NcrReInspectPhotoId).HasName("pk_ncrReInspectPhoto_ncrReInspectPhotoId");
+
+            entity.HasOne(d => d.NcrReInspect).WithMany(p => p.NcrReInspectPhotos)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_ncrReInspectPhoto_itemDefect");
+        });
+
         modelBuilder.Entity<Ncr>(entity =>
         {
             entity.HasKey(e => e.NcrId).HasName("pk_ncr_ncrId");
@@ -191,13 +200,13 @@ public partial class HaverNiagaraContext : DbContext
             entity.HasKey(e => e.OpDispositionTypeId).HasName("pk_opDispositionType_opDispositionTypeId");
         });
 
-        modelBuilder.Entity<NcrReInspectPhoto>(entity =>
-        {
-            entity.HasKey(e => e.NcrReInspectPhotoId).HasName("pk_ncrReInspectPhoto_ncrReInspectPhotoId");
+        //modelBuilder.Entity<NcrReInspectPhoto>(entity =>
+        //{
+        //    entity.HasKey(e => e.NcrReInspectPhotoId).HasName("pk_ncrReInspectPhoto_ncrReInspectPhotoId");
 
-            entity.HasOne(d => d.NcrReInspect).WithMany(p => p.NcrReInspectPhotos)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-        });
+        //    entity.HasOne(d => d.NcrReInspect).WithMany(p => p.NcrReInspectPhotos)
+        //        .OnDelete(DeleteBehavior.ClientSetNull);
+        //});
 
 
         modelBuilder.Entity<Item>()

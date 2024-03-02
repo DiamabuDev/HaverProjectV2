@@ -17,9 +17,9 @@ public partial class NcrReInspectPhoto
     [Column("ncrReInspectPhotoContent")]
     public byte[] NcrReInspectPhotoContent { get; set; }
 
-    //[StringLength(255, ErrorMessage = "The name of the file cannot be more than 255 characters.")]
-    //[Display(Name = "File Name")]
-    //public string FileName { get; set; }
+    [StringLength(255, ErrorMessage = "The name of the file cannot be more than 255 characters.")]
+    [Display(Name = "File Name")]
+    public string FileName { get; set; }
 
     [Required]
     [Column("ncrReInspectPhotoMimeType")]
@@ -40,6 +40,6 @@ public partial class NcrReInspectPhoto
     [InverseProperty("NcrReInspectPhotos")]
     public NcrReInspect NcrReInspect { get; set; }
 
-    //public FileContent FileContent { get; set; } = new FileContent();
+    public ReInspectFileContent ReInspectFileContent { get; set; } = new ReInspectFileContent();
 
 }

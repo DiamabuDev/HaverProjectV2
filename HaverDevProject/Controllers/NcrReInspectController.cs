@@ -48,7 +48,7 @@ namespace HaverDevProject.Controllers
                 StartDate = temp;
             }
 
-            string[] sortOptions = new[] { "Created", "Acceptable", "Inspected By", "NCR #" };
+            string[] sortOptions = new[] { "Updated", "Acceptable", "Inspected By", "NCR #" };
 
             var ncrReInspect = _context.NcrReInspects
                 .Include(n => n.Ncr)
@@ -102,21 +102,21 @@ namespace HaverDevProject.Controllers
                 }
             }
 
-            if (sortField == "Created")
+            if (sortField == "Updated")
             {
                 if (sortDirection == "desc") //desc by default
                 {
                     ncrReInspect = ncrReInspect
                         .OrderBy(p => p.Ncr.NcrQa.NcrQacreationDate);
 
-                    ViewData["filterApplied:Created"] = "<i class='bi bi-sort-up'></i>";
+                    ViewData["filterApplied:NcrLastUpdated"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncrReInspect = ncrReInspect
                         .OrderByDescending(p => p.Ncr.NcrQa.NcrQacreationDate);
 
-                    ViewData["filterApplied:Created"] = "<i class='bi bi-sort-down'></i>";
+                    ViewData["filterApplied:NcrLastUpdated"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
             else if (sortField == "Acceptable")
@@ -216,7 +216,7 @@ namespace HaverDevProject.Controllers
         {
             int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
             NcrReInspect ncr = new NcrReInspect();
-            ncr.NcrId = ncrId; // Set the NcrNumber from the parameter           
+            ncr.NcrId = ncrId; // Set the NcrNumber from the parameter
 
             //ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName");
             return View(ncr);
@@ -294,7 +294,10 @@ namespace HaverDevProject.Controllers
                 return NotFound();
             }
 
-            var ncrReInspect = await _context.NcrReInspects.FindAsync(id);
+            var ncrReInspect = await _context.NcrReInspects
+                .Include(n => n.NcrReInspectPhotos)
+                .FirstOrDefaultAsync(n=>n.NcrReInspectId == id);
+
             if (ncrReInspect == null)
             {
                 return NotFound();
@@ -321,7 +324,7 @@ namespace HaverDevProject.Controllers
             }
 
             if (await TryUpdateModelAsync<NcrReInspect>(ncrReInspectToUpdate, "",
-                r => r.NcrReInspectAcceptable, r => r.NcrReInspectNewNcrNumber, r => r.NcrReInspectUserId, r => r.NcrId, r => r.NcrReInspectDefectVideo))
+                r => r.NcrReInspectAcceptable, r => r.NcrReInspectNewNcrNumber, r => r.NcrReInspectUserId, r => r.NcrId, r => r.NcrReInspectDefectVideo, r => r.NcrReInspectPhotos))
             {
                 try
                 {
@@ -433,7 +436,11 @@ namespace HaverDevProject.Controllers
         {
             if (pictures != null && pictures.Any())
             {
-                ncrReInspect.NcrReInspectPhotos = new List<NcrReInspectPhoto>();
+                // If the NcrReInspect already has some photos, keep them
+                if (ncrReInspect.NcrReInspectPhotos == null)
+                {
+                    ncrReInspect.NcrReInspectPhotos = new List<NcrReInspectPhoto>();
+                }
 
                 foreach (var picture in pictures)
                 {
@@ -451,12 +458,22 @@ namespace HaverDevProject.Controllers
                             ncrReInspect.NcrReInspectPhotos.Add(new NcrReInspectPhoto
                             {
                                 NcrReInspectPhotoContent = ResizeImage.shrinkImageWebp(pictureArray, 500, 600),
-                                NcrReInspectPhotoMimeType = "image/webp"
+                                NcrReInspectPhotoMimeType = "image/webp",
+                                FileName = picture.FileName
                             });
                         }
                     }
                 }
             }
+        }
+
+        public async Task<FileContentResult> Download(int id)
+        {
+            var theFile = await _context.NcrReInspectPhotos
+                .Include(d => d.ReInspectFileContent)
+                .Where(f => f.NcrReInspectPhotoId == id)
+                .FirstOrDefaultAsync();
+            return File(theFile.NcrReInspectPhotoContent, theFile.NcrReInspectPhotoMimeType, theFile.FileName);
         }
 
         public JsonResult GetNcrs()
