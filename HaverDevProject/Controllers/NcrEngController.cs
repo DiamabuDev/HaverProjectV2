@@ -28,17 +28,17 @@ namespace HaverDevProject.Controllers
 
 
         // GET: NcrEng
-        public async Task<IActionResult> Index(string SearchCode, /*int? SupplierID, */DateTime StartDate, DateTime EndDate,
+        public async Task<IActionResult> Index(string SearchCode, int? EngDispositionTypeId, DateTime StartDate, DateTime EndDate,
             int? page, int? pageSizeID, string actionButton, string sortDirection = "desc", string sortField = "Created", string filter = "Active")
         {
             //Set the date range filer based on the values in the database
             if (EndDate == DateTime.MinValue)
             {
-                StartDate = _context.NcrQas
-                .Min(f => f.NcrQacreationDate.Date);
+                StartDate = _context.Ncrs
+                .Min(f => f.NcrLastUpdated.Date);
 
-                EndDate = _context.NcrQas
-                .Max(f => f.NcrQacreationDate.Date);
+                EndDate = _context.Ncrs
+                .Max(f => f.NcrLastUpdated.Date);
 
                 ViewData["StartDate"] = StartDate.ToString("yyyy-MM-dd");
                 ViewData["EndDate"] = EndDate.ToString("yyyy-MM-dd");
@@ -52,8 +52,9 @@ namespace HaverDevProject.Controllers
             }
 
             //List of sort options.
-            string[] sortOptions = new[] { "Created", "NCR #", "Disposition", "Description", "Phase" };
+            string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "Disposition", "Phase" };
 
+            
             PopulateDropDownLists();
 
             var ncrEng = _context.NcrEngs
@@ -66,9 +67,10 @@ namespace HaverDevProject.Controllers
                 //.Where(n => n.Ncr.NcrPhase == NcrPhase.Engineer)
                 .AsNoTracking();
 
+            
             GetNcrs();
 
-            //Filterig values            
+            //Filtering values            
             if (!String.IsNullOrEmpty(filter))
             {
                 if (filter == "Active")
@@ -81,19 +83,25 @@ namespace HaverDevProject.Controllers
                     ncrEng = ncrEng.Where(n => n.Ncr.NcrStatus == false);
                 }
             }
+
             if (!String.IsNullOrEmpty(SearchCode))
             {
                 ncrEng = ncrEng.Where(s => s.Ncr.NcrNumber.ToUpper().Contains(SearchCode.ToUpper()));
             }
+            if (EngDispositionTypeId.HasValue)
+            {
+                ncrEng = ncrEng.Where(n => n.EngDispositionType.EngDispositionTypeId == EngDispositionTypeId);
+            }
             if (StartDate == EndDate)
             {
-                ncrEng = ncrEng.Where(n => n.Ncr.NcrQa.NcrQacreationDate == StartDate);
+                ncrEng = ncrEng.Where(n => n.Ncr.NcrLastUpdated == StartDate);
             }
             else
             {
-                ncrEng = ncrEng.Where(n => n.Ncr.NcrQa.NcrQacreationDate >= StartDate &&
-                         n.Ncr.NcrQa.NcrQacreationDate <= EndDate);
+                ncrEng = ncrEng.Where(n => n.Ncr.NcrLastUpdated >= StartDate &&
+                         n.Ncr.NcrLastUpdated <= EndDate);
             }
+
 
             //Sorting columns
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
@@ -125,6 +133,21 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:NcrNumber"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
+            else if (sortField == "Supplier")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncrEng = ncrEng
+                        .OrderBy(p => p.Ncr.NcrQa.Item.Supplier.SupplierName);
+                    ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrEng = ncrEng
+                        .OrderByDescending(p => p.Ncr.NcrQa.Item.Supplier.SupplierName);
+                    ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
             else if (sortField == "Disposition")
             {
                 if (sortDirection == "asc")
@@ -140,34 +163,20 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:Disposition"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
-            else if (sortField == "Description")
-            {
-                if (sortDirection == "asc")
-                {
-                    ncrEng = ncrEng
-                        .OrderBy(p => p.Ncr.NcrEng.NcrEngDispositionDescription);
-                    ViewData["filterApplied:Description"] = "<i class='bi bi-sort-up'></i>";
-                }
-                else
-                {
-                    ncrEng = ncrEng
-                        .OrderByDescending(p => p.Ncr.NcrEng.NcrEngDispositionDescription);
-                    ViewData["filterApplied:Description"] = "<i class='bi bi-sort-down'></i>";
-                }
-            }
+
             else if (sortField == "Created")
             {
                 if (sortDirection == "desc") //desc by default
                 {
                     ncrEng = ncrEng
-                        .OrderBy(p => p.Ncr.NcrQa.NcrQacreationDate);
+                        .OrderBy(p => p.Ncr.NcrLastUpdated);
 
                     ViewData["filterApplied:Created"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncrEng = ncrEng
-                        .OrderByDescending(p => p.Ncr.NcrQa.NcrQacreationDate);
+                        .OrderByDescending(p => p.Ncr.NcrLastUpdated);
 
                     ViewData["filterApplied:Created"] = "<i class='bi bi-sort-down'></i>";
                 }
@@ -305,6 +314,7 @@ namespace HaverDevProject.Controllers
                     //update ncr 
                     var ncr = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrIdObt);
                     ncr.NcrPhase = NcrPhase.Operations;
+                    ncr.NcrLastUpdated = DateTime.Now;
                     _context.Ncrs.Update(ncr);
                     await _context.SaveChangesAsync();
 
@@ -425,6 +435,7 @@ namespace HaverDevProject.Controllers
 
                     await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrEng.NcrId);
                     ncrEng.NcrPhase = NcrPhase.Operations;
+                    //ncrEng.Ncr.NcrLastUpdated = DateTime.Now;
                     _context.Update(ncrEng);
                     await _context.SaveChangesAsync();
 
