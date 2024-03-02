@@ -1,11 +1,9 @@
-﻿PROC
-
-@model HaverDevProject.Models.NcrProcurement
+﻿@model HaverDevProject.Models.NcrProcurement
 
 <div class="container mt-3">
     <div class="row">
         <div class="col-md-10 mx-auto">
-            <button class="btn custom-header-bg icon-drop text-start" type="button" data-bs-toggle="collapse" data-bs-target="#procurementSection" aria-expanded="@ViewBag.IsNCRProcView.ToString().ToLower()" aria-controls="procurementSection">
+            <button class="btn custom-header-bg icon-drop text-start mb-0" type="button" data-bs-toggle="collapse" data-bs-target="#procurementSection" aria-expanded="@ViewBag.IsNCRProcView.ToString().ToLower()" aria-controls="procurementSection">
                 Procurement <i class="bi bi-chevron-down"></i>
             </button>
             <div class="collapse @(ViewBag.IsNCRProcView? "show" : "")" id="procurementSection">
