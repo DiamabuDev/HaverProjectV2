@@ -427,6 +427,10 @@ namespace HaverDevProject.Controllers
                     ncrEng.NcrPhase = NcrPhase.Operations;
                     _context.Update(ncrEng);
                     await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "NCR edited successfully!";
+                    int ncrEngId = ncrEng.NcrEngId;
+                    return RedirectToAction("Details", new { id = ncrEngId });
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -439,7 +443,17 @@ namespace HaverDevProject.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                catch (RetryLimitExceededException)
+                {
+                    ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
+                }
+                catch (DbUpdateException)
+                {
+                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                }
+
+
+                //return RedirectToAction(nameof(Index));
             }
             return View(ncrEngDTO);
         }
