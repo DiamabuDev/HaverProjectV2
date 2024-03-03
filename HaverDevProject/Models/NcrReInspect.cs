@@ -12,6 +12,7 @@ public class NcrReInspect : Auditable
 {
     public int NcrReInspectId { get; set; }
     public bool NcrReInspectAcceptable { get; set; } = true;
+    //public string NcrNumber { get; set; }
     public string NcrReInspectNewNcrNumber { get; set; }
     public int NcrReInspectUserId { get; set; }
     public bool NcrQaStatusFlag { get; set; }

@@ -26,15 +26,17 @@
             <div class="card-body col-lg-10 col-11 mx-auto">
                 <div class="row">
                     <div class="col-6">
-                        <label class="pb-3">Reinspection Acceptable?</label>
-                        <div class="text-left">
-                            <div class="form-check form-check-inline">
-                                <input type="radio" class="form-check-input" asp-for="NcrReInspectAcceptable" value="true" />
-                                <label class="form-check-label">Yes</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input type="radio" class="form-check-input" asp-for="NcrReInspectAcceptable" value="false" />
-                                <label class="form-check-label">No</label>
+                        <div class="form-group">
+                            <label class="pb-3">Reinspection Acceptable? <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Is this NCR Reinspection Acceptable?">(Y/N)</small></label>
+                            <div class="text-left">
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrReInspectAcceptable" value="true" />
+                                    <label class="form-check-label">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrReInspectAcceptable" value="false" />
+                                    <label class="form-check-label">No</label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -48,15 +50,20 @@
                 <div class="row">
                     <div class="col-6">
                         <div class="form-group">
-                            <label asp-for="NcrId" class="control-label"></label>
+                            <label asp-for="NcrId" class="control-label">NCR No. <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Code to identify the NCR">(e.g. 2024-000)</small></label>
                             <select asp-for="NcrId" class="form-control" asp-items="ViewBag.NcrId" disabled></select>
                             <span asp-validation-for="NcrId" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="form-group">
-                            <label asp-for="NcrReInspectUserId" class="control-label"></label>
-                            <input asp-for="NcrReInspectUserId" class="form-control" />
+                            <label asp-for="NcrReInspectUserId" class="control-label">Inspector's Name <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Name of the Inspector">(e.g. J. Doe)</small></label>
+                            <select asp-for="NcrReInspectUserId" class="form-control">
+                                <option value="1">J. Doe</option>
+                                <option value="2">E. Xample</option>
+                                <option value="3">S. Ample</option>
+                                <option value="4">T. Est</option>
+                            </select>
                             <span asp-validation-for="NcrReInspectUserId" class="text-danger"></span>
                         </div>
                     </div>
@@ -64,7 +71,7 @@
                 </div>
                
                 <div class="form-group">
-                    <label class="control-label"> Current Photos:</label>
+                    <label class="control-label">Current Photos:</label>
                     <div class="ml-md-3">
                         @{
                             int fileCount = Model.NcrReInspectPhotos.Count;
@@ -104,7 +111,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="NcrReInspectDefectVideo" class="control-label"></label>
+                    <label asp-for="NcrReInspectDefectVideo" class="control-label">Video Link <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Link to desired Video">(e.g. https://haverniagara.com/)</small></label>
                     <input asp-for="NcrReInspectDefectVideo" class="form-control" />
                     <span asp-validation-for="NcrReInspectDefectVideo" class="text-danger"></span>
                 </div>
@@ -174,6 +181,12 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    </script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             var radioButtons = document.getElementsByName("NcrReInspectAcceptable");

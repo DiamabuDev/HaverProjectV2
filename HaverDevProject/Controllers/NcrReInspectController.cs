@@ -201,6 +201,7 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrOperation).ThenInclude(n => n.FollowUpType)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrProcurement)
                 .FirstOrDefaultAsync(m => m.NcrReInspectId == id);
+
             if (ncrReInspect == null)
             {
                 return NotFound();
@@ -217,6 +218,10 @@ namespace HaverDevProject.Controllers
         // GET: NcrReInspect/Create
         public IActionResult Create(string ncrNumber)
         {
+            //NcrReInspect ncrReInspect = _context.NcrReInspects
+            //    .Include(nr => nr.Ncr)
+            //    .FirstOrDefault(nr => nr.Ncr.NcrNumber == ncrNumber);
+
             int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
             NcrReInspect ncr = new NcrReInspect();
             ncr.NcrId = ncrId; // Set the NcrNumber from the parameter
@@ -238,7 +243,7 @@ namespace HaverDevProject.Controllers
                 {
                     await AddReInspectPictures(ncrReInspect, Photos);
 
-                    ncrReInspect.NcrReInspectNewNcrNumber = GetNcrNumber();
+                    //ncrReInspect.NcrReInspectNewNcrNumber = GetNcrNumber();
                     _context.Add(ncrReInspect);
                     await _context.SaveChangesAsync();
 
@@ -284,7 +289,7 @@ namespace HaverDevProject.Controllers
                 ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
             }
 
-            ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrReInspect.NcrId);
+            //ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrReInspect.NcrId);
 
             return View(ncrReInspect);
         } //,RowVersion

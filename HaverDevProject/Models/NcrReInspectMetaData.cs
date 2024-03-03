@@ -9,9 +9,9 @@ namespace HaverDevProject.Models;
 
 public class NcrReInspectMetaData
 {
-    //[Key]
-    //[Column("ncrReInspectId")]
-    //public int NcrReInspectId { get; set; }
+    [Key]
+    [Column("ncrReInspectId")]
+    public int NcrReInspectId { get; set; }
 
     [Display(Name = "Re-Inspected Acceptable")]
     [Column("ncrReInspectAcceptable")]
@@ -20,6 +20,10 @@ public class NcrReInspectMetaData
     [Display(Name = "New NCR Number")]
     [Column("ncrReInspectNewNcrNumber")]
     public string NcrReInspectNewNcrNumber { get; set; }
+
+    //[Display(Name = "NCR Number")]
+    //[Column("ncrNumber")]
+    //public string NcrNumber { get; set; }
 
     [Display(Name = "Inspector's Name")]
     [Column("ncrReInspectUserId")]
