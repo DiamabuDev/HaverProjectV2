@@ -58,6 +58,8 @@ namespace HaverDevProject.Controllers
             //List of sort options.
             string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "SupplierReturn", "Phase" };
 
+            ViewData["SupplierId"] = SupplierSelectList();
+
             var ncrProc = _context.NcrProcurements
                 .Include(n => n.Ncr)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
@@ -84,6 +86,10 @@ namespace HaverDevProject.Controllers
             if (!String.IsNullOrEmpty(SearchCode))
             {
                 ncrProc = ncrProc.Where(s => s.Ncr.NcrNumber.ToUpper().Contains(SearchCode.ToUpper()));
+            }
+            if (SupplierID.HasValue)
+            {
+                ncrProc = ncrProc.Where(n => n.Ncr.NcrQa.Item.Supplier.SupplierId == SupplierID);
             }
             if (StartDate == EndDate)
             {
@@ -600,6 +606,44 @@ namespace HaverDevProject.Controllers
             return File(theFile.ProcDefectPhotoContent, theFile.ProcDefectPhotoMimeType, theFile.FileName);
         }
 
+        private SelectList SupplierSelectList()
+        {
+            return new SelectList(_context.Suppliers
+                .Where(s => s.SupplierName != "NO SUPPLIER PROVIDED")
+                .OrderBy(s => s.SupplierName), "SupplierId", "SupplierName");
+        }
+        private SelectList SupplierSelectCreateList(int? selectedId)
+        {
+            return new SelectList(_context.Suppliers
+                .Where(s => s.SupplierStatus == true && s.SupplierName != "NO SUPPLIER PROVIDED")
+                .OrderBy(s => s.SupplierName), "SupplierId", "SupplierName", selectedId);
+        }
+
+        private SelectList ItemSelectList(int? SupplierID, int? selectedId)
+        {
+            var query = from c in _context.Items
+                        where c.SupplierId == SupplierID
+                        select c;
+            return new SelectList(query.OrderBy(i => i.ItemName), "ItemId", "ItemName", selectedId);
+        }
+
+        private void PopulateDropDownLists(NcrQa ncrQa = null)
+        {
+            if ((ncrQa?.ItemId).HasValue)
+            {
+                if (ncrQa.Item == null)
+                {
+                    ncrQa.Item = _context.Items.Find(ncrQa.ItemId);
+                }
+                ViewData["SupplierId"] = SupplierSelectCreateList(ncrQa?.Item.Supplier.SupplierId);
+                ViewData["ItemId"] = ItemSelectList(ncrQa.Item.SupplierId, ncrQa.ItemId);
+            }
+            else
+            {
+                ViewData["SupplierId"] = SupplierSelectCreateList(null);
+                ViewData["ItemId"] = ItemSelectList(null, null);
+            }
+        }
         private bool NcrProcurementExists(int id)
         {
             return _context.NcrProcurements.Any(e => e.NcrProcurementId == id);
