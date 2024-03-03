@@ -297,17 +297,17 @@ namespace HaverDevProject.Controllers
                     ItemId = ncrQaDTO.ItemId,
                     DefectId = ncrQaDTO.DefectId,
                     NcrQaEngDispositionRequired = ncrQaDTO.NcrQaEngDispositionRequired
-                };               
+                };              
                 
-
                 _context.NcrQas.Add(ncrQa);
                 await _context.SaveChangesAsync();                
 
                 TempData["SuccessMessage"] = "NCR created successfully!";
                 int ncrQaId = ncrQa.NcrQaId;
                 return RedirectToAction("Details", new { id = ncrQaId });                                
-            }           
+            }
 
+            //PopulateDropDownLists();
             ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierName", ncrQaDTO.SupplierId);
             ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName", ncrQaDTO.ItemId);
             ViewData["DefectId"] = new SelectList(_context.Defects, "DefectId", "DefectName", ncrQaDTO.DefectId);
@@ -356,10 +356,11 @@ namespace HaverDevProject.Controllers
                 ItemDefectPhotos = ncrQa.ItemDefectPhotos
             };
 
-            PopulateDropDownLists();
-            //ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierName", ncrQa.Item.SupplierId);
-            //ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName", ncrQa.Item.ItemId);
-            //ViewData["DefectId"] = new SelectList(_context.Defects, "DefectId", "DefectName", ncrQa.Defect.DefectId);            
+            //PopulateDropDownLists();
+            ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierName", ncrQaDTO.SupplierId);
+            ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName", ncrQaDTO.ItemId);
+            ViewData["DefectId"] = new SelectList(_context.Defects, "DefectId", "DefectName", ncrQaDTO.DefectId);
+
             return View(ncrQaDTO);
         }
 
@@ -441,7 +442,10 @@ namespace HaverDevProject.Controllers
                     }
                 }     
             }
-            PopulateDropDownLists();
+            //PopulateDropDownLists();
+            ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierName", ncrQaDTO.SupplierId);
+            ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName", ncrQaDTO.ItemId);
+            ViewData["DefectId"] = new SelectList(_context.Defects, "DefectId", "DefectName", ncrQaDTO.DefectId);
             return View(ncrQaDTO);            
         }
 
