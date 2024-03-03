@@ -10,19 +10,5 @@
 
 @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRReInspDetailsPartial.cshtml", Model)
 
-@* <<<<<<< HEAD *@
-@* <div class="carousel-item @(i == 0 ? "active" : "")">
-    <img src="@imageSrc" alt="Defect Photo of @Model.Ncr.NcrQa.Defect.DefectName" title="Defect Photo of @Model.Ncr.NcrQa.Defect.DefectName" class="d-block w-100 img-fluid rounded" />
-</div> *@
-
-<button class="carousel-control-prev" type="button" data-bs-target="#photoCarousel" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Previous</span>
-</button>
-<button class="carousel-control-next" type="button" data-bs-target="#photoCarousel" data-bs-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Next</span>
-</button>
-
 @await Html.PartialAsync("~/Views/NCRDetailViews/_ActionButtons.cshtml", Model)
 
