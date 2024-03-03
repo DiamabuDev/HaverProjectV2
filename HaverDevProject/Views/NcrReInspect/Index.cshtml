@@ -48,7 +48,7 @@
 @*                 <input type="radio" class="btn-check btn-filter" name="filter" id="Active" autocomplete="off" checked value="Active" data-filter="Active">
                 <label class="btn btn-success me-2" for="Active">Active NCRs</label> *@
 
-                <input type="radio" class="btn-check btn-filter" name="filter" id="Closed" autocomplete="off" value="Closed" data-filter="Closed" disabled>
+                <input type="radio" class="btn-check btn-filter" name="filter" id="Closed" autocomplete="off" value="Closed" data-filter="Closed">
                 <label class="btn btn-danger me-2" for="Closed">Closed NCRs </label>
 
                 <button type="button" id="pendingCountIndicator" class="btn btn-warning btn-block" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></button>
@@ -57,7 +57,7 @@
     </div>
     <div class="form-horizontal">
         <div class="card card-body bg-custom-color mb-2">
-            <div class="row d-flex justify-content-center align-items-center">
+            <div class="row d-flex justify-content-left align-items-left">
 @*                 <div class="form-group col-lg-3 col-md-5 col-sm-10 col-10">
                     <label class="control-label">Filter by Suppliers:</label>
                     @Html.DropDownList("SupplierID", null, "All Suppliers", htmlAttributes: new { @class = "form-control" })
@@ -91,19 +91,19 @@
                         @Html.Raw(ViewData["filterApplied:Created"])
                     </button>
                 </th>
-                <th class="col-2">
+                <th class="col-md-1">
                     <button type="submit" name="actionButton" value="NCR #" class="btn text-light custom-btn-text-start">
                         NCR #
                         @Html.Raw(ViewData["filterApplied:Ncr"])
                     </button>
                 </th>
-                <th class="col-3">
+                <th class="col-md-3">
                     <button type="submit" name="actionButton" value="Supplier" class="btn text-light custom-btn-text-start">
                         Supplier
                         @Html.Raw(ViewData["filterApplied:Supplier"])
                     </button>
                 </th>
-                <th class="d-none d-md-table-cell col-3">
+                <th class="d-none d-md-table-cell col-md-3">
                     <button type="submit" name="actionButton" value="Acceptable" class="btn text-light custom-btn-text-start">
                         Acceptable
                         @Html.Raw(ViewData["filterApplied:NcrReInspectAcceptable"])
@@ -115,7 +115,7 @@
                         @Html.Raw(ViewData["filterApplied:NcrReInspectUserId"])
                     </button>
                 </th> *@
-                <th class="d-none d-xxl-table-cell">
+                <th class="d-none d-xxl-table-cell col-md-2">
                     <button type="submit" name="actionButton" value="Phase" class="btn text-light custom-btn-text-start">
                         Phase
                         @Html.Raw(ViewData["filterApplied:Phase"])
@@ -152,10 +152,10 @@
                     @* <td>
                         @Html.DisplayFor(modelItem => item.NcrReInspectAcceptable)
                     </td> *@
-                    <td class="col-3">
+                    <td class="col-md-2">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrQa.Item.Supplier.SupplierName)
                     </td>
-                    <td class="d-none d-md-table-cell col-3">
+                    <td class="d-none d-md-table-cell col-2">
                         @if (item.NcrReInspectAcceptable)
                         {
                             <text>Yes</text>
@@ -186,7 +186,8 @@
                             <text>Dave</text>
                         }
                     </td>
- *@                    <td class="d-none d-xxl-table-cell">
+                *@
+                    <td class="d-none d-xxl-table-cell col-md-1">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrPhase)
                     </td>
 @*                     <td>
