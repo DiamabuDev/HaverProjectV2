@@ -347,12 +347,10 @@ namespace HaverDevProject.Controllers
             var ncrOperation = await _context.NcrOperations
                 .Include(n => n.NcrEng)
                 .Include(n => n.Ncr)
-                    .Include(n => n.Ncr)
-                        .ThenInclude(n => n.NcrQa)
-                            .ThenInclude(n => n.Item)
-                                .ThenInclude(n => n.Supplier)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
                 .Include(n => n.OpDispositionType)
                 .Include(n => n.FollowUpType)
+                .Include(n => n.OpDefectPhotos)
                 .FirstOrDefaultAsync(n => n.NcrOpId == id);
 
             if (ncrOperation == null)
@@ -373,7 +371,7 @@ namespace HaverDevProject.Controllers
                 CarNumber = ncrOperation.CarNumber,
                 FollowUp = ncrOperation.FollowUp,
                 ExpectedDate = ncrOperation.ExpectedDate,
-                FollowUpTypeId = ncrOperation.FollowUpType.FollowUpTypeId,
+                FollowUpTypeId = ncrOperation.FollowUpTypeId,
 
                 UpdateOp = ncrOperation.UpdateOp,
                 NcrPurchasingUserId = ncrOperation.NcrPurchasingUserId,
@@ -382,50 +380,37 @@ namespace HaverDevProject.Controllers
                 OpDefectPhotos = ncrOperation.OpDefectPhotos
             };
 
+
             ViewData["FollowUpTypeId"] = new SelectList(_context.FollowUpTypes, "FollowUpTypeId", "FollowUpTypeName", ncrOperation.FollowUpTypeId);
             ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrOperation.NcrId);
             ViewData["OpDispositionTypeId"] = new SelectList(_context.OpDispositionTypes, "OpDispositionTypeId", "OpDispositionTypeName", ncrOperation.OpDispositionTypeId);
             return View(ncrOperationDTO);
         }
 
-        // POST: NcrOperation/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int NcrOpId, int NcrId, NcrOperationDTO ncrOperationDTO, NcrOperation ncrOperation, List<IFormFile> Photos)
+        public async Task<IActionResult> Edit(int NcrOpId, int id, int NcrId, NcrOperationDTO ncrOperationDTO, NcrOperation ncrOperation, List<IFormFile> Photos)
         {
             if (ModelState.IsValid)
             {
-                var ncrToUpdate = await _context.Ncrs
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(n => n.NcrId == NcrId);
-
-                if (ncrToUpdate == null)
+                if (id != ncrOperationDTO.NcrId)
                 {
                     return NotFound();
-                }
-                else
-                {
-                    ncrToUpdate.NcrPhase = NcrPhase.Procurement;
-
-                    _context.Ncrs.Update(ncrToUpdate);
-                    await _context.SaveChangesAsync();
                 }
 
                 // Go get the ncrOperation to update
                 var ncrOperationToUpdate = await _context.NcrOperations
-                .Include(n => n.NcrEng)
-                .Include(n => n.Ncr)
+                    .Include(n => n.NcrEng)
                     .Include(n => n.Ncr)
-                        .ThenInclude(n => n.NcrQa)
-                            .ThenInclude(n => n.Item)
-                                .ThenInclude(n => n.Supplier)
-                .Include(n => n.OpDispositionType)
-                .Include(n => n.FollowUpType)
-                .Include(n => n.OpDefectPhotos)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(n => n.NcrOpId == NcrOpId);
+                        .Include(n => n.Ncr)
+                            .ThenInclude(n => n.NcrQa)
+                                .ThenInclude(n => n.Item)
+                                    .ThenInclude(n => n.Supplier)
+                    .Include(n => n.OpDispositionType)
+                    .Include(n => n.FollowUpType)
+                    .Include(n => n.OpDefectPhotos)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(n => n.NcrOpId == NcrOpId);
 
                 // Check that we got the function or exit with a not found error
                 if (ncrOperationToUpdate == null)
@@ -437,6 +422,12 @@ namespace HaverDevProject.Controllers
                     await AddPictures(ncrOperationDTO, Photos);
                     try
                     {
+                        // Update the related Ncr entity
+                        ncrOperationToUpdate.Ncr.NcrPhase = NcrPhase.Procurement;
+                        _context.Ncrs.Update(ncrOperationToUpdate.Ncr);
+                        await _context.SaveChangesAsync();
+
+                        // Update the NcrOperation entity
                         ncrOperationToUpdate.OpDispositionTypeId = ncrOperation.OpDispositionTypeId;
                         ncrOperationToUpdate.NcrPurchasingDescription = ncrOperation.NcrPurchasingDescription;
                         ncrOperationToUpdate.Car = ncrOperation.Car;
@@ -466,6 +457,7 @@ namespace HaverDevProject.Controllers
                     }
                 }
             }
+
             PopulateDropDownLists();
             return View(ncrOperationDTO);
         }
