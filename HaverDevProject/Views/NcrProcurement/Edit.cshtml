@@ -67,7 +67,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row supplier-return-fields">
                     <div class="col-6">
                         <div class="form-group">
                             <label asp-for="SupplierReturnMANum" class="control-label"></label>
@@ -83,14 +83,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row supplier-return-fields">
                     <div class="form-group">
                         <label asp-for="NcrProcExpectedDate" class="control-label"></label>
-                        <input asp-for="NcrProcExpectedDate" class="form-control" type="date" value="@Model.NcrProcExpectedDate.ToString("yyyy-MM-dd")" />
+                        <input asp-for="NcrProcExpectedDate" class="form-control" type="date"
+                               value="@(Model.NcrProcExpectedDate.HasValue ? Model.NcrProcExpectedDate.Value.ToString("yyyy-MM-dd") : string.Empty)" />
                         <span asp-validation-for="NcrProcExpectedDate" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row supplier-return-fields">
                     <div class="form-group">
                         <label asp-for="SupplierReturnAccount" class="control-label"></label>
                         <input asp-for="SupplierReturnAccount" class="form-control" />
@@ -185,4 +186,37 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        $(document).ready(function () {
+            // Store the original value of NcrProcExpectedDate
+            var originalExpectedDate = '@(Model.NcrProcExpectedDate?.ToString("yyyy-MM-dd"))';
+
+            // Function to show/hide elements based on SupplierReturnRequest value
+            function toggleSupplierReturnFields() {
+                var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
+                var supplierReturnFields = $('.supplier-return-fields');
+                var expectedDateField = supplierReturnFields.find('input[name="NcrProcExpectedDate"]');
+
+                // Check the value of SupplierReturnRequest and toggle the visibility accordingly
+                if (supplierReturnRequest === 'true') {
+                    // If SupplierReturnReq is true, set the original value and show the fields
+                    supplierReturnFields.show();
+                    expectedDateField.val(originalExpectedDate);
+                } else {
+                    // If SupplierReturnReq is false, hide the fields without clearing the value
+                    supplierReturnFields.hide();
+                }
+            }
+
+            // Call the function on page load
+            toggleSupplierReturnFields();
+
+            // Bind the function to the change event of SupplierReturnRequest radio buttons
+            $('input[name="NcrProcSupplierReturnReq"]').change(function () {
+                toggleSupplierReturnFields();
+            });
+        });
+    </script>
+
+
 }

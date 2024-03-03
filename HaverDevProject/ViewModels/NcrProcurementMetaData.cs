@@ -20,7 +20,7 @@ namespace HaverDevProject.Models
         [Column("ncrProcExpectedDate")]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}", ApplyFormatInEditMode = true)]
-        public DateTime NcrProcExpectedDate { get; set; }
+        public DateTime? NcrProcExpectedDate { get; set; }
 
         [Display(Name = "Dispose on Site")]
         [Column("ncrProcDisposedAllowed")]

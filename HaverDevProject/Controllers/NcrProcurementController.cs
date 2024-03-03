@@ -30,14 +30,21 @@ namespace HaverDevProject.Controllers
             //Set the date range filer based on the values in the database
             if (EndDate == DateTime.MinValue)
             {
-                StartDate = _context.NcrQas
-                .Min(f => f.Ncr.NcrQa.NcrQacreationDate.Date);
+                StartDate = _context.Ncrs
+                .Min(f => f.NcrLastUpdated.Date);
 
-                EndDate = _context.NcrQas
-                .Max(f => f.Ncr.NcrQa.NcrQacreationDate.Date);
+                EndDate = _context.Ncrs
+                .Max(f => f.NcrLastUpdated.Date);
 
                 ViewData["StartDate"] = StartDate.ToString("yyyy-MM-dd");
                 ViewData["EndDate"] = EndDate.ToString("yyyy-MM-dd");
+            }
+            //Check the order of the dates and swap them if required
+            if (EndDate < StartDate)
+            {
+                DateTime temp = EndDate;
+                EndDate = StartDate;
+                StartDate = temp;
             }
 
             //Check the order of the dates and swap them if required
@@ -49,13 +56,14 @@ namespace HaverDevProject.Controllers
             }
 
             //List of sort options.
-            string[] sortOptions = new[] { "Created", "NCR #", "SupplierReturn", "ExpectedDate" };
+            string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "SupplierReturn", "Phase" };
 
             var ncrProc = _context.NcrProcurements
                 .Include(n => n.Ncr)
-                .Include(n => n.Ncr).ThenInclude(n => n.NcrOperation)
-                .Where(n => n.Ncr.NcrPhase == NcrPhase.ReInspection)
-                //.Include(n => n.SupplierReturn)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
+                //.Where(n => n.Ncr.NcrPhase == NcrPhase.ReInspection)
                 .AsNoTracking();
 
             GetNcrs();
@@ -79,12 +87,12 @@ namespace HaverDevProject.Controllers
             }
             if (StartDate == EndDate)
             {
-                ncrProc = ncrProc.Where(n => n.Ncr.NcrQa.NcrQacreationDate == StartDate);
+                ncrProc = ncrProc.Where(n => n.Ncr.NcrLastUpdated == StartDate);
             }
             else
             {
-                ncrProc = ncrProc.Where(n => n.Ncr.NcrQa.NcrQacreationDate >= StartDate &&
-                         n.Ncr.NcrQa.NcrQacreationDate <= EndDate);
+                ncrProc = ncrProc.Where(n => n.Ncr.NcrLastUpdated >= StartDate &&
+                         n.Ncr.NcrLastUpdated <= EndDate);
             }
 
             //Sorting columns
@@ -117,6 +125,21 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:NcrNumber"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
+            else if (sortField == "Supplier")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncrProc = ncrProc
+                        .OrderBy(p => p.Ncr.NcrQa.Item.Supplier.SupplierName);
+                    ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrProc = ncrProc
+                        .OrderByDescending(p => p.Ncr.NcrQa.Item.Supplier.SupplierName);
+                    ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
             else if (sortField == "SupplierReturn")
             {
                 if (sortDirection == "asc")
@@ -132,36 +155,53 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:SupplierReturn"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
-            else if (sortField == "ExpectedDate")
-            {
-                if (sortDirection == "asc")
-                {
-                    ncrProc = ncrProc
-                        .OrderBy(p => p.NcrProcExpectedDate);
-                    ViewData["filterApplied:ExpectedDate"] = "<i class='bi bi-sort-up'></i>";
-                }
-                else
-                {
-                    ncrProc = ncrProc
-                        .OrderByDescending(p => p.NcrProcExpectedDate);
-                    ViewData["filterApplied:ExpectedDate"] = "<i class='bi bi-sort-down'></i>";
-                }
-            }
+            //else if (sortField == "ExpectedDate")
+            //{
+            //    if (sortDirection == "asc")
+            //    {
+            //        ncrProc = ncrProc
+            //            .OrderBy(p => p.NcrProcExpectedDate);
+            //        ViewData["filterApplied:ExpectedDate"] = "<i class='bi bi-sort-up'></i>";
+            //    }
+            //    else
+            //    {
+            //        ncrProc = ncrProc
+            //            .OrderByDescending(p => p.NcrProcExpectedDate);
+            //        ViewData["filterApplied:ExpectedDate"] = "<i class='bi bi-sort-down'></i>";
+            //    }
+            //}
             else if (sortField == "Created")
             {
                 if (sortDirection == "asc") //desc by default
                 {
                     ncrProc = ncrProc
-                        .OrderBy(p => p.NcrProcUpdate);
+                        .OrderBy(p => p.Ncr.NcrLastUpdated);
 
                     ViewData["filterApplied:Created"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncrProc = ncrProc
-                        .OrderByDescending(p => p.NcrProcUpdate);
+                        .OrderByDescending(p => p.Ncr.NcrLastUpdated);
 
                     ViewData["filterApplied:Created"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Phase")
+            {
+                if (sortDirection == "desc") //desc by default
+                {
+                    ncrProc = ncrProc
+                        .OrderBy(p => p.Ncr.NcrPhase);
+
+                    ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrProc = ncrProc
+                        .OrderByDescending(p => p.Ncr.NcrPhase);
+
+                    ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
             else //(sortField == "Status")
@@ -474,7 +514,7 @@ namespace HaverDevProject.Controllers
             //        .ThenInclude(n => n.NcrQa)
             //            .ThenInclude(n => n.Item)
             //                .ThenInclude(n => n.Supplier) 
-            //    .Where(ncrEng => !existingNcrIds.Contains(ncrEng.NcrId))
+            //    .Where(ncrProc => !existingNcrIds.Contains(ncrProc.NcrId))
             //    .ToList();
 
             List<Ncr> pendings = _context.Ncrs
@@ -508,8 +548,8 @@ namespace HaverDevProject.Controllers
 
             //// Count only the unique NcrIds in NcrOp
             //int pendingCount = _context.NcrEngs
-            //    .Where(ncrEng => ncrOpPending.Contains(ncrEng.NcrId))
-            //    .Select(ncrEng => ncrEng.NcrId)
+            //    .Where(ncrProc => ncrOpPending.Contains(ncrProc.NcrId))
+            //    .Select(ncrProc => ncrProc.NcrId)
             //    .Distinct()
             //    .Count();
 
