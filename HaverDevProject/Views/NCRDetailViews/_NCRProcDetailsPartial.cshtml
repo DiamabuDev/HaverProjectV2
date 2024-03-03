@@ -18,46 +18,20 @@
                                     <th class="four-cols">Supplier Return Completed</th>
                                 </tr>
                             </thead>
-                        </table>
-                    </div>
-                    <div class="card-body pb-0 pt-0">
-                        <table class="table">
                             <tbody>
                                 <tr>
                                     <td class="four-cols">
-                                        @if (Model.Ncr.NcrProcurement.NcrProcSupplierReturnReq == true)
-                                        {
-                                            <text>Yes</text>
-                                        }
-                                        else
-                                        {
-                                            <text>No</text>
-                                        }
+                                        @(Model.Ncr.NcrProcurement.NcrProcSupplierReturnReq ? "Yes" : "No")
                                     </td>
-                                    <td class="four-cols">@Model.Ncr.NcrProcurement.NcrProcExpectedDate</td>
+                                    <td class="four-cols">@(Model.Ncr.NcrProcurement.NcrProcExpectedDate?.ToString("yyyy-MM-dd") ?? "")</td>
                                     <td class="four-cols">
-                                        @if (Model.Ncr.NcrProcurement.NcrProcDisposedAllowed == true)
-                                        {
-                                            <text>Yes</text>
-                                        }
-                                        else
-                                        {
-                                            <text>No</text>
-                                        }
+                                        @(Model.Ncr.NcrProcurement.NcrProcDisposedAllowed ? "Yes" : "No")
                                     </td>
                                     <td class="four-cols">
-                                        @if (Model.Ncr.NcrProcurement.NcrProcSAPReturnCompleted == true)
-                                        {
-                                            <text>Yes</text>
-                                        }
-                                        else
-                                        {
-                                            <text>No</text>
-                                        }
+                                        @(Model.Ncr.NcrProcurement.NcrProcSAPReturnCompleted ? "Yes" : "No")
                                     </td>
                                 </tr>
                             </tbody>
-
                         </table>
                     </div>
                     <div class="card-body pb-0 pt-0">
@@ -71,29 +45,45 @@
                             <tbody>
                                 <tr>
                                     <td class="four-cols">
-                                        @if (Model.Ncr.NcrProcurement.NcrProcCreditExpected == true)
-                                        {
-                                            <text>Yes</text>
-                                        }
-                                        else
-                                        {
-                                            <text>No</text>
-                                        }
+                                        @(Model.Ncr.NcrProcurement.NcrProcCreditExpected ? "Yes" : "No")
                                     </td>
                                     <td class="two-cols">
-                                        @if (Model.Ncr.NcrProcurement.NcrProcSupplierBilled == true)
-                                        {
-                                            <text>Yes</text>
-                                        }
-                                        else
-                                        {
-                                            <text>No</text>
-                                        }
+                                        @(Model.Ncr.NcrProcurement.NcrProcSupplierBilled ? "Yes" : "No")
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
+                    <div class="card">
+                        <div class="card-body pb-0">
+                            <table class="table m-0">
+                                <thead class="custom-light-bg">
+                                    <tr>
+                                        <th class="three-cols">Procurement</th>
+                                        <th class="three-cols">Creation Date</th>
+                                        <th class="three-cols">Last Updated</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="three-cols">R. May</td>
+                                        <td class="three-cols">@Model.Ncr.NcrQa.NcrQacreationDate.ToString("yyyy-MM-dd")</td>
+                                        <td class="three-cols">
+                                            @{
+                                                if (Model.UpdatedOn.HasValue)
+                                                {
+                                                    DateTime localUpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(Model.UpdatedOn.Value, TimeZoneInfo.Local);
+                                                    @localUpdatedOn.ToString("yyyy-MM-dd HH:mm:ss")
+                                                }
+                                                else
+                                                {
+                                                    @("Not available")
+                                                }
+                                            }
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                 </div>
                 @{
                     bool hasImages = Model.ProcDefectPhotos != null && Model.ProcDefectPhotos.Any(p => p.ProcDefectPhotoContent != null);

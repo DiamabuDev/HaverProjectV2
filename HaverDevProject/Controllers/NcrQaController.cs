@@ -56,8 +56,8 @@ namespace HaverDevProject.Controllers
             ViewData["SupplierId"] = SupplierSelectList();
 
             var ncrQa = _context.NcrQas
-                .Include(n => n.Item)
-                .Include(n => n.Item).ThenInclude(i => i.Supplier)
+                //.Include(n => n.Item).ThenInclude(n => n.ItemDefects).ThenInclude(n => n.Defect)
+                .Include(n => n.Item.Supplier)
                 .Include(n => n.Defect)
                 .Include(n => n.Ncr)
                 .AsNoTracking();
@@ -65,19 +65,30 @@ namespace HaverDevProject.Controllers
             //Filterig values            
             if (!String.IsNullOrEmpty(filter))
             {
-                if (filter == "Active")
+                if (filter == "All")
+                {
+                    ViewData["filterApplied:ButtonAll"] = "btn-primary";
+                    ViewData["filterApplied:ButtonActive"] = "btn-secondary";
+                    ViewData["filterApplied:ButtonClosed"] = "btn-secondary";
+                }
+                else if (filter == "Active")
                 {
                     ncrQa = ncrQa.Where(n => n.Ncr.NcrStatus == true);
+                    ViewData["filterApplied:ButtonActive"] = "btn-success";
+                    ViewData["filterApplied:ButtonAll"] = "btn-secondary";
+                    ViewData["filterApplied:ButtonClosed"] = "btn-secondary";
                 }
                 else //(filter == "Closed")
                 {
-
                     ncrQa = ncrQa.Where(n => n.Ncr.NcrStatus == false);
+                    ViewData["filterApplied:ButtonClosed"] = "btn-danger";
+                    ViewData["filterApplied:ButtonAll"] = "btn-secondary";
+                    ViewData["filterApplied:ButtonActive"] = "btn-secondary";
                 }
-            }    
+            }
             if (!String.IsNullOrEmpty(SearchCode))
             {
-                ncrQa = ncrQa.Where(s => s.Item.ItemDefects.FirstOrDefault().Defect.DefectName.ToUpper().Contains(SearchCode.ToUpper()) 
+                ncrQa = ncrQa.Where(s => s.Defect.DefectName.ToUpper().Contains(SearchCode.ToUpper() ) //(s => s.Item.ItemDefects.FirstOrDefault().Defect.DefectName.ToUpper().Contains(SearchCode.ToUpper()) 
                 || s.Ncr.NcrNumber.ToUpper().Contains(SearchCode.ToUpper())); 
             }
             if (SupplierID.HasValue)
@@ -93,6 +104,8 @@ namespace HaverDevProject.Controllers
                 ncrQa = ncrQa.Where(n => n.NcrQacreationDate >= StartDate && 
                          n.NcrQacreationDate <= EndDate);   
             }
+
+            
 
             //Sorting columns
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
