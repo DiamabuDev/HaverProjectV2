@@ -25,35 +25,14 @@
                             <tbody>
                                 <tr>
                                     <td class="four-cols">
-                                        @if (Model.Ncr.NcrProcurement.NcrProcSupplierReturnReq == true)
-                                        {
-                                            <text>Yes</text>
-                                        }
-                                        else
-                                        {
-                                            <text>No</text>
-                                        }
+                                        @(Model.Ncr.NcrProcurement.NcrProcSupplierReturnReq ? "Yes" : "No")
                                     </td>
                                     <td class="four-cols">@Model.Ncr.NcrProcurement.NcrProcExpectedDate</td>
                                     <td class="four-cols">
-                                        @if (Model.Ncr.NcrProcurement.NcrProcDisposedAllowed == true)
-                                        {
-                                            <text>Yes</text>
-                                        }
-                                        else
-                                        {
-                                            <text>No</text>
-                                        }
+                                        @(Model.Ncr.NcrProcurement.NcrProcDisposedAllowed ? "Yes" : "No")
                                     </td>
                                     <td class="four-cols">
-                                        @if (Model.Ncr.NcrProcurement.NcrProcSAPReturnCompleted == true)
-                                        {
-                                            <text>Yes</text>
-                                        }
-                                        else
-                                        {
-                                            <text>No</text>
-                                        }
+                                        @(Model.Ncr.NcrProcurement.NcrProcSAPReturnCompleted ? "Yes" : "No")
                                     </td>
                                 </tr>
                             </tbody>
@@ -71,24 +50,10 @@
                             <tbody>
                                 <tr>
                                     <td class="four-cols">
-                                        @if (Model.Ncr.NcrProcurement.NcrProcCreditExpected == true)
-                                        {
-                                            <text>Yes</text>
-                                        }
-                                        else
-                                        {
-                                            <text>No</text>
-                                        }
+                                        @(Model.Ncr.NcrProcurement.NcrProcCreditExpected ? "Yes" : "No")
                                     </td>
                                     <td class="two-cols">
-                                        @if (Model.Ncr.NcrProcurement.NcrProcSupplierBilled == true)
-                                        {
-                                            <text>Yes</text>
-                                        }
-                                        else
-                                        {
-                                            <text>No</text>
-                                        }
+                                        @(Model.Ncr.NcrProcurement.NcrProcSupplierBilled ? "Yes" : "No")
                                     </td>
                                 </tr>
                             </tbody>
