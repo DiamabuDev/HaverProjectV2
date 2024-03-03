@@ -220,6 +220,24 @@
     </form>        
 </div>
 
+<div class="modal" tabindex="-1" role="dialog" id="engineerDispositionModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Engineer Disposition Required</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                 <p><strong>Warning:</strong> Engineer Disposition is not required. Are you sure you want to proceed?</p>
+            </div>
+            <div class="modal-footer">
+                
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script src="~/js/refreshDDL.js"></script>
@@ -243,4 +261,26 @@
             refreshDDL('DefectId', URL, true, 'No defects related with the item selected', false, null, true);
         });
     </script>
+    <script>
+    function showEngineerDispositionModal() {
+        $('#engineerDispositionModal').modal('show');
+    }
+
+    function hideEngineerDispositionModal() {
+        $('#engineerDispositionModal').modal('hide');
+    }
+      
+
+    // Agrega este código para mostrar el modal cuando cambie el valor del radio button.
+    $('input[name="NcrQaEngDispositionRequired"]').change(function () {
+        var engineerDispositionRequired = $(this).val();
+        if (engineerDispositionRequired === "false") {
+            showEngineerDispositionModal();
+        } else {
+            hideEngineerDispositionModal();
+        }
+    });
+</script>
+
+
 }
