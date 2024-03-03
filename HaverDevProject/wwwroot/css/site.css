@@ -97,8 +97,6 @@ body {
     width: 210px;
 }
 
-
-
 /* Styles for mobile devices */
 @media (max-width: 767px) {
     .dashboard {
