@@ -27,11 +27,11 @@
                             <label class="pb-3"><b>Reinspection Acceptable? </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Is this NCR Reinspection Acceptable?">(Y/N)</small></label>
                             <div class="text-left">
                                 <div class="form-check form-check-inline">
-                                    <input type="radio" class="form-check-input" asp-for="NcrReInspectAcceptable" value="true" />
+                                    <input type="radio" class="form-check-input" id="true" asp-for="NcrReInspectAcceptable" value="true" />
                                     <label class="form-check-label">Yes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input type="radio" class="form-check-input" asp-for="NcrReInspectAcceptable" value="false"  />
+                                    <input type="radio" class="form-check-input" id="false" asp-for="NcrReInspectAcceptable" value="false" />
                                     <label class="form-check-label">No</label>
                                 </div>
                             </div>
@@ -147,9 +147,17 @@
     </script>
     <script>
         function NewNcr(){
-            var radioBtns = document.getElementByName("NcrReInspectAcceptable")
 
-            if 
+            if (document.getElementById("false").checked == true) {
+                var confirmNew = confirm("Do you want to create a new NCR?");
+
+                if (confirmNew) {
+                    alert("yes");
+                }
+                else {
+                    alert("no");
+                }
+            }
         }
     </script>
 
