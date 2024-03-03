@@ -13,14 +13,14 @@
     <div class="row mt-3 mb-2">
         <div class="col-8">
             <div class="d-flex justify-content-start">
-                @* <input type="radio" class="btn-check btn-filter" name="filter" id="All" autocomplete="off" value="All">
-                <label class="btn btn-primary me-2" for="All">All NCRs</label> *@
+                <input type="radio" class="btn-check btn-filter" name="filter" id="All" autocomplete="off" value="All" data-filter="All">
+                <label class="btn @ViewData["filterApplied:ButtonAll"] me-2" for="All">All NCRs</label>
 
                 <input type="radio" class="btn-check btn-filter" name="filter" id="Active" autocomplete="off" checked value="Active" data-filter="Active">
-                <label class="btn btn-success me-2" for="Active">Active NCRs</label>
+                <label class="btn @ViewData["filterApplied:ButtonActive"] me-2" for="Active">Active NCRs</label>
 
                 <input type="radio" class="btn-check btn-filter" name="filter" id="Closed" autocomplete="off" value="Closed" data-filter="Closed">
-                <label class="btn btn-danger me-2" for="Closed">Closed NCRs </label>
+                <label class="btn @ViewData["filterApplied:ButtonClosed"] me-2" for="Closed">Closed NCRs </label>
             </div>
         </div>
         <div class="col-4 text-end">
@@ -148,6 +148,10 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $('.btn-filter').on('click', function () {
+
+                
+
+
                 $('#filter').val($(this).data('filter'));
                 $('#ncrForm').submit();
             });
@@ -173,12 +177,5 @@
             }
         });        
     </script>    
-
-    @* <script src="~/js/bootstrap-datepicker.min.js"></script>
-    <script>
-        $('.datepicker').datepicker({
-            format: 'mm/dd/yyyy'
-        });
-    </script> *@
 }
 
