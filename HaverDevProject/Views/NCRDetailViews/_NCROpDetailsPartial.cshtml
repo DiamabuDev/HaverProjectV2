@@ -42,7 +42,12 @@
                                     <td>@(Model.Ncr.NcrOperation.Car ? "Yes" : "No")</td>
                                     <td>@Model.Ncr.NcrOperation.CarNumber</td>
                                     <td>@(Model.Ncr.NcrOperation.FollowUp ? "Yes" : "No")</td>
-                                    <td>@Model.Ncr.NcrOperation.FollowUpType.FollowUpTypeName</td>
+                                    <td>
+                                        @if (Model.Ncr.NcrOperation.FollowUpType != null)
+                                        {
+                                            @Model.Ncr.NcrOperation.FollowUpType.FollowUpTypeName
+                                        }
+                                    </td>
                                     <td>@(Model.Ncr.NcrOperation.ExpectedDate?.ToString("yyyy-MM-dd") ?? "")</td>
                                 </tr>
                             </tbody>
