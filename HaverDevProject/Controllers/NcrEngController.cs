@@ -35,10 +35,10 @@ namespace HaverDevProject.Controllers
             if (EndDate == DateTime.MinValue)
             {
                 StartDate = _context.Ncrs
-                .Min(f => f.NcrLastUpdated.Date);
+                .Min(f => f.NcrQa.NcrQacreationDate.Date);
 
                 EndDate = _context.Ncrs
-                .Max(f => f.NcrLastUpdated.Date);
+                .Max(f => f.NcrQa.NcrQacreationDate.Date);
 
                 ViewData["StartDate"] = StartDate.ToString("yyyy-MM-dd");
                 ViewData["EndDate"] = EndDate.ToString("yyyy-MM-dd");
@@ -73,14 +73,25 @@ namespace HaverDevProject.Controllers
             //Filtering values            
             if (!String.IsNullOrEmpty(filter))
             {
-                if (filter == "Active")
+                if (filter == "All")
+                {
+                    ViewData["filterApplied:ButtonAll"] = "btn-primary";
+                    ViewData["filterApplied:ButtonActive"] = "btn-success custom-opacity";
+                    ViewData["filterApplied:ButtonClosed"] = "btn-danger custom-opacity";
+                }
+                else if (filter == "Active")
                 {
                     ncrEng = ncrEng.Where(n => n.Ncr.NcrStatus == true);
+                    ViewData["filterApplied:ButtonActive"] = "btn-success";
+                    ViewData["filterApplied:ButtonAll"] = "btn-primary custom-opacity";
+                    ViewData["filterApplied:ButtonClosed"] = "btn-danger custom-opacity";
                 }
                 else //(filter == "Closed")
                 {
-
                     ncrEng = ncrEng.Where(n => n.Ncr.NcrStatus == false);
+                    ViewData["filterApplied:ButtonClosed"] = "btn-danger";
+                    ViewData["filterApplied:ButtonAll"] = "btn-primary custom-opacity";
+                    ViewData["filterApplied:ButtonActive"] = "btn-success custom-opacity";
                 }
             }
 
@@ -94,12 +105,12 @@ namespace HaverDevProject.Controllers
             }
             if (StartDate == EndDate)
             {
-                ncrEng = ncrEng.Where(n => n.Ncr.NcrLastUpdated == StartDate);
+                ncrEng = ncrEng.Where(n => n.Ncr.NcrQa.NcrQacreationDate == StartDate);
             }
             else
             {
-                ncrEng = ncrEng.Where(n => n.Ncr.NcrLastUpdated >= StartDate &&
-                         n.Ncr.NcrLastUpdated <= EndDate);
+                ncrEng = ncrEng.Where(n => n.Ncr.NcrQa.NcrQacreationDate >= StartDate &&
+                         n.Ncr.NcrQa.NcrQacreationDate <= EndDate);
             }
 
 
@@ -345,8 +356,6 @@ namespace HaverDevProject.Controllers
                     TempData["SuccessMessage"] = "NCR saved successfully!";
                     int ncrEngId = ncrEng.NcrEngId;
                     return RedirectToAction("Details", new { id = ncrEngId });
-
-                    //return RedirectToAction(nameof(Index));
                 }
 
             }
@@ -354,13 +363,13 @@ namespace HaverDevProject.Controllers
             {
                 ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException )
             {
-                ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");         
             }
 
             PopulateDropDownLists();
-            //ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName", ncrEngDTO.EngDispositionTypeId);
+          
             return View(ncrEngDTO);
         }
 
