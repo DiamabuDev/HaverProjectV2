@@ -19,7 +19,7 @@ public class NcrEngDTO : Auditable
     public bool NcrEngCustomerNotification { get; set; } = false;
     public string NcrEngDispositionDescription { get; set; }
     public bool NcrEngStatusFlag { get; set; }
-
+    public DateTime NcrEngCreationDate { get; set; }
     public NcrPhase NcrPhase { get; set; }
     public int NcrEngUserId { get; set; }
     public int EngDispositionTypeId { get; set; }
