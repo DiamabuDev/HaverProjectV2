@@ -397,6 +397,7 @@ namespace HaverDevProject.Controllers
                 else
                 {                    
                     ncrToUpdate.NcrPhase = ncrQaDTO.NcrQaEngDispositionRequired ? NcrPhase.Engineer : NcrPhase.Operations;
+                    ncrToUpdate.NcrLastUpdated = DateTime.Now;
 
                     _context.Ncrs.Update(ncrToUpdate);
                     await _context.SaveChangesAsync();
