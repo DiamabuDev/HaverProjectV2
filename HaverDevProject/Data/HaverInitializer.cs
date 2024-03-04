@@ -686,6 +686,7 @@ namespace HaverDevProject.Data
                             NcrEngCustomerNotification = false,
                             NcrEngDispositionDescription = "Example Description of Disposition 1",
                             NcrEngUserId = 1, //nullable
+                            NcrEngCreationDate = DateTime.Parse("2023-12-18"),
                             EngDispositionTypeId = context.EngDispositionTypes.FirstOrDefault(f => f.EngDispositionTypeName == "Use As Is").EngDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-137").NcrId
                         },
@@ -694,6 +695,7 @@ namespace HaverDevProject.Data
                             NcrEngCustomerNotification = true,
                             NcrEngDispositionDescription = "Example Description of Disposition 2",
                             NcrEngUserId = 2, //nullable
+                            NcrEngCreationDate = DateTime.Parse("2023-12-19"),
                             EngDispositionTypeId = context.EngDispositionTypes.FirstOrDefault(f => f.EngDispositionTypeName == "Repair").EngDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-138").NcrId
                         },
@@ -702,6 +704,7 @@ namespace HaverDevProject.Data
                             NcrEngCustomerNotification = true,
                             NcrEngDispositionDescription = "Example Description of Disposition 3",
                             NcrEngUserId = 3, //nullable
+                            NcrEngCreationDate = DateTime.Parse("2023-12-23"),
                             EngDispositionTypeId = context.EngDispositionTypes.FirstOrDefault(f => f.EngDispositionTypeName == "Rework").EngDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-139").NcrId
                         },
@@ -710,6 +713,7 @@ namespace HaverDevProject.Data
                             NcrEngCustomerNotification = true,
                             NcrEngDispositionDescription = "Example Description of Disposition 4",
                             NcrEngUserId = 4, //nullable
+                            NcrEngCreationDate = DateTime.Parse("2024-01-18"),
                             EngDispositionTypeId = context.EngDispositionTypes.FirstOrDefault(f => f.EngDispositionTypeName == "Scrap").EngDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-140").NcrId
                         },
@@ -718,6 +722,7 @@ namespace HaverDevProject.Data
                             NcrEngCustomerNotification = false,
                             NcrEngDispositionDescription = "Example Description of Disposition 5",
                             NcrEngUserId = 1, //nullable
+                            NcrEngCreationDate = DateTime.Parse("2024-01-14"),
                             EngDispositionTypeId = context.EngDispositionTypes.FirstOrDefault(f => f.EngDispositionTypeName == "Use As Is").EngDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-141").NcrId
                         },
@@ -726,6 +731,7 @@ namespace HaverDevProject.Data
                             NcrEngCustomerNotification = true,
                             NcrEngDispositionDescription = "Example Description of Disposition 6",
                             NcrEngUserId = 2, //nullable
+                            NcrEngCreationDate = DateTime.Parse("2024-01-11"),
                             EngDispositionTypeId = context.EngDispositionTypes.FirstOrDefault(f => f.EngDispositionTypeName == "Scrap").EngDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-001").NcrId
                         },
@@ -734,6 +740,7 @@ namespace HaverDevProject.Data
                             NcrEngCustomerNotification = true,
                             NcrEngDispositionDescription = "Example Description of Disposition 7",
                             NcrEngUserId = 3, //nullable
+                            NcrEngCreationDate = DateTime.Parse("2024-01-11"),
                             EngDispositionTypeId = context.EngDispositionTypes.FirstOrDefault(f => f.EngDispositionTypeName == "Rework").EngDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-002").NcrId
                         },
@@ -742,6 +749,7 @@ namespace HaverDevProject.Data
                             NcrEngCustomerNotification = true,
                             NcrEngDispositionDescription = "Example Description of Disposition 8",
                             NcrEngUserId = 4, //nullable
+                            NcrEngCreationDate = DateTime.Parse("2024-01-15"),
                             EngDispositionTypeId = context.EngDispositionTypes.FirstOrDefault(f => f.EngDispositionTypeName == "Rework").EngDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-003").NcrId
                         },
@@ -750,6 +758,7 @@ namespace HaverDevProject.Data
                             NcrEngCustomerNotification = false,
                             NcrEngDispositionDescription = "Example Description of Disposition 9",
                             NcrEngUserId = 1, //nullable
+                            NcrEngCreationDate = DateTime.Parse("2024-01-22"),
                             EngDispositionTypeId = context.EngDispositionTypes.FirstOrDefault(f => f.EngDispositionTypeName == "Repair").EngDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-004").NcrId
                         },
@@ -766,6 +775,7 @@ namespace HaverDevProject.Data
                             NcrEngCustomerNotification = true,
                             NcrEngDispositionDescription = "Example Description of Disposition 11",
                             NcrEngUserId = 3, //nullable
+                            NcrEngCreationDate = DateTime.Parse("2024-01-23"),
                             EngDispositionTypeId = context.EngDispositionTypes.FirstOrDefault(f => f.EngDispositionTypeName == "Scrap").EngDispositionTypeId,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-006").NcrId
                         }
