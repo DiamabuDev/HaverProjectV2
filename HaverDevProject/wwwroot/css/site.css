@@ -113,6 +113,10 @@ body {
     width: 210px;
 }
 
+.custom-opacity{
+    opacity:0.7;
+}
+
 /* Styles for mobile devices */
 @media (max-width: 767px) {
     .dashboard {
