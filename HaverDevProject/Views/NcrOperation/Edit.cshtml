@@ -27,7 +27,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="form-group">
-                            <label asp-for="NcrNumber" class="control-label"></label>
+                            <label asp-for="NcrNumber" class="control-label"><b>Ncr Number</b></label>
                             <input asp-for="NcrNumber" class="form-control" readonly />
                         </div>
                     </div>
@@ -35,7 +35,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="form-group">
-                            <label asp-for="OpDispositionTypeId" class="control-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Indicate disposition by selecting one of the options in the dropdown list">Purchasing's Preliminary Decision</span> <span class="fw-bold text-danger">*</span></label>
+                            <label asp-for="OpDispositionTypeId" class="control-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Indicate disposition by selecting one of the options in the dropdown list"><b>Purchasing's Preliminary Decision</b></span> <span class="fw-bold text-danger">*</span></label>
                             <select asp-for="OpDispositionTypeId" class="form-control" asp-items="ViewBag.OpDispositionTypeId">
                                 <option value="">Select Preliminary Decision</option>
                             </select>
@@ -44,7 +44,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label asp-for="NcrPurchasingDescription" class="control-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Describe your selection">Description</span> <span class="fw-bold text-danger">*</span></label>
+                    <label asp-for="NcrPurchasingDescription" class="control-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Describe your selection"><b>Description</b></span> <span class="fw-bold text-danger">*</span></label>
                     <textarea asp-for="NcrPurchasingDescription" class="form-control"></textarea>
                     <span asp-validation-for="NcrPurchasingDescription" class="text-danger"></span>
                 </div>
@@ -75,7 +75,7 @@
                 <div class="row">
                     <div class="row">
                         <div class="form-group">
-                            <label class="pb-3"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select Yes or No">Follow-Up Requiered?</span></label>
+                            <label class="pb-3"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select Yes or No"><b>Follow-Up Requiered?</b></span></label>
                             <div class="text-left">
                                 <div class="form-check form-check-inline">
                                     <input type="radio" class="form-check-input" asp-for="FollowUp" value="true" id="follow-no" />
@@ -105,14 +105,14 @@
                         <div class="col-12">
                             <div class="form-group">
                                 <label asp-for="ExpectedDate" class="control-label"></label>
-                                <input asp-for="ExpectedDate" class="form-control date-input"/>
+                                <input asp-for="ExpectedDate" class="form-control date-input" value="@Model.ExpectedDate?.ToString("yyyy-MM-dd")" />
                                 <span asp-validation-for="ExpectedDate" class="text-danger"></span>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label"> Current Photos:</label>
+                    <label class="control-label"><b>Current Photos:</b></label>
                     <div class="ml-md-3">
                         @{
                             int fileCount = Model.OpDefectPhotos.Count;
@@ -144,13 +144,13 @@
                 </div>
                 <div class="row">
                     <div class="form-group">
-                        <label class="control-label custom-file-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Upload photos">Upload Operations Photos</span></label>
+                        <label class="control-label custom-file-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Upload photos"><b>Upload Operations Photos</b></span></label>
                         <div class="input-group mb-3">
                             <input type="file" class="form-control" name="Photos" multiple="multiple" />
                         </div>
                     </div>
                     <div class="form-group">
-                        <label asp-for="NcrOperationVideo" class="control-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Paste or type the video link">Video Link</span></label>
+                        <label asp-for="NcrOperationVideo" class="control-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Paste or type the video link"><b>Video Link</b></span></label>
                         <input asp-for="NcrOperationVideo" class="form-control" />
                         <span asp-validation-for="NcrOperationVideo" class="text-danger"></span>
                     </div>

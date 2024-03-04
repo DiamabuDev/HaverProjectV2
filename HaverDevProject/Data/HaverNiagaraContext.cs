@@ -57,7 +57,7 @@ public partial class HaverNiagaraContext : DbContext
     public virtual DbSet<ItemDefectPhoto> ItemDefectPhotos { get; set; }
 
     public virtual DbSet<EngDefectPhoto> EngDefectPhotos { get; set; }
-    public virtual DbSet<EngDefectPhoto> OpDefectPhotos { get; set; }
+    public virtual DbSet<OpDefectPhoto> OpDefectPhotos { get; set; }
 
     public virtual DbSet<Ncr> Ncrs { get; set; }
 
@@ -155,7 +155,7 @@ public partial class HaverNiagaraContext : DbContext
 
         modelBuilder.Entity<OpDefectPhoto>(entity =>
         {
-            entity.HasKey(e => e.OpDefectPhotoId).HasName("pk_engDefectPhoto_engDefectPhotoId");
+            entity.HasKey(e => e.OpDefectPhotoId).HasName("pk_opDefectPhoto_opDefectPhotoId");
 
             entity.HasOne(d => d.NcrOperation).WithMany(p => p.OpDefectPhotos)
                 .OnDelete(DeleteBehavior.ClientSetNull)

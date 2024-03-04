@@ -400,16 +400,12 @@ namespace HaverDevProject.Controllers
 
                 // Go get the ncrOperation to update
                 var ncrOperationToUpdate = await _context.NcrOperations
-                    .Include(n => n.NcrEng)
                     .Include(n => n.Ncr)
-                        .Include(n => n.Ncr)
-                            .ThenInclude(n => n.NcrQa)
-                                .ThenInclude(n => n.Item)
-                                    .ThenInclude(n => n.Supplier)
+                    //.Include(n => n.NcrEng)
                     .Include(n => n.OpDispositionType)
                     .Include(n => n.FollowUpType)
                     .Include(n => n.OpDefectPhotos)
-                    .AsNoTracking()
+                    //.AsNoTracking()
                     .FirstOrDefaultAsync(n => n.NcrOpId == NcrOpId);
 
                 // Check that we got the function or exit with a not found error
@@ -422,10 +418,11 @@ namespace HaverDevProject.Controllers
                     await AddPictures(ncrOperationDTO, Photos);
                     try
                     {
-                        // Update the related Ncr entity
+                        //Update the related Ncr entity
                         ncrOperationToUpdate.Ncr.NcrPhase = NcrPhase.Procurement;
                         _context.Ncrs.Update(ncrOperationToUpdate.Ncr);
                         await _context.SaveChangesAsync();
+
 
                         // Update the NcrOperation entity
                         ncrOperationToUpdate.OpDispositionTypeId = ncrOperation.OpDispositionTypeId;
@@ -433,7 +430,7 @@ namespace HaverDevProject.Controllers
                         ncrOperationToUpdate.Car = ncrOperation.Car;
                         ncrOperationToUpdate.CarNumber = ncrOperation.CarNumber;
                         ncrOperationToUpdate.FollowUp = ncrOperation.FollowUp;
-                        ncrOperationToUpdate.ExpectedDate = ncrOperation.ExpectedDate;
+                        ncrOperationToUpdate.ExpectedDate = ncrOperationToUpdate.ExpectedDate;
                         ncrOperationToUpdate.FollowUpTypeId = ncrOperation.FollowUpTypeId;
                         ncrOperationToUpdate.UpdateOp = DateTime.Today;
                         ncrOperationToUpdate.NcrPurchasingUserId = ncrOperation.NcrPurchasingUserId;
@@ -553,6 +550,15 @@ namespace HaverDevProject.Controllers
             }).ToList();
 
             return Json(ncrs);
+        }
+
+        public async Task<FileContentResult> Download(int id)
+        {
+            var theFile = await _context.OpDefectPhotos
+                .Include(d => d.OpFileContent)
+                .Where(f => f.OpDefectPhotoId == id)
+                .FirstOrDefaultAsync();
+            return File(theFile.OpDefectPhotoContent, theFile.OpDefectPhotoMimeType, theFile.FileName);
         }
 
         private async Task AddPictures(NcrOperationDTO ncrOperationDTO, List<IFormFile> pictures)
