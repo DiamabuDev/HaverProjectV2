@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1><i class="bi bi-caret-right-fill"></i>Non-Conformance Reports</h1>
+<h1><i class="bi bi-caret-right-fill"></i> Non-Conformance Reports</h1>
 
 
 <!-- Modal -->
@@ -94,19 +94,25 @@
                         @Html.Raw(ViewData["filterApplied:Created"])
                     </button>
                 </th>
-                <th>
+                <th class="d-none d-md-table-cell">
+                    <button type="submit" name="actionButton" value="Creation" class="btn text-light custom-btn-text-start">
+                        Creation Date
+                        @Html.Raw(ViewData["filterApplied:Creation"])
+                    </button>
+                </th>
+                <th class="">
                     <button type="submit" name="actionButton" value="NCR #" class="btn text-light custom-btn-text-start">
                         NCR #
                         @Html.Raw(ViewData["filterApplied:NcrNumber"])
                     </button>
                 </th>
-                <th class="col-3">
+                <th class="">
                     <button type="submit" name="actionButton" value="Supplier" class="btn text-light custom-btn-text-start">
                         Supplier
                         @Html.Raw(ViewData["filterApplied:Supplier"])
                     </button>
                 </th>
-                <th class="col-3">
+                <th class="col-2">
                     <button type="submit" name="actionButton" value="DispositionType" class="btn text-light custom-btn-text-start">
                         Disposition
                         @Html.Raw(ViewData["filterApplied:DispositionType"])
@@ -115,10 +121,10 @@
                 <th class="d-none d-md-table-cell">
                     <button type="submit" name="actionButton" value="Phase" class="btn text-light custom-btn-text-start">
                         Phase
-                        @Html.Raw(ViewData["filterApplied:Pahse"])
+                        @Html.Raw(ViewData["filterApplied:Phase"])
                     </button>
                 </th>
-                <th></th>
+                <th class =""></th>
             </tr>
         </thead>
         <tbody>
@@ -130,6 +136,9 @@
                     </td>
                     <td class="d-none d-md-table-cell">
                         @Html.DisplayFor(modelItem => item.UpdateOp)
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                        @Html.DisplayFor(modelItem => item.Ncr.NcrQa.NcrQacreationDate)
                     </td>
                     <td class="standout">
 

@@ -8,6 +8,10 @@ namespace HaverDevProject.ViewModels
     public class NcrOperationDTO
     {
         public string NcrNumber { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [DataType(DataType.Date)]
+        public DateTime NcrOpCreationDate { get; set; }
         public bool NcrStatus { get; set; } = true;
         public int NcrOpId { get; set; }
         public int NcrId { get; set; }
