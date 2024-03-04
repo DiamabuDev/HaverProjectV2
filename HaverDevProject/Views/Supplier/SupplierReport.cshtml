@@ -7,7 +7,7 @@
 <div class="container mt-3">
     <div class="row">
         <div id="contentToDownload" class="col-md-8 mx-auto">
-            <h1><i class="bi bi-caret-right-fill"></i>Supplier Report</h1>            
+            <h1><i class="bi bi-caret-right-fill"></i>Supplier Report</h1>
             <div class="row align-items-center mb-3 mt-4">
                 <div class="col-auto fw-bold fs-5">
                     NCR No.:
@@ -23,30 +23,30 @@
                 @if (Model.NcrStatus == false)
                 {
                     <div class="col-auto">
-                        <span class="fw-bold">Quality Department:</span>
-                        <span> [Department Name]</span>
+                        <span class="fw-bold">Closed by:</span>
+                        <span>R. May</span>
                     </div>
                 }
             </div>
-            
+
             <div class="collapse show" id="qualityRepSection">
                 <div class="card">
                     <div class="card-body pb-0 pt-0">
                         <table class="table">
                             <thead>
-                                <tr>                                    
+                                <tr>
                                     <th class="four-cols">Supplier Name</th>
                                     <th class="four-cols">PO or Prod. No.</th>
                                 </tr>
                             </thead>
-                            <tbody>     
+                            <tbody>
                                 <tr>
                                     <td class="four-cols">@Model.SupplierName</td>
                                     <td class="four-cols">@Model.NcrQaOrderNumber</td>
                                 </tr>
                             </tbody>
                         </table>
-                    </div>                   
+                    </div>
                     <div class="card">
                         <div class="card-header">
                             Item Information
@@ -61,17 +61,17 @@
                                         <th class="four-cols">Quantity Defective</th>
                                     </tr>
                                 </thead>
-                                <tbody>                                    
+                                <tbody>
                                     <tr>
                                         <td class="four-cols">@Model.ItemSAP</td>
                                         <td class="four-cols">@Model.ItemName</td>
                                         <td class="four-cols">@Model.NcrQaQuanReceived</td>
                                         <td class="four-cols">@Model.NcrQaQuanDefective</td>
-                                    </tr>                                    
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
-                    </div>                    
+                    </div>
                     <div class="card">
                         <div class="card-header">
                             Defect Information
@@ -84,20 +84,17 @@
                                         <th class="two-cols">Description of Defect</th>
                                     </tr>
                                 </thead>
-                                <tbody>                                    
-                                    @foreach (var defectName in Model.DefectNames) 
-                                    {
-                                        <tr>
-                                            <td class="two-cols-1">@defectName</td> 
-                                            <td class="two-cols">@Model.NcrQaDescriptionOfDefect</td> 
-                                        </tr>
-                                    }
+                                <tbody>
+                                    <tr>
+                                        <td class="two-cols-1">@Model.NcrQaDefect</td>
+                                        <td class="two-cols">@Model.NcrQaDescriptionOfDefect</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                </div>         
-                
+                </div>
+
                 <button class="btn custom-header-bg icon-drop text-start" type="button" data-bs-toggle="collapse" data-bs-target="#engSection" aria-expanded="true" aria-controls="engSection">
                     Engineering <i class="bi bi-chevron-down"></i>
                 </button>
@@ -113,19 +110,19 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    
-                                    
-                                        <tr>
-                                            <td class="two-cols-1">@Model.EngDispositionType</td>
-                                            <td class="two-cols">@Model.EngDispositionDescription</td>
-                                        </tr>
-                                    
+
+
+                                    <tr>
+                                        <td class="two-cols-1">@Model.EngDispositionType</td>
+                                        <td class="two-cols">@Model.EngDispositionDescription</td>
+                                    </tr>
+
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-                        
+
                 <button class="btn custom-header-bg icon-drop text-start" type="button" data-bs-toggle="collapse" data-bs-target="#opSection" aria-expanded="true" aria-controls="opSection">
                     Operations <i class="bi bi-chevron-down"></i>
                 </button>
@@ -141,16 +138,16 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    
-                                        <tr>
-                                            <td class="two-cols-1">@Model.OpDispositionType</td>
-                                            <td class="two-cols">@Model.OperationDescription</td>
-                                        </tr>
-                                    
+
+                                    <tr>
+                                        <td class="two-cols-1">@Model.OpDispositionType</td>
+                                        <td class="two-cols">@Model.OperationDescription</td>
+                                    </tr>
+
                                 </tbody>
                             </table>
                         </div>
-                     </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -184,7 +181,7 @@
             const sideMargin = 15; // Side margin for both left and right
 
             const adjustedWidth = pdfWidth - (sideMargin * 2);
-            const adjustedHeight = (imgProps.height * adjustedWidth) / imgProps.width; 
+            const adjustedHeight = (imgProps.height * adjustedWidth) / imgProps.width;
 
             pdf.addImage(imgData, 'PNG', sideMargin, topMargin, adjustedWidth, adjustedHeight);
             pdf.save("SupplierReport.pdf");
