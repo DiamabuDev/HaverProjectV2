@@ -225,6 +225,7 @@ namespace HaverDevProject.Controllers
             int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
             NcrReInspect ncr = new NcrReInspect();
             ncr.NcrId = ncrId; // Set the NcrNumber from the parameter
+            ncr.NcrReInspectCreationDate = DateTime.Now;
 
             //ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncr.NcrId);
             return View(ncr);
@@ -306,6 +307,12 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.NcrReInspectPhotos)
                 .FirstOrDefaultAsync(n=>n.NcrReInspectId == id);
 
+
+            var currentReInspect = new NcrReInspect
+            {
+                NcrReInspectCreationDate = ncrReInspect.NcrReInspectCreationDate
+            };
+
             if (ncrReInspect == null)
             {
                 return NotFound();
@@ -332,7 +339,8 @@ namespace HaverDevProject.Controllers
             }
 
             if (await TryUpdateModelAsync<NcrReInspect>(ncrReInspectToUpdate, "",
-                r => r.NcrReInspectAcceptable, r => r.NcrReInspectNewNcrNumber, r => r.NcrReInspectUserId, r => r.NcrId, r => r.NcrReInspectDefectVideo, r => r.NcrReInspectPhotos))
+                r => r.NcrReInspectAcceptable, r => r.NcrReInspectNewNcrNumber, r => r.NcrReInspectUserId,
+                r => r.NcrId, r => r.NcrReInspectDefectVideo, r => r.NcrReInspectPhotos, r => r.NcrReInspectCreationDate))
             {
                 try
                 {

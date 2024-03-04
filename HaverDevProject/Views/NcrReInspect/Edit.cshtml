@@ -40,6 +40,12 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <b>Date</b>
+                            <input asp-for="NcrReInspectCreationDate" class="form-control" readonly />
+                        </div>
+                    </div>
                     @* <div class="col-6">
                     <div class="form-group">
                     <label asp-for="NcrReInspectPhotos" class="control-label"></label>
@@ -187,7 +193,7 @@
             return new bootstrap.Tooltip(tooltipTriggerEl);
         });
     </script>
-    <script>
+@*     <script>
         document.addEventListener("DOMContentLoaded", function () {
             var radioButtons = document.getElementsByName("NcrReInspectAcceptable");
 
@@ -216,4 +222,4 @@
             });
         });
     </script>
-}
+ *@}
