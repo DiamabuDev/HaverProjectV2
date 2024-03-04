@@ -46,6 +46,8 @@ namespace HaverDevProject.Models
 
         public string SupplierReturnAccount { get; set; }
 
+        public string NcrProcDefectVideo { get; set; }
+
         public ICollection<ProcDefectPhoto> ProcDefectPhotos { get; set; } = new HashSet<ProcDefectPhoto>();
     }
 }
