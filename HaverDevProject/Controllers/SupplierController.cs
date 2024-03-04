@@ -390,6 +390,7 @@ namespace HaverDevProject.Controllers
                 ItemName = ncrData.NcrQa?.Item?.ItemName ?? "Not Available",
                 NcrQaQuanReceived = ncrData.NcrQa?.NcrQaQuanReceived ?? 0,
                 NcrQaQuanDefective = ncrData.NcrQa?.NcrQaQuanDefective ?? 0,
+                NcrQaDefect = ncrData.NcrQa?.Defect.DefectName ?? "Not Available",
                 NcrQaDescriptionOfDefect = ncrData.NcrQa?.NcrQaDescriptionOfDefect ?? "Not Available",
                 EngDispositionType = ncrData.NcrEng?.EngDispositionType?.EngDispositionTypeName ?? "Not Available",
                 EngDispositionDescription = ncrData.NcrEng?.NcrEngDispositionDescription ?? "Not Available",

@@ -23,8 +23,8 @@
                 @if (Model.NcrStatus == false)
                 {
                     <div class="col-auto">
-                        <span class="fw-bold">Quality Department:</span>
-                        <span> [Department Name]</span>
+                        <span class="fw-bold">Closed by:</span>
+                        <span>R. May</span>
                     </div>
                 }
             </div>
@@ -84,14 +84,11 @@
                                         <th class="two-cols">Description of Defect</th>
                                     </tr>
                                 </thead>
-                                <tbody>                                    
-                                    @foreach (var defectName in Model.DefectNames) 
-                                    {
+                                <tbody>  
                                         <tr>
-                                            <td class="two-cols-1">@defectName</td> 
+                                            <td class="two-cols-1">@Model.NcrQaDefect</td> 
                                             <td class="two-cols">@Model.NcrQaDescriptionOfDefect</td> 
                                         </tr>
-                                    }
                                 </tbody>
                             </table>
                         </div>
