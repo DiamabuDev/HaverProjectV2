@@ -248,7 +248,9 @@ namespace HaverDevProject.Controllers
                     _context.Add(ncrReInspect);
                     await _context.SaveChangesAsync();
 
-                    var ncrToUpdate = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrReInspect.NcrId);
+                    var ncrToUpdate = await _context.Ncrs
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(n => n.NcrId == ncrReInspect.NcrId);
 
                     ncrToUpdate.NcrPhase = NcrPhase.Closed;
                     ncrToUpdate.NcrStatus = false;
@@ -306,12 +308,6 @@ namespace HaverDevProject.Controllers
             var ncrReInspect = await _context.NcrReInspects
                 .Include(n => n.NcrReInspectPhotos)
                 .FirstOrDefaultAsync(n=>n.NcrReInspectId == id);
-
-
-            var currentReInspect = new NcrReInspect
-            {
-                NcrReInspectCreationDate = ncrReInspect.NcrReInspectCreationDate
-            };
 
             if (ncrReInspect == null)
             {
