@@ -120,7 +120,7 @@
 
 
                 <div class="form-group">
-                    <b>Video Link</b>
+                    <label asp-for="NcrEngDefectVideo" class="control-label"><b>Video Link </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Link to desired Video">(e.g. https://haverniagara.com/)</small></label>
                     <input asp-for="NcrEngDefectVideo" class="form-control" />
                     <span asp-validation-for="NcrEngDefectVideo" class="text-danger"></span>
                 </div>
@@ -172,20 +172,27 @@
                     </div> *@
 
 
-                    <div class="col-12">
+                    <div class="col-6">
                         <div class="form-group">
-                          <b>  <label asp-for="DrawingRevDate" class="control-label"></label></b>
-                            <input asp-for="DrawingRevDate" class="form-control" />
-                            <span asp-validation-for="DrawingRevDate" class="text-danger"></span>
+                            <b>Revision Date</b>
+                            @* <label asp-for="NcrNumber" class="control-label"></label> *@
+                            <input asp-for="DrawingRevDate" class="form-control" readonly />
                         </div>
+@*                         <div class="form-group">
+                          <b>  <label asp-for="DrawingRevDate" class="control-label"></label></b>
+                            <input asp-for="DrawingRevDate" class="form-control" readonly />
+                            <span asp-validation-for="DrawingRevDate" class="text-danger"></span>
+                        </div> *@
                     </div>
+
+
                 </div>
             </div>
             <div class="card-footer">
                 <div class="form-group d-flex justify-content-end mt-2">
                     <div>
                         <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn btn-primary ">
-                            <i class="bi bi-arrow-90deg-left"></i> Back to the @ViewData["ControllerName"] List
+                            <i class="bi bi-arrow-90deg-left"></i> Back to the NCR List
                         </button>
                     </div>
                     <div>
@@ -217,6 +224,13 @@
                     $('#drawingConditional').addClass('hidden');
                 }
             });
+        });
+    </script>
+
+    <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
         });
     </script>
 }

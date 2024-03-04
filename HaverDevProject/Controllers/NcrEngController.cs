@@ -52,7 +52,7 @@ namespace HaverDevProject.Controllers
             }
 
             //List of sort options.
-            string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "Disposition", "Phase" };
+            string[] sortOptions = new[] { "Creation Date", "NCR #", "Supplier", "Disposition", "Phase", "Last Updated" };
 
             
             PopulateDropDownLists();
@@ -64,7 +64,7 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
                 .Include(n => n.Drawing)
-                .Where(n => n.Ncr.NcrPhase == NcrPhase.Operations)
+                //.Where(n => n.Ncr.NcrPhase == NcrPhase.Operations)
                 .AsNoTracking();
 
             
@@ -164,21 +164,21 @@ namespace HaverDevProject.Controllers
                 }
             }
 
-            else if (sortField == "Created")
+            else if (sortField == "Creation Date")
             {
                 if (sortDirection == "desc") //desc by default
                 {
                     ncrEng = ncrEng
-                        .OrderBy(p => p.Ncr.NcrLastUpdated);
+                        .OrderBy(p => p.Ncr.NcrQa.NcrQacreationDate);
 
-                    ViewData["filterApplied:Created"] = "<i class='bi bi-sort-up'></i>";
+                    ViewData["filterApplied:Creation Date"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncrEng = ncrEng
-                        .OrderByDescending(p => p.Ncr.NcrLastUpdated);
+                        .OrderByDescending(p => p.Ncr.NcrQa.NcrQacreationDate);
 
-                    ViewData["filterApplied:Created"] = "<i class='bi bi-sort-down'></i>";
+                    ViewData["filterApplied:Creation Date"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
             else if (sortField == "Phase")
@@ -196,6 +196,23 @@ namespace HaverDevProject.Controllers
                         .OrderByDescending(p => p.Ncr.NcrPhase);
 
                     ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Last Updated")
+            {
+                if (sortDirection == "desc") //desc by default
+                {
+                    ncrEng = ncrEng
+                        .OrderBy(p => p.Ncr.NcrLastUpdated);
+
+                    ViewData["filterApplied:Last Updated"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrEng = ncrEng
+                        .OrderByDescending(p => p.Ncr.NcrLastUpdated);
+
+                    ViewData["filterApplied:Last Updated"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
             else //(sortField == "Status")
@@ -263,6 +280,7 @@ namespace HaverDevProject.Controllers
             ncr.NcrNumber = ncrNumber; // Set the NcrNumber from the parameter
             ncr.DrawingRevDate = DateTime.Now;
             ncr.NcrEngCreationDate = DateTime.Now;
+            ncr.DrawingOriginalRevNumber = 1;
             ncr.DrawingRequireUpdating = false;
             ncr.NcrEngCustomerNotification = false;
 

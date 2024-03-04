@@ -40,7 +40,7 @@ public class NcrEngMetaData
 	public int EngDispositionTypeId { get; set; }
 
 	[Display(Name = "Disposition Type")]
-	//[Required(ErrorMessage = "You must provide the Disposition Type.")]
+	[Required(ErrorMessage = "You must provide the Disposition Type.")]
 	[ForeignKey("EngDispositionTypeId")]
 	//[InverseProperty("NcrEngs")]
 	public virtual EngDispositionType EngDispositionType { get; set; }

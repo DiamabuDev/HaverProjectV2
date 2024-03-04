@@ -86,9 +86,9 @@
             <tr>
                 <th></th>
                 <th class="d-none d-md-table-cell">
-                    <button type="submit" name="actionButton" value="Created" class="btn text-light custom-btn-text-start">
-                        Last Updated
-                        @Html.Raw(ViewData["filterApplied:Created"])
+                    <button type="submit" name="actionButton" value="Creation Date" class="btn text-light custom-btn-text-start">
+                        Creation Date
+                        @Html.Raw(ViewData["filterApplied:Creation Date"])
                     </button>
                 </th>
                 <th>
@@ -109,10 +109,16 @@
                         @Html.Raw(ViewData["filterApplied:Disposition"])
                     </button>
                 </th>
-                <th class="d-none d-xxl-table-cell">
+                <th>
                     <button type="submit" name="actionButton" value="Phase" class="btn text-light custom-btn-text-start">
                         Phase
                         @Html.Raw(ViewData["filterApplied:Phase"])
+                    </button>
+                </th>
+                <th class="d-none d-xxl-table-cell">
+                    <button type="submit" name="actionButton" value="Last Updated" class="btn text-light custom-btn-text-start">
+                        Last Updated
+                        @Html.Raw(ViewData["filterApplied:Last Updated"])
                     </button>
                 </th>
                 <th></th>
@@ -126,7 +132,7 @@
                         <i class="bi bi-circle-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="@((item.Ncr.NcrStatus == true) ? "Active" : "Closed")"></i>
                     </td>
                     <td class="d-none d-md-table-cell">
-                        @Html.DisplayFor(modelItem => item.Ncr.NcrLastUpdated)
+                        @Html.DisplayFor(modelItem => item.Ncr.NcrQa.NcrQacreationDate)
                     </td>
                     <td class="standout">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrNumber)
@@ -137,8 +143,11 @@
                     <td class="d-none d-md-table-cell col-3">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrEng.EngDispositionType.EngDispositionTypeName)
                     </td>
-                    <td class="d-none d-xxl-table-cell">
+                    <td>
                         @Html.DisplayFor(modelItem => item.Ncr.NcrPhase)
+                    </td>
+                    <td class="d-none d-xxl-table-cell">
+                        @Html.DisplayFor(modelItem => item.Ncr.NcrLastUpdated)
                     </td>
                     @*                     <td class="d-none d-md-table-cell">
                 @Html.DisplayFor(modelItem => item.Ncr.NcrEng.UpdatedOn)
