@@ -10,6 +10,9 @@
 
 <div class="col-md-8 col-10 mx-auto">
     <form asp-action="Edit" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="NcrOpId" />
+        <input type="hidden" asp-for="NcrId" />
+
         <div class="card border-2">
             <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
                 <div>
@@ -24,7 +27,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="form-group">
-                            <label asp-for="NcrNumber" class="control-label"></label>
+                            <label asp-for="NcrNumber" class="control-label"><b>Ncr Number</b></label>
                             <input asp-for="NcrNumber" class="form-control" readonly />
                         </div>
                     </div>
@@ -32,7 +35,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="form-group">
-                            <label asp-for="OpDispositionTypeId" class="control-label"></label>
+                            <label asp-for="OpDispositionTypeId" class="control-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Indicate disposition by selecting one of the options in the dropdown list"><b>Purchasing's Preliminary Decision</b></span> <span class="fw-bold text-danger">*</span></label>
                             <select asp-for="OpDispositionTypeId" class="form-control" asp-items="ViewBag.OpDispositionTypeId">
                                 <option value="">Select Preliminary Decision</option>
                             </select>
@@ -41,13 +44,13 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label asp-for="NcrPurchasingDescription" class="control-label"></label>
+                    <label asp-for="NcrPurchasingDescription" class="control-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Describe your selection"><b>Description</b></span> <span class="fw-bold text-danger">*</span></label>
                     <textarea asp-for="NcrPurchasingDescription" class="form-control"></textarea>
                     <span asp-validation-for="NcrPurchasingDescription" class="text-danger"></span>
                 </div>
                 <div class="row">
                     <div class="form-group">
-                        <label class="pb-3">Was a CAR raised?</label>
+                        <label class="pb-3"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select Yes or No">Was a CAR raised?</span></label>
                         <div class="text-left">
                             <div class="form-check form-check-inline">
                                 <input type="radio" class="form-check-input" asp-for="Car" value="true" id="car-raised-yes" />
@@ -64,7 +67,7 @@
                     <div class="col-6">
                         <div class="form-group">
                             <label asp-for="CarNumber" class="control-label"></label>
-                            <input asp-for="CarNumber" class="form-control" disabled="disabled" />
+                            <input asp-for="CarNumber" class="form-control" placeholder="Car Number" />
                             <span asp-validation-for="CarNumber" class="text-danger"></span>
                         </div>
                     </div>
@@ -72,7 +75,7 @@
                 <div class="row">
                     <div class="row">
                         <div class="form-group">
-                            <label class="pb-3">Follow-Up Requiered?</label>
+                            <label class="pb-3"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select Yes or No"><b>Follow-Up Requiered?</b></span></label>
                             <div class="text-left">
                                 <div class="form-check form-check-inline">
                                     <input type="radio" class="form-check-input" asp-for="FollowUp" value="true" id="follow-no" />
@@ -91,7 +94,7 @@
                         <div class="col-12">
                             <div class="form-group">
                                 <label asp-for="FollowUpTypeId" class="control-label"></label>
-                                <select asp-for="FollowUpTypeId" class="form-control" asp-items="ViewBag.FollowUpTypeId" disabled="disabled">
+                                <select asp-for="FollowUpTypeId" class="form-control" asp-items="ViewBag.FollowUpTypeId">
                                     <option value="">Select Follow Type</option>
                                 </select>
                                 <span asp-validation-for="FollowUpTypeId" class="text-danger"></span>
@@ -102,14 +105,14 @@
                         <div class="col-12">
                             <div class="form-group">
                                 <label asp-for="ExpectedDate" class="control-label"></label>
-                                <input asp-for="ExpectedDate" class="form-control date-input" disabled="disabled" />
+                                <input asp-for="ExpectedDate" class="form-control date-input" value="@Model.ExpectedDate?.ToString("yyyy-MM-dd")" />
                                 <span asp-validation-for="ExpectedDate" class="text-danger"></span>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label"> Current Photos:</label>
+                    <label class="control-label"><b>Current Photos:</b></label>
                     <div class="ml-md-3">
                         @{
                             int fileCount = Model.OpDefectPhotos.Count;
@@ -141,13 +144,13 @@
                 </div>
                 <div class="row">
                     <div class="form-group">
-                        <label class="control-label custom-file-label">Upload Operations Photos:</label>
+                        <label class="control-label custom-file-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Upload photos"><b>Upload Operations Photos</b></span></label>
                         <div class="input-group mb-3">
                             <input type="file" class="form-control" name="Photos" multiple="multiple" />
                         </div>
                     </div>
                     <div class="form-group">
-                        <label asp-for="NcrOperationVideo" class="control-label"></label>
+                        <label asp-for="NcrOperationVideo" class="control-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Paste or type the video link"><b>Video Link</b></span></label>
                         <input asp-for="NcrOperationVideo" class="form-control" />
                         <span asp-validation-for="NcrOperationVideo" class="text-danger"></span>
                     </div>
@@ -155,102 +158,107 @@
             </div>
             <div class="card-footer">
                 <div class="form-group d-flex justify-content-end mt-2">
-                    @* <div>
-                    <button type="button" onclick="location.href='@ViewData[" returnURL"]'"
-                    class="btn btn-primary ">
-                    <i class="bi bi-arrow-90deg-left"></i> Back to the @ViewData["ControllerName"] List
-                    </button>
-                    </div> *@
+                    <div>
+                        <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn btn-primary ">
+                            <i class="bi bi-arrow-90deg-left"></i> Back to the @ViewData["ControllerName"] List
+                        </button>
+                    </div>
                     <div>
                         <button type="submit" class="btn btn-primary ms-4">
-                            <i class='bi-plus-square-dotted'></i> Save
+                            <i class="bi bi-floppy"></i> Save
                         </button>
                     </div>
                 </div>
             </div>
         </div>
-
     </form>
 </div>
 
 
 @section Scripts {
+
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
-
-        <script>
-            $(document).ready(function () {
-                $('input[name="Car"]').change(function () {
-                    var carRaised = $(this).val();
-                    var carNumberField = $('input[name="CarNumber"]');
-
-                    if (carRaised === "true") {
-                        carNumberField.prop('disabled', false);
-                        carNumberField.val('');
-                    } else {
-                        carNumberField.prop('disabled', true);
-                        carNumberField.val('');
-                    }
-                });
-            });
-        </script>
-
-        <script>
-            $(document).ready(function () {
-                $('input[name="FollowUp"]').change(function () {
-                    var followUpRequired = $(this).val();
-                    var followUpTypeIdField = $('select[name="FollowUpTypeId"]');
-                    var expectedDateField = $('input[name="ExpectedDate"]');
-
-                    if (followUpRequired === "true") {
-                        followUpTypeIdField.prop('disabled', false);
-                        expectedDateField.prop('disabled', false);
-                        followUpTypeIdField.val('');
-                        expectedDateField.val('');
-                    } else {
-                        followUpTypeIdField.prop('disabled', true);
-                        expectedDateField.prop('disabled', true);
-                        followUpTypeIdField.val('');
-                        expectedDateField.val('');
-                    }
-                });
-            });
-        </script>
-
-        <script>
-            document.getElementById("car-number-input").style.display = "none";
-
-            // Toggle visibility when radio buttons change
-            const carRaisedRadios = document.querySelectorAll('input[name="Car"]');
-            carRaisedRadios.forEach(radio => {
-                radio.addEventListener('change', () => {
-                    const carNumberInput = document.getElementById("car-number-input");
-                    if (radio.value === "true") {
-                        carNumberInput.style.display = "block";
-                    } else {
-                        carNumberInput.style.display = "none";
-                    }
-                });
-            });
-        </script>
-
-        <script>
-            document.getElementById("Follow-input").style.display = "none";
-
-            // Toggle visibility when radio buttons change
-            const followRadios = document.querySelectorAll('input[name="FollowUp"]');
-            followRadios.forEach(radio => {
-                radio.addEventListener('change', () => {
-                    const followInput = document.getElementById("Follow-input");
-                    if (radio.value === "true") {
-                        followInput.style.display = "block";
-                    } else {
-                        followInput.style.display = "none";
-                    }
-                });
-            });
-        </script>
     }
+    <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('input[name="Car"]').change(function () {
+                var carRaised = $(this).val();
+                var carNumberField = $('input[name="CarNumber"]');
+
+                if (carRaised === "true") {
+                    carNumberField.prop('disabled', false);
+                    carNumberField.val('');
+                } else {
+                    carNumberField.prop('disabled', true);
+                    carNumberField.val('');
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('input[name="FollowUp"]').change(function () {
+                var followUpRequired = $(this).val();
+                var followUpTypeIdField = $('select[name="FollowUpTypeId"]');
+                var expectedDateField = $('input[name="ExpectedDate"]');
+
+                if (followUpRequired === "true") {
+                    followUpTypeIdField.prop('disabled', false);
+                    expectedDateField.prop('disabled', false);
+                    followUpTypeIdField.val('');
+                    expectedDateField.val('');
+                } else {
+                    followUpTypeIdField.prop('disabled', true);
+                    expectedDateField.prop('disabled', true);
+                    followUpTypeIdField.val('');
+                    expectedDateField.val('');
+                }
+            });
+        });
+    </script>
+
+    <script>
+        document.getElementById("car-number-input").style.display = "block";
+
+        // Toggle visibility when radio buttons change
+        const carRaisedRadios = document.querySelectorAll('input[name="Car"]');
+        carRaisedRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                const carNumberInput = document.getElementById("car-number-input");
+                if (radio.value === "true") {
+                    carNumberInput.style.display = "block";
+                } else {
+                    carNumberInput.style.display = "none";
+                }
+            });
+        });
+    </script>
+
+    <script>
+        document.getElementById("Follow-input").style.display = "block";
+
+        // Toggle visibility when radio buttons change
+        const followRadios = document.querySelectorAll('input[name="FollowUp"]');
+        followRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                const followInput = document.getElementById("Follow-input");
+                if (radio.value === "true") {
+                    followInput.style.display = "block";
+                } else {
+                    followInput.style.display = "none";
+                }
+            });
+        });
+    </script>
 
 
 }

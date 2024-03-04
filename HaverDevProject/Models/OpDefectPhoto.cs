@@ -40,4 +40,6 @@ public class OpDefectPhoto
     [InverseProperty("OpDefectPhotos")]
     public virtual NcrOperation NcrOperation { get; set; }
 
+    public OpFileContent OpFileContent { get; set; } = new OpFileContent();
+
 }
