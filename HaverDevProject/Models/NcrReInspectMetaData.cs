@@ -14,6 +14,7 @@ public class NcrReInspectMetaData
     public int NcrReInspectId { get; set; }
 
     [Display(Name = "Re-Inspected Acceptable")]
+    [Required(ErrorMessage = "You must provide if the NCR is acceptable")]
     [Column("ncrReInspectAcceptable")]
     public bool NcrReInspectAcceptable { get; set; } = false;
 
@@ -31,6 +32,7 @@ public class NcrReInspectMetaData
     public DateTime NcrReInspectCreationDate { get; set; }
 
     [Display(Name = "Inspector's Name")]
+    [Required(ErrorMessage = "You must provide the Inspector's Name")]
     [Column("ncrReInspectUserId")]
     public int NcrReInspectUserId { get; set; }
 

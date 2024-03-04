@@ -91,19 +91,19 @@
                         @Html.Raw(ViewData["filterApplied:Created"])
                     </button>
                 </th>
-                <th class="col-md-1">
+                <th>
                     <button type="submit" name="actionButton" value="NCR #" class="btn text-light custom-btn-text-start">
                         NCR #
                         @Html.Raw(ViewData["filterApplied:Ncr"])
                     </button>
                 </th>
-                <th class="col-md-3">
+                <th class="col-3">
                     <button type="submit" name="actionButton" value="Supplier" class="btn text-light custom-btn-text-start">
                         Supplier
                         @Html.Raw(ViewData["filterApplied:Supplier"])
                     </button>
                 </th>
-                <th class="d-none d-md-table-cell col-md-3">
+                <th class="d-none d-md-table-cell col-3">
                     <button type="submit" name="actionButton" value="Acceptable" class="btn text-light custom-btn-text-start">
                         Acceptable
                         @Html.Raw(ViewData["filterApplied:NcrReInspectAcceptable"])
@@ -115,10 +115,16 @@
                         @Html.Raw(ViewData["filterApplied:NcrReInspectUserId"])
                     </button>
                 </th> *@
-                <th class="d-none d-xxl-table-cell col-md-2">
+                <th>
                     <button type="submit" name="actionButton" value="Phase" class="btn text-light custom-btn-text-start">
                         Phase
                         @Html.Raw(ViewData["filterApplied:Phase"])
+                    </button>
+                </th>
+                <th class="d-none d-xxl-table-cell">
+                    <button type="submit" name="actionButton" value="Last Updated" class="btn text-light custom-btn-text-start">
+                        Last Updated
+                        @Html.Raw(ViewData["filterApplied:Last Updated"])
                     </button>
                 </th>
 @*                 <th>
@@ -152,10 +158,10 @@
                     @* <td>
                         @Html.DisplayFor(modelItem => item.NcrReInspectAcceptable)
                     </td> *@
-                    <td class="col-md-2">
+                    <td class="col-3">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrQa.Item.Supplier.SupplierName)
                     </td>
-                    <td class="d-none d-md-table-cell col-2">
+                    <td class="d-none d-md-table-cell col-3">
                         @if (item.NcrReInspectAcceptable)
                         {
                             <text>Yes</text>
@@ -187,8 +193,11 @@
                         }
                     </td>
                 *@
-                    <td class="d-none d-xxl-table-cell col-md-1">
+                    <td>
                         @Html.DisplayFor(modelItem => item.Ncr.NcrPhase)
+                    </td>
+                    <td class="d-none d-xxl-table-cell">
+                        @Html.DisplayFor(modelItem => item.Ncr.NcrLastUpdated)
                     </td>
 @*                     <td>
                         @Html.DisplayFor(modelItem => item.NcrReInspectAcceptable)

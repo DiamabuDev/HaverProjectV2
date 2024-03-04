@@ -48,7 +48,7 @@ namespace HaverDevProject.Controllers
                 StartDate = temp;
             }
 
-            string[] sortOptions = new[] { "Created", "Acceptable", "Supplier", "NCR #" };
+            string[] sortOptions = new[] { "Created", "Acceptable", "Supplier", "NCR #", "Last Updated" };
 
             var ncrReInspect = _context.NcrReInspects
                 .Include(n => n.Ncr)
@@ -119,6 +119,23 @@ namespace HaverDevProject.Controllers
                         .OrderByDescending(p => p.Ncr.NcrQa.NcrQacreationDate);
 
                     ViewData["filterApplied:Created"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Last Updated")
+            {
+                if (sortDirection == "desc") //desc by default
+                {
+                    ncrReInspect = ncrReInspect
+                        .OrderBy(p => p.Ncr.NcrLastUpdated);
+
+                    ViewData["filterApplied:Last Updated"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrReInspect = ncrReInspect
+                        .OrderByDescending(p => p.Ncr.NcrLastUpdated);
+
+                    ViewData["filterApplied:Last Updated"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
             else if (sortField == "Acceptable")
@@ -253,7 +270,9 @@ namespace HaverDevProject.Controllers
                     _context.Add(ncrReInspect);
                     await _context.SaveChangesAsync();
 
-                    var ncrToUpdate = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrReInspect.NcrId);
+                    var ncrToUpdate = await _context.Ncrs
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(n => n.NcrId == ncrReInspect.NcrId);
 
                     ncrToUpdate.NcrPhase = NcrPhase.Closed;
                     ncrToUpdate.NcrStatus = false;
@@ -311,12 +330,6 @@ namespace HaverDevProject.Controllers
             var ncrReInspect = await _context.NcrReInspects
                 .Include(n => n.NcrReInspectPhotos)
                 .FirstOrDefaultAsync(n=>n.NcrReInspectId == id);
-
-
-            var currentReInspect = new NcrReInspect
-            {
-                NcrReInspectCreationDate = ncrReInspect.NcrReInspectCreationDate
-            };
 
             if (ncrReInspect == null)
             {
