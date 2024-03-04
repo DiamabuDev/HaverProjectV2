@@ -52,11 +52,12 @@ namespace HaverDevProject.Controllers
             //List of sort options.
             string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "Defect", "PO Number", "Phase"};
 
-            PopulateDropDownLists();
+            //PopulateDropDownLists();
+            ViewData["SupplierId"] = SupplierSelectList();
 
             var ncrQa = _context.NcrQas
-                .Include(n => n.Item)
-                .Include(n => n.Item).ThenInclude(i => i.Supplier)
+                //.Include(n => n.Item).ThenInclude(n => n.ItemDefects).ThenInclude(n => n.Defect)
+                .Include(n => n.Item.Supplier)
                 .Include(n => n.Defect)
                 .Include(n => n.Ncr)
                 .AsNoTracking();
@@ -64,19 +65,30 @@ namespace HaverDevProject.Controllers
             //Filterig values            
             if (!String.IsNullOrEmpty(filter))
             {
-                if (filter == "Active")
+                if (filter == "All")
+                {
+                    ViewData["filterApplied:ButtonAll"] = "btn-primary";
+                    ViewData["filterApplied:ButtonActive"] = "btn-secondary";
+                    ViewData["filterApplied:ButtonClosed"] = "btn-secondary";
+                }
+                else if (filter == "Active")
                 {
                     ncrQa = ncrQa.Where(n => n.Ncr.NcrStatus == true);
+                    ViewData["filterApplied:ButtonActive"] = "btn-success";
+                    ViewData["filterApplied:ButtonAll"] = "btn-secondary";
+                    ViewData["filterApplied:ButtonClosed"] = "btn-secondary";
                 }
                 else //(filter == "Closed")
                 {
-
                     ncrQa = ncrQa.Where(n => n.Ncr.NcrStatus == false);
+                    ViewData["filterApplied:ButtonClosed"] = "btn-danger";
+                    ViewData["filterApplied:ButtonAll"] = "btn-secondary";
+                    ViewData["filterApplied:ButtonActive"] = "btn-secondary";
                 }
-            }    
+            }
             if (!String.IsNullOrEmpty(SearchCode))
             {
-                ncrQa = ncrQa.Where(s => s.Item.ItemDefects.FirstOrDefault().Defect.DefectName.ToUpper().Contains(SearchCode.ToUpper()) 
+                ncrQa = ncrQa.Where(s => s.Defect.DefectName.ToUpper().Contains(SearchCode.ToUpper() ) //(s => s.Item.ItemDefects.FirstOrDefault().Defect.DefectName.ToUpper().Contains(SearchCode.ToUpper()) 
                 || s.Ncr.NcrNumber.ToUpper().Contains(SearchCode.ToUpper())); 
             }
             if (SupplierID.HasValue)
@@ -92,6 +104,8 @@ namespace HaverDevProject.Controllers
                 ncrQa = ncrQa.Where(n => n.NcrQacreationDate >= StartDate && 
                          n.NcrQacreationDate <= EndDate);   
             }
+
+            
 
             //Sorting columns
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
@@ -296,17 +310,17 @@ namespace HaverDevProject.Controllers
                     ItemId = ncrQaDTO.ItemId,
                     DefectId = ncrQaDTO.DefectId,
                     NcrQaEngDispositionRequired = ncrQaDTO.NcrQaEngDispositionRequired
-                };               
+                };              
                 
-
                 _context.NcrQas.Add(ncrQa);
                 await _context.SaveChangesAsync();                
 
                 TempData["SuccessMessage"] = "NCR created successfully!";
                 int ncrQaId = ncrQa.NcrQaId;
                 return RedirectToAction("Details", new { id = ncrQaId });                                
-            }           
+            }
 
+            //PopulateDropDownLists();
             ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierName", ncrQaDTO.SupplierId);
             ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName", ncrQaDTO.ItemId);
             ViewData["DefectId"] = new SelectList(_context.Defects, "DefectId", "DefectName", ncrQaDTO.DefectId);
@@ -354,9 +368,12 @@ namespace HaverDevProject.Controllers
                 NcrQaDefectVideo = ncrQa.NcrQaDefectVideo,
                 ItemDefectPhotos = ncrQa.ItemDefectPhotos
             };
-            ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierName", ncrQa.Item.SupplierId);
-            ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName", ncrQa.Item.ItemId);
-            ViewData["DefectId"] = new SelectList(_context.Defects, "DefectId", "DefectName", ncrQa.Defect.DefectId);            
+
+            //PopulateDropDownLists();
+            ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierName", ncrQaDTO.SupplierId);
+            ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName", ncrQaDTO.ItemId);
+            ViewData["DefectId"] = new SelectList(_context.Defects, "DefectId", "DefectName", ncrQaDTO.DefectId);
+
             return View(ncrQaDTO);
         }
 
@@ -438,7 +455,10 @@ namespace HaverDevProject.Controllers
                     }
                 }     
             }
-            PopulateDropDownLists();
+            //PopulateDropDownLists();
+            ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierName", ncrQaDTO.SupplierId);
+            ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName", ncrQaDTO.ItemId);
+            ViewData["DefectId"] = new SelectList(_context.Defects, "DefectId", "DefectName", ncrQaDTO.DefectId);
             return View(ncrQaDTO);            
         }
 
@@ -511,11 +531,18 @@ namespace HaverDevProject.Controllers
             return $"{currentYear}-{nextConsecutiveNumberString}";
         }
 
-        private SelectList SupplierSelectList(int? selectedId)
+        private SelectList SupplierSelectList()
         {
             return new SelectList(_context.Suppliers
+                .Where(s => s.SupplierName != "NO SUPPLIER PROVIDED")
+                .OrderBy(s => s.SupplierName), "SupplierId", "SupplierName");
+        }
+        private SelectList SupplierSelectCreateList(int? selectedId)
+        {
+            return new SelectList(_context.Suppliers
+                .Where(s => s.SupplierStatus == true && s.SupplierName != "NO SUPPLIER PROVIDED")
                 .OrderBy(s => s.SupplierName), "SupplierId", "SupplierName", selectedId);
-        }        
+        }
 
         private SelectList ItemSelectList(int? SupplierID, int? selectedId)
         {
@@ -533,15 +560,18 @@ namespace HaverDevProject.Controllers
                 {
                     ncrQa.Item = _context.Items.Find(ncrQa.ItemId);
                 }
-                ViewData["SupplierId"] = SupplierSelectList(ncrQa?.Item.Supplier.SupplierId);
+                ViewData["SupplierId"] = SupplierSelectCreateList(ncrQa?.Item.Supplier.SupplierId);
                 ViewData["ItemId"] = ItemSelectList(ncrQa.Item.SupplierId, ncrQa.ItemId);
             }
             else
             {
-                ViewData["SupplierId"] = SupplierSelectList(null);
+                ViewData["SupplierId"] = SupplierSelectCreateList(null);
                 ViewData["ItemId"] = ItemSelectList(null, null);
             }
-        }               
+        }  
+        
+
+
 
         [HttpGet]
         public JsonResult GetItems(int SupplierId)

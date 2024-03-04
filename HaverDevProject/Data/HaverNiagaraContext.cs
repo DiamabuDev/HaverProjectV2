@@ -137,7 +137,7 @@ public partial class HaverNiagaraContext : DbContext
 
         modelBuilder.Entity<ProcDefectPhoto>(entity =>
         {
-            entity.HasKey(e => e.ProcDefectPhotoId).HasName("pk_engDefectPhoto_engDefectPhotoId");
+            entity.HasKey(e => e.ProcDefectPhotoId).HasName("pk_procDefectPhoto_procDefectPhotoId");
 
             entity.HasOne(d => d.NcrProcurement).WithMany(p => p.ProcDefectPhotos)
                 .OnDelete(DeleteBehavior.ClientSetNull)

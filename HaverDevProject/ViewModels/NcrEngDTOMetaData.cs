@@ -26,6 +26,11 @@ public class NcrEngDTOMetaData
     [Column("ncrStatus")]
     public bool NcrStatus { get; set; }
 
+    [Display(Name = "Date")]
+    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+    [DataType(DataType.Date)]
+    public DateTime NcrEngCreationDate { get; set; }
+
     [Display(Name = "Customer Notification")]
     [Column("ncrEngCustomerNotification")]
     public bool NcrEngCustomerNotification { get; set; } = false;

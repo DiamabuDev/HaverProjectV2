@@ -26,10 +26,24 @@
             <div class="card-body col-lg-10 col-11 mx-auto">
                 <div class="row">
                     <div class="col-6">
-                        <div class="form-group form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" asp-for="NcrReInspectAcceptable" /> @Html.DisplayNameFor(model => model.NcrReInspectAcceptable)
-                            </label>
+                        <div class="form-group">
+                            <label class="pb-3"><b>Reinspection Acceptable? </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Is this NCR Reinspection Acceptable?">(Y/N)</small></label>
+                            <div class="text-left">
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrReInspectAcceptable" value="true" />
+                                    <label class="form-check-label">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrReInspectAcceptable" value="false" />
+                                    <label class="form-check-label">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <b>Date</b>
+                            <input asp-for="NcrReInspectCreationDate" class="form-control" readonly />
                         </div>
                     </div>
                     @* <div class="col-6">
@@ -42,15 +56,20 @@
                 <div class="row">
                     <div class="col-6">
                         <div class="form-group">
-                            <label asp-for="NcrId" class="control-label"></label>
+                            <label asp-for="NcrId" class="control-label"><b>NCR No. </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Code to identify the NCR">(e.g. 2024-000)</small></label>
                             <select asp-for="NcrId" class="form-control" asp-items="ViewBag.NcrId" disabled></select>
                             <span asp-validation-for="NcrId" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="form-group">
-                            <label asp-for="NcrReInspectUserId" class="control-label"></label>
-                            <input asp-for="NcrReInspectUserId" class="form-control" />
+                            <label asp-for="NcrReInspectUserId" class="control-label"><b>Inspector's Name </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Name of the Inspector">(e.g. J. Doe)</small></label>
+                            <select asp-for="NcrReInspectUserId" class="form-control">
+                                <option value="1">J. Doe</option>
+                                <option value="2">E. Xample</option>
+                                <option value="3">S. Ample</option>
+                                <option value="4">T. Est</option>
+                            </select>
                             <span asp-validation-for="NcrReInspectUserId" class="text-danger"></span>
                         </div>
                     </div>
@@ -58,7 +77,7 @@
                 </div>
                
                 <div class="form-group">
-                    <label class="control-label"> Current Photos:</label>
+                    <label class="control-label"><b>Current Photos:</b></label>
                     <div class="ml-md-3">
                         @{
                             int fileCount = Model.NcrReInspectPhotos.Count;
@@ -91,14 +110,14 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label custom-file-label">Upload Additional Photos:</label>
+                    <label class="control-label custom-file-label"><b>Upload Additional Photos:</b></label>
                     <div class="input-group mb-3">
                         <input type="file" class="form-control" name="Photos" multiple="multiple" />
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="NcrReInspectDefectVideo" class="control-label"></label>
+                    <label asp-for="NcrReInspectDefectVideo" class="control-label"><b>Video Link </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Link to desired Video">(e.g. https://haverniagara.com/)</small></label>
                     <input asp-for="NcrReInspectDefectVideo" class="form-control" />
                     <span asp-validation-for="NcrReInspectDefectVideo" class="text-danger"></span>
                 </div>
@@ -169,22 +188,38 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
-        var checkbox = document.getElementById("NcrReInspectAcceptable");
-
-        checkbox.addEventListener("change", function () {
-            if (!checkbox.checked) {
-                // If checkbox is unchecked, show confirmation dialog
-                var confirmResult = confirm("Do you want to make a new NCR?");
-                if (!confirmResult) {
-                    // If user cancels, keep checkbox checked
-                    checkbox.checked = true;
-                }
-                else {
-                    window.location.href = "/NcrQa/Create";
-                }
-            } else {
-                textbox.disabled = false;
-            }
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
         });
     </script>
-}
+@*     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var radioButtons = document.getElementsByName("NcrReInspectAcceptable");
+
+            // Loop through each radio button
+            radioButtons.forEach(function (radio) {
+                // Add change event listener to each radio button
+                radio.addEventListener("change", function () {
+                    if (this.value === "false") {
+                        // If "No" radio button is selected, show confirmation dialog
+                        var confirmResult = confirm("Do you want to make a new NCR?");
+                        if (!confirmResult) {
+                            // If user cancels, keep "Yes" radio button selected
+                            document.querySelector('input[value="true"]').checked = true;
+                        } else {
+                            window.location.href = "/NcrQa/Create";
+                            // const urlParams = new URLSearchParams(window.location.search);
+                            // const value = urlParams.get('NcrNumber');
+
+                            // window.history.back();
+
+                        }
+                    } else {
+                        // If "Yes" radio button is selected, do nothing
+                    }
+                });
+            });
+        });
+    </script>
+ *@}

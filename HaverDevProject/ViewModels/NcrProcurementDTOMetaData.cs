@@ -31,7 +31,7 @@ namespace HaverDevProject.Models
         [Display(Name = "Expected Date")]
         [Column("ncrProcExpectedDate")]
         [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}", ApplyFormatInEditMode = true)]
-        public DateTime NcrProcExpectedDate { get; set; }
+        public DateTime? NcrProcExpectedDate { get; set; }
 
         [Display(Name = "Dispose on Site")]
         [Column("ncrProcDisposedAllowed")]
@@ -87,6 +87,10 @@ namespace HaverDevProject.Models
         [StringLength(45, ErrorMessage = "Only 45 characters for the Account Number")]
         [Column("supplierReturnAccount")]
         public string SupplierReturnAccount { get; set; }
+
+        [Display(Name = "Video Link")]
+        [StringLength(100, ErrorMessage = "Video link cannot be more than 100 characters.")]
+        public string NcrProcDefectVideo { get; set; }
 
         [Display(Name = "Procurement Photos")]
         public ICollection<ProcDefectPhoto> ProcDefectPhotos { get; set; } = new HashSet<ProcDefectPhoto>();

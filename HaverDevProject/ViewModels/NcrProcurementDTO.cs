@@ -18,7 +18,7 @@ namespace HaverDevProject.Models
 
         public bool NcrProcSupplierReturnReq { get; set; }
 
-        public DateTime NcrProcExpectedDate { get; set; }
+        public DateTime? NcrProcExpectedDate { get; set; }
 
         public bool NcrProcDisposedAllowed { get; set; }
 
@@ -45,6 +45,8 @@ namespace HaverDevProject.Models
         public string SupplierReturnName { get; set; }
 
         public string SupplierReturnAccount { get; set; }
+
+        public string NcrProcDefectVideo { get; set; }
 
         public ICollection<ProcDefectPhoto> ProcDefectPhotos { get; set; } = new HashSet<ProcDefectPhoto>();
     }

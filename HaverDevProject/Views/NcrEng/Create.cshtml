@@ -22,21 +22,38 @@
             </div>
             <div class="card-body col-lg-10 col-11 mx-auto">
                 <div class="row">
-                    <div class="col-12">
+                    <div class="col-6">
                         <div class="form-group">
-                            <label asp-for="NcrNumber" class="control-label"></label>
+                            <b>NCR No.</b>
+                            @* <label asp-for="NcrNumber" class="control-label"></label> *@
                             <input asp-for="NcrNumber" class="form-control" readonly />
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <b>Date</b>
+                            @* <label asp-for="NcrNumber" class="control-label"></label> *@
+                            <input asp-for="NcrEngCreationDate" class="form-control" readonly />
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-12">
-                        <div class="form-group form-drop">
-                            <label class="pb-3">Review by HBC Engineering: (indicate disposition by selecting one of the following)</label>
-                            @*  <label asp-for="EngDispositionTypeId" class="control-label"></label> *@
+                       
+                            <div class="form-group">
+                            <label class="control-label"><b>Review by HBC Engineering:</b> (indicate disposition by selecting one of the following)  <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">  <span class="fw-bold text-danger">*</span></small></label>
+                                <select class="form-control" id="EngDispositionTypeId" name="EngDispositionTypeId" asp-items="ViewBag.EngDispositionTypeId" required>
+                                    <option value="0">Select Disposition</option>
+                                </select>
+                            </div>
+@*                         <div class="form-group form-drop">
+
+                            <label class="pb-3"><b>Review by HBC Engineering: </b> (indicate disposition by selecting one of the following)</label>
+                             <label asp-for="EngDispositionTypeId" class="control-label"></label>
                             <select asp-for="EngDispositionTypeId" class="form-control"
                                     asp-items="ViewBag.EngDispositionTypeId"></select>
-                        </div>
+                        </div> *@
+
                     </div>
                 </div>
                 <div class="row">
@@ -55,7 +72,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="form-group">
-                            Disposition (Sequence of work steps required when 'repair' or 'rework' indicated)
+                            <b>Disposition:</b> (Sequence of work steps required when 'repair' or 'rework' indicated)
                             @* <label asp-for="NcrEngDispositionDescription" class="control-label"></label> *@
                             <textarea asp-for="NcrEngDispositionDescription" class="form-control"></textarea>
                             <span asp-validation-for="NcrEngDispositionDescription" class="text-danger"></span>
@@ -65,14 +82,14 @@
 
 
                 <div class="form-group">
-                    <label class="control-label custom-file-label">Upload Engineer Photos:</label>
+                    <label class="control-label custom-file-label"> <b>Upload Engineer Photos: </b></label>
                     <div class="input-group mb-3">
                         <input type="file" class="form-control" name="Photos" multiple="multiple" />
                     </div>
 
                 </div>
                 <div class="form-group">
-                    Video Link
+                   <b> Video Link </b>
                     <input asp-for="NcrEngDefectVideo" class="form-control" />
                     <span asp-validation-for="NcrEngDefectVideo" class="text-danger"></span>
                 </div>
@@ -91,39 +108,39 @@
                     <div class="row">
                         <div class="col-6">
                             <div class="form-group">
-                                <label asp-for="DrawingOriginalRevNumber" class="control-label"></label>
+                               <b> <label asp-for="DrawingOriginalRevNumber" class="control-label"></label></b>
                                 <input asp-for="DrawingOriginalRevNumber" class="form-control" />
                                 <span asp-validation-for="DrawingOriginalRevNumber" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="form-group">
-                                <label asp-for="DrawingUserId" class="control-label"></label>
-                                <input asp-for="DrawingUserId" class="form-control" />
-                                <span asp-validation-for="DrawingUserId" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="form-group">
-                                <label asp-for="DrawingUpdatedRevNumber" class="control-label"></label>
+                                <b> <label asp-for="DrawingUpdatedRevNumber" class="control-label"></label></b>
                                 <input asp-for="DrawingUpdatedRevNumber" class="form-control" />
                                 <span asp-validation-for="DrawingUpdatedRevNumber" class="text-danger"></span>
                             </div>
                         </div>
+                    </div>
+@*                     <div class="row">
                         <div class="col-6">
                             <div class="form-group">
-                                <label asp-for="NcrEngUserId" class="control-label"></label>
+                                <b> <label asp-for="DrawingUserId" class="control-label"></label></b>
+                                <input asp-for="DrawingUserId" class="form-control" />
+                                <span asp-validation-for="DrawingUserId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                               <b> <label asp-for="NcrEngUserId" class="control-label"></label></b>
                                 <input asp-for="NcrEngUserId" class="form-control" />
                                 <span asp-validation-for="NcrEngUserId" class="text-danger"></span>
                             </div>
                         </div>
-                    </div>
+                    </div> *@
 
                     <div class="col-12">
                         <div class="form-group">
-                            <label asp-for="DrawingRevDate" class="control-label"></label>
+                           <b> <label asp-for="DrawingRevDate" class="control-label"></label></b>
                             <input asp-for="DrawingRevDate" class="form-control" />
                             <span asp-validation-for="DrawingRevDate" class="text-danger"></span>
                         </div>
@@ -166,6 +183,13 @@
                     $('#drawingConditional').addClass('hidden');
                 }
             });
+        });
+    </script>
+
+    <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
         });
     </script>
 }

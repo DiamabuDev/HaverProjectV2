@@ -27,14 +27,14 @@
                 <div class="row">
                     <div class="col-6">                    
                         <div class="form-group">
-                            <label asp-for="NcrNumber" class="control-label"></label>
+                            <label asp-for="NcrNumber" class="control-label fw-bold"></label>
                             <input asp-for="NcrNumber" class="form-control" readonly/>
                             <span asp-validation-for="NcrNumber" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="form-group">
-                            <label asp-for="NcrQacreationDate" class="control-label"></label>
+                            <label asp-for="NcrQacreationDate" class="control-label fw-bold"></label>
                             <input asp-for="NcrQacreationDate" class="form-control" readonly/>
                             <span asp-validation-for="NcrQacreationDate" class="text-danger"></span>
                         </div>
@@ -42,7 +42,10 @@
                 </div>
                 <div class="row">       
                     <div class="form-group">
-                        <label class="pb-3">Identify Process Applicable:</label>   
+                        <label class="pb-3">
+                            <strong>Identify Process Applicable:</strong> 
+                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Supplier or Rec-Insp)</small> 
+                            <span class="fw-bold text-danger">*</span></label>
                         <div class="text-center">
                             <div class="form-check form-check-inline">
                                 <input type="radio" class="form-check-input" asp-for="NcrQaProcessApplicable" value="true" checked />
@@ -58,14 +61,20 @@
                 <div class="row">                
                     <div class="col-6">
                         <div class="form-group">
-                            <label asp-for="NcrQaOrderNumber" class="control-label"></label>
-                            <input asp-for="NcrQaOrderNumber" class="form-control" />
+                            <label asp-for="NcrQaOrderNumber" class="control-label">
+                                <strong>PO or Prod. No.: </strong>
+                                <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Enter a valid value">(e.g. 4500730930)</small> 
+                                <span class="fw-bold text-danger">*</span></label>
+                            <input asp-for="NcrQaOrderNumber" class="form-control" type="number" step="1" />
                             <span asp-validation-for="NcrQaOrderNumber" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="form-group">
-                            <label asp-for="NcrQaSalesOrder" class="control-label"></label>
+                            <label asp-for="NcrQaSalesOrder" class="control-label">
+                                <strong>Sales Order No. </strong>
+                                <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Enter a valid value">(e.g. Stock)</small> 
+                                <span class="fw-bold text-danger">*</span></label>
                             <input asp-for="NcrQaSalesOrder" class="form-control" />
                             <span asp-validation-for="NcrQaSalesOrder" class="text-danger"></span>
                         </div>
@@ -74,14 +83,20 @@
                 <div class="row">               
                     <div class="col-6">
                         <div class="form-group">
-                            <label asp-for="NcrQaQuanReceived" class="control-label"></label>
+                            <label asp-for="NcrQaQuanReceived" class="control-label">
+                                <strong>Quantity Received: </strong>
+                                <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Enter a numeric value">(e.g. 150)</small> 
+                                <span class="fw-bold text-danger">*</span></label>
                             <input asp-for="NcrQaQuanReceived" class="form-control" />
                             <span asp-validation-for="NcrQaQuanReceived" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="form-group">
-                            <label asp-for="NcrQaQuanDefective" class="control-label"></label>
+                            <label asp-for="NcrQaQuanDefective" class="control-label">
+                                <strong>Quantity Defective:</strong> 
+                                <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Enter a numeric value">(e.g. 25)</small> 
+                                <span class="fw-bold text-danger">*</span></label>
                             <input asp-for="NcrQaQuanDefective" class="form-control" />
                             <span asp-validation-for="NcrQaQuanDefective" class="text-danger"></span>
                         </div>
@@ -89,33 +104,44 @@
                 </div>
                 <div class="row">     
                     <div class="form-group">
-                        <label class="control-label">Supplier:</label>
+                        <label class="control-label">
+                            <strong>Supplier: Supplier: </strong>
+                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Lawrence Sintered Metals.)</small> 
+                            <span class="fw-bold text-danger">*</span></label>
                         <select class="form-control" id="SupplierId" name="SupplierId" asp-items="ViewBag.SupplierId" asp-for="SupplierId" required>
                             <option value="0">Select Supplier</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label asp-for="ItemId" class="control-label"></label>
+                        <label asp-for="ItemId" class="control-label">
+                            <strong>Item: </strong>
+                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Panel.)</small> <span class="fw-bold text-danger">*</span></label>
                         <select asp-for="ItemId" id="ItemId" class="form-control" asp-items="ViewBag.ItemId" required>
                             <option value="0">Select a Supplier First</option>
                         </select>
                         <span asp-validation-for="ItemId" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="DefectId" class="control-label"></label>
+                        <label asp-for="DefectId" class="control-label">
+                            <strong>Defect: </strong>
+                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Surface to house internal components.)</small> 
+                            <span class="fw-bold text-danger">*</span></label>
                         <select asp-for="DefectId" class="form-control" id="DefectId" name="DefectId" asp-items="ViewBag.DefectId">
                             <option value="0">Select an Item First</option>
                         </select>
                         <span asp-validation-for="DefectId" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="NcrQaDescriptionOfDefect" class="control-label"></label>
+                        <label asp-for="NcrQaDescriptionOfDefect" class="control-label">
+                            <strong>Description of Defect: </strong>
+                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Enter the required description">(e.g. Dimensions outside of control parameters.)</small> 
+                            <span class="fw-bold text-danger">*</span></label>
                         <textarea asp-for="NcrQaDescriptionOfDefect" class="form-control"></textarea>
                         <span asp-validation-for="NcrQaDescriptionOfDefect" class="text-danger"></span>
                     </div>
                    
                     <div class="form-group">
-                        <label class="control-label"> Current Photos:</label>
+                        <label class="control-label"> <strong>Current Photos:</strong></label>
                         <div class="ml-md-3">
                             @{
                                 int fileCount = Model.ItemDefectPhotos.Count;
@@ -145,29 +171,24 @@
                         </div>
                     </div>
 
-
                     <div class="form-group">
-                        <label class="control-label custom-file-label">Upload Additional Photos:</label>
+                        <label class="control-label custom-file-label"><strong>Upload Additional Photos:</strong></label>
                         <input type="file" class="form-control" name="Photos" multiple="multiple" />
                     </div>
 
                     <div class="form-group">
-                        <label asp-for="NcrQaDefectVideo" class="control-label"></label>
+                        <label asp-for="NcrQaDefectVideo" class="control-label fw-bold"></label>
                         <input asp-for="NcrQaDefectVideo" class="form-control" />
                         <span asp-validation-for="NcrQaDefectVideo" class="text-danger"></span>
-                    </div>
-
-
+                    </div>               
                     
-                    
-
-
-
                 </div>
                 <div class="row">
                     <div class="col-6">                                           
                         <div class="form-group">
-                            <label class="pb-3">Item marked Nonconforming:</label>
+                            <label class="pb-3">
+                                <strong>Item marked Nonconforming: </strong>
+                                <span class="fw-bold text-danger">*</span></label>
                             <div class="text-center">
                                 <div class="form-check form-check-inline">
                                     <input type="radio" class="form-check-input" asp-for="NcrQaItemMarNonConforming" value="true" checked />
@@ -182,7 +203,9 @@
                     </div>
                     <div class="col-6">
                         <div class="form-group">
-                            <label class="pb-3">Engineer Disposition Required?</label>
+                            <label class="pb-3">
+                                <strong>Engineer Disposition Required? </strong>
+                                <span class="fw-bold text-danger">*</span></label>
                             <div class="text-center">
                                 <div class="form-check form-check-inline">
                                     <input type="radio" class="form-check-input" asp-for="NcrQaEngDispositionRequired" value="true" checked/>
@@ -230,6 +253,12 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script src="~/js/refreshDDL.js"></script>
+    <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    </script>
     <script type="text/javascript">
         $('#SupplierId').change(function () {
             var selectedSupplier = $("#SupplierId").val();
