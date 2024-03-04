@@ -256,14 +256,16 @@ namespace HaverDevProject.Controllers
         }
 
 
-        // GET: NcrOperation/Create
+        // GET: NcrEng/Create
         public IActionResult Create(string ncrNumber)
         {
             NcrEngDTO ncr = new NcrEngDTO();
             ncr.NcrNumber = ncrNumber; // Set the NcrNumber from the parameter
             ncr.DrawingRevDate = DateTime.Now;
+            ncr.NcrEngCreationDate = DateTime.Now;
             ncr.DrawingRequireUpdating = false;
             ncr.NcrEngCustomerNotification = false;
+
             //ncr.NcrStatus = true; // Active
 
             PopulateDropDownLists();
@@ -271,7 +273,7 @@ namespace HaverDevProject.Controllers
             return View(ncr);
         }
 
-        // POST: NcrOperation/Create
+        // POST: NcrEng/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -297,6 +299,7 @@ namespace HaverDevProject.Controllers
                         NcrEngDispositionDescription = ncrEngDTO.NcrEngDispositionDescription,
                         NcrEngStatusFlag = ncrEngDTO.NcrEngStatusFlag,
                         NcrEngUserId = 1,
+                        NcrEngCreationDate = DateTime.Now,
                         EngDispositionTypeId = ncrEngDTO.EngDispositionTypeId,
                         DrawingId = ncrEngDTO.DrawingId,
                         DrawingRequireUpdating = false,
@@ -372,6 +375,7 @@ namespace HaverDevProject.Controllers
                 //NcrStatus = ncrEng.Ncr.NcrStatus,
                 NcrEngCustomerNotification = ncrEng.NcrEngCustomerNotification,
                 NcrEngDispositionDescription = ncrEng.NcrEngDispositionDescription,
+                NcrEngCreationDate = ncrEng.NcrEngCreationDate,
                 NcrEngStatusFlag = ncrEng.NcrEngStatusFlag,
                 NcrEngUserId = ncrEng.NcrEngUserId,
                 EngDispositionTypeId = ncrEng.EngDispositionTypeId,
@@ -380,7 +384,7 @@ namespace HaverDevProject.Controllers
                 DrawingRequireUpdating = ncrEng.DrawingRequireUpdating,
                 DrawingOriginalRevNumber = ncrEng.DrawingOriginalRevNumber,
                 DrawingUpdatedRevNumber = ncrEng.DrawingUpdatedRevNumber,
-                DrawingRevDate = ncrEng.DrawingRevDate,
+                DrawingRevDate = DateTime.Now,
                 DrawingUserId = ncrEng.DrawingUserId,
                 EngDefectPhotos = ncrEng.EngDefectPhotos,
                 NcrEngDefectVideo = ncrEng.NcrEngDefectVideo,
@@ -418,6 +422,7 @@ namespace HaverDevProject.Controllers
                     //ncrEng.Ncr.NcrStatus = ncrEngDTO.NcrStatus;
                     ncrEng.NcrEngCustomerNotification = ncrEngDTO.NcrEngCustomerNotification;
                     ncrEng.NcrEngDispositionDescription = ncrEngDTO.NcrEngDispositionDescription;
+                    ncrEng.NcrEngCreationDate = ncrEngDTO.NcrEngCreationDate;
                     ncrEng.NcrEngStatusFlag = ncrEngDTO.NcrEngStatusFlag;
                     ncrEng.NcrEngUserId = ncrEngDTO.NcrEngUserId;
                     ncrEng.EngDispositionTypeId = ncrEngDTO.EngDispositionTypeId;
@@ -426,7 +431,7 @@ namespace HaverDevProject.Controllers
                     ncrEng.DrawingRequireUpdating = ncrEngDTO.DrawingRequireUpdating;
                     ncrEng.DrawingOriginalRevNumber = ncrEngDTO.DrawingOriginalRevNumber;
                     ncrEng.DrawingUpdatedRevNumber = ncrEngDTO.DrawingUpdatedRevNumber;
-                    ncrEng.DrawingRevDate = ncrEngDTO.DrawingRevDate;
+                    ncrEng.DrawingRevDate = DateTime.Now;
                     ncrEng.DrawingUserId = ncrEngDTO.DrawingUserId;
                     ncrEng.EngDefectPhotos = ncrEngDTO.EngDefectPhotos;
                     ncrEng.NcrEngDefectVideo = ncrEngDTO.NcrEngDefectVideo;
@@ -472,20 +477,6 @@ namespace HaverDevProject.Controllers
 
         public JsonResult GetNcrs()
         {
-            // Get the list of NcrIds that already exist in NcrOperation
-            //List<int> ncrOpPending = _context.Ncrs
-            //    .Where(n => n.NcrPhase == NcrPhase.Operations)
-            //    .Select(n => n.NcrId)
-            //    .ToList();
-
-            //// Include related data in the query for NcrEng
-            //List<NcrEng> pendings = _context.NcrEngs
-            //    .Include(n => n.Ncr)
-            //        .ThenInclude(n => n.NcrQa)
-            //            .ThenInclude(n => n.Item)
-            //                .ThenInclude(n => n.Supplier) 
-            //    .Where(ncrEng => !existingNcrIds.Contains(ncrEng.NcrId))
-            //    .ToList();
 
             List<Ncr> pendings = _context.Ncrs
                 .Include(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
@@ -507,21 +498,6 @@ namespace HaverDevProject.Controllers
 
         public JsonResult GetPendingCount()
         {
-            // Get the list of NcrIds that already exist in NcrOperation
-            //List<int> existingNcrIds = _context.NcrOperations.Select(op => op.NcrId).ToList();
-
-            //List<int> ncrOpPending = _context.Ncrs
-            //    .Where(n => n.NcrPhase == NcrPhase.Operations)
-            //    .Select(n => n.NcrId)
-            //    .ToList();
-
-
-            //// Count only the unique NcrIds in NcrEngs
-            //int pendingCount = _context.NcrEngs
-            //    .Where(ncrEng => ncrOpPending.Contains(ncrEng.NcrId))
-            //    .Select(ncrEng => ncrEng.NcrId)
-            //    .Distinct()
-            //    .Count();
 
             int pendingCount = _context.Ncrs
                 .Where(n => n.NcrPhase == NcrPhase.Engineer)
