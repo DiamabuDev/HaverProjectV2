@@ -61,14 +61,14 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>Item Marked NonConforming</th>
-                                    <th>Engineer Disposition Required?</th>
+                                    <th class="two-cols-1">Item Marked NonConforming</th>
+                                    <th class="two-cols">Engineer Disposition Required?</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>@(Model.NcrQaItemMarNonConforming == true ? "Yes" : "No")</td>
-                                    <td>@(Model.NcrQaEngDispositionRequired == true ? "Yes" : "No")</td>
+                                    <td class="two-cols-1">@(Model.NcrQaItemMarNonConforming == true ? "Yes" : "No")</td>
+                                    <td class="two-cols">@(Model.NcrQaEngDispositionRequired == true ? "Yes" : "No")</td>
                                 </tr>
                             </tbody>
                         </table>
