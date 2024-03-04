@@ -52,7 +52,7 @@ namespace HaverDevProject.Controllers
             }
 
             //List of sort options.
-            string[] sortOptions = new[] { "Creation Date", "NCR #", "Supplier", "Disposition", "Phase", "Last Updated" };
+            string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "Disposition", "Phase", "Last Updated" };
 
             
             PopulateDropDownLists();
@@ -164,21 +164,21 @@ namespace HaverDevProject.Controllers
                 }
             }
 
-            else if (sortField == "Creation Date")
+            else if (sortField == "Created")
             {
                 if (sortDirection == "desc") //desc by default
                 {
                     ncrEng = ncrEng
                         .OrderBy(p => p.Ncr.NcrQa.NcrQacreationDate);
 
-                    ViewData["filterApplied:Creation Date"] = "<i class='bi bi-sort-up'></i>";
+                    ViewData["filterApplied:Created"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncrEng = ncrEng
                         .OrderByDescending(p => p.Ncr.NcrQa.NcrQacreationDate);
 
-                    ViewData["filterApplied:Creation Date"] = "<i class='bi bi-sort-down'></i>";
+                    ViewData["filterApplied:Created"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
             else if (sortField == "Phase")
