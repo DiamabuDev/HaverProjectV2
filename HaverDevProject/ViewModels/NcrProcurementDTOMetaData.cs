@@ -88,6 +88,10 @@ namespace HaverDevProject.Models
         [Column("supplierReturnAccount")]
         public string SupplierReturnAccount { get; set; }
 
+        [Display(Name = "Video Link")]
+        [StringLength(100, ErrorMessage = "Video link cannot be more than 100 characters.")]
+        public string NcrProcDefectVideo { get; set; }
+
         [Display(Name = "Procurement Photos")]
         public ICollection<ProcDefectPhoto> ProcDefectPhotos { get; set; } = new HashSet<ProcDefectPhoto>();
     }

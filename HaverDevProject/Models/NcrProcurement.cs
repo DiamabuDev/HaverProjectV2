@@ -29,6 +29,8 @@ namespace HaverDevProject.Models
         public int NcrId { get; set; }
         public virtual Ncr Ncr { get; set; }
 
+
+        public string NcrProcDefectVideo { get; set; }
         public ICollection<ProcDefectPhoto> ProcDefectPhotos { get; set; } = new HashSet<ProcDefectPhoto>();
 
     }

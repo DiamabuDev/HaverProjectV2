@@ -60,6 +60,10 @@
     <div class="form-horizontal">
         <div class="card card-body bg-custom-color mb-2">
             <div class="row d-flex justify-content-center align-items-center">
+                <div class="form-group col-lg-3 col-md-5 col-sm-10 col-10">
+                    <label class="control-label">Filter by Suppliers:</label>
+                    @Html.DropDownList("SupplierID", null, "All Suppliers", htmlAttributes: new { @class = "form-control" })
+                </div>
                 <div class="form-group col-lg-2">
                     <label class="control-label">Start Date:</label>
                     @Html.TextBox("StartDate", @ViewData["StartDate"], new { @class = "form-control", type = "date" })
@@ -86,29 +90,29 @@
                 <th></th>
                 <th class="d-none d-md-table-cell">
                     <button type="submit" name="actionButton" value="Created" class="btn text-light custom-btn-text-start">
-                        Updated
+                        Last Updated
                         @Html.Raw(ViewData["filterApplied:Created"])
                     </button>
                 </th>
-                <th style="padding-right: 50px;">
+                <th>
                     <button type="submit" name="actionButton" value="NCR #" class="btn text-light custom-btn-text-start">
                         NCR #
                         @Html.Raw(ViewData["filterApplied:NcrNumber"])
                     </button>
                 </th>
-                <th style="padding-right: 50px;">
+                <th class="col-3">
                     <button type="submit" name="actionButton" value="Supplier" class="btn text-light custom-btn-text-start">
                         Supplier
                         @Html.Raw(ViewData["filterApplied:Supplier"])
                     </button>
                 </th>
-                <th>
+                <th class="d-none d-md-table-cell col-3">
                     <button type="submit" name="actionButton" value="Supplier Return" class="btn text-light custom-btn-text-start">
                         Supplier Return
                         @Html.Raw(ViewData["filterApplied:SupplierReturn"])
                     </button>
                 </th>
-                <th>
+                <th class="d-none d-xxl-table-cell">
                     <button type="submit" name="actionButton" value="Phase" class="btn text-light custom-btn-text-start">
                         Phase
                         @Html.Raw(ViewData["filterApplied:Phase"])
@@ -134,17 +138,15 @@
                         @Html.DisplayFor(modelItem => item.Ncr.NcrLastUpdated)
                     </td>
                     <td class="standout" style="padding-right: 50px;">
-
                         @Html.DisplayFor(modelItem => item.Ncr.NcrNumber)
                     </td>
-                    <td class="standout" style="padding-right: 50px;">
-
+                    <td class="col-3" style="padding-right: 100px;">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrQa.Item.Supplier.SupplierName)
                     </td>
                     <td class="col-3" style="padding-left: 50px;">
                         @Html.Raw(item.NcrProcSupplierReturnReq ? "Yes" : "No")
                     </td>
-                    <td class="d-none d-md-table-cell col-3">
+                    <td class="d-none d-xxl-table-cell">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrPhase)
                     </td>
                     @* <td class="@((item.Ncr.NcrStatus == true) ? "stillactive" : "closed")">
