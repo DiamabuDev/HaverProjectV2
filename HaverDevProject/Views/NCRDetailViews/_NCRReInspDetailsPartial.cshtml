@@ -6,7 +6,7 @@
             <button class="btn custom-header-bg icon-drop text-start mb-0" type="button" data-bs-toggle="collapse" data-bs-target="#reInspectSection" aria-expanded="@ViewBag.IsNCRReInspView.ToString().ToLower()" aria-controls="reInspectSection">
                 Re-Inspection <i class="bi bi-chevron-down"></i>
             </button>
-            <div class="collapse  @(ViewBag.IsNCRReInspView? "show" : "")" id="reInspectSection">
+            <div class="collapse @(ViewBag.IsNCRReInspView? "show" : "")" id="reInspectSection">
                 <div class="card">
                     <div class="card-body pb-0 pt-0">
                         <table class="table">
@@ -15,7 +15,6 @@
                                     <th class="four-cols">NCR #</th>
                                     <th class="four-cols">Acceptable</th>
                                     <th class="four-cols">New NCR #</th>
-                                    <th class="four-cols">Re-Inspection Done By</th>
                                 </tr>
                             </thead>
                         </table>
@@ -26,46 +25,54 @@
                                 <tr>
                                     <td class="four-cols">@Model.Ncr.NcrNumber</td>
                                     <td class="four-cols">
-                                        @if (Model.NcrReInspectAcceptable == true)
-                                        {
-                                            <text>Yes</text>
-                                        }
-                                        else
-                                        {
-                                            <text>No</text>
-                                        }
+                                        @(Model.NcrReInspectAcceptable ? "Yes" : "No")
                                     </td>
                                     <td class="four-cols">
-                                        @if (Model.NcrReInspectNewNcrNumber == null)
-                                        {
-                                            <text>N/A</text>
-                                        }
-                                        else
-                                        {
-                                            <text></text>
-                                        }
+                                        @(Model.NcrReInspectNewNcrNumber == null ? "N/A" : Model.NcrReInspectNewNcrNumber.ToString())
                                     </td>
-                                    <td class="four-cols">
-                                        @if (Model.NcrReInspectUserId == 1)
-                                        {
-                                            <text>J. Doe</text>
-                                        }
-                                        else if (Model.NcrReInspectUserId == 2)
-                                        {
-                                            <text>E. Xample</text>
-                                        }
-                                        else if (Model.NcrReInspectUserId == 3)
-                                        {
-                                            <text>S. Ample</text>
-                                        }
-                                        else
-                                        {
-                                            <text>T. Est</text>
-                                        }
-                                    </td>
+
                                 </tr>
                             </tbody>
 
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body pb-0">
+                        <table class="table m-0">
+                            <thead class="custom-light-bg">
+                                <tr>
+                                    <th class="three-cols">ReInspection Representative</th>
+                                    <th class="three-cols">Section Creation Date</th>
+                                    <th class="three-cols">Last Updated</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="three-cols">
+                                        @{
+                                            var userName = Model.NcrReInspectUserId == 1 ? "J. Doe" :
+                                            Model.NcrReInspectUserId == 2 ? "E. Xample" :
+                                            Model.NcrReInspectUserId == 3 ? "S. Ample" : "T. Est";
+                                        }
+                                        @userName
+                                    </td>
+                                    <td class="three-cols">@Model.NcrReInspectCreationDate.ToString("yyyy-MM-dd")</td>
+                                    <td class="three-cols">
+                                        @{
+                                            if (Model.UpdatedOn.HasValue)
+                                            {
+                                                DateTime localUpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(Model.UpdatedOn.Value, TimeZoneInfo.Local);
+                                                @localUpdatedOn.ToString("yyyy-MM-dd HH:mm:ss")
+                                            }
+                                            else
+                                            {
+                                                @("Not available")
+                                            }
+                                        }
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -75,10 +82,10 @@
                 }
                 @if (hasImages || hasVideos)
                 {
-                    <button class="btn custom-secondary-bg icon-drop text-start" type="button" data-bs-toggle="collapse" data-bs-target="#additionalInfo2" aria-expanded="false" aria-controls="additionalInfo2">
+                    <button class="btn custom-secondary-bg icon-drop text-start" type="button" data-bs-toggle="collapse" data-bs-target="#additionalInfoReInsp" aria-expanded="false" aria-controls="additionalInfo2">
                         Additional Information <i class="bi bi-chevron-down"></i>
                     </button>
-                    <div class="collapse" id="additionalInfo2">
+                    <div class="collapse" id="additionalInfoReInsp">
                         @if (hasImages)
                         {
                             <div class="card-header">

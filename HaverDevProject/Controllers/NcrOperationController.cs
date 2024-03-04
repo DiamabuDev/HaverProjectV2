@@ -55,17 +55,15 @@ namespace HaverDevProject.Controllers
             }
 
             //List of sort options.
-            string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "DispositionType", "Phase" };
+            string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "DispositionType", "Phase", "Creation" };
 
             PopulateDropDownLists();
 
             var ncrOperation = _context.NcrOperations
                 .Include(n => n.NcrEng)
                 .Include(n => n.Ncr)
-                    .Include(n => n.Ncr)
-                        .ThenInclude(n => n.NcrQa)
-                            .ThenInclude(n => n.Item)
-                                .ThenInclude(n => n.Supplier)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
                 .Include(n => n.OpDispositionType)
                 .Include(n => n.FollowUpType)
                 .AsNoTracking();
@@ -165,6 +163,23 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:Created"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
+            else if (sortField == "Creation")
+            {
+                if (sortDirection == "desc") //desc by default
+                {
+                    ncrOperation = ncrOperation
+                        .OrderBy(p => p.Ncr.NcrQa.NcrQacreationDate);
+
+                    ViewData["filterApplied:Creation"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrOperation = ncrOperation
+                        .OrderByDescending(p => p.Ncr.NcrQa.NcrQacreationDate);
+
+                    ViewData["filterApplied:Creation"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
             else if (sortField == "Status")
             {
                 if (sortDirection == "asc")
@@ -242,11 +257,13 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects).ThenInclude(n => n.Defect)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.ItemDefectPhotos)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrEng)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrEng).ThenInclude(n => n.EngDispositionType)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrEng).ThenInclude(n => n.Drawing)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrEng).ThenInclude(n => n.EngDefectPhotos)
                 .Include(n => n.OpDispositionType)
+                .Include(n => n.OpDefectPhotos)
                 .FirstOrDefaultAsync(m => m.NcrOpId == id);
             if (ncrOperation == null)
             {
@@ -264,6 +281,7 @@ namespace HaverDevProject.Controllers
         {
             NcrOperationDTO ncr = new NcrOperationDTO();
             ncr.NcrNumber = ncrNumber; // Set the NcrNumber from the parameter
+            ncr.NcrOpCreationDate = DateTime.Now;
             ncr.UpdateOp = DateTime.Now;
             ncr.NcrStatus = true; // Active
 
@@ -283,7 +301,8 @@ namespace HaverDevProject.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    // Find the Ncr entity based on the NcrNumber in the DTO
+
+
                     int ncrIdObt = _context.Ncrs
                         .Where(n => n.NcrNumber == ncrOperationDTO.NcrNumber)
                         .Select(n => n.NcrId)
@@ -299,7 +318,6 @@ namespace HaverDevProject.Controllers
                         CarNumber = ncrOperationDTO.CarNumber,
                         FollowUp = ncrOperationDTO.FollowUp,
                         ExpectedDate = ncrOperationDTO.ExpectedDate,
-
                         FollowUpTypeId = ncrOperationDTO.FollowUpTypeId,
                         UpdateOp = DateTime.Today,
                         NcrPurchasingUserId = 1,
@@ -319,8 +337,6 @@ namespace HaverDevProject.Controllers
                     TempData["SuccessMessage"] = "NCR saved successfully!";
                     int ncrOpId = ncrOperation.NcrOpId;
                     return RedirectToAction("Details", new { id = ncrOpId });
-
-                    //return RedirectToAction(nameof(Index));
                 }
             }
             catch (RetryLimitExceededException /* dex */)
@@ -347,10 +363,12 @@ namespace HaverDevProject.Controllers
             var ncrOperation = await _context.NcrOperations
                 .Include(n => n.NcrEng)
                 .Include(n => n.Ncr)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
                 .Include(n => n.OpDispositionType)
                 .Include(n => n.FollowUpType)
                 .Include(n => n.OpDefectPhotos)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(n => n.NcrOpId == id);
 
             if (ncrOperation == null)
@@ -362,6 +380,7 @@ namespace HaverDevProject.Controllers
             {
                 NcrOpId = ncrOperation.NcrOpId,
                 NcrNumber = ncrOperation.Ncr.NcrNumber,
+                NcrOpCreationDate = ncrOperation.Ncr.NcrQa.NcrQacreationDate,
                 NcrId = ncrOperation.NcrId,
                 Ncr = ncrOperation.Ncr,
                 OpDispositionTypeId = ncrOperation.OpDispositionTypeId,
@@ -393,6 +412,10 @@ namespace HaverDevProject.Controllers
         {
             if (ModelState.IsValid)
             {
+                var ncrToUpdate = await _context.Ncrs
+                .AsNoTracking()
+                .FirstOrDefaultAsync(n => n.NcrId == NcrId);
+
                 if (id != ncrOperationDTO.NcrId)
                 {
                     return NotFound();

@@ -16,7 +16,7 @@
         <div class="card border-2">
             <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
                 <div>
-                    <h2 class="m-0">Add to NCR</h2>
+                    <h2 class="m-0">Edit NCR</h2>
                 </div>
                 <div class="justify-content-end">
                     <p class="m-0">Fields marked <span class="fw-bold text-danger">*</span> are required.</p>
@@ -25,10 +25,16 @@
             </div>
             <div class="card-body col-lg-10 col-11 mx-auto">
                 <div class="row">
-                    <div class="col-12">
+                    <div class="col-6">
                         <div class="form-group">
-                            <label asp-for="NcrNumber" class="control-label"><b>Ncr Number</b></label>
+                            <label asp-for="NcrNumber" class="control-label"><b>NCR No.</b></label>
                             <input asp-for="NcrNumber" class="form-control" readonly />
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <b>Creation Date</b>
+                            <input asp-for="NcrOpCreationDate" class="form-control" readonly />
                         </div>
                     </div>
                 </div>
@@ -43,14 +49,18 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label asp-for="NcrPurchasingDescription" class="control-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Describe your selection"><b>Description</b></span> <span class="fw-bold text-danger">*</span></label>
-                    <textarea asp-for="NcrPurchasingDescription" class="form-control"></textarea>
-                    <span asp-validation-for="NcrPurchasingDescription" class="text-danger"></span>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label asp-for="NcrPurchasingDescription" class="control-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Describe your selection"><b>Description</b></span> <span class="fw-bold text-danger">*</span></label>
+                            <textarea asp-for="NcrPurchasingDescription" class="form-control"></textarea>
+                            <span asp-validation-for="NcrPurchasingDescription" class="text-danger"></span>
+                        </div>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="form-group">
-                        <label class="pb-3"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select Yes or No">Was a CAR raised?</span></label>
+                        <label class="pb-3"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select Yes or No"><b>Was a CAR raised?</b></span><span class="fw-bold text-danger"> *</span></label>
                         <div class="text-left">
                             <div class="form-check form-check-inline">
                                 <input type="radio" class="form-check-input" asp-for="Car" value="true" id="car-raised-yes" />
@@ -75,7 +85,7 @@
                 <div class="row">
                     <div class="row">
                         <div class="form-group">
-                            <label class="pb-3"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select Yes or No"><b>Follow-Up Requiered?</b></span></label>
+                            <label class="pb-3"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select Yes or No"><b>Follow-Up Required?</b></span><span class="fw-bold text-danger"> *</span></label>
                             <div class="text-left">
                                 <div class="form-check form-check-inline">
                                     <input type="radio" class="form-check-input" asp-for="FollowUp" value="true" id="follow-no" />
@@ -91,7 +101,7 @@
                 </div>
                 <div class="row collapse" id="Follow-input">
                     <div class="row">
-                        <div class="col-12">
+                        <div class="col-6">
                             <div class="form-group">
                                 <label asp-for="FollowUpTypeId" class="control-label"></label>
                                 <select asp-for="FollowUpTypeId" class="form-control" asp-items="ViewBag.FollowUpTypeId">
@@ -100,9 +110,7 @@
                                 <span asp-validation-for="FollowUpTypeId" class="text-danger"></span>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
+                        <div class="col-6">
                             <div class="form-group">
                                 <label asp-for="ExpectedDate" class="control-label"></label>
                                 <input asp-for="ExpectedDate" class="form-control date-input" value="@Model.ExpectedDate?.ToString("yyyy-MM-dd")" />
@@ -160,7 +168,7 @@
                 <div class="form-group d-flex justify-content-end mt-2">
                     <div>
                         <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn btn-primary ">
-                            <i class="bi bi-arrow-90deg-left"></i> Back to the @ViewData["ControllerName"] List
+                            <i class="bi bi-arrow-90deg-left"></i> Back to the NCR List
                         </button>
                     </div>
                     <div>

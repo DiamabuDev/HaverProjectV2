@@ -68,22 +68,22 @@ namespace HaverDevProject.Controllers
                 if (filter == "All")
                 {
                     ViewData["filterApplied:ButtonAll"] = "btn-primary";
-                    ViewData["filterApplied:ButtonActive"] = "btn-secondary";
-                    ViewData["filterApplied:ButtonClosed"] = "btn-secondary";
+                    ViewData["filterApplied:ButtonActive"] = "btn-success custom-opacity";
+                    ViewData["filterApplied:ButtonClosed"] = "btn-danger custom-opacity";
                 }
                 else if (filter == "Active")
                 {
                     ncrQa = ncrQa.Where(n => n.Ncr.NcrStatus == true);
                     ViewData["filterApplied:ButtonActive"] = "btn-success";
-                    ViewData["filterApplied:ButtonAll"] = "btn-secondary";
-                    ViewData["filterApplied:ButtonClosed"] = "btn-secondary";
+                    ViewData["filterApplied:ButtonAll"] = "btn-primary custom-opacity";
+                    ViewData["filterApplied:ButtonClosed"] = "btn-danger custom-opacity";
                 }
                 else //(filter == "Closed")
                 {
                     ncrQa = ncrQa.Where(n => n.Ncr.NcrStatus == false);
                     ViewData["filterApplied:ButtonClosed"] = "btn-danger";
-                    ViewData["filterApplied:ButtonAll"] = "btn-secondary";
-                    ViewData["filterApplied:ButtonActive"] = "btn-secondary";
+                    ViewData["filterApplied:ButtonAll"] = "btn-primary custom-opacity";
+                    ViewData["filterApplied:ButtonActive"] = "btn-success custom-opacity";
                 }
             }
             if (!String.IsNullOrEmpty(SearchCode))
@@ -397,6 +397,7 @@ namespace HaverDevProject.Controllers
                 else
                 {                    
                     ncrToUpdate.NcrPhase = ncrQaDTO.NcrQaEngDispositionRequired ? NcrPhase.Engineer : NcrPhase.Operations;
+                    ncrToUpdate.NcrLastUpdated = DateTime.Now;
 
                     _context.Ncrs.Update(ncrToUpdate);
                     await _context.SaveChangesAsync();

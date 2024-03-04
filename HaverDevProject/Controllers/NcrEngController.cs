@@ -52,7 +52,7 @@ namespace HaverDevProject.Controllers
             }
 
             //List of sort options.
-            string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "Disposition", "Phase" };
+            string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "Disposition", "Phase", "Last Updated" };
 
             
             PopulateDropDownLists();
@@ -64,7 +64,7 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
                 .Include(n => n.Drawing)
-                .Where(n => n.Ncr.NcrPhase == NcrPhase.Operations)
+                //.Where(n => n.Ncr.NcrPhase == NcrPhase.Operations)
                 .AsNoTracking();
 
             
@@ -169,14 +169,14 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "desc") //desc by default
                 {
                     ncrEng = ncrEng
-                        .OrderBy(p => p.Ncr.NcrLastUpdated);
+                        .OrderBy(p => p.Ncr.NcrQa.NcrQacreationDate);
 
                     ViewData["filterApplied:Created"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncrEng = ncrEng
-                        .OrderByDescending(p => p.Ncr.NcrLastUpdated);
+                        .OrderByDescending(p => p.Ncr.NcrQa.NcrQacreationDate);
 
                     ViewData["filterApplied:Created"] = "<i class='bi bi-sort-down'></i>";
                 }
@@ -196,6 +196,23 @@ namespace HaverDevProject.Controllers
                         .OrderByDescending(p => p.Ncr.NcrPhase);
 
                     ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Last Updated")
+            {
+                if (sortDirection == "desc") //desc by default
+                {
+                    ncrEng = ncrEng
+                        .OrderBy(p => p.Ncr.NcrLastUpdated);
+
+                    ViewData["filterApplied:Last Updated"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrEng = ncrEng
+                        .OrderByDescending(p => p.Ncr.NcrLastUpdated);
+
+                    ViewData["filterApplied:Last Updated"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
             else //(sortField == "Status")
@@ -241,6 +258,7 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects).ThenInclude(n => n.Defect)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.ItemDefectPhotos)
                 .Include(n => n.Drawing)
                 .Include(n => n.EngDefectPhotos)
                 .FirstOrDefaultAsync(m => m.NcrEngId == id);
@@ -263,6 +281,7 @@ namespace HaverDevProject.Controllers
             ncr.NcrNumber = ncrNumber; // Set the NcrNumber from the parameter
             ncr.DrawingRevDate = DateTime.Now;
             ncr.NcrEngCreationDate = DateTime.Now;
+            ncr.DrawingOriginalRevNumber = 1;
             ncr.DrawingRequireUpdating = false;
             ncr.NcrEngCustomerNotification = false;
 
@@ -290,6 +309,7 @@ namespace HaverDevProject.Controllers
                         .Select(n => n.NcrId)
                         .FirstOrDefault();
 
+                    //PopulateDropDownLists();
                     await AddPictures(ncrEngDTO, Photos);
 
                     NcrEng ncrEng = new NcrEng
@@ -309,7 +329,7 @@ namespace HaverDevProject.Controllers
                         DrawingUserId = ncrEngDTO.DrawingUserId,
                         EngDefectPhotos = ncrEngDTO.EngDefectPhotos,
                         NcrEngDefectVideo = ncrEngDTO.NcrEngDefectVideo,
-                        NcrPhase = NcrPhase.Operations
+                        //NcrPhase = NcrPhase.Operations
                     };
                     _context.NcrEngs.Add(ncrEng);
                     await _context.SaveChangesAsync();
@@ -435,13 +455,16 @@ namespace HaverDevProject.Controllers
                     ncrEng.DrawingUserId = ncrEngDTO.DrawingUserId;
                     ncrEng.EngDefectPhotos = ncrEngDTO.EngDefectPhotos;
                     ncrEng.NcrEngDefectVideo = ncrEngDTO.NcrEngDefectVideo;
-                    ncrEng.NcrPhase = NcrPhase.Operations;
+                    //ncrEng.NcrPhase = NcrPhase.Operations;
 
-
-                    await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrEng.NcrId);
-                    ncrEng.NcrPhase = NcrPhase.Operations;
-                    //ncrEng.Ncr.NcrLastUpdated = DateTime.Now;
                     _context.Update(ncrEng);
+                    await _context.SaveChangesAsync();
+
+
+                    var ncr = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrEng.NcrId);
+                    //ncr.NcrPhase = NcrPhase.Operations;
+                    ncr.NcrLastUpdated = DateTime.Now;
+                    _context.Update(ncr);
                     await _context.SaveChangesAsync();
 
                     TempData["SuccessMessage"] = "NCR edited successfully!";
