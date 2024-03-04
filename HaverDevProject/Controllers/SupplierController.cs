@@ -26,11 +26,11 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: Supplier
-        public async Task<IActionResult> Index(string SearchCode, string SearchContact, int? page, int? pageSizeID, 
+        public async Task<IActionResult> Index(string SearchCode, string SearchContact, int? page, int? pageSizeID,
             string actionButton, string sortDirection = "asc", string sortField = "Code", string filter = "Active")
         {
             //List of sort options.
-            string[] sortOptions = new[] { "Code", "Name", "Email", "Contact"};            
+            string[] sortOptions = new[] { "Code", "Name", "Email", "Contact" };
 
             var suppliers = _context.Suppliers
                 .AsNoTracking();
@@ -105,7 +105,7 @@ namespace HaverDevProject.Controllers
                         .OrderByDescending(p => p.SupplierName);
                     ViewData["filterApplied:SupplierName"] = "<i class='bi bi-sort-down'></i>";
                 }
-            }            
+            }
             else if (sortField == "Email") //Sorting by Email
             {
                 if (sortDirection == "asc")
@@ -214,7 +214,7 @@ namespace HaverDevProject.Controllers
                     await _context.SaveChangesAsync();
                     TempData["SuccessMessage"] = "Supplier created successfully!";
                     int newSupplierId = supplier.SupplierId;
-                    return RedirectToAction("Details", new { id = newSupplierId});
+                    return RedirectToAction("Details", new { id = newSupplierId });
                 }
             }
             catch (RetryLimitExceededException)
@@ -283,7 +283,7 @@ namespace HaverDevProject.Controllers
                     if (!SupplierExists(supplier.SupplierId))
                     {
                         ModelState.AddModelError("", "Unable to save changes. The Supplier was deleted by another user.");
-                    }                    
+                    }
                 }
                 catch (DbUpdateException dex)
                 {
@@ -296,7 +296,7 @@ namespace HaverDevProject.Controllers
                         ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
                     }
                 }
-                
+
             }
             return View(supplier);
         }
@@ -351,7 +351,7 @@ namespace HaverDevProject.Controllers
                     ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
                 }
             }
-            return View(supplier);            
+            return View(supplier);
         }
 
         public async Task<IActionResult> SupplierReport(int? id)
@@ -390,6 +390,7 @@ namespace HaverDevProject.Controllers
                 ItemName = ncrData.NcrQa?.Item?.ItemName ?? "Not Available",
                 NcrQaQuanReceived = ncrData.NcrQa?.NcrQaQuanReceived ?? 0,
                 NcrQaQuanDefective = ncrData.NcrQa?.NcrQaQuanDefective ?? 0,
+                NcrQaDefect = ncrData.NcrQa?.Defect.DefectName ?? "Not Available",
                 NcrQaDescriptionOfDefect = ncrData.NcrQa?.NcrQaDescriptionOfDefect ?? "Not Available",
                 EngDispositionType = ncrData.NcrEng?.EngDispositionType?.EngDispositionTypeName ?? "Not Available",
                 EngDispositionDescription = ncrData.NcrEng?.NcrEngDispositionDescription ?? "Not Available",
@@ -405,7 +406,8 @@ namespace HaverDevProject.Controllers
                 }
                 else
                 {
-                    reportDto.DefectNames.Add("No Defect Available");                 }
+                    reportDto.DefectNames.Add("No Defect Available");
+                }
             }
 
             return View("SupplierReport", reportDto);
@@ -502,7 +504,7 @@ namespace HaverDevProject.Controllers
         }
         private bool SupplierExists(int id)
         {
-          return _context.Suppliers.Any(e => e.SupplierId == id);
+            return _context.Suppliers.Any(e => e.SupplierId == id);
         }
     }
 }
