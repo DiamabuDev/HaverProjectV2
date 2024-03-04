@@ -9,17 +9,17 @@ namespace HaverDevProject.Models;
 [Table("engDispositionType")]
 public partial class EngDispositionType
 {
-    [Key]
+    //[Key]
     [Column("engDispositionTypeId")]
     public int EngDispositionTypeId { get; set; }
 
     [Display(Name = "Review by HBC Engineering")]
-    [Required]
+    [Required(ErrorMessage = "You must provide the Disposition Type.")]
     [Column("engDispositionTypeName")]
     [StringLength(45)]
     [Unicode(false)]
     public string EngDispositionTypeName { get; set; }
 
-    [InverseProperty("EngDispositionType")]
+    //[InverseProperty("EngDispositionType")]
     public virtual ICollection<NcrEng> NcrEngs { get; set; } = new List<NcrEng>();
 }

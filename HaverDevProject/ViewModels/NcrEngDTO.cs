@@ -23,6 +23,7 @@ public class NcrEngDTO : Auditable
     public NcrPhase NcrPhase { get; set; }
     public int NcrEngUserId { get; set; }
     public int EngDispositionTypeId { get; set; }
+    public EngDispositionType EngDispositionType { get; set; }
     public int NcrId { get; set; }
     public int DrawingId { get; set; }
     public bool DrawingRequireUpdating { get; set; } = false;
