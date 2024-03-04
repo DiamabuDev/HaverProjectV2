@@ -18,9 +18,9 @@
                 <div>
                     <h2 class="m-0">Edit NCR</h2>
                 </div>
-@*                 <div class="justify-content-end">
+                <div class="justify-content-end">
                     <p class="m-0">Fields marked <span class="fw-bold text-danger">*</span> are required.</p>
-                </div> *@
+                </div>
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             </div>
             <div class="card-body col-lg-10 col-11 mx-auto">
@@ -49,6 +49,7 @@
                     <div class="col-6">
                         <div class="form-group">
                             <label class="pb-3"><b>Reinspection Acceptable? </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Is this NCR Reinspection Acceptable?">(Y/N)</small></label>
+                            <span class="fw-bold text-danger">*</span>
                             <div class="text-left">
                                 <div class="form-check form-check-inline">
                                     <input type="radio" class="form-check-input" asp-for="NcrReInspectAcceptable" value="true" />
@@ -65,6 +66,7 @@
                     <div class="col-6">
                         <div class="form-group">
                             <label asp-for="NcrReInspectUserId" class="control-label"><b>Inspector's Name </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Name of the Inspector">(e.g. J. Doe)</small></label>
+                            <span class="fw-bold text-danger">*</span>
                             <select asp-for="NcrReInspectUserId" class="form-control">
                                 <option value="1">J. Doe</option>
                                 <option value="2">E. Xample</option>

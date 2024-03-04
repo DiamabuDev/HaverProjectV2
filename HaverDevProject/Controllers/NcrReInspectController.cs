@@ -48,7 +48,7 @@ namespace HaverDevProject.Controllers
                 StartDate = temp;
             }
 
-            string[] sortOptions = new[] { "Created", "Acceptable", "Supplier", "NCR #" };
+            string[] sortOptions = new[] { "Created", "Acceptable", "Supplier", "NCR #", "Last Updated" };
 
             var ncrReInspect = _context.NcrReInspects
                 .Include(n => n.Ncr)
@@ -119,6 +119,23 @@ namespace HaverDevProject.Controllers
                         .OrderByDescending(p => p.Ncr.NcrQa.NcrQacreationDate);
 
                     ViewData["filterApplied:Created"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Last Updated")
+            {
+                if (sortDirection == "desc") //desc by default
+                {
+                    ncrReInspect = ncrReInspect
+                        .OrderBy(p => p.Ncr.NcrLastUpdated);
+
+                    ViewData["filterApplied:Last Updated"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrReInspect = ncrReInspect
+                        .OrderByDescending(p => p.Ncr.NcrLastUpdated);
+
+                    ViewData["filterApplied:Last Updated"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
             else if (sortField == "Acceptable")
