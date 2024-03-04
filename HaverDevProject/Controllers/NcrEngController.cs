@@ -308,6 +308,7 @@ namespace HaverDevProject.Controllers
                         .Select(n => n.NcrId)
                         .FirstOrDefault();
 
+                    //PopulateDropDownLists();
                     await AddPictures(ncrEngDTO, Photos);
 
                     NcrEng ncrEng = new NcrEng
@@ -327,7 +328,7 @@ namespace HaverDevProject.Controllers
                         DrawingUserId = ncrEngDTO.DrawingUserId,
                         EngDefectPhotos = ncrEngDTO.EngDefectPhotos,
                         NcrEngDefectVideo = ncrEngDTO.NcrEngDefectVideo,
-                        NcrPhase = NcrPhase.Operations
+                        //NcrPhase = NcrPhase.Operations
                     };
                     _context.NcrEngs.Add(ncrEng);
                     await _context.SaveChangesAsync();
@@ -453,13 +454,16 @@ namespace HaverDevProject.Controllers
                     ncrEng.DrawingUserId = ncrEngDTO.DrawingUserId;
                     ncrEng.EngDefectPhotos = ncrEngDTO.EngDefectPhotos;
                     ncrEng.NcrEngDefectVideo = ncrEngDTO.NcrEngDefectVideo;
-                    ncrEng.NcrPhase = NcrPhase.Operations;
+                    //ncrEng.NcrPhase = NcrPhase.Operations;
 
-
-                    await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrEng.NcrId);
-                    ncrEng.NcrPhase = NcrPhase.Operations;
-                    //ncrEng.Ncr.NcrLastUpdated = DateTime.Now;
                     _context.Update(ncrEng);
+                    await _context.SaveChangesAsync();
+
+
+                    var ncr = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrEng.NcrId);
+                    //ncr.NcrPhase = NcrPhase.Operations;
+                    ncr.NcrLastUpdated = DateTime.Now;
+                    _context.Update(ncr);
                     await _context.SaveChangesAsync();
 
                     TempData["SuccessMessage"] = "NCR edited successfully!";
