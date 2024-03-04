@@ -201,6 +201,7 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrOperation).ThenInclude(n => n.FollowUpType)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrProcurement)
                 .FirstOrDefaultAsync(m => m.NcrReInspectId == id);
+
             if (ncrReInspect == null)
             {
                 return NotFound();
@@ -217,11 +218,16 @@ namespace HaverDevProject.Controllers
         // GET: NcrReInspect/Create
         public IActionResult Create(string ncrNumber)
         {
+            //NcrReInspect ncrReInspect = _context.NcrReInspects
+            //    .Include(nr => nr.Ncr)
+            //    .FirstOrDefault(nr => nr.Ncr.NcrNumber == ncrNumber);
+
             int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
             NcrReInspect ncr = new NcrReInspect();
             ncr.NcrId = ncrId; // Set the NcrNumber from the parameter
+            ncr.NcrReInspectCreationDate = DateTime.Now;
 
-            //ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName");
+            //ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncr.NcrId);
             return View(ncr);
         }
 
@@ -238,12 +244,11 @@ namespace HaverDevProject.Controllers
                 {
                     await AddReInspectPictures(ncrReInspect, Photos);
 
-                    ncrReInspect.NcrReInspectNewNcrNumber = GetNcrNumber();
+                    //ncrReInspect.NcrReInspectNewNcrNumber = GetNcrNumber();
                     _context.Add(ncrReInspect);
-
                     await _context.SaveChangesAsync();
 
-                    var ncrToUpdate = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n=>n.NcrId == ncrReInspect.NcrId);
+                    var ncrToUpdate = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrReInspect.NcrId);
 
                     ncrToUpdate.NcrPhase = NcrPhase.Closed;
                     ncrToUpdate.NcrStatus = false;
@@ -285,7 +290,8 @@ namespace HaverDevProject.Controllers
                 ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
             }
 
-            ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrReInspect.NcrId);
+            //ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrReInspect.NcrId);
+
             return View(ncrReInspect);
         } //,RowVersion
 
@@ -300,6 +306,12 @@ namespace HaverDevProject.Controllers
             var ncrReInspect = await _context.NcrReInspects
                 .Include(n => n.NcrReInspectPhotos)
                 .FirstOrDefaultAsync(n=>n.NcrReInspectId == id);
+
+
+            var currentReInspect = new NcrReInspect
+            {
+                NcrReInspectCreationDate = ncrReInspect.NcrReInspectCreationDate
+            };
 
             if (ncrReInspect == null)
             {
@@ -327,7 +339,8 @@ namespace HaverDevProject.Controllers
             }
 
             if (await TryUpdateModelAsync<NcrReInspect>(ncrReInspectToUpdate, "",
-                r => r.NcrReInspectAcceptable, r => r.NcrReInspectNewNcrNumber, r => r.NcrReInspectUserId, r => r.NcrId, r => r.NcrReInspectDefectVideo, r => r.NcrReInspectPhotos))
+                r => r.NcrReInspectAcceptable, r => r.NcrReInspectNewNcrNumber, r => r.NcrReInspectUserId,
+                r => r.NcrId, r => r.NcrReInspectDefectVideo, r => r.NcrReInspectPhotos, r => r.NcrReInspectCreationDate))
             {
                 try
                 {

@@ -1057,7 +1057,8 @@ namespace HaverDevProject.Data
                         {
                             NcrReInspectAcceptable = true,
                             NcrReInspectUserId = 1, //need to make nullable
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-137").NcrId
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-137").NcrId,
+                            NcrReInspectCreationDate = DateTime.Parse("2023-12-07")
                         },
                         //new NcrReInspect
                         //{
@@ -1069,7 +1070,8 @@ namespace HaverDevProject.Data
                         {
                             NcrReInspectAcceptable = true,
                             NcrReInspectUserId = 3, //need to make nullable
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-139").NcrId
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-139").NcrId,
+                            NcrReInspectCreationDate = DateTime.Parse("2023-12-11")
                         },
                         //new NcrReInspect
                         //{
@@ -1081,7 +1083,8 @@ namespace HaverDevProject.Data
                         {
                             NcrReInspectAcceptable = true,
                             NcrReInspectUserId = 1, //need to make nullable
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-141").NcrId
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-141").NcrId,
+                            NcrReInspectCreationDate = DateTime.Parse("2023-12-17")
                         },
                         //new NcrReInspect
                         //{
@@ -1117,7 +1120,8 @@ namespace HaverDevProject.Data
                         {
                             NcrReInspectAcceptable = true,
                             NcrReInspectUserId = 3, //need to make nullable
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-006").NcrId
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-006").NcrId,
+                            NcrReInspectCreationDate = DateTime.Parse("2024-01-14")
                         }//,
                         //new NcrReInspect
                         //{

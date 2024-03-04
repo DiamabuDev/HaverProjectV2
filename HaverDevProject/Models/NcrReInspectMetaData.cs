@@ -21,6 +21,15 @@ public class NcrReInspectMetaData
     [Column("ncrReInspectNewNcrNumber")]
     public string NcrReInspectNewNcrNumber { get; set; }
 
+    //[Display(Name = "NCR Number")]
+    //[Column("ncrNumber")]
+    //public string NcrNumber { get; set; }
+
+    [Display(Name = "Date")]
+    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+    [DataType(DataType.Date)]
+    public DateTime NcrReInspectCreationDate { get; set; }
+
     [Display(Name = "Inspector's Name")]
     [Column("ncrReInspectUserId")]
     public int NcrReInspectUserId { get; set; }
