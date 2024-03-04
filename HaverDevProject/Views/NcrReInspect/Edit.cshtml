@@ -27,17 +27,9 @@
                 <div class="row">
                     <div class="col-6">
                         <div class="form-group">
-                            <label class="pb-3"><b>Reinspection Acceptable? </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Is this NCR Reinspection Acceptable?">(Y/N)</small></label>
-                            <div class="text-left">
-                                <div class="form-check form-check-inline">
-                                    <input type="radio" class="form-check-input" asp-for="NcrReInspectAcceptable" value="true" />
-                                    <label class="form-check-label">Yes</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input type="radio" class="form-check-input" asp-for="NcrReInspectAcceptable" value="false" />
-                                    <label class="form-check-label">No</label>
-                                </div>
-                            </div>
+                            <label asp-for="NcrId" class="control-label"><b>NCR No. </b></label>
+                            <select asp-for="NcrId" class="form-control" asp-items="ViewBag.NcrId" disabled></select>
+                            <span asp-validation-for="NcrId" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-6">
@@ -56,11 +48,20 @@
                 <div class="row">
                     <div class="col-6">
                         <div class="form-group">
-                            <label asp-for="NcrId" class="control-label"><b>NCR No. </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Code to identify the NCR">(e.g. 2024-000)</small></label>
-                            <select asp-for="NcrId" class="form-control" asp-items="ViewBag.NcrId" disabled></select>
-                            <span asp-validation-for="NcrId" class="text-danger"></span>
+                            <label class="pb-3"><b>Reinspection Acceptable? </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Is this NCR Reinspection Acceptable?">(Y/N)</small></label>
+                            <div class="text-left">
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrReInspectAcceptable" value="true" />
+                                    <label class="form-check-label">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" asp-for="NcrReInspectAcceptable" value="false" />
+                                    <label class="form-check-label">No</label>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
                     <div class="col-6">
                         <div class="form-group">
                             <label asp-for="NcrReInspectUserId" class="control-label"><b>Inspector's Name </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Name of the Inspector">(e.g. J. Doe)</small></label>
