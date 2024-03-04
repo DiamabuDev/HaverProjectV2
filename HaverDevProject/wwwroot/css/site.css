@@ -314,6 +314,16 @@ body {
         padding-left: 1.5rem;
     }
 
+.custom-btn-color {
+    background-color: #0b5ed7;
+    color: #fff;
+}
+
+    .custom-btn-color:hover {
+        background-color: #002B5C;
+        color: #fff;
+    }
+
     .big-col {
         width: 55%;
     }

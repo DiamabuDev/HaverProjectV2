@@ -12,6 +12,7 @@ namespace HaverDevProject.ViewModels
         public string NcrQaOrderNumber { get; set; }
         public int ItemSAP { get; set; }
         public string ItemName { get; set; }
+        public string NcrQaDefect { get; set; }
         public List<string> DefectNames { get; set; } = new List<string>();
         public int NcrQaQuanReceived { get; set; }
         public int NcrQaQuanDefective { get; set; }
