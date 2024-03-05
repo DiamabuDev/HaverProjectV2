@@ -264,6 +264,8 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrOperation).ThenInclude(n => n.FollowUpType)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrOperation).ThenInclude(n => n.OpDefectPhotos)
                 .Include(n => n.ProcDefectPhotos)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrReInspect)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrReInspect).ThenInclude(n => n.NcrReInspectPhotos)
                 .FirstOrDefaultAsync(m => m.NcrProcurementId == id);
             if (ncrProcurement == null)
             {
@@ -274,6 +276,7 @@ namespace HaverDevProject.Controllers
             ViewBag.IsNCREngView = false;
             ViewBag.IsNCROpView = false;
             ViewBag.IsNCRProcView = true;
+            ViewBag.IsNCRReInspView = false;
             return View(ncrProcurement);
         }
 

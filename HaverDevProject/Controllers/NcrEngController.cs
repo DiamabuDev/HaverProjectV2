@@ -272,6 +272,14 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.ItemDefectPhotos)
                 .Include(n => n.Drawing)
                 .Include(n => n.EngDefectPhotos)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrOperation)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrOperation).ThenInclude(n => n.OpDispositionType)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrOperation).ThenInclude(n => n.FollowUpType)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrOperation).ThenInclude(n => n.OpDefectPhotos)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrProcurement)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrProcurement).ThenInclude(n => n.ProcDefectPhotos)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrReInspect)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrReInspect).ThenInclude(n => n.NcrReInspectPhotos)
                 .FirstOrDefaultAsync(m => m.NcrEngId == id);
 
             if (ncrEng == null)
@@ -281,6 +289,9 @@ namespace HaverDevProject.Controllers
 
             ViewBag.IsNCRQaView = false;
             ViewBag.IsNCREngView = true;
+            ViewBag.IsNCROpView = false;
+            ViewBag.IsNCRProcView = false;
+            ViewBag.IsNCRReInspView = false;
             return View(ncrEng);
         }
 
