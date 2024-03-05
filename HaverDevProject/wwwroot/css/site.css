@@ -208,10 +208,15 @@ body {
         color: #fff;
     }
 
-    .custom-secondary-bg {
-        background-color: #516282;
-        color: #fff;
-    }
+.custom-header-bg:hover {
+    font-weight: bold;
+    color: #fff;
+}
+
+.custom-secondary-bg {
+    background-color: #516282;
+    color: #fff;
+}
 
     .custom-light-bg {
         background-color: #A9C0D4;
@@ -315,12 +320,22 @@ body {
     }
 
 .custom-btn-color {
-    background-color: #0b5ed7;
+    background-color: #22488E;
     color: #fff;
 }
 
     .custom-btn-color:hover {
-        background-color: #002B5C;
+        background-color: #4B94FF;
+        color: #fff;
+    }
+
+.custom-pdf-color {
+    background-color: #8F1A1A;
+    color: #fff;
+}
+
+    .custom-pdf-color:hover {
+        background-color: #F42929;
         color: #fff;
     }
 
