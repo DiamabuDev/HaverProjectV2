@@ -1,7 +1,60 @@
 ﻿@model HaverDevProject.Models.NcrEng
 
-@await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", Model.Ncr.NcrQa)
+<div id="contentToDownload">
+    @if (Model.Ncr.NcrQa != null)
+    {
+        @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", Model.Ncr.NcrQa)
+        ;
+    }
 
-@await Html.PartialAsync("~/Views/NCRDetailViews/_NCREngDetailsPartial.cshtml", Model)
+    @if (Model.Ncr.NcrEng != null)
+    {
+        @await Html.PartialAsync("~/Views/NCRDetailViews/_NCREngDetailsPartial.cshtml", Model.Ncr.NcrEng)
+        ;
+    }
 
-@await Html.PartialAsync("~/Views/NCRDetailViews/_ActionButtons.cshtml", Model)
+    @if (Model.Ncr.NcrOperation != null)
+    {
+        @await Html.PartialAsync("~/Views/NCRDetailViews/_NCROpDetailsPartial.cshtml", Model.Ncr.NcrOperation)
+        ;
+    }
+
+    @if (Model.Ncr.NcrProcurement != null)
+    {
+        @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRProcDetailsPartial.cshtml", Model.Ncr.NcrProcurement)
+        ;
+    }
+
+    @if (Model.Ncr.NcrReInspect != null)
+    {
+        @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRReInspDetailsPartial.cshtml", Model.Ncr.NcrReInspect)
+        ;
+    }
+</div>
+
+@await Html.PartialAsync("~/Views/NCRDetailViews/_ActionButtons.cshtml", Model);
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+
+<script>
+    document.getElementById('downloadPdf').addEventListener('click', function () {
+        html2canvas(document.getElementById('contentToDownload')).then(canvas => {
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jspdf.jsPDF();
+
+            const imgProps = pdf.getImageProperties(imgData);
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+            const topMargin = 15;
+            const sideMargin = 0;
+
+            const adjustedWidth = pdfWidth - (sideMargin * 2);
+            const adjustedHeight = (imgProps.height * adjustedWidth) / imgProps.width;
+
+            pdf.addImage(imgData, 'PNG', sideMargin, topMargin, adjustedWidth, adjustedHeight);
+            pdf.save("NcrReport.pdf");
+        });
+    });
+</script>
