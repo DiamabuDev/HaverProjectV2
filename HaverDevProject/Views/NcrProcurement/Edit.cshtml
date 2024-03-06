@@ -22,23 +22,24 @@
                 <div class="row">
                     <div class="col-6">
                         <div class="form-group">
-                            <label asp-for="NcrNumber" class="control-label"></label>
+                            <strong>NCR No.</strong>
+                            @* <label asp-for="NcrNumber" class="control-label"></label> *@
                             <input asp-for="NcrNumber" class="form-control" readonly />
                             <span asp-validation-for="NcrNumber" class="text-danger"></span>
                         </div>
                     </div>
-                    @* <div class="col-6">
-                    <div class="form-group">
-                    <label asp-for="NcrQa.NcrQacreationDate" class="control-label"></label>
-                    <input asp-for="NcrQa.NcrQacreationDate" class="form-control" readonly />
-                    <span asp-validation-for="NcrQa.NcrQacreationDate" class="text-danger"></span>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <strong>Date</strong>
+                            @* <label asp-for="NcrNumber" class="control-label"></label> *@
+                            <input asp-for="NcrProcCreated" class="form-control" readonly />
+                        </div>
                     </div>
-                    </div> *@
                 </div>
                 <div class="row">
                     <div class="col-6">
                         <div class="form-group">
-                            <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No if Supplier Requested a Return"> Supplier Return Request <span class="fw-bold text-danger">*</span></label>
+                            <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No if Supplier Requested a Return"><strong>Supplier Return Request </strong><span class="fw-bold text-danger">*</span></label>
                             <div class="text-center">
                                 <div class="form-check form-check-inline">
                                     <input type="radio" class="form-check-input" asp-for="NcrProcSupplierReturnReq" value="true" checked />
@@ -53,7 +54,7 @@
                     </div>
                     <div class="col-6">
                         <div class="form-group">
-                            <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No if the Product is to be Disposed on Site"> Dispose on Site? <span class="fw-bold text-danger">*</span></label>
+                            <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No if the Product is to be Disposed on Site"><strong>Dispose on Site? </strong><span class="fw-bold text-danger">*</span></label>
                             <div class="text-center">
                                 <div class="form-check form-check-inline">
                                     <input type="radio" class="form-check-input" asp-for="NcrProcDisposedAllowed" value="true" checked />
@@ -70,38 +71,40 @@
                 <div class="row supplier-return-fields">
                     <div class="col-6">
                         <div class="form-group">
-                            <label asp-for="SupplierReturnMANum" class="control-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Return Material Authorization Number"> Supplier RMA # <span class="fw-bold text-danger">*</span></label>
+                            <label asp-for="SupplierReturnMANum" class="control-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Return Material Authorization Number"><strong>Supplier RMA # </strong></label>
                             <input asp-for="SupplierReturnMANum" class="form-control" />
                             <span asp-validation-for="SupplierReturnMANum" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="form-group"> 
-                            <label asp-for="SupplierReturnName" class="control-label" class="control-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Name of Delivery Service"> Carrier Name <span class="fw-bold text-danger">*</span></label>
+                            <label asp-for="SupplierReturnName" class="control-label" class="control-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Name of Delivery Service"><strong>Carrier Name </strong></label>
                             <input asp-for="SupplierReturnName" class="form-control" />
                             <span asp-validation-for="SupplierReturnName" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
                 <div class="row supplier-return-fields">
-                    <div class="form-group">
-                        <label asp-for="NcrProcExpectedDate" class="control-label" class="control-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Product Expected Return Date"> Expected Date <span class="fw-bold text-danger">*</span></label>
-                        <input asp-for="NcrProcExpectedDate" class="form-control" type="date" 
-                               value="@(Model.NcrProcExpectedDate.HasValue ? Model.NcrProcExpectedDate.Value.ToString("yyyy-MM-dd") : string.Empty)" />
-                        <span asp-validation-for="NcrProcExpectedDate" class="text-danger"></span>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label asp-for="NcrProcExpectedDate" class="control-label" class="control-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Product Expected Return Date"><strong>Expected Date </strong></label>
+                            <input asp-for="NcrProcExpectedDate" class="form-control" type="date" 
+                                   value="@(Model.NcrProcExpectedDate.HasValue ? Model.NcrProcExpectedDate.Value.ToString("yyyy-MM-dd") : string.Empty)" />
+                            <span asp-validation-for="NcrProcExpectedDate" class="text-danger"></span>
+                        </div>
                     </div>
-                </div>
-                <div class="row supplier-return-fields">
-                    <div class="form-group">
-                        <label asp-for="SupplierReturnAccount" class="control-label" class="control-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Account Number for the Return Request"> Account # <span class="fw-bold text-danger">*</span></label>
-                        <input asp-for="SupplierReturnAccount" class="form-control" /> 
-                        <span asp-validation-for="SupplierReturnAccount" class="text-danger"></span>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label asp-for="SupplierReturnAccount" class="control-label" class="control-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Account Number for the Return Request"><strong>Account # </strong></label>
+                            <input asp-for="SupplierReturnAccount" class="form-control" /> 
+                            <span asp-validation-for="SupplierReturnAccount" class="text-danger"></span>
+                        </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-6">
                         <div class="form-group">
-                            <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No if the Supplier has been Billed"> Suppleir Billed <span class="fw-bold text-danger">*</span></label>
+                            <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No if the Supplier has been Billed"><strong>Suppleir Billed </strong><span class="fw-bold text-danger">*</span></label>
                             <div class="text-center">
                                 <div class="form-check form-check-inline">
                                     <input type="radio" class="form-check-input" asp-for="NcrProcSupplierBilled" value="true" checked />
@@ -116,7 +119,7 @@
                     </div>
                     <div class="col-6">
                         <div class="form-group">
-                            <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No if the Supplier Credit is Expected"> Supplier Credit Expected <span class="fw-bold text-danger">*</span></label>
+                            <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No if the Supplier Credit is Expected"><strong>Supplier Credit Expected </strong><span class="fw-bold text-danger">*</span></label>
                             <div class="text-center">
                                 <div class="form-check form-check-inline">
                                     <input type="radio" class="form-check-input" asp-for="NcrProcCreditExpected" value="true" checked />
@@ -132,7 +135,7 @@
                 </div>
                 <div class="row">
                     <div class="form-group">
-                        <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No for SAP Return Completion"> SAP Return Completed <span class="fw-bold text-danger">*</span></label>
+                        <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No for SAP Return Completion"><strong>SAP Return Completed </strong><span class="fw-bold text-danger">*</span></label>
                         <div class="text-center">
                             <div class="form-check form-check-inline">
                                 <input type="radio" class="form-check-input" asp-for="NcrProcSAPReturnCompleted" value="true" checked />
@@ -181,13 +184,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label custom-file-label">Upload Procurement Photos:</label>
+                    <label class="control-label custom-file-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Choose a Photo to Upload"><strong>Upload Photos: </strong></label>
                     <div class="input-group mb-3">
                         <input type="file" class="form-control" name="photos" multiple="multiple" />
                     </div>
                 </div>
                 <div class="form-group">
-                    Video Link
+                    <label asp-for="NcrProcDefectVideo" class="control-label"><strong>Video Links </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Link to desired Videos">(e.g. https://haverniagara.com/)</small></label>
                     <input asp-for="NcrProcDefectVideo" class="form-control" />
                     <span asp-validation-for="NcrProcDefectVideo" class="text-danger"></span>
                 </div>
@@ -195,8 +198,8 @@
             <div class="card-footer">
                 <div class="form-group d-flex justify-content-end mt-2">
                     <div>
-                        <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn btn-primary ">
-                            <i class="bi bi-arrow-90deg-left"></i> Back to the @ViewData["ControllerName"] List
+                        <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn custom-btn-color">
+                            <i class="bi bi-arrow-90deg-left"></i> Back to NCR List
                         </button>
                     </div>
                     <div>

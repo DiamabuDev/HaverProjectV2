@@ -7,10 +7,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HaverDevProject.Data;
 using HaverDevProject.Models;
+using HaverDevProject.Utilities;
+using HaverDevProject.CustomControllers;
 
 namespace HaverDevProject.Controllers
 {
-    public class NcrController : Controller
+    public class NcrController : ElephantController
     {
         private readonly HaverNiagaraContext _context;
 
@@ -20,9 +22,202 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: Ncr
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string SearchCode, int? SupplierID, DateTime StartDate, DateTime EndDate,
+            int? page, int? pageSizeID, string actionButton, string sortDirection = "desc", string sortField = "Created", string filter = "Active")
         {
-              return View(await _context.Ncrs.ToListAsync());
+            //Set the date range filer based on the values in the database
+            if (EndDate == DateTime.MinValue)
+            {
+                StartDate = _context.NcrQas
+                .Min(f => f.NcrQacreationDate.Date);
+
+                EndDate = _context.NcrQas
+                .Max(f => f.NcrQacreationDate.Date);
+
+                ViewData["StartDate"] = StartDate.ToString("yyyy-MM-dd");
+                ViewData["EndDate"] = EndDate.ToString("yyyy-MM-dd");
+            }
+            //Check the order of the dates and swap them if required
+            if (EndDate < StartDate)
+            {
+                DateTime temp = EndDate;
+                EndDate = StartDate;
+                StartDate = temp;
+            }
+
+            //List of sort options.
+            string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "Defect", "PO Number", "Phase" };
+
+            //PopulateDropDownLists();
+            ViewData["SupplierId"] = SupplierSelectList();
+
+            var ncr = _context.Ncrs
+                //.Include(n => n.Item).ThenInclude(n => n.ItemDefects).ThenInclude(n => n.Defect)
+                .Include(n => n.NcrQa.Item.Supplier)
+                .Include(n => n.NcrQa.Defect)
+                .AsNoTracking();
+
+            //Filterig values            
+            if (!String.IsNullOrEmpty(filter))
+            {
+                if (filter == "All")
+                {
+                    ViewData["filterApplied:ButtonAll"] = "btn-primary";
+                    ViewData["filterApplied:ButtonActive"] = "btn-success custom-opacity";
+                    ViewData["filterApplied:ButtonClosed"] = "btn-danger custom-opacity";
+                }
+                else if (filter == "Active")
+                {
+                    ncr = ncr.Where(n => n.NcrStatus == true);
+                    ViewData["filterApplied:ButtonActive"] = "btn-success";
+                    ViewData["filterApplied:ButtonAll"] = "btn-primary custom-opacity";
+                    ViewData["filterApplied:ButtonClosed"] = "btn-danger custom-opacity";
+                }
+                else //(filter == "Closed")
+                {
+                    ncr = ncr.Where(n => n.NcrStatus == false);
+                    ViewData["filterApplied:ButtonClosed"] = "btn-danger";
+                    ViewData["filterApplied:ButtonAll"] = "btn-primary custom-opacity";
+                    ViewData["filterApplied:ButtonActive"] = "btn-success custom-opacity";
+                }
+            }
+            if (!String.IsNullOrEmpty(SearchCode))
+            {
+                ncr = ncr.Where(s => s.NcrQa.Defect.DefectName.ToUpper().Contains(SearchCode.ToUpper()) //(s => s.Item.ItemDefects.FirstOrDefault().Defect.DefectName.ToUpper().Contains(SearchCode.ToUpper()) 
+                || s.NcrNumber.ToUpper().Contains(SearchCode.ToUpper()));
+            }
+            if (SupplierID.HasValue)
+            {
+                ncr = ncr.Where(n => n.NcrQa.Item.Supplier.SupplierId == SupplierID);
+            }
+            if (StartDate == EndDate)
+            {
+                ncr = ncr.Where(n => n.NcrQa.NcrQacreationDate == StartDate);
+            }
+            else
+            {
+                ncr = ncr.Where(n => n.NcrQa.NcrQacreationDate >= StartDate &&
+                         n.NcrQa.NcrQacreationDate <= EndDate);
+            }
+
+
+
+            //Sorting columns
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                page = 1;//Reset page to start
+
+                if (sortOptions.Contains(actionButton))//Change of sort is requested
+                {
+                    if (actionButton == sortField) //Reverse order on same field
+                    {
+                        sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                    }
+                    sortField = actionButton;//Sort by the button clicked
+                }
+            }
+
+            if (sortField == "NCR #")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncr = ncr
+                        .OrderBy(p => p.NcrNumber);
+                    ViewData["filterApplied:NcrNumber"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncr = ncr
+                        .OrderByDescending(p => p.NcrNumber);
+                    ViewData["filterApplied:NcrNumber"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Defect")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncr = ncr
+                        .OrderBy(p => p.NcrQa.Item.ItemDefects.FirstOrDefault().Defect.DefectName);
+                    ViewData["filterApplied:Defect"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncr = ncr
+                        .OrderByDescending(p => p.NcrQa.Item.ItemDefects.FirstOrDefault().Defect.DefectName);
+                    ViewData["filterApplied:Defect"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Supplier")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncr = ncr
+                        .OrderBy(p => p.NcrQa.Item.Supplier.SupplierName);
+                    ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncr = ncr
+                        .OrderByDescending(p => p.NcrQa.Item.Supplier.SupplierName);
+                    ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Created")
+            {
+                if (sortDirection == "desc") //desc by default
+                {
+                    ncr = ncr
+                        .OrderBy(p => p.NcrQa.NcrQacreationDate);
+
+                    ViewData["filterApplied:Created"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncr = ncr
+                        .OrderByDescending(p => p.NcrQa.NcrQacreationDate);
+
+                    ViewData["filterApplied:Created"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Phase")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncr = ncr
+                        .OrderBy(p => p.NcrPhase); //.OrderBy(p => p.Ncr.NcrStatus);
+                    ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncr = ncr
+                        .OrderByDescending(p => p.NcrPhase); //.OrderByDescending(p => p.Ncr.NcrStatus);
+                    ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else //(sortField == "PO Number")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncr = ncr
+                        .OrderBy(p => p.NcrQa.NcrQaOrderNumber);
+                    ViewData["filterApplied:PONumber"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncr = ncr
+                        .OrderByDescending(p => p.NcrQa.NcrQaOrderNumber);
+                    ViewData["filterApplied:PONumber"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+
+            ViewData["sortField"] = sortField;
+            ViewData["sortDirection"] = sortDirection;
+
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, ControllerName());
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+            var pagedData = await PaginatedList<Ncr>.CreateAsync(ncr.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData);
         }
 
         // GET: Ncr/Details/5
@@ -154,6 +349,45 @@ namespace HaverDevProject.Controllers
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        private SelectList SupplierSelectList()
+        {
+            return new SelectList(_context.Suppliers
+                .Where(s => s.SupplierName != "NO SUPPLIER PROVIDED")
+                .OrderBy(s => s.SupplierName), "SupplierId", "SupplierName");
+        }
+        private SelectList SupplierSelectCreateList(int? selectedId)
+        {
+            return new SelectList(_context.Suppliers
+                .Where(s => s.SupplierStatus == true && s.SupplierName != "NO SUPPLIER PROVIDED")
+                .OrderBy(s => s.SupplierName), "SupplierId", "SupplierName", selectedId);
+        }
+
+        private SelectList ItemSelectList(int? SupplierID, int? selectedId)
+        {
+            var query = from c in _context.Items
+                        where c.SupplierId == SupplierID
+                        select c;
+            return new SelectList(query.OrderBy(i => i.ItemName), "ItemId", "ItemName", selectedId);
+        }
+
+        private void PopulateDropDownLists(Ncr ncr = null)
+        {
+            if ((ncr?.NcrQa.ItemId).HasValue)
+            {
+                if (ncr.NcrQa.Item == null)
+                {
+                    ncr.NcrQa.Item = _context.Items.Find(ncr.NcrQa.ItemId);
+                }
+                ViewData["SupplierId"] = SupplierSelectCreateList(ncr?.NcrQa.Item.Supplier.SupplierId);
+                ViewData["ItemId"] = ItemSelectList(ncr.NcrQa.Item.SupplierId, ncr.NcrQa.ItemId);
+            }
+            else
+            {
+                ViewData["SupplierId"] = SupplierSelectCreateList(null);
+                ViewData["ItemId"] = ItemSelectList(null, null);
+            }
         }
 
         private bool NcrExists(int id)

@@ -20,7 +20,7 @@ namespace HaverDevProject.Models
         public bool NcrProcSupplierBilled { get; set; }
         public bool NcrProcFlagStatus { get; set; }
         public int NcrProcUserId { get; set; }
-        public DateTime NcrProcUpdate { get; set; }
+        public DateTime NcrProcCreated { get; set; }
         public int SupplierReturnId { get; set; }
         public SupplierReturn SupplierReturn { get; set; }
         public string SupplierReturnMANum { get; set; }
