@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1><i class="bi bi-caret-right-fill"></i> Non-Conformance Reports</h1>
+<h1><i class="bi bi-caret-right-fill"></i> Engineer Non-Conformance Reports</h1>
 
 
 <!-- Modal -->
@@ -132,6 +132,7 @@
                     </button>
                 </th>
                 <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -159,18 +160,16 @@
                     <td class="d-none d-xxl-table-cell">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrLastUpdated)
                     </td>
-                    @*                     <td class="d-none d-md-table-cell">
-                @Html.DisplayFor(modelItem => item.Ncr.NcrEng.UpdatedOn)
-                </td> *@
-                    @* <td class="@((item.Ncr.NcrStatus == true) ? "stillactive" : "closed")">
-                @Html.DisplayFor(modelItem => item.Ncr.NcrStatus)
-                </td> *@
 
                     <td>
-                        @* @Html.ActionLink("Edit", "Edit", new { id = item.NcrEngId }) *@
-                        <a asp-action="Edit" asp-route-id="@item.NcrEngId" class="btn text-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
+                        @if (item.Ncr.NcrPhase != NcrPhase.Closed)
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.NcrEngId" class="btn text-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
+                        }
+
+                      <td>
                         <a asp-action="Details" asp-route-id="@item.NcrEngId" class="btn text-primary" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
-                        @* <a asp-action="Delete" asp-route-id="@item.NcrQaId">Delete</a> *@
+
                     </td>
                 </tr>
             }
@@ -194,7 +193,7 @@
                 type: 'GET',
                 success: function (data) {
                     // Update the content of the indicator
-                    $('#pendingCountIndicator').html('<i class="bi bi-bell-fill"></i> Pending Ncrs:  ' + data);
+                    $('#pendingCountIndicator').html('<i class="bi bi-bell-fill"></i> Pending NCRs:  ' + data);
                 },
                 error: function () {
                     console.error('Error fetching pending count');
