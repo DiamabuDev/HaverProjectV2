@@ -12,9 +12,8 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th class="four-cols">NCR #</th>
-                                    <th class="four-cols">Acceptable</th>
-                                    <th class="four-cols">New NCR #</th>
+                                    <th class="two-cols-1">Acceptable</th>
+                                    <th class="two-cols">New NCR #</th>
                                 </tr>
                             </thead>
                         </table>
@@ -23,11 +22,10 @@
                         <table class="table">
                             <tbody>
                                 <tr>
-                                    <td class="four-cols">@Model.Ncr.NcrNumber</td>
-                                    <td class="four-cols">
+                                    <td class="two-cols-1">
                                         @(Model.NcrReInspectAcceptable ? "Yes" : "No")
                                     </td>
-                                    <td class="four-cols">
+                                    <td class="two-cols">
                                         @(Model.NcrReInspectNewNcrNumber == null ? "N/A" : Model.NcrReInspectNewNcrNumber.ToString())
                                     </td>
 
