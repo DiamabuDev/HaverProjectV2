@@ -151,13 +151,14 @@
                             }
                             @if (hasVideos)
                             {
-                                <div class="card-header">
-                                    Videos
-                                </div>
                                 <div class="card-body">
                                     @if (Model.NcrProcDefectVideo != null)
                                     {
-                                        <a href="@Model.NcrProcDefectVideo" target="_blank">Video Link</a>
+                                        @foreach (var videoUrl in Model.NcrProcDefectVideo.Split(','))
+                                        {
+                                            <a href="@videoUrl" target="_blank">Video Link</a>
+                                            <br />
+                                        }
                                     }
                                 </div>
                             }

@@ -141,10 +141,13 @@
                                 Videos
                             </div>
                             <div class="card-body">
-
                                 @if (Model.NcrEngDefectVideo != null)
                                 {
-                                    <a href="@Model.NcrEngDefectVideo" target="_blank">Video Link</a>
+                                    @foreach (var videoUrl in Model.NcrEngDefectVideo.Split(','))
+                                    {
+                                        <a href="@videoUrl" target="_blank">Video Link</a>
+                                        <br /> 
+                                    }
                                 }
                             </div>
                         }

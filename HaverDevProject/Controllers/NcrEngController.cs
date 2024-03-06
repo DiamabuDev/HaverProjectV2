@@ -333,6 +333,9 @@ namespace HaverDevProject.Controllers
 
                     //PopulateDropDownLists();
                     await AddPictures(ncrEngDTO, Photos);
+                    // Add multiple video links using a comma as a delimiter
+                    string multipleVideoLinks = string.Join(",", ncrEngDTO.NcrEngDefectVideo);
+
 
                     NcrEng ncrEng = new NcrEng
                     {
@@ -350,7 +353,7 @@ namespace HaverDevProject.Controllers
                         DrawingRevDate = DateTime.Now,
                         DrawingUserId = ncrEngDTO.DrawingUserId,
                         EngDefectPhotos = ncrEngDTO.EngDefectPhotos,
-                        NcrEngDefectVideo = ncrEngDTO.NcrEngDefectVideo,
+                        NcrEngDefectVideo = multipleVideoLinks
                         //NcrPhase = NcrPhase.Operations
                     };
                     _context.NcrEngs.Add(ncrEng);

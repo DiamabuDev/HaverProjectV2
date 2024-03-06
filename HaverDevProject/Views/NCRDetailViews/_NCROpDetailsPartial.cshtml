@@ -124,14 +124,14 @@
                             }
                             @if (hasVideos)
                             {
-                                <div class="card-header">
-                                    Videos
-                                </div>
                                 <div class="card-body">
-
                                     @if (Model.NcrOperationVideo != null)
                                     {
-                                        <a href="@Model.NcrOperationVideo" target="_blank">Video Link</a>
+                                        @foreach (var videoUrl in Model.NcrOperationVideo.Split(','))
+                                        {
+                                            <a href="@videoUrl" target="_blank">Video Link</a>
+                                            <br />
+                                        }
                                     }
                                 </div>
                             }
