@@ -81,7 +81,7 @@
                             <label class="pb-3"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select Yes or No"><b>Follow-Up Required?</b></span><span class="fw-bold text-danger">*</span></label>
                             <div class="text-left">
                                 <div class="form-check form-check-inline">
-                                    <input type="radio" class="form-check-input" asp-for="FollowUp" value="true" checked id="follow-no" />
+                                    <input type="radio"  class="form-check-input" asp-for="FollowUp" value="true" checked id="follow-no" />
                                     <label class="form-check-label" data-bs-toggle="collapse" data-bs-target="#Follow-input">Yes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
@@ -105,7 +105,7 @@
                         </div>
                         <div class="col-6">
                             <div class="form-group">
-                                <label asp-for="ExpectedDate" class="control-label"></label>
+                                <label asp-for="ExpectedDate" class="control-label date-input"></label>
                                 <input asp-for="ExpectedDate" class="form-control date-input" value="@Model.ExpectedDate?.ToString("yyyy-MM-dd")" />
                                 <span asp-validation-for="ExpectedDate" class="text-danger"></span>
                             </div>
@@ -227,6 +227,8 @@
             });
         });
     </script>
+
+
 
 }
 

@@ -57,6 +57,7 @@ public partial class HaverNiagaraContext : DbContext
     public virtual DbSet<ItemDefectPhoto> ItemDefectPhotos { get; set; }
 
     public virtual DbSet<EngDefectPhoto> EngDefectPhotos { get; set; }
+
     public virtual DbSet<OpDefectPhoto> OpDefectPhotos { get; set; }
 
     public virtual DbSet<Ncr> Ncrs { get; set; }
@@ -158,7 +159,7 @@ public partial class HaverNiagaraContext : DbContext
             entity.HasKey(e => e.OpDefectPhotoId).HasName("pk_opDefectPhoto_opDefectPhotoId");
 
             entity.HasOne(d => d.NcrOperation).WithMany(p => p.OpDefectPhotos)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("fk_opDefectPhoto_itemDefect");
         });
 
@@ -182,7 +183,7 @@ public partial class HaverNiagaraContext : DbContext
             entity.HasKey(e => e.NcrOpId).HasName("pk_ncrOperation_NcrOpId");
 
             entity.HasOne(d => d.OpDispositionType).WithMany(p => p.NcrOperations)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("fk_ncrOperation_opDispositionType");
         });
 
