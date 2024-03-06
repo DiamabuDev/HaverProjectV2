@@ -104,9 +104,7 @@ namespace HaverDevProject.Controllers
             {
                 ncrQa = ncrQa.Where(n => n.NcrQacreationDate >= StartDate && 
                          n.NcrQacreationDate <= EndDate);   
-            }
-
-            
+            }            
 
             //Sorting columns
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!

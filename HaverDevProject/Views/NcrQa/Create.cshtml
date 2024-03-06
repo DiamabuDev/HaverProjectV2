@@ -144,7 +144,7 @@
                         </div>
                     </div> *@
                     <div class="form-group">
-                        <label class="control-label custom-file-label"><strong>Upload Defect Photos:</strong></label>
+                        <label class="control-label custom-file-label"><strong>Upload Photos:</strong></label>
                         <div class="input-group mb-3">
                             <input type="file" class="form-control" name="Photos" multiple="multiple" />
                         </div>                       
@@ -152,8 +152,8 @@
 
                     <div class="form-group">
                         <label asp-for="NcrQaDefectVideo" class="control-label">
-                            <strong>Video Link: </strong>
-                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Link to the desired video">(e.g. https://haverniagara.com/)</small>
+                            <strong>Video Links: </strong>
+                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Add multiple video links separated by a comma">(e.g. https://haverniagara.com, https://www.google.ca)</small>
                         </label>
                         <input asp-for="NcrQaDefectVideo" class="form-control" />
                         <span asp-validation-for="NcrQaDefectVideo" class="text-danger"></span>

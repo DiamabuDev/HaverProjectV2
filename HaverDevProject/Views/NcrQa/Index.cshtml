@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1><i class="bi bi-caret-right-fill"></i> Non-Conformance Reports</h1>
+<h1><i class="bi bi-caret-right-fill"></i> Quality Inspector Non-Conformance Reports</h1>
 
 <form id="ncrForm" asp-action="Index" method="get">
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
@@ -127,7 +127,10 @@
                     </td>
 
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.NcrQaId" class="btn text-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
+                        @if (item.Ncr.NcrPhase != NcrPhase.Closed)
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.NcrQaId" class="btn text-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
+                        }
                         <a asp-action="Details" asp-route-id="@item.NcrQaId" class="btn text-primary" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
 
                         @if(item.Ncr.NcrPhase == NcrPhase.Closed)
