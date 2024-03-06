@@ -29,18 +29,18 @@ namespace HaverDevProject.Controllers
 
         // GET: NcrOperation
         public async Task<IActionResult> Index(string SearchCode, int? OpDispositionTypeId, DateTime StartDate, DateTime EndDate,
-            int? page, int? pageSizeID, string actionButton, string sortDirection = "desc", string sortField = "Created", string filter = "Active")
+            int? page, int? pageSizeID, string actionButton, string sortDirection = "desc", string sortField = "Creation", string filter = "Active")
         {
             
             //Set the date range filer based on the values in the database
             if (EndDate == DateTime.MinValue)
             {
-                StartDate = _context.NcrOperations
-                    .Min(f => f.UpdateOp.Date)
+                StartDate = _context.Ncrs
+                    .Min(f => f.NcrQa.NcrQacreationDate.Date)
                     .Subtract(TimeSpan.FromDays(1));
 
-                EndDate = _context.NcrOperations
-                    .Max(f => f.UpdateOp.Date)
+                EndDate = _context.Ncrs
+                    .Max(f => f.NcrQa.NcrQacreationDate.Date)
                     .Add(TimeSpan.FromDays(1));
 
                 ViewData["StartDate"] = StartDate.ToString("yyyy-MM-dd");
@@ -55,7 +55,7 @@ namespace HaverDevProject.Controllers
             }
 
             //List of sort options.
-            string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "DispositionType", "Phase", "Creation" };
+            string[] sortOptions = new[] { "Creation", "NCR #", "Supplier", "DispositionType", "Phase", "Created" };
 
             PopulateDropDownLists();
 
@@ -73,14 +73,25 @@ namespace HaverDevProject.Controllers
             //Filterig values            
             if (!String.IsNullOrEmpty(filter))
             {
-                if (filter == "Active")
+                if (filter == "All")
+                {
+                    ViewData["filterApplied:ButtonAll"] = "btn-primary";
+                    ViewData["filterApplied:ButtonActive"] = "btn-success custom-opacity";
+                    ViewData["filterApplied:ButtonClosed"] = "btn-danger custom-opacity";
+                }
+                else if (filter == "Active")
                 {
                     ncrOperation = ncrOperation.Where(n => n.Ncr.NcrStatus == true);
+                    ViewData["filterApplied:ButtonActive"] = "btn-success";
+                    ViewData["filterApplied:ButtonAll"] = "btn-primary custom-opacity";
+                    ViewData["filterApplied:ButtonClosed"] = "btn-danger custom-opacity";
                 }
                 else //(filter == "Closed")
                 {
-
                     ncrOperation = ncrOperation.Where(n => n.Ncr.NcrStatus == false);
+                    ViewData["filterApplied:ButtonClosed"] = "btn-danger";
+                    ViewData["filterApplied:ButtonAll"] = "btn-primary custom-opacity";
+                    ViewData["filterApplied:ButtonActive"] = "btn-success custom-opacity";
                 }
             }
             if (!String.IsNullOrEmpty(SearchCode))
@@ -93,12 +104,12 @@ namespace HaverDevProject.Controllers
             }
             if (StartDate == EndDate)
             {
-                ncrOperation = ncrOperation.Where(n => n.UpdateOp == StartDate);
+                ncrOperation = ncrOperation.Where(n => n.Ncr.NcrQa.NcrQacreationDate == StartDate);
             }
             else
             {
-                ncrOperation = ncrOperation.Where(n => n.UpdateOp >= StartDate &&
-                         n.UpdateOp <= EndDate);
+                ncrOperation = ncrOperation.Where(n => n.Ncr.NcrQa.NcrQacreationDate >= StartDate &&
+                         n.Ncr.NcrQa.NcrQacreationDate <= EndDate);
             }
 
             //Sorting columns
@@ -269,6 +280,7 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrReInspect)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrReInspect).ThenInclude(n => n.NcrReInspectPhotos)
                 .FirstOrDefaultAsync(m => m.NcrOpId == id);
+
             if (ncrOperation == null)
             {
                 return NotFound();
@@ -293,9 +305,12 @@ namespace HaverDevProject.Controllers
             ncr.NcrOpCreationDate = DateTime.Now;
             ncr.UpdateOp = DateTime.Now;
             ncr.NcrStatus = true; // Active
+            ncr.FollowUp = false;
+            ncr.Car = false;
 
-            ViewData["FollowUpTypeId"] = new SelectList(_context.FollowUpTypes, "FollowUpTypeId", "FollowUpTypeName");
-            ViewData["OpDispositionTypeId"] = new SelectList(_context.OpDispositionTypes, "OpDispositionTypeId", "OpDispositionTypeName");
+            PopulateDropDownLists();
+            //ViewData["FollowUpTypeId"] = new SelectList(_context.FollowUpTypes, "FollowUpTypeId", "FollowUpTypeName");
+            //ViewData["OpDispositionTypeId"] = new SelectList(_context.OpDispositionTypes, "OpDispositionTypeId", "OpDispositionTypeName");
             return View(ncr);
         }
 
@@ -304,20 +319,19 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(NcrOperationDTO ncrOperationDTO, int OpDispositionTypeId, List<IFormFile> Photos)
+        public async Task<IActionResult> Create(NcrOperationDTO ncrOperationDTO, List<IFormFile> Photos)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-
-
                     int ncrIdObt = _context.Ncrs
                         .Where(n => n.NcrNumber == ncrOperationDTO.NcrNumber)
                         .Select(n => n.NcrId)
                         .FirstOrDefault();
 
                     await AddPictures(ncrOperationDTO, Photos);
+
                     NcrOperation ncrOperation = new NcrOperation
                     {
                         NcrId = ncrIdObt, // Assign the NcrId from the found Ncr entity
@@ -358,13 +372,14 @@ namespace HaverDevProject.Controllers
             }
 
             PopulateDropDownLists();
+
             return View(ncrOperationDTO);
         }
 
         // GET: NcrOperation/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.NcrOperations == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -400,94 +415,93 @@ namespace HaverDevProject.Controllers
                 FollowUp = ncrOperation.FollowUp,
                 ExpectedDate = ncrOperation.ExpectedDate,
                 FollowUpTypeId = ncrOperation.FollowUpTypeId,
-
                 UpdateOp = ncrOperation.UpdateOp,
                 NcrPurchasingUserId = ncrOperation.NcrPurchasingUserId,
                 NcrEng = ncrOperation.NcrEng,
                 NcrOperationVideo = ncrOperation.NcrOperationVideo,
-                OpDefectPhotos = ncrOperation.OpDefectPhotos
+                OpDefectPhotos = ncrOperation.OpDefectPhotos,
             };
 
 
             ViewData["FollowUpTypeId"] = new SelectList(_context.FollowUpTypes, "FollowUpTypeId", "FollowUpTypeName", ncrOperation.FollowUpTypeId);
-            ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrOperation.NcrId);
+            //ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrOperation.NcrId);
             ViewData["OpDispositionTypeId"] = new SelectList(_context.OpDispositionTypes, "OpDispositionTypeId", "OpDispositionTypeName", ncrOperation.OpDispositionTypeId);
             return View(ncrOperationDTO);
         }
 
+        // POST: NcrOperation/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int NcrOpId, int id, int NcrId, NcrOperationDTO ncrOperationDTO, NcrOperation ncrOperation, List<IFormFile> Photos)
+        public async Task<IActionResult> Edit(int id, NcrOperationDTO ncrOperationDTO, List<IFormFile> Photos)
         {
+            ncrOperationDTO.NcrOpId = id;
+            if (id != ncrOperationDTO.NcrOpId)
+            {
+                return NotFound();
+            }
+
             if (ModelState.IsValid)
             {
-                var ncrToUpdate = await _context.Ncrs
-                .AsNoTracking()
-                .FirstOrDefaultAsync(n => n.NcrId == NcrId);
-
-                if (id != ncrOperationDTO.NcrId)
+                await AddPictures(ncrOperationDTO, Photos);
+                try
                 {
-                    return NotFound();
-                }
-
-                // Go get the ncrOperation to update
-                var ncrOperationToUpdate = await _context.NcrOperations
+                    var ncrOperation = await _context.NcrOperations
                     .Include(n => n.Ncr)
-                    //.Include(n => n.NcrEng)
                     .Include(n => n.OpDispositionType)
                     .Include(n => n.FollowUpType)
                     .Include(n => n.OpDefectPhotos)
-                    //.AsNoTracking()
-                    .FirstOrDefaultAsync(n => n.NcrOpId == NcrOpId);
+                    .FirstOrDefaultAsync(ne => ne.NcrId == id);
 
-                // Check that we got the function or exit with a not found error
-                if (ncrOperationToUpdate == null)
-                {
-                    return NotFound();
+
+                    ncrOperation.OpDispositionTypeId = ncrOperationDTO.OpDispositionTypeId;
+                    ncrOperation.NcrPurchasingDescription = ncrOperationDTO.NcrPurchasingDescription;
+                    ncrOperation.Car = ncrOperationDTO.Car;
+                    ncrOperation.CarNumber = ncrOperationDTO.CarNumber;
+                    ncrOperation.FollowUp = ncrOperationDTO.FollowUp;
+                    ncrOperation.ExpectedDate = ncrOperationDTO.ExpectedDate;
+                    ncrOperation.FollowUpTypeId = ncrOperationDTO.FollowUpTypeId;
+                    ncrOperation.UpdateOp = DateTime.Today;
+                    ncrOperation.NcrPurchasingUserId = 1;
+                    ncrOperation.NcrOperationVideo = ncrOperationDTO.NcrOperationVideo;
+                    ncrOperation.OpDefectPhotos = ncrOperationDTO.OpDefectPhotos;
+
+                    _context.Update(ncrOperation);
+                    await _context.SaveChangesAsync();
+
+
+                    //var ncr = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrOperation.NcrId);
+                    ////ncr.NcrPhase = NcrPhase.Operations;
+                    //ncr.NcrLastUpdated = DateTime.Now;
+                    //_context.Update(ncr);
+                    //await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "NCR edited successfully!";
+                    int ncrOpId = ncrOperation.NcrOpId;
+                    return RedirectToAction("Details", new { id = ncrOpId });
                 }
-                else
+                catch (DbUpdateConcurrencyException)
                 {
-                    await AddPictures(ncrOperationDTO, Photos);
-                    try
+                    if (!NcrOperationExists(ncrOperationDTO.NcrOpId))
                     {
-                        //Update the related Ncr entity
-                        ncrOperationToUpdate.Ncr.NcrPhase = NcrPhase.Procurement;
-                        _context.Ncrs.Update(ncrOperationToUpdate.Ncr);
-                        await _context.SaveChangesAsync();
-
-
-                        // Update the NcrOperation entity
-                        ncrOperationToUpdate.OpDispositionTypeId = ncrOperation.OpDispositionTypeId;
-                        ncrOperationToUpdate.NcrPurchasingDescription = ncrOperation.NcrPurchasingDescription;
-                        ncrOperationToUpdate.Car = ncrOperation.Car;
-                        ncrOperationToUpdate.CarNumber = ncrOperation.CarNumber;
-                        ncrOperationToUpdate.FollowUp = ncrOperation.FollowUp;
-                        ncrOperationToUpdate.ExpectedDate = ncrOperationToUpdate.ExpectedDate;
-                        ncrOperationToUpdate.FollowUpTypeId = ncrOperation.FollowUpTypeId;
-                        ncrOperationToUpdate.UpdateOp = DateTime.Today;
-                        ncrOperationToUpdate.NcrPurchasingUserId = ncrOperation.NcrPurchasingUserId;
-                        ncrOperationToUpdate.NcrOperationVideo = ncrOperation.NcrOperationVideo;
-                        ncrOperationToUpdate.OpDefectPhotos = ncrOperation.OpDefectPhotos;
-
-                        _context.NcrOperations.Update(ncrOperationToUpdate);
-                        await _context.SaveChangesAsync();
-
-                        TempData["SuccessMessage"] = "NCR edited successfully!";
-                        int updateNcrOperation = ncrOperationToUpdate.NcrOpId;
-                        return RedirectToAction("Details", new { id = updateNcrOperation });
+                        return NotFound();
                     }
-                    catch (RetryLimitExceededException)
+                    else
                     {
-                        ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
-                    }
-                    catch (DbUpdateException)
-                    {
-                        ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                        throw;
                     }
                 }
+                catch (RetryLimitExceededException)
+                {
+                    ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
+                }
+                catch (DbUpdateException)
+                {
+                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                }
+
             }
-
-            PopulateDropDownLists();
             return View(ncrOperationDTO);
         }
 
