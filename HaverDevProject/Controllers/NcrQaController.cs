@@ -262,6 +262,9 @@ namespace HaverDevProject.Controllers
             ViewBag.IsNCROpView = false;
             ViewBag.IsNCRProcView = false;
             ViewBag.IsNCRReInspView = false;
+
+            ViewBag.NCRSectionId = id;
+
             return View(ncrQa);
         }
 
