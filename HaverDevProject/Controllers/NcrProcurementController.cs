@@ -31,10 +31,10 @@ namespace HaverDevProject.Controllers
             if (EndDate == DateTime.MinValue)
             {
                 StartDate = _context.Ncrs
-                .Min(f => f.NcrLastUpdated.Date);
+                .Min(f => f.NcrQa.NcrQacreationDate.Date);
 
                 EndDate = _context.Ncrs
-                .Max(f => f.NcrLastUpdated.Date);
+                .Max(f => f.NcrQa.NcrQacreationDate.Date);
 
                 ViewData["StartDate"] = StartDate.ToString("yyyy-MM-dd");
                 ViewData["EndDate"] = EndDate.ToString("yyyy-MM-dd");
@@ -56,7 +56,7 @@ namespace HaverDevProject.Controllers
             }
 
             //List of sort options.
-            string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "SupplierReturn", "Phase" };
+            string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "SupplierReturn", "Phase", "Last Updated" };
 
             ViewData["SupplierId"] = SupplierSelectList();
 
@@ -73,14 +73,25 @@ namespace HaverDevProject.Controllers
             //Filterig values            
             if (!String.IsNullOrEmpty(filter))
             {
-                if (filter == "Active")
+                if (filter == "All")
+                {
+                    ViewData["filterApplied:ButtonAll"] = "btn-primary";
+                    ViewData["filterApplied:ButtonActive"] = "btn-success custom-opacity";
+                    ViewData["filterApplied:ButtonClosed"] = "btn-danger custom-opacity";
+                }
+                else if (filter == "Active")
                 {
                     ncrProc = ncrProc.Where(n => n.Ncr.NcrStatus == true);
+                    ViewData["filterApplied:ButtonActive"] = "btn-success";
+                    ViewData["filterApplied:ButtonAll"] = "btn-primary custom-opacity";
+                    ViewData["filterApplied:ButtonClosed"] = "btn-danger custom-opacity";
                 }
                 else //(filter == "Closed")
                 {
-
                     ncrProc = ncrProc.Where(n => n.Ncr.NcrStatus == false);
+                    ViewData["filterApplied:ButtonClosed"] = "btn-danger";
+                    ViewData["filterApplied:ButtonAll"] = "btn-primary custom-opacity";
+                    ViewData["filterApplied:ButtonActive"] = "btn-success custom-opacity";
                 }
             }
             if (!String.IsNullOrEmpty(SearchCode))
@@ -93,12 +104,12 @@ namespace HaverDevProject.Controllers
             }
             if (StartDate == EndDate)
             {
-                ncrProc = ncrProc.Where(n => n.Ncr.NcrLastUpdated == StartDate);
+                ncrProc = ncrProc.Where(n => n.Ncr.NcrQa.NcrQacreationDate == StartDate);
             }
             else
             {
-                ncrProc = ncrProc.Where(n => n.Ncr.NcrLastUpdated >= StartDate &&
-                         n.Ncr.NcrLastUpdated <= EndDate);
+                ncrProc = ncrProc.Where(n => n.Ncr.NcrQa.NcrQacreationDate >= StartDate &&
+                         n.Ncr.NcrQa.NcrQacreationDate <= EndDate);
             }
 
             //Sorting columns
@@ -178,17 +189,17 @@ namespace HaverDevProject.Controllers
             //}
             else if (sortField == "Created")
             {
-                if (sortDirection == "asc") //desc by default
+                if (sortDirection == "desc") //desc by default
                 {
                     ncrProc = ncrProc
-                        .OrderBy(p => p.Ncr.NcrLastUpdated);
+                        .OrderBy(p => p.Ncr.NcrQa.NcrQacreationDate);
 
                     ViewData["filterApplied:Created"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncrProc = ncrProc
-                        .OrderByDescending(p => p.Ncr.NcrLastUpdated);
+                        .OrderByDescending(p => p.Ncr.NcrQa.NcrQacreationDate);
 
                     ViewData["filterApplied:Created"] = "<i class='bi bi-sort-down'></i>";
                 }
@@ -208,6 +219,23 @@ namespace HaverDevProject.Controllers
                         .OrderByDescending(p => p.Ncr.NcrPhase);
 
                     ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Last Updated")
+            {
+                if (sortDirection == "desc") //desc by default
+                {
+                    ncrProc = ncrProc
+                        .OrderBy(p => p.Ncr.NcrLastUpdated);
+
+                    ViewData["filterApplied:Last Updated"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrProc = ncrProc
+                        .OrderByDescending(p => p.Ncr.NcrLastUpdated);
+
+                    ViewData["filterApplied:Last Updated"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
             else //(sortField == "Status")
@@ -285,7 +313,8 @@ namespace HaverDevProject.Controllers
         {
             NcrProcurementDTO ncr = new NcrProcurementDTO();
             ncr.NcrNumber = ncrNumber;
-            ncr.NcrProcUpdate = DateTime.Now;
+            ncr.NcrProcCreated = DateTime.Now;
+            ncr.NcrProcExpectedDate = DateTime.Now;
             ncr.NcrProcSupplierReturnReq = true;
             ncr.NcrStatus = true; //Active
 
@@ -324,7 +353,7 @@ namespace HaverDevProject.Controllers
                         NcrProcSupplierBilled = ncrProcDTO.NcrProcSupplierBilled,
                         NcrProcFlagStatus = ncrProcDTO.NcrProcFlagStatus,
                         NcrProcUserId = ncrProcDTO.NcrProcUserId,
-                        NcrProcUpdate = DateTime.Now,
+                        NcrProcCreated = DateTime.Now,
                         SupplierReturnMANum = ncrProcDTO.SupplierReturnMANum,
                         SupplierReturnName = ncrProcDTO.SupplierReturnName,
                         SupplierReturnAccount = ncrProcDTO.SupplierReturnAccount,
@@ -396,7 +425,7 @@ namespace HaverDevProject.Controllers
                 NcrProcSupplierBilled = ncrProc.NcrProcSupplierBilled,
                 NcrProcFlagStatus = ncrProc.NcrProcFlagStatus,
                 NcrProcUserId = ncrProc.NcrProcUserId,
-                NcrProcUpdate = ncrProc.NcrProcUpdate,
+                NcrProcCreated = ncrProc.NcrProcCreated,
                 NcrId = ncrProc.NcrId,
                 SupplierReturnMANum = ncrProc.SupplierReturnMANum,
                 SupplierReturnName = ncrProc.SupplierReturnName,
@@ -441,7 +470,7 @@ namespace HaverDevProject.Controllers
                     ncrProc.NcrProcSupplierBilled = ncrProcDTO.NcrProcSupplierBilled;
                     ncrProc.NcrProcFlagStatus = ncrProcDTO.NcrProcFlagStatus;
                     ncrProc.NcrProcUserId = ncrProcDTO.NcrProcUserId;
-                    ncrProc.NcrProcUpdate = DateTime.Now;
+                    ncrProc.NcrProcCreated = DateTime.Now;
                     ncrProc.NcrId = ncrProcDTO.NcrId;
                     ncrProc.SupplierReturnMANum = ncrProcDTO.SupplierReturnMANum;
                     ncrProc.SupplierReturnName = ncrProcDTO.SupplierReturnName;
@@ -451,9 +480,10 @@ namespace HaverDevProject.Controllers
                     ncrProc.ProcDefectPhotos = ncrProcDTO.ProcDefectPhotos;
                     //ncrProc.NcrPhase = NcrPhase.ReInspection;
 
-                    await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrProc.NcrId);
+                    var ncr = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrProc.NcrId);
                     //ncrProc.Ncr.NcrPhase = NcrPhase.ReInspection;
-                    _context.Update(ncrProc);
+                    ncr.NcrLastUpdated = DateTime.Now;
+                    _context.Update(ncr);
                     await _context.SaveChangesAsync();
 
                     TempData["SuccessMessage"] = "NCR edited successfully!";
@@ -518,20 +548,6 @@ namespace HaverDevProject.Controllers
 
         public JsonResult GetNcrs()
         {
-            // Get the list of NcrIds that already exist in NcrOperation
-            //List<int> ncrOpPending = _context.Ncrs
-            //    .Where(n => n.NcrPhase == NcrPhase.Operations)
-            //    .Select(n => n.NcrId)
-            //    .ToList();
-
-            //// Include related data in the query for NcrEng
-            //List<NcrEng> pendings = _context.NcrEngs
-            //    .Include(n => n.Ncr)
-            //        .ThenInclude(n => n.NcrQa)
-            //            .ThenInclude(n => n.Item)
-            //                .ThenInclude(n => n.Supplier) 
-            //    .Where(ncrProc => !existingNcrIds.Contains(ncrProc.NcrId))
-            //    .ToList();
 
             List<Ncr> pendings = _context.Ncrs
                 .Include(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
@@ -553,21 +569,6 @@ namespace HaverDevProject.Controllers
 
         public JsonResult GetPendingCount()
         {
-            // Get the list of NcrIds that already exist in NcrOperation
-            //List<int> existingNcrIds = _context.NcrOperations.Select(op => op.NcrId).ToList();
-
-            //List<int> ncrOpPending = _context.Ncrs
-            //    .Where(n => n.NcrPhase == NcrPhase.Operations)
-            //    .Select(n => n.NcrId)
-            //    .ToList();
-
-
-            //// Count only the unique NcrIds in NcrOp
-            //int pendingCount = _context.NcrEngs
-            //    .Where(ncrProc => ncrOpPending.Contains(ncrProc.NcrId))
-            //    .Select(ncrProc => ncrProc.NcrId)
-            //    .Distinct()
-            //    .Count();
 
             int pendingCount = _context.Ncrs
                 .Where(n => n.NcrPhase == NcrPhase.Procurement)

@@ -1155,7 +1155,7 @@ namespace HaverDevProject.Data
                             NcrProcCreditExpected = true,
                             NcrProcSupplierBilled = true,
                             NcrProcUserId = 1, //need to make nullable
-                            NcrProcUpdate = DateTime.Parse("2024-02-20"),
+                            NcrProcCreated = DateTime.Parse("2023-12-18"),
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
                             SupplierReturnAccount = "12345",
@@ -1164,13 +1164,13 @@ namespace HaverDevProject.Data
                         new NcrProcurement
                         {
                             NcrProcSupplierReturnReq = true,
-                            NcrProcExpectedDate = DateTime.Parse("2023-10-17"),
+                            NcrProcExpectedDate = DateTime.Parse("2023-12-19"),
                             NcrProcDisposedAllowed = false,
                             NcrProcSAPReturnCompleted = true,
                             NcrProcCreditExpected = true,
                             NcrProcSupplierBilled = true,
                             NcrProcUserId = 2, //need to make nullable
-                            NcrProcUpdate = DateTime.Parse("2024-02-20"),
+                            NcrProcCreated = DateTime.Parse("2023-12-19"),
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
                             SupplierReturnAccount = "12345",
@@ -1179,13 +1179,13 @@ namespace HaverDevProject.Data
                         new NcrProcurement
                         {
                             NcrProcSupplierReturnReq = true,
-                            NcrProcExpectedDate = DateTime.Parse("2024-01-07"),
+                            NcrProcExpectedDate = DateTime.Parse("2023-12-23"),
                             NcrProcDisposedAllowed = false,
                             NcrProcSAPReturnCompleted = true,
                             NcrProcCreditExpected = true,
                             NcrProcSupplierBilled = true,
                             NcrProcUserId = 3, //need to make nullable
-                            NcrProcUpdate = DateTime.Parse("2024-02-20"),
+                            NcrProcCreated = DateTime.Parse("2023-12-23"),
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
                             SupplierReturnAccount = "12345",
@@ -1194,13 +1194,13 @@ namespace HaverDevProject.Data
                         new NcrProcurement
                         {
                             NcrProcSupplierReturnReq = true,
-                            NcrProcExpectedDate = DateTime.Parse("2024-01-09"),
+                            NcrProcExpectedDate = DateTime.Parse("2024-01-18"),
                             NcrProcDisposedAllowed = false,
                             NcrProcSAPReturnCompleted = true,
                             NcrProcCreditExpected = true,
                             NcrProcSupplierBilled = true,
                             NcrProcUserId = 4, //need to make nullable
-                            NcrProcUpdate = DateTime.Parse("2024-02-20"),
+                            NcrProcCreated = DateTime.Parse("2024-01-18"),
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
                             SupplierReturnAccount = "12345",
@@ -1215,7 +1215,7 @@ namespace HaverDevProject.Data
                             NcrProcCreditExpected = true,
                             NcrProcSupplierBilled = true,
                             NcrProcUserId = 1, //need to make nullable
-                            NcrProcUpdate = DateTime.Parse("2024-02-20"),
+                            NcrProcCreated = DateTime.Parse("2024-01-14"),
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
                             SupplierReturnAccount = "12345",
@@ -1230,7 +1230,7 @@ namespace HaverDevProject.Data
                         //    NcrProcCreditExpected = true,
                         //    NcrProcSupplierBilled = true,
                         //    NcrProcUserId = 2, //need to make nullable
-                        //    NcrProcUpdate = DateTime.Parse("2024-02-20"),
+                        //    NcrProcCreated = DateTime.Parse("2024-02-20"),
                         //    SupplierReturnMANum = "11345",
                         //    SupplierReturnName = "FEDEX",
                         //    SupplierReturnAccount = "12345",
@@ -1245,7 +1245,7 @@ namespace HaverDevProject.Data
                         //    NcrProcCreditExpected = true,
                         //    NcrProcSupplierBilled = true,
                         //    NcrProcUserId = 3, //need to make nullable
-                        //    NcrProcUpdate = DateTime.Parse("2024-02-20"),
+                        //    NcrProcCreated = DateTime.Parse("2024-02-20"),
                         //    SupplierReturnMANum = "11345",
                         //    SupplierReturnName = "FEDEX",
                         //    SupplierReturnAccount = "12345",
@@ -1260,7 +1260,7 @@ namespace HaverDevProject.Data
                         //    NcrProcCreditExpected = true,
                         //    NcrProcSupplierBilled = true,
                         //    NcrProcUserId = 4, //need to make nullable
-                        //    NcrProcUpdate = DateTime.Parse("2024-02-20"),
+                        //    NcrProcCreated = DateTime.Parse("2024-02-20"),
                         //    SupplierReturnMANum = "11345",
                         //    SupplierReturnName = "FEDEX",
                         //    SupplierReturnAccount = "12345",
@@ -1275,7 +1275,7 @@ namespace HaverDevProject.Data
                         //    NcrProcCreditExpected = true,
                         //    NcrProcSupplierBilled = true,
                         //    NcrProcUserId = 1, //need to make nullable
-                        //    NcrProcUpdate = DateTime.Parse("2024-02-20"),
+                        //    NcrProcCreated = DateTime.Parse("2024-02-20"),
                         //    SupplierReturnMANum = "11345",
                         //    SupplierReturnName = "FEDEX",
                         //    SupplierReturnAccount = "12345",
@@ -1290,7 +1290,7 @@ namespace HaverDevProject.Data
                         //    NcrProcCreditExpected = true,
                         //    NcrProcSupplierBilled = true,
                         //    NcrProcUserId = 2, //need to make nullable
-                        //    NcrProcUpdate = DateTime.Parse("2024-02-20"),
+                        //    NcrProcCreated = DateTime.Parse("2024-02-20"),
                         //    SupplierReturnMANum = "11345",
                         //    SupplierReturnName = "FEDEX",
                         //    SupplierReturnAccount = "12345",
@@ -1305,7 +1305,7 @@ namespace HaverDevProject.Data
                             NcrProcCreditExpected = true,
                             NcrProcSupplierBilled = true,
                             NcrProcUserId = 3, //need to make nullable
-                            NcrProcUpdate = DateTime.Parse("2024-02-20"),
+                            NcrProcCreated = DateTime.Parse("2024-01-23"),
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
                             SupplierReturnAccount = "12345",
@@ -1320,7 +1320,7 @@ namespace HaverDevProject.Data
                         //    NcrProcCreditExpected = true,
                         //    NcrProcSupplierBilled = true,
                         //    NcrProcUserId = 4, //need to make nullable
-                        //    NcrProcUpdate = DateTime.Parse("2024-02-20"),
+                        //    NcrProcCreated = DateTime.Parse("2024-02-20"),
                         //    SupplierReturnMANum = "11345",
                         //    SupplierReturnName = "FEDEX",
                         //    SupplierReturnAccount = "12345",

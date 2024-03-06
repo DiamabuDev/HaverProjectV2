@@ -32,7 +32,7 @@ namespace HaverDevProject.Models
 
         public int NcrProcUserId { get; set; }
 
-        public DateTime NcrProcUpdate { get; set; }
+        public DateTime NcrProcCreated { get; set; }
 
         public int NcrId { get; set; }
 
