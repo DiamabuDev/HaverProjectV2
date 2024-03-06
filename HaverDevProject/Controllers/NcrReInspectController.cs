@@ -247,9 +247,6 @@ namespace HaverDevProject.Controllers
             //    .Include(nr => nr.Ncr)
             //    .FirstOrDefault(nr => nr.Ncr.NcrNumber == ncrNumber);
 
-
-
-
             int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
 
             Ncr ncr = _context.Ncrs.FirstOrDefault(n => n.NcrId == ncrId);
