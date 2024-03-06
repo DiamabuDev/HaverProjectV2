@@ -15,6 +15,8 @@ namespace HaverDevProject.Models
         [Display(Name = "Re-Inspection")]
         ReInspection,
         [Display(Name = "Closed")]
-        Closed
+        Closed,
+        [Display(Name = "Archive")]
+        Archive,
     }
 }

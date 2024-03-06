@@ -1089,13 +1089,13 @@ namespace HaverDevProject.Data
                         //    NcrReInspectUserId = 4, //need to make nullable
                         //    NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-140").NcrId
                         //},
-                        new NcrReInspect
-                        {
-                            NcrReInspectAcceptable = true,
-                            NcrReInspectUserId = 1, //need to make nullable
-                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-141").NcrId,
-                            NcrReInspectCreationDate = DateTime.Parse("2023-12-17")
-                        },
+                        //new NcrReInspect
+                        //{
+                        //    NcrReInspectAcceptable = true,
+                        //    NcrReInspectUserId = 1, //need to make nullable
+                        //    NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-141").NcrId,
+                        //    NcrReInspectCreationDate = DateTime.Parse("2023-12-17")
+                        //},
                         //new NcrReInspect
                         //{
                         //    NcrReInspectAcceptable = true,

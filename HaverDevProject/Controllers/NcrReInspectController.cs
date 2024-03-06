@@ -247,13 +247,23 @@ namespace HaverDevProject.Controllers
             //    .Include(nr => nr.Ncr)
             //    .FirstOrDefault(nr => nr.Ncr.NcrNumber == ncrNumber);
 
+
+
+
             int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
-            NcrReInspect ncr = new NcrReInspect();
-            ncr.NcrId = ncrId; // Set the NcrNumber from the parameter
-            ncr.NcrReInspectCreationDate = DateTime.Now;
+
+            Ncr ncr = _context.Ncrs.FirstOrDefault(n => n.NcrId == ncrId);
+
+            NcrReInspect ncrReInspect = new NcrReInspect
+            {
+                NcrId = ncrId,
+                NcrReInspectCreationDate = DateTime.Now,
+                NcrNumber = ncrNumber
+            };
+            
 
             //ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncr.NcrId);
-            return View(ncr);
+            return View(ncrReInspect);
         }
 
         // POST: NcrReInspect/Create
@@ -261,17 +271,19 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("NcrReInspectId,NcrReInspectAcceptable,NcrReInspectNewNcrNumber,NcrReInspectUserId,NcrReInspectDefectVideo,NcrId")] NcrReInspect ncrReInspect, List<IFormFile> Photos)
+        public async Task<IActionResult> Create( NcrReInspect ncrReInspect, List<IFormFile> Photos)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    await AddReInspectPictures(ncrReInspect, Photos);
+                    //await AddReInspectPictures(ncrReInspect, Photos);
 
                     //ncrReInspect.NcrReInspectNewNcrNumber = GetNcrNumber();
                     _context.Add(ncrReInspect);
                     await _context.SaveChangesAsync();
+
+                    await AddReInspectPictures(ncrReInspect, Photos);
 
                     var ncrToUpdate = await _context.Ncrs
                         .AsNoTracking()

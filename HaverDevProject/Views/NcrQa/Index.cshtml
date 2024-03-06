@@ -129,6 +129,20 @@
                     <td>
                         <a asp-action="Edit" asp-route-id="@item.NcrQaId" class="btn text-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
                         <a asp-action="Details" asp-route-id="@item.NcrQaId" class="btn text-primary" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
+
+                        @if(item.Ncr.NcrPhase == NcrPhase.Closed)
+                        {
+                            <a asp-action="ArchiveNcr" asp-route-id="@item.Ncr.NcrId" class="btn btn-danger" data-bs-toggle="tooltip" title="Archive NCR"><i class="bi bi-archive-fill"></i></a>
+                        }
+
+                        @if (item.Ncr.NcrPhase == NcrPhase.Archive)
+                        {
+                            <a asp-action="RestoreNcr" asp-route-id="@item.Ncr.NcrId" class="btn btn-success" data-bs-toggle="tooltip" title="Restore NCR"><i class="bi bi-archive-fill"></i></a>
+                        }
+
+                        
+
+                
                         @* <a asp-action="Delete" asp-route-id="@item.NcrQaId">Delete</a> *@                        
                     </td>
                 </tr>
