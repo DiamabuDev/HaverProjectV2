@@ -70,7 +70,7 @@ namespace HaverDevProject.Controllers
             
             GetNcrs();
 
-            //Filtering values            
+            //Filtering values
             if (!String.IsNullOrEmpty(filter))
             {
                 if (filter == "All")
@@ -349,14 +349,14 @@ namespace HaverDevProject.Controllers
                         NcrEngCreationDate = DateTime.Now,
                         EngDispositionTypeId = ncrEngDTO.EngDispositionTypeId,
                         DrawingId = ncrEngDTO.DrawingId,
-                        DrawingRequireUpdating = false,
+                        DrawingRequireUpdating = ncrEngDTO.DrawingRequireUpdating,
                         DrawingOriginalRevNumber = ncrEngDTO.DrawingOriginalRevNumber,
                         DrawingUpdatedRevNumber = ncrEngDTO.DrawingUpdatedRevNumber,
                         DrawingRevDate = DateTime.Now,
-                        DrawingUserId = ncrEngDTO.DrawingUserId,
+                        DrawingUserId = ncrEngDTO.DrawingUserId, 
                         EngDefectPhotos = ncrEngDTO.EngDefectPhotos,
                         NcrEngDefectVideo = ncrEngDTO.NcrEngDefectVideo
-                        //NcrPhase = NcrPhase.Operations
+                       
                     };
                     _context.NcrEngs.Add(ncrEng);
                     await _context.SaveChangesAsync();
