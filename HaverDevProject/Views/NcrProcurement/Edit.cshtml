@@ -201,7 +201,7 @@
                 <div class="form-group d-flex justify-content-end mt-2">
                     <div>
                         <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn custom-btn-color">
-                            <i class="bi bi-arrow-90deg-left"></i> Back to Log
+                            <i class="bi bi-arrow-90deg-left"></i> Back to NCR Log
                         </button>
                     </div>
                     <div>
@@ -238,6 +238,38 @@
                 } else {
                     // If SupplierReturnReq is false, hide the fields without clearing the value
                     supplierReturnFields.hide();
+                }
+            }
+
+            // Call the function on page load
+            toggleSupplierReturnFields();
+
+            // Bind the function to the change event of SupplierReturnRequest radio buttons
+            $('input[name="NcrProcSupplierReturnReq"]').change(function () {
+                toggleSupplierReturnFields();
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            // Function to show/hide elements and manage validation based on SupplierReturnRequest value
+            function toggleSupplierReturnFields() {
+                var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
+                var supplierRMAField = $('#SupplierReturnMANum');
+                var carrierNameField = $('#SupplierReturnName');
+                var accountField = $('#SupplierReturnAccount');
+
+                // Check the value of SupplierReturnRequest and toggle the required attribute accordingly
+                if (supplierReturnRequest === 'true') {
+                    // Set required attribute
+                    supplierRMAField.prop('required', true);
+                    carrierNameField.prop('required', true);
+                    accountField.prop('required', true);
+                } else {
+                    // Remove required attribute
+                    supplierRMAField.prop('required', false);
+                    carrierNameField.prop('required', false);
+                    accountField.prop('required', false);
                 }
             }
 

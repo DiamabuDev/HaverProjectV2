@@ -52,9 +52,8 @@
                 <div class="row">
                     <div class="col-6">
                         <div class="form-group">
-                            <label asp-for="NcrNumber" class="control-label"></label>
+                            <strong>Ncr No.</strong>
                             <input asp-for="NcrNumber" class="form-control" readonly />
-                            <span asp-validation-for="NcrNumber" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-6">
@@ -192,7 +191,7 @@
                 <div class="form-group d-flex justify-content-end mt-2">
                     <div>
                         <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn custom-btn-color">
-                            <i class="bi bi-arrow-90deg-left"></i> Back to Log
+                            <i class="bi bi-arrow-90deg-left"></i> Back to NCR Log
                         </button>
                     </div>
                     <div>
@@ -207,6 +206,9 @@
 </div>
 
 @section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
     <script>
         $(document).ready(function () {
             // Function to show/hide elements and manage validation based on SupplierReturnRequest value
@@ -240,6 +242,39 @@
             });
         });
     </script>
+    <script>
+        $(document).ready(function () {
+            // Function to show/hide elements and manage validation based on SupplierReturnRequest value
+            function toggleSupplierReturnFields() {
+                var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
+                var supplierRMAField = $('#SupplierReturnMANum');
+                var carrierNameField = $('#SupplierReturnName');
+                var accountField = $('#SupplierReturnAccount');
+
+                // Check the value of SupplierReturnRequest and toggle the required attribute accordingly
+                if (supplierReturnRequest === 'true') {
+                    // Set required attribute
+                    supplierRMAField.prop('required', true);
+                    carrierNameField.prop('required', true);
+                    accountField.prop('required', true);
+                } else {
+                    // Remove required attribute
+                    supplierRMAField.prop('required', false);
+                    carrierNameField.prop('required', false);
+                    accountField.prop('required', false);
+                }
+            }
+
+            // Call the function on page load
+            toggleSupplierReturnFields();
+
+            // Bind the function to the change event of SupplierReturnRequest radio buttons
+            $('input[name="NcrProcSupplierReturnReq"]').change(function () {
+                toggleSupplierReturnFields();
+            });
+        });
+    </script>
+
     <script>
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
