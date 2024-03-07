@@ -70,6 +70,7 @@ namespace HaverDevProject.Models
 
         [Display(Name = "Account Number")]
         [StringLength(45, ErrorMessage = "Only 45 characters for the Account Number")]
+        [RegularExpression("^[0-9]*$", ErrorMessage = "Only numbers are allowed.")]
         [Column("supplierReturnAccount")]
         public string SupplierReturnAccount { get; set; }
 
