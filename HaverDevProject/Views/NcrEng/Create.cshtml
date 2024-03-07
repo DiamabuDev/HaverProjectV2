@@ -40,7 +40,7 @@
                 <div class="row">
                     <div class="col-12">                      
                         <div class="form-group">
-                            <label asp-for="EngDispositionTypeId" class="control-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option"><strong>HBC Engineering: </strong> (indicate disposition by selecting one of the following)  </span> <span class="fw-bold text-danger">*</span></label>
+                            <label asp-for="EngDispositionTypeId" class="control-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option"><strong>HBC Engineering </strong> (indicate disposition by selecting one of the following)  </span> <span class="fw-bold text-danger">*</span></label>
                             <select asp-for="EngDispositionTypeId" class="form-control" asp-items="ViewBag.EngDispositionTypeId">
                                 <option value="">Select Disposition</option>
                             </select>
@@ -64,7 +64,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="form-group">
-                            <strong>Disposition:</strong> (Sequence of work steps required when 'repair' or 'rework' indicated)
+                            <strong>Disposition</strong> (Sequence of work steps required when 'repair' or 'rework' indicated)
                             @* <label asp-for="NcrEngDispositionDescription" class="control-label"></label> *@
                             <textarea asp-for="NcrEngDispositionDescription" class="form-control"></textarea>
                             <span asp-validation-for="NcrEngDispositionDescription" class="text-danger"></span>
@@ -74,7 +74,7 @@
 
 
                 <div class="form-group">
-                    <label class="control-label custom-file-label"> <strong>Upload Photos: </strong></label>
+                    <label class="control-label custom-file-label"> <strong>Upload Photos </strong></label>
                     <div class="input-group mb-3">
                         <input type="file" class="form-control" name="Photos" multiple="multiple" />
                     </div>
