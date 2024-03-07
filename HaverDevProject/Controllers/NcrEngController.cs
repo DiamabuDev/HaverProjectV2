@@ -300,8 +300,10 @@ namespace HaverDevProject.Controllers
 
 
         // GET: NcrEng/Create
-        public IActionResult Create(string ncrNumber)
+        public async Task<IActionResult> Create(string ncrNumber)
         {
+            int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
+            
             NcrEngDTO ncr = new NcrEngDTO();
             ncr.NcrNumber = ncrNumber; // Set the NcrNumber from the parameter
             ncr.DrawingRevDate = DateTime.Now;
@@ -312,8 +314,27 @@ namespace HaverDevProject.Controllers
 
             //ncr.NcrStatus = true; // Active
 
+            var readOnlyDetails = await _context.Ncrs
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.Item)
+                        .ThenInclude(item => item.Supplier)
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.Item)
+                        .ThenInclude(item => item.ItemDefects)
+                            .ThenInclude(defect => defect.Defect)
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.ItemDefectPhotos)
+                .FirstOrDefaultAsync(n => n.NcrId == ncrId);
+
+            ViewBag.IsNCRQaView = false;
+            ViewBag.IsNCREngView = false;
+            ViewBag.IsNCROpView = false;
+            ViewBag.IsNCRProcView = false;
+            ViewBag.IsNCRReInspView = false;
+
+            ViewBag.ncrDetails = readOnlyDetails;
+
             PopulateDropDownLists();
-            //ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName");
             return View(ncr);
         }
 
@@ -336,8 +357,6 @@ namespace HaverDevProject.Controllers
 
                     //PopulateDropDownLists();
                     await AddPictures(ncrEngDTO, Photos);
-
-
 
                     NcrEng ncrEng = new NcrEng
                     {
@@ -368,8 +387,6 @@ namespace HaverDevProject.Controllers
                     _context.Ncrs.Update(ncr);
                     await _context.SaveChangesAsync();
 
-
-
                     TempData["SuccessMessage"] = "NCR saved successfully!";
                     int ncrEngId = ncrEng.NcrEngId;
                     return RedirectToAction("Details", new { id = ncrEngId });
@@ -382,7 +399,7 @@ namespace HaverDevProject.Controllers
             }
             catch (DbUpdateException )
             {
-                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");         
+                ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");         
             }
 
             PopulateDropDownLists();

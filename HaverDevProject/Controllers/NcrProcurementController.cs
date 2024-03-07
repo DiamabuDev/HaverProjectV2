@@ -56,7 +56,7 @@ namespace HaverDevProject.Controllers
             }
 
             //List of sort options.
-            string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "SupplierReturn", "Phase", "Last Updated" };
+            string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "SupplierReturn", "SAP", "Phase", "Last Updated" };
 
             ViewData["SupplierId"] = SupplierSelectList();
 
@@ -172,21 +172,21 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:SupplierReturn"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
-            //else if (sortField == "ExpectedDate")
-            //{
-            //    if (sortDirection == "asc")
-            //    {
-            //        ncrProc = ncrProc
-            //            .OrderBy(p => p.NcrProcExpectedDate);
-            //        ViewData["filterApplied:ExpectedDate"] = "<i class='bi bi-sort-up'></i>";
-            //    }
-            //    else
-            //    {
-            //        ncrProc = ncrProc
-            //            .OrderByDescending(p => p.NcrProcExpectedDate);
-            //        ViewData["filterApplied:ExpectedDate"] = "<i class='bi bi-sort-down'></i>";
-            //    }
-            //}
+            else if (sortField == "SAP")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncrProc = ncrProc
+                        .OrderBy(p => p.NcrProcSAPReturnCompleted);
+                    ViewData["filterApplied:SAP"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrProc = ncrProc
+                        .OrderByDescending(p => p.NcrProcSAPReturnCompleted);
+                    ViewData["filterApplied:SAP"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
             else if (sortField == "Created")
             {
                 if (sortDirection == "desc") //desc by default
@@ -221,7 +221,7 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
-            else if (sortField == "Last Updated")
+            else /*if (sortField == "Last Updated")*/
             {
                 if (sortDirection == "desc") //desc by default
                 {
@@ -238,21 +238,21 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:Last Updated"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
-            else //(sortField == "Status")
-            {
-                if (sortDirection == "asc")
-                {
-                    ncrProc = ncrProc
-                        .OrderBy(p => p.Ncr.NcrStatus);
-                    ViewData["filterApplied:Status"] = "<i class='bi bi-sort-up'></i>";
-                }
-                else
-                {
-                    ncrProc = ncrProc
-                        .OrderByDescending(p => p.Ncr.NcrStatus);
-                    ViewData["filterApplied:Status"] = "<i class='bi bi-sort-down'></i>";
-                }
-            }
+            //else //(sortField == "Status")
+            //{
+            //    if (sortDirection == "asc")
+            //    {
+            //        ncrProc = ncrProc
+            //            .OrderBy(p => p.Ncr.NcrStatus);
+            //        ViewData["filterApplied:Status"] = "<i class='bi bi-sort-up'></i>";
+            //    }
+            //    else
+            //    {
+            //        ncrProc = ncrProc
+            //            .OrderByDescending(p => p.Ncr.NcrStatus);
+            //        ViewData["filterApplied:Status"] = "<i class='bi bi-sort-down'></i>";
+            //    }
+            //}
 
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
@@ -312,8 +312,10 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: NcrProcurement/Create
-        public IActionResult Create(string ncrNumber)
+        public async Task<IActionResult> Create(string ncrNumber)
         {
+            int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
+
             NcrProcurementDTO ncr = new NcrProcurementDTO();
             ncr.NcrNumber = ncrNumber;
             ncr.NcrProcCreated = DateTime.Now;
@@ -321,6 +323,37 @@ namespace HaverDevProject.Controllers
             ncr.NcrProcSupplierReturnReq = true;
             ncr.NcrStatus = true; //Active
 
+            var readOnlyDetails = await _context.Ncrs
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.Item)
+                        .ThenInclude(item => item.Supplier)
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.Item)
+                        .ThenInclude(item => item.ItemDefects)
+                            .ThenInclude(defect => defect.Defect)
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.ItemDefectPhotos)
+                .Include(n => n.NcrEng)
+                    .ThenInclude(eng => eng.EngDispositionType)
+                .Include(n => n.NcrEng)
+                    .ThenInclude(eng => eng.Drawing)
+                .Include(n => n.NcrEng)
+                    .ThenInclude(eng => eng.EngDefectPhotos)
+                .Include(n => n.NcrOperation)
+                    .ThenInclude(op => op.OpDispositionType)
+                .Include(n => n.NcrOperation)
+                    .ThenInclude(op => op.FollowUpType)
+                .Include(n => n.NcrOperation)
+                    .ThenInclude(op => op.OpDefectPhotos)
+                .FirstOrDefaultAsync(n => n.NcrId == ncrId);
+
+            ViewBag.IsNCRQaView = false;
+            ViewBag.IsNCREngView = false;
+            ViewBag.IsNCROpView = false;
+            ViewBag.IsNCRProcView = false;
+            ViewBag.IsNCRReInspView = false;
+
+            ViewBag.ncrDetails = readOnlyDetails;
 
             return View(ncr);
         }
@@ -408,7 +441,7 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.ProcDefectPhotos)
                 //.Include(n => n.SupplierReturn)
                 .AsNoTracking()
-                .FirstOrDefaultAsync(n => n.NcrId == id);
+                .FirstOrDefaultAsync(n => n.NcrProcurementId == id);
 
             if (ncrProc == null)
             {
@@ -463,7 +496,7 @@ namespace HaverDevProject.Controllers
                 {
                     var ncrProc = await _context.NcrProcurements
                         //.Include(n => n.SupplierReturn)
-                        .FirstOrDefaultAsync(n => n.NcrId == id);
+                        .FirstOrDefaultAsync(n => n.NcrProcurementId == id);
 
                     ncrProc.NcrProcSupplierReturnReq = ncrProcDTO.NcrProcSupplierReturnReq;
                     ncrProc.NcrProcExpectedDate = ncrProcDTO.NcrProcExpectedDate;
@@ -482,6 +515,10 @@ namespace HaverDevProject.Controllers
                     ncrProc.NcrProcDefectVideo = ncrProcDTO.NcrProcDefectVideo;
                     ncrProc.ProcDefectPhotos = ncrProcDTO.ProcDefectPhotos;
                     //ncrProc.NcrPhase = NcrPhase.ReInspection;
+
+
+                    //_context.Update(ncrProc);
+                    //await _context.SaveChangesAsync();
 
                     var ncr = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrProc.NcrId);
                     //ncrProc.Ncr.NcrPhase = NcrPhase.ReInspection;
