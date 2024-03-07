@@ -94,7 +94,7 @@
                                 <tbody>
                                     <tr>
                                         <td class="three-cols">R. May</td>
-                                        <td class="three-cols">@Model.Ncr.NcrQa.NcrQacreationDate.ToString("yyyy-MM-dd")</td>
+                                        <td class="three-cols">@Model.NcrProcCreated.ToString("yyyy-MM-dd")</td>
                                         <td class="three-cols">
                                             @{
                                                 if (Model.UpdatedOn.HasValue)
@@ -128,7 +128,7 @@
                                     Images
                                 </div>
                                 <div class="card-body pb-0">
-                                    <div class="row">
+                                    <div class="row justify-content-center">
                                         @{
                                             if (Model.ProcDefectPhotos != null && Model.ProcDefectPhotos.Any())
                                             {
