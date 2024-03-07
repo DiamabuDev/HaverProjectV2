@@ -18,9 +18,35 @@
 </head>
 <div class="col-md-8 col-10 mx-auto">
     <h1><i class="bi bi-caret-right-fill"></i>Procurement</h1>
-</div>
+    <button class="btn custom-details-btn icon-drop text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#details" aria-expanded="false" aria-controls="details">
+        Details <i class="bi bi-chevron-down"></i>
+    </button>
+    <div class="collapse" id="details">
+        @if (Model.Ncr.NcrQa != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", Model.Ncr.NcrQa)
+        }
 
-<div class="col-md-8 col-10 mx-auto">
+        @if (Model.Ncr.NcrEng != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCREngDetailsPartial.cshtml", Model.Ncr.NcrEng)
+        }
+
+        @if (Model.Ncr.NcrOperation != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCROpDetailsPartial.cshtml", Model.Ncr.NcrOperation)
+        }
+
+        @if (Model.Ncr.NcrProcurement != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRProcDetailsPartial.cshtml", Model.Ncr.NcrProcurement)
+        }
+
+        @if (Model.Ncr.NcrReInspect != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRReInspDetailsPartial.cshtml", Model.Ncr.NcrReInspect)
+        }
+    </div>
     <form asp-action="Create" method="post" enctype="multipart/form-data">
         <div class="card border-2">
             <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
