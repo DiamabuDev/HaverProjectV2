@@ -4,7 +4,9 @@
     ViewData["Title"] = "Edit";
 }
 
-
+<div class="col-md-8 col-10 mx-auto">
+    <h1><i class="bi bi-caret-right-fill"></i>Procurement</h1>
+</div>
 
 <div class="col-md-8 col-10 mx-auto">
     <form asp-action="Edit" method="post" enctype="multipart/form-data">
@@ -40,7 +42,7 @@
                     <div class="col-6">
                         <div class="form-group">
                             <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No if Supplier Requested a Return"><strong>Supplier Return Request </strong><span class="fw-bold text-danger">*</span></label>
-                            <div class="text-center">
+                            <div>
                                 <div class="form-check form-check-inline">
                                     <input type="radio" class="form-check-input" asp-for="NcrProcSupplierReturnReq" value="true" checked />
                                     <label class="form-check-label">Yes</label>
@@ -55,7 +57,7 @@
                     <div class="col-6">
                         <div class="form-group">
                             <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No if the Product is to be Disposed on Site"><strong>Dispose on Site? </strong><span class="fw-bold text-danger">*</span></label>
-                            <div class="text-center">
+                            <div>
                                 <div class="form-check form-check-inline">
                                     <input type="radio" class="form-check-input" asp-for="NcrProcDisposedAllowed" value="true" checked />
                                     <label class="form-check-label">Yes</label>
@@ -71,14 +73,14 @@
                 <div class="row supplier-return-fields">
                     <div class="col-6">
                         <div class="form-group">
-                            <label asp-for="SupplierReturnMANum" class="control-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Return Material Authorization Number"><strong>Supplier RMA # </strong></label>
+                            <label asp-for="SupplierReturnMANum" class="control-label"><strong>Supplier RMA # </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Return Material Authorization Number">(e.g. RT20062090)</small></label>
                             <input asp-for="SupplierReturnMANum" class="form-control" />
                             <span asp-validation-for="SupplierReturnMANum" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="form-group"> 
-                            <label asp-for="SupplierReturnName" class="control-label" class="control-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Name of Delivery Service"><strong>Carrier Name </strong></label>
+                            <label asp-for="SupplierReturnName" class="control-label"><strong>Carrier Name </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Name of Delivery Service">(e.g. Purolator)</small></label>
                             <input asp-for="SupplierReturnName" class="form-control" />
                             <span asp-validation-for="SupplierReturnName" class="text-danger"></span>
                         </div>
@@ -87,7 +89,7 @@
                 <div class="row supplier-return-fields">
                     <div class="col-6">
                         <div class="form-group">
-                            <label asp-for="NcrProcExpectedDate" class="control-label" class="control-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Product Expected Return Date"><strong>Expected Date </strong></label>
+                            <label asp-for="NcrProcExpectedDate" class="control-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Product Expected Return Date"><strong>Expected Date </strong></label>
                             <input asp-for="NcrProcExpectedDate" class="form-control" type="date" 
                                    value="@(Model.NcrProcExpectedDate.HasValue ? Model.NcrProcExpectedDate.Value.ToString("yyyy-MM-dd") : string.Empty)" />
                             <span asp-validation-for="NcrProcExpectedDate" class="text-danger"></span>
@@ -95,7 +97,7 @@
                     </div>
                     <div class="col-6">
                         <div class="form-group">
-                            <label asp-for="SupplierReturnAccount" class="control-label" class="control-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Account Number for the Return Request"><strong>Account # </strong></label>
+                            <label asp-for="SupplierReturnAccount" class="control-label"><strong>Account # </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Account Number for the Return Request">(e.g. 946735)</small></label>
                             <input asp-for="SupplierReturnAccount" class="form-control" /> 
                             <span asp-validation-for="SupplierReturnAccount" class="text-danger"></span>
                         </div>
@@ -104,8 +106,8 @@
                 <div class="row">
                     <div class="col-6">
                         <div class="form-group">
-                            <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No if the Supplier has been Billed"><strong>Suppleir Billed </strong><span class="fw-bold text-danger">*</span></label>
-                            <div class="text-center">
+                            <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No if the Supplier has been Billed"><strong>Supplier Billed </strong><span class="fw-bold text-danger">*</span></label>
+                            <div>
                                 <div class="form-check form-check-inline">
                                     <input type="radio" class="form-check-input" asp-for="NcrProcSupplierBilled" value="true" checked />
                                     <label class="form-check-label">Yes</label>
@@ -120,7 +122,7 @@
                     <div class="col-6">
                         <div class="form-group">
                             <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No if the Supplier Credit is Expected"><strong>Supplier Credit Expected </strong><span class="fw-bold text-danger">*</span></label>
-                            <div class="text-center">
+                            <div>
                                 <div class="form-check form-check-inline">
                                     <input type="radio" class="form-check-input" asp-for="NcrProcCreditExpected" value="true" checked />
                                     <label class="form-check-label">Yes</label>
@@ -135,8 +137,8 @@
                 </div>
                 <div class="row">
                     <div class="form-group">
-                        <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No for SAP Return Completion"><strong>SAP Return Completed </strong><span class="fw-bold text-danger">*</span></label>
-                        <div class="text-center">
+                        <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No Check Yes or No if Sales Return Process is Completed"><strong>SAP Return Completed </strong><span class="fw-bold text-danger">*</span></label>
+                        <div>
                             <div class="form-check form-check-inline">
                                 <input type="radio" class="form-check-input" asp-for="NcrProcSAPReturnCompleted" value="true" checked />
                                 <label class="form-check-label">Yes</label>
@@ -150,7 +152,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label"> Current Photos:</label>
+                    <label class="control-label"> <strong>Current Photos</strong></label>
                     <div class="ml-md-3">
                         @{
                             int fileCount = Model.ProcDefectPhotos.Count;
@@ -184,13 +186,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label custom-file-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Choose a Photo to Upload"><strong>Upload Photos: </strong></label>
+                    <label class="control-label custom-file-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Choose a Photo to Upload"><strong>Upload Photos </strong></label>
                     <div class="input-group mb-3">
                         <input type="file" class="form-control" name="photos" multiple="multiple" />
                     </div>
                 </div>
                 <div class="form-group">
-                    <label asp-for="NcrProcDefectVideo" class="control-label"><strong>Video Links </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Link to desired Videos">(e.g. https://haverniagara.com/)</small></label>
+                    <label asp-for="NcrProcDefectVideo" class="control-label"><strong>Video Links </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Add multiple video links separated by a comma">(e.g. https://haverniagara.com, https://www.google.ca)</small></label>
                     <input asp-for="NcrProcDefectVideo" class="form-control" />
                     <span asp-validation-for="NcrProcDefectVideo" class="text-danger"></span>
                 </div>
@@ -199,7 +201,7 @@
                 <div class="form-group d-flex justify-content-end mt-2">
                     <div>
                         <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn custom-btn-color">
-                            <i class="bi bi-arrow-90deg-left"></i> Back to NCR List
+                            <i class="bi bi-arrow-90deg-left"></i> Back to Log
                         </button>
                     </div>
                     <div>
