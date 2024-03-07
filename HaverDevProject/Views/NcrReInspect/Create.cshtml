@@ -37,7 +37,7 @@
         }
     </div>
 
-    <form asp-action="Create" method="post" enctype="multipart/form-data">
+    <form asp-action="Create" method="post" enctype="multipart/form-data" id="reInspectFormId">
         <div class="card border-2 mt-2">
             <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
                 <div>
@@ -112,7 +112,7 @@
                                     
                 </div> *@
                 <div class="form-group">
-                    <label class="control-label custom-file-label"><b>Upload Photos:</b></label>
+                    <label class="control-label custom-file-label"><b>Upload Photos</b></label>
                     <input type="file" class="form-control" name="Photos" multiple="multiple" />
                 </div>      
                 <div class="form-group">
@@ -132,7 +132,7 @@
                         </button>
                     </div>
                     <div>
-                        <button type="submit" class="btn btn-primary ms-4">
+                        <button type="submit" class="btn btn-primary ms-4" onclick="showCloseReinspectionModal()" id="btnSaveAndClose">
                             <i class='bi bi-floppy'></i> Save and Close
                         </button>
                     </div>
@@ -154,6 +154,24 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" id="closeReinspectionModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Save and Close NCR</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Warning:</strong> By accepting, you will be closing this NCR and will <b>no longer</b> be able to edit. Proceed?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnNo" data-bs-dismiss="modal">No</button>
+                <button type="button" class="btn btn-primary" id="btnYes">Yes</button>
             </div>
         </div>
     </div>
@@ -237,6 +255,31 @@
                 hideAcceptableReinspectionModal();
             }
         });
+    </script>
+
+    <script>
+        document.getElementById('btnSaveAndClose').addEventListener('click', function (event) {
+            event.preventDefault();
+
+            showCloseReinspectionModal();
+
+            $('#closeReinspectionModal').on('hidden.bs.modal', function () {
+                document.getElementById('reInspectFormId').submit();
+            });
+        });
+
+        function showCloseReinspectionModal() {
+            $('#closeReinspectionModal').modal('show');
+
+            document.getElementById('btnYes').addEventListener('click', function () {
+                document.getElementById('btnSaveAndClose').click();
+                hideCloseReinspectionModal();
+            });
+        }
+
+        function hideCloseReinspectionModal() {
+            $('#closeReinspectionModal').modal('hide');
+        }
     </script>
 
 }
