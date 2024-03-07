@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Defect = HaverDevProject.Models.Defect;
 using OfficeOpenXml;
 
+
 namespace HaverDevProject.Controllers
 {
     public class DefectsController : ElephantController
@@ -30,7 +31,7 @@ namespace HaverDevProject.Controllers
             string actionButton, string sortDirection = "asc", string sortField = "Defect")
         {
             //List of sort options.
-            string[] sortOptions = new[] {"Defect", "Description", "Item"};
+            string[] sortOptions = new[] { "Defect", "Description", "Item" };
 
             PopulateDropDownList();
 
@@ -194,7 +195,7 @@ namespace HaverDevProject.Controllers
         // GET: Defects/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            
+
             if (id == null || _context.Defects == null)
             {
                 return NotFound();
@@ -231,7 +232,7 @@ namespace HaverDevProject.Controllers
             }
 
             UpdateDefectItemsCheckboxes(selectedOptions, defectToUpdate);
-            
+
             if (await TryUpdateModelAsync<Defect>(defectToUpdate, "",
                 d => d.DefectName, d => d.DefectDesription))
             {
@@ -287,18 +288,18 @@ namespace HaverDevProject.Controllers
             {
                 _context.Defects.Remove(defect);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        
+
         private void PopulateAssignedItemCheckboxes(Defect defect)
         {
             var allItems = _context.Items
                 .Select(i => new { i.ItemId, i.ItemName })
                 .Distinct();
-            
+
             var currentItemDefectIDs = new HashSet<int>(defect.ItemDefects.Select(id => id.ItemId));
             var checkBoxes = new List<CheckOptionVM>();
             foreach (var item in allItems)
@@ -357,7 +358,6 @@ namespace HaverDevProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Upload(IFormFile file)
         {
-
             if (file.ContentType != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             {
                 TempData["ErrorMessage"] = "Invalid file type. Please upload an Excel file (.xlsx).";
@@ -365,6 +365,7 @@ namespace HaverDevProject.Controllers
             }
 
             var errorMessages = new List<string>();
+            var seenDefectNames = new HashSet<string>(); // Tracks defect names seen in the current upload
 
             using (var stream = new MemoryStream())
             {
@@ -374,56 +375,69 @@ namespace HaverDevProject.Controllers
                     ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
                     int rowCount = worksheet.Dimension.Rows;
 
+                    // First pass: Validate all rows
                     for (int row = 2; row <= rowCount; row++)
                     {
-                        var transaction = _context.Database.BeginTransaction();
+                        var defectName = worksheet.Cells[row, 1].Value?.ToString().Trim();
 
-                        try
+                        // Check for required field
+                        if (string.IsNullOrWhiteSpace(defectName))
                         {
-                            var defectName = worksheet.Cells[row, 1].Value?.ToString().Trim();
-                            var defectDescription = worksheet.Cells[row, 2].Value?.ToString().Trim();
+                            errorMessages.Add($"Row {row}: Defect Type Name is required.");
+                            continue;
+                        }
 
-                            if (string.IsNullOrWhiteSpace(defectName))
-                            {
-                                errorMessages.Add($"Row {row}: Defect Name is required.");
-                            }
+                        // Check for in-memory duplicates
+                        if (seenDefectNames.Contains(defectName))
+                        {
+                            errorMessages.Add($"Row {row}: Defect Type with Defect Type Name {defectName} is duplicated in the file.");
+                            continue;
+                        }
 
-                            var existingDefectType = await _context.Defects
-                                                                    .AsNoTracking()
-                                                                    .FirstOrDefaultAsync(dt => dt.DefectName == defectName);
-                            if (existingDefectType != null)
-                            {
-                                errorMessages.Add($"Row {row}: Defect with Defect Name {defectName} already exists.");
-                            }
+                        // Check for duplicates in the database
+                        if (await _context.Defects.AsNoTracking().AnyAsync(d => d.DefectName == defectName))
+                        {
+                            errorMessages.Add($"Row {row}: Defect Type with Defect Type Name {defectName} already exists in the database.");
+                            continue;
+                        }
+
+                        seenDefectNames.Add(defectName); // Mark this defect name as seen
+                    }
+
+                    // If errors were found, stop and return errors
+                    if (errorMessages.Any())
+                    {
+                        TempData["ErrorMessage"] = $"Please fix the following errors and try again: {string.Join(" ", errorMessages)}";
+                        return RedirectToAction(nameof(Index));
+                    }
+
+                    // Second pass: Insert rows into the database, since no errors were found
+                    int successfulRows = 0;
+                    foreach (var defectName in seenDefectNames)
+                    {
+                        var row = worksheet.Cells[worksheet.Dimension.Start.Row, 1, worksheet.Dimension.End.Row, 1]
+                                            .FirstOrDefault(cell => cell.Value.ToString().Trim() == defectName);
+
+                        if (row != null)
+                        {
+                            var defectDescription = worksheet.Cells[row.Start.Row, 2].Value?.ToString().Trim();
 
                             var newDefect = new Defect
                             {
                                 DefectName = defectName,
-                                DefectDesription = defectDescription,
+                                DefectDesription = defectDescription
                             };
 
                             _context.Defects.Add(newDefect);
-                            await _context.SaveChangesAsync();
-
-                            transaction.Commit();
-
-                        }
-                        catch (Exception)
-                        {
-                            transaction.Rollback(); // Rollback transaction on error
+                            successfulRows++;
                         }
                     }
+
+                    await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = $"File uploaded successfully. {successfulRows} row(s) were added.";
                 }
             }
 
-            if (errorMessages.Any())
-            {
-                TempData["ErrorMessage"] = $"Fix error(s) and try to upload again: {string.Join(" ", errorMessages)}";
-            }
-            else
-            {
-                TempData["SuccessMessage"] = "File uploaded successfully.";
-            }
             return RedirectToAction(nameof(Index));
         }
 
