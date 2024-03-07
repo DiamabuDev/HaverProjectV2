@@ -434,16 +434,33 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, NcrOperationDTO ncrOperationDTO, List<IFormFile> Photos)
+        public async Task<IActionResult> Edit(int id, int NcrId, NcrOperationDTO ncrOperationDTO, List<IFormFile> Photos)
         {
-            ncrOperationDTO.NcrOpId = id;
-            if (id != ncrOperationDTO.NcrOpId)
-            {
-                return NotFound();
-            }
+            //ncrOperationDTO.NcrOpId = id;
+            //if (id != ncrOperationDTO.NcrOpId)
+            //{
+            //    return NotFound();
+            //}
 
             if (ModelState.IsValid)
             {
+                //var ncrToUpdate = await _context.Ncrs
+                //    .AsNoTracking()
+                //    .FirstOrDefaultAsync(n => n.NcrId == NcrId);
+
+                //if (ncrToUpdate == null)
+                //{
+                //    return NotFound();
+                //}
+                //else
+                //{
+                //    ncrToUpdate.NcrPhase = NcrPhase.Procurement;
+                //    ncrToUpdate.NcrLastUpdated = DateTime.Now;
+
+                //    _context.Ncrs.Update(ncrToUpdate);
+                //    await _context.SaveChangesAsync();
+                //}
+
                 await AddPictures(ncrOperationDTO, Photos);
                 try
                 {

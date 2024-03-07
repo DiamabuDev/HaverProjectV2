@@ -13,8 +13,11 @@ namespace HaverDevProject.ViewModels
         [Column("ncrId")]
         [Display(Name = "NCR")]
         public int NcrId { get; set; }
+
         [Column("ncrOpCreationDate")]
         [Display(Name = "NCR Creation Date")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [DataType(DataType.Date)]
         public DateTime NcrOpCreationDate { get; set; }
 
         [Column("opDispositionTypeId")]
@@ -34,6 +37,7 @@ namespace HaverDevProject.ViewModels
         [Required(ErrorMessage = "You must include a description")]
         public string NcrPurchasingDescription { get; set; }
 
+        [Column("ncrCar")]
         [Display(Name = "Was a CAR raised")]
         [Required(ErrorMessage = "You select an option if the CAR was raised.")]
         public bool Car { get; set; }
@@ -58,17 +62,21 @@ namespace HaverDevProject.ViewModels
         [Display(Name = "If \"Yes\" indicate type & expected date" )]
         public FollowUpType FollowUpType { get; set; }
 
+        [Column("ncrUpdateOp")]
         [Display(Name = "Date")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime UpdateOp { get; set; }
 
         [Column("ncrOperationUserId")]
         [Display(Name = "Operation Manager")]
         public int NcrPurchasingUserId { get; set; }
 
+        [Column("ncrOperationVideo")]
         [Display(Name = "Video Link")]
         public string NcrOperationVideo { get; set; }
+
+
         [Display(Name = "Operations Photos")]
         public ICollection<OpDefectPhoto> OpDefectPhotos { get; set; } = new HashSet<OpDefectPhoto>();
     }
