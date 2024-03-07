@@ -312,14 +312,49 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: NcrProcurement/Create
-        public IActionResult Create(string ncrNumber)
+        public async Task<IActionResult> Create(string ncrNumber)
         {
+            int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
+
             NcrProcurementDTO ncr = new NcrProcurementDTO();
             ncr.NcrNumber = ncrNumber;
             ncr.NcrProcCreated = DateTime.Now;
             ncr.NcrProcExpectedDate = DateTime.Now;
             ncr.NcrProcSupplierReturnReq = true;
             ncr.NcrStatus = true; //Active
+
+            var readOnlyDetails = await _context.Ncrs
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.Item)
+                        .ThenInclude(item => item.Supplier)
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.Item)
+                        .ThenInclude(item => item.ItemDefects)
+                            .ThenInclude(defect => defect.Defect)
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.ItemDefectPhotos)
+                .Include(n => n.NcrEng)
+                    .ThenInclude(eng => eng.EngDispositionType)
+                .Include(n => n.NcrEng)
+                    .ThenInclude(eng => eng.Drawing)
+                .Include(n => n.NcrEng)
+                    .ThenInclude(eng => eng.EngDefectPhotos)
+                .Include(n => n.NcrOperation)
+                    .ThenInclude(op => op.OpDispositionType)
+                .Include(n => n.NcrOperation)
+                    .ThenInclude(op => op.FollowUpType)
+                .Include(n => n.NcrOperation)
+                    .ThenInclude(op => op.OpDefectPhotos)
+                .FirstOrDefaultAsync(n => n.NcrId == ncrId);
+
+            ViewBag.IsNCRQaView = false;
+            ViewBag.IsNCREngView = false;
+            ViewBag.IsNCROpView = false;
+            ViewBag.IsNCRProcView = false;
+            ViewBag.IsNCRReInspView = false;
+
+            ViewBag.ncrDetails = readOnlyDetails;
+
             return View(ncr);
         }
 
