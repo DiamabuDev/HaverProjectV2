@@ -56,7 +56,7 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
                 //.Where(n => n.Ncr.NcrPhase == NcrPhase.ReInspection)
-                .Where(n => n.Ncr.NcrPhase == NcrPhase.Closed)
+                .Where(n => n.Ncr.NcrPhase == NcrPhase.Closed || n.Ncr.NcrPhase == NcrPhase.ReCreated)
                 .AsNoTracking();
 
             GetNcrs();
@@ -286,7 +286,16 @@ namespace HaverDevProject.Controllers
                         .AsNoTracking()
                         .FirstOrDefaultAsync(n => n.NcrId == ncrReInspect.NcrId);
 
-                    ncrToUpdate.NcrPhase = NcrPhase.Closed;
+                    if (ncrReInspect.NcrReInspectAcceptable == false)
+                    {
+                        ncrToUpdate.NcrPhase = NcrPhase.ReCreated;
+                    }
+                    else
+                    {
+                        ncrToUpdate.NcrPhase = NcrPhase.Closed;
+
+                    }
+
                     ncrToUpdate.NcrStatus = false;
                     ncrToUpdate.NcrLastUpdated = DateTime.Today;
                     _context.Ncrs.Update(ncrToUpdate);

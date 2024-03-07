@@ -213,12 +213,12 @@
                     </td>
                 *@
                     <td>
-                        @if (item.Ncr.NcrPhase != NcrPhase.Closed)
+                        @if (item.Ncr.NcrPhase != NcrPhase.Closed && item.Ncr.NcrPhase != NcrPhase.ReCreated)
                         {
-                            <a asp-action="Edit" asp-route-id="@item.NcrReInspectId" class="btn text-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
+                            <a asp-action="Edit" asp-route-id="@item.NcrReInspectId" class="btn text-primary" data-bs- toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
                         }
 
-                        <a asp-action="Details" asp-route-id="@item.NcrReInspectId" class="btn text-primary" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
+                        <a asp-action="Details" asp-route-id="@item.NcrReInspectId" class="btn text-primary" data-bs- toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
 
                     </td>
                 </tr>

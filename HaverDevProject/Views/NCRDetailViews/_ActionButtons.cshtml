@@ -9,10 +9,16 @@
                     <i class="bi bi-arrow-90deg-left"></i> Back to NCR List
                 </button>
                 <div>
-                    @if (Model.Ncr.NcrPhase != NcrPhase.Closed)
+                    @if (Model.Ncr.NcrPhase != NcrPhase.Closed && Model.Ncr.NcrPhase != NcrPhase.ReCreated)
                     {
                         <a type="button" class="btn btn-primary ms-4" asp-action="Edit" asp-route-id="@ViewBag.NCRSectionID">
                             <i class="bi bi-pencil-square"></i> Edit
+                        </a>
+                    }
+                    @if (Model.Ncr.NcrPhase == NcrPhase.ReCreated)
+                    {
+                        <a type="button" class="btn btn-primary ms-4" asp-action="Create" asp-controller="NcrQa">
+                            <i class="bi bi-pencil-square"></i> Create
                         </a>
                     }
                 </div>
