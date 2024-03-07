@@ -1,6 +1,11 @@
 ﻿@model HaverDevProject.Models.NcrQa
 
-<div id="contentToDownload">
+<div class="container-fluid mt-2">
+    <div class="row justify-content-center">
+        <div id="contentToDownload" class="col-md-10 mx-0">
+
+    @await Html.PartialAsync("~/Views/NCRDetailViews/_HeadingDetails.cshtml", Model)
+
     @if (Model.Ncr.NcrQa != null)
     {
         @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", Model.Ncr.NcrQa)
@@ -25,7 +30,10 @@
     {
         @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRReInspDetailsPartial.cshtml", Model.Ncr.NcrReInspect)
     }
+        </div>
+    </div>
 </div>
+
 
 @await Html.PartialAsync("~/Views/NCRDetailViews/_ActionButtons.cshtml", Model)
 

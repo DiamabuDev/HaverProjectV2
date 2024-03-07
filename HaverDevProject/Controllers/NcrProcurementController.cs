@@ -320,8 +320,6 @@ namespace HaverDevProject.Controllers
             ncr.NcrProcExpectedDate = DateTime.Now;
             ncr.NcrProcSupplierReturnReq = true;
             ncr.NcrStatus = true; //Active
-
-
             return View(ncr);
         }
 
