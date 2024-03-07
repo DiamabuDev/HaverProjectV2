@@ -241,25 +241,50 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: NcrReInspect/Create
-        public IActionResult Create(string ncrNumber)
+        public async Task<IActionResult> Create(string ncrNumber)
         {
-            //NcrReInspect ncrReInspect = _context.NcrReInspects
-            //    .Include(nr => nr.Ncr)
-            //    .FirstOrDefault(nr => nr.Ncr.NcrNumber == ncrNumber);
-
             int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
 
-            Ncr ncr = _context.Ncrs.FirstOrDefault(n => n.NcrId == ncrId);
+            var ncr = await _context.Ncrs
+                .Include(n => n.NcrQa)
+                        .ThenInclude(qa => qa.Item)
+                          .ThenInclude(item => item.Supplier)
+                      .Include(n => n.NcrQa)
+                        .ThenInclude(qa => qa.Item)
+                          .ThenInclude(item => item.ItemDefects)
+                            .ThenInclude(defect => defect.Defect)
+                      .Include(n => n.NcrQa)
+                        .ThenInclude(qa => qa.ItemDefectPhotos)
+                      .Include(n => n.NcrEng)
+                        .ThenInclude(eng => eng.EngDispositionType)
+                      .Include(n => n.NcrEng)
+                        .ThenInclude(eng => eng.Drawing)
+                      .Include(n => n.NcrEng)
+                        .ThenInclude(eng => eng.EngDefectPhotos)
+                      .Include(n => n.NcrOperation)
+                        .ThenInclude(op => op.OpDispositionType)
+                      .Include(n => n.NcrOperation)
+                        .ThenInclude(op => op.FollowUpType)
+                      .Include(n => n.NcrOperation)
+                        .ThenInclude(op => op.OpDefectPhotos)
+                      .Include(n => n.NcrProcurement)
+                        .ThenInclude(proc => proc.ProcDefectPhotos)
+                .FirstOrDefaultAsync(n => n.NcrId == ncrId);
 
             NcrReInspect ncrReInspect = new NcrReInspect
             {
+                Ncr = ncr,
                 NcrId = ncrId,
                 NcrReInspectCreationDate = DateTime.Now,
                 NcrNumber = ncrNumber
             };
-            
 
-            //ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncr.NcrId);
+            ViewBag.IsNCRQaView = false;
+            ViewBag.IsNCREngView = false;
+            ViewBag.IsNCROpView = false;
+            ViewBag.IsNCRProcView = false;
+            ViewBag.IsNCRReInspView = false;
+
             return View(ncrReInspect);
         }
 
@@ -292,7 +317,7 @@ namespace HaverDevProject.Controllers
                     _context.Ncrs.Update(ncrToUpdate);
                     await _context.SaveChangesAsync();
 
-                    TempData["SuccessMessage"] = "NCR created successfully!";
+                    TempData["SuccessMessage"] = "NCR closed successfully!";
                     int ncrReInspectId = ncrReInspect.NcrReInspectId;
                     return RedirectToAction("Details", new { id = ncrReInspectId });
                 }

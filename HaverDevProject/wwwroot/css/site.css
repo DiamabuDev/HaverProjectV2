@@ -339,6 +339,17 @@ body {
         color: #fff;
     }
 
+.custom-details-btn {
+    background-color: #063970;
+    color: #fff;
+}
+
+    .custom-details-btn:hover {
+        background-color: #063970;
+        color: #fff;
+        font-weight: bold;
+    }
+
     .big-col {
         width: 55%;
     }

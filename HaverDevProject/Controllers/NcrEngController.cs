@@ -312,8 +312,13 @@ namespace HaverDevProject.Controllers
 
             //ncr.NcrStatus = true; // Active
 
+            ViewBag.IsNCRQaView = false;
+            ViewBag.IsNCREngView = true;
+            ViewBag.IsNCROpView = false;
+            ViewBag.IsNCRProcView = false;
+            ViewBag.IsNCRReInspView = false;
+
             PopulateDropDownLists();
-            //ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName");
             return View(ncr);
         }
 
@@ -336,8 +341,6 @@ namespace HaverDevProject.Controllers
 
                     //PopulateDropDownLists();
                     await AddPictures(ncrEngDTO, Photos);
-
-
 
                     NcrEng ncrEng = new NcrEng
                     {
@@ -368,8 +371,6 @@ namespace HaverDevProject.Controllers
                     _context.Ncrs.Update(ncr);
                     await _context.SaveChangesAsync();
 
-
-
                     TempData["SuccessMessage"] = "NCR saved successfully!";
                     int ncrEngId = ncrEng.NcrEngId;
                     return RedirectToAction("Details", new { id = ncrEngId });
@@ -382,7 +383,7 @@ namespace HaverDevProject.Controllers
             }
             catch (DbUpdateException )
             {
-                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");         
+                ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");         
             }
 
             PopulateDropDownLists();
