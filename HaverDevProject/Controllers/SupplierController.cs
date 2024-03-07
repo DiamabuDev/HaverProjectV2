@@ -1,421 +1,495 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HaverDevProject.CustomControllers;
+using HaverDevProject.Data;
+using HaverDevProject.Models;
+using HaverDevProject.Utilities;
+using HaverDevProject.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using HaverDevProject.Data;
-using HaverDevProject.Models;
-using HaverDevProject.CustomControllers;
-using HaverDevProject.Utilities;
 using Microsoft.EntityFrameworkCore.Storage;
-using HaverDevProject.ViewModels;
-using Microsoft.AspNetCore.Http.HttpResults;
 using OfficeOpenXml;
-using SQLitePCL;
+
+//using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HaverDevProject.Controllers
 {
-    public class ItemController : ElephantController
+    public class SupplierController : ElephantController
     {
         private readonly HaverNiagaraContext _context;
 
-        public ItemController(HaverNiagaraContext context)
+        public SupplierController(HaverNiagaraContext context)
         {
             _context = context;
         }
 
-        // GET: Item
-        public async Task<IActionResult> Index(string SearchCode, int? SupplierID, int? DefectID, int? page, int? pageSizeID,
-            string actionButton, string sortDirection = "asc", string sortField = "Code")
+        // GET: Supplier
+        public async Task<IActionResult> Index(
+            string SearchCode,
+            string SearchContact,
+            int? page,
+            int? pageSizeID,
+            string actionButton,
+            string sortDirection = "asc",
+            string sortField = "Code",
+            string filter = "Active"
+        )
         {
             //List of sort options.
-            string[] sortOptions = new[] { "Code", "Item", "Description", "Supplier", "Defect" };
+            string[] sortOptions = new[] { "Code", "Name", "Email", "Contact" };
 
-            PopulateDropDownList();
+            var suppliers = _context.Suppliers.AsNoTracking();
 
-            var items = _context.Items
-                .Include(i => i.Supplier)
-                .Include(d => d.ItemDefects).ThenInclude(id => id.Defect)
-                .AsNoTracking();
+            //Filterig values
 
-            //Filterig values                       
+            if (!String.IsNullOrEmpty(filter))
+            {
+                if (filter == "All")
+                {
+                    ViewData["filterApplied:ButtonAll"] = "btn-primary";
+                    ViewData["filterApplied:ButtonActive"] = "btn-success custom-opacity";
+                    ViewData["filterApplied:ButtonClosed"] = "btn-danger custom-opacity";
+                }
+                else if (filter == "Active")
+                {
+                    suppliers = suppliers.Where(s => s.SupplierStatus == true);
+                    ViewData["filterApplied:ButtonActive"] = "btn-success";
+                    ViewData["filterApplied:ButtonAll"] = "btn-primary custom-opacity";
+                    ViewData["filterApplied:ButtonClosed"] = "btn-danger custom-opacity";
+                }
+                else //(filter == "Closed")
+                {
+                    suppliers = suppliers.Where(s => s.SupplierStatus == false);
+                    ViewData["filterApplied:ButtonClosed"] = "btn-danger";
+                    ViewData["filterApplied:ButtonAll"] = "btn-primary custom-opacity";
+                    ViewData["filterApplied:ButtonActive"] = "btn-success custom-opacity";
+                }
+            }
+
             if (!String.IsNullOrEmpty(SearchCode))
             {
-                items = items.Where(s => s.ItemName.ToUpper().Contains(SearchCode.ToUpper())
-                                        || s.Supplier.SupplierName.ToUpper().Contains(SearchCode.ToUpper()));
+                suppliers = suppliers.Where(s =>
+                    s.SupplierCode.ToUpper().Contains(SearchCode.ToUpper())
+                    || s.SupplierName.ToUpper().Contains(SearchCode.ToUpper())
+                );
             }
 
-            if (SupplierID.HasValue)
+            if (!String.IsNullOrEmpty(SearchContact))
             {
-                items = items.Where(s => s.Supplier.SupplierId == SupplierID);
+                suppliers = suppliers.Where(s =>
+                    s.SupplierContactName.ToUpper().Contains(SearchContact.ToUpper())
+                );
             }
-
-            if (DefectID.HasValue)
-            {
-                items = items.Where(d => d.ItemDefects.Any(id => id.DefectId == DefectID));
-            }
-
 
             //Sorting columns
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
             {
-                page = 1;//Reset page to start
+                page = 1; //Reset page to start
 
-                if (sortOptions.Contains(actionButton))//Change of sort is requested
+                if (sortOptions.Contains(actionButton)) //Change of sort is requested
                 {
                     if (actionButton == sortField) //Reverse order on same field
                     {
                         sortDirection = sortDirection == "asc" ? "desc" : "asc";
                     }
-                    sortField = actionButton;//Sort by the button clicked
+                    sortField = actionButton; //Sort by the button clicked
                 }
             }
-
             //Now we know which field and direction to sort by
             if (sortField == "Code")
             {
                 if (sortDirection == "asc")
                 {
-                    items = items
-                        .OrderBy(p => p.ItemNumber);
-                    ViewData["filterApplied:ItemNumber"] = "<i class='bi bi-sort-up'></i>";
-
+                    suppliers = suppliers.OrderBy(p => p.SupplierCode);
+                    ViewData["filterApplied:SupplierCode"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
-                    items = items
-                        .OrderByDescending(p => p.ItemNumber);
-                    ViewData["filterApplied:ItemNumber"] = "<i class='bi bi-sort-down'></i>";
+                    suppliers = suppliers.OrderByDescending(p => p.SupplierCode);
+                    ViewData["filterApplied:SupplierCode"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
-            else if (sortField == "Item")
+            else if (sortField == "Name")
             {
                 if (sortDirection == "asc")
                 {
-                    items = items
-                        .OrderBy(p => p.ItemName);
-                    ViewData["filterApplied:ItemName"] = "<i class='bi bi-sort-up'></i>";
+                    suppliers = suppliers.OrderBy(p => p.SupplierName);
+                    ViewData["filterApplied:SupplierName"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
-                    items = items
-                        .OrderByDescending(p => p.ItemName);
-                    ViewData["filterApplied:ItemName"] = "<i class='bi bi-sort-down'></i>";
+                    suppliers = suppliers.OrderByDescending(p => p.SupplierName);
+                    ViewData["filterApplied:SupplierName"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
-            else if (sortField == "Supplier")
+            else if (sortField == "Email") //Sorting by Email
             {
                 if (sortDirection == "asc")
                 {
-                    items = items
-                        .OrderBy(p => p.Supplier.SupplierName);
-                    ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-up'></i>";
-
+                    suppliers = suppliers.OrderBy(p => p.SupplierEmail);
+                    ViewData["filterApplied:SupplierEmail"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
-                    items = items
-                        .OrderByDescending(p => p.Supplier.SupplierName);
-                    ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-down'></i>";
+                    suppliers = suppliers.OrderByDescending(p => p.SupplierEmail);
+                    ViewData["filterApplied:SupplierEmail"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
-            else //Sorting by Item
+            else if (sortField == "Status")
             {
                 if (sortDirection == "asc")
                 {
-                    items = items
-                        .OrderBy(d => d.ItemDefects.Select(id => id.Defect.DefectName).FirstOrDefault()).AsNoTracking();
-                    ViewData["filterApplied:Defect"] = "<i class='bi bi-sort-up'></i>";
-
+                    suppliers = suppliers.OrderBy(s => s.SupplierStatus);
+                    ViewData["filterApplied:Status"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
-                    items = items
-                        .OrderByDescending(d => d.ItemDefects.Select(id => id.Defect.DefectName).FirstOrDefault()).AsNoTracking();
-                    ViewData["filterApplied:Defect"] = "<i class='bi bi-sort-down'></i>";
+                    suppliers = suppliers.OrderByDescending(s => s.SupplierStatus);
+                    ViewData["filterApplied:Status"] = "<i class='bi bi-sort-down'></i>";
                 }
-
             }
-
+            else //Sorting by Contact
+            {
+                if (sortDirection == "asc")
+                {
+                    suppliers = suppliers.OrderBy(s => s.SupplierContactName);
+                    ViewData["filterApplied:SupplierContact"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    suppliers = suppliers.OrderByDescending(s => s.SupplierContactName);
+                    ViewData["filterApplied:SupplierContact"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
             //Set sort for next time
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
 
+            ViewData["filter"] = filter;
+
+            //return View(await suppliers.ToListAsync());
+
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, ControllerName());
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
-            var pagedData = await PaginatedList<Item>.CreateAsync(items.AsNoTracking(), page ?? 1, pageSize);
+            var pagedData = await PaginatedList<Supplier>.CreateAsync(
+                suppliers.AsNoTracking(),
+                page ?? 1,
+                pageSize
+            );
 
             return View(pagedData);
-
         }
 
-        // GET: Item/Details/5
+        // GET: Supplier/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Items == null)
+            if (id == null || _context.Suppliers == null)
             {
                 return NotFound();
             }
 
-            var item = await _context.Items
-                .Include(i => i.Supplier)
-                .Include(d => d.ItemDefects).ThenInclude(id => id.Defect)
-                .FirstOrDefaultAsync(m => m.ItemId == id);
-
-            if (item == null)
+            var supplier = await _context
+                .Suppliers.Include(s => s.Items)
+                .ThenInclude(s => s.NcrQas)
+                .ThenInclude(s => s.Ncr)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.SupplierId == id);
+            if (supplier == null)
             {
                 return NotFound();
             }
 
-            return View(item);
+            var supplierViewModel = new SupplierDetailsViewModel
+            {
+                Supplier = supplier,
+                RelatedNCRs =
+                    supplier.Items.FirstOrDefault()?.NcrQas?.Select(nqa => nqa.Ncr).ToList()
+                    ?? new List<Ncr>()
+            };
+
+            return View(supplierViewModel);
         }
 
-        // GET: Item/Create
+        // GET: Supplier/Create
         public IActionResult Create()
         {
-            PopulateDropDownList();
-            Item item = new Item();
-            PopulateAssignedDefectCheckboxes(item);
             return View();
         }
 
-        // POST: Item/Create
+        // POST: Supplier/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ItemId,ItemNumber,ItemName,ItemDescription,SupplierId")] Item item, string[] selectedOptions)
+        public async Task<IActionResult> Create(
+            [Bind("SupplierId,SupplierCode,SupplierName,SupplierContactName,SupplierEmail")]
+                Supplier supplier
+        )
         {
             try
             {
-                if (selectedOptions != null)
-                {
-                    foreach (var condition in selectedOptions)
-                    {
-                        var defectToAdd = new ItemDefect { ItemId = item.ItemId, DefectId = int.Parse(condition) };
-                        item.ItemDefects.Add(defectToAdd);
-                    }
-                }
-
                 if (ModelState.IsValid)
                 {
-                    _context.Add(item);
+                    _context.Add(supplier);
                     await _context.SaveChangesAsync();
-                    TempData["SuccessMessage"] = "Item created successfully!";
-                    int newItemId = item.ItemId;
-                    return RedirectToAction("Details", new { id = newItemId });
+                    TempData["SuccessMessage"] = "Supplier created successfully!";
+                    int newSupplierId = supplier.SupplierId;
+                    return RedirectToAction("Details", new { id = newSupplierId });
                 }
             }
             catch (RetryLimitExceededException)
             {
-                ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
+                ModelState.AddModelError(
+                    "",
+                    "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator."
+                );
             }
             catch (DbUpdateException dex)
             {
                 if (dex.GetBaseException().Message.Contains("UNIQUE"))
                 {
-                    ModelState.AddModelError("ItemNumber", "Unable to save changes. Remember, you cannot have duplicate SAP Number.");
+                    ModelState.AddModelError(
+                        "SupplierCode",
+                        "Unable to save changes. Remember, you cannot have duplicate Supplier Code."
+                    );
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                    ModelState.AddModelError(
+                        "",
+                        "Unable to save changes. Try again, and if the problem persists see your system administrator."
+                    );
                 }
             }
-            ViewBag.SupplierId = new SelectList(_context.Suppliers, "SupplierId", "SupplierName", item.SupplierId);
-            return View(item);
+
+            return View(supplier);
         }
 
-        // GET: Item/Edit/5
+        // GET: Supplier/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Items == null)
+            if (id == null || _context.Suppliers == null)
             {
                 return NotFound();
             }
-            var item = await _context.Items
-                .Include(d => d.ItemDefects).ThenInclude(id => id.Defect)
-                .Include(i => i.Supplier)
-                .FirstOrDefaultAsync(d => d.ItemId == id);
 
-            if (item == null)
+            var supplier = await _context.Suppliers.FindAsync(id);
+            if (supplier == null)
             {
                 return NotFound();
             }
-            PopulateAssignedDefectCheckboxes(item);
-            ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierName", item.SupplierId);
-            return View(item);
+            return View(supplier);
         }
 
-        // POST: Item/Edit/5
+        // POST: Supplier/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, string[] selectedOptions)
+        public async Task<IActionResult> Edit(
+            int id,
+            [Bind(
+                "SupplierId,SupplierCode,SupplierName,SupplierContactName,SupplierEmail,SupplierStatus"
+            )]
+                Supplier supplier
+        )
         {
-            var itemToUpdate = await _context.Items
-                .Include(d => d.ItemDefects).ThenInclude(id => id.Defect)
-                .Include(i => i.Supplier)
-                .FirstOrDefaultAsync(i => i.ItemId == id);
-
-            if (itemToUpdate == null)
+            if (id != supplier.SupplierId)
             {
                 return NotFound();
             }
 
-            UpdateDefectItemsCheckboxes(selectedOptions, itemToUpdate);
-
-            if (await TryUpdateModelAsync<Item>(itemToUpdate, "",
-                    i => i.ItemNumber, i => i.ItemName, i => i.ItemDescription))
+            if (ModelState.IsValid)
             {
                 try
                 {
+                    _context.Update(supplier);
                     await _context.SaveChangesAsync();
-                    TempData["SuccessMessage"] = "Item updated successfully!";
-                    int updateItemId = itemToUpdate.ItemId;
-                    return RedirectToAction("Details", new { id = updateItemId });
+                    TempData["SuccessMessage"] = "Supplier updated successfully!";
+                    int updateSupplierId = supplier.SupplierId;
+                    return RedirectToAction("Details", new { id = updateSupplierId });
                 }
                 catch (RetryLimitExceededException)
                 {
-                    ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
+                    ModelState.AddModelError(
+                        "",
+                        "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator."
+                    );
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!SupplierExists(supplier.SupplierId))
+                    {
+                        ModelState.AddModelError(
+                            "",
+                            "Unable to save changes. The Supplier was deleted by another user."
+                        );
+                    }
                 }
                 catch (DbUpdateException dex)
                 {
                     if (dex.GetBaseException().Message.Contains("UNIQUE"))
                     {
-                        ModelState.AddModelError("ItemNumber", "Unable to save changes. Remember, you cannot have duplicate SAP Number.");
+                        ModelState.AddModelError(
+                            "SupplierCode",
+                            "Unable to save changes. Remember, you cannot have duplicate Supplier Code."
+                        );
                     }
                     else
                     {
-                        ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                        ModelState.AddModelError(
+                            "",
+                            "Unable to save changes. Try again, and if the problem persists see your system administrator."
+                        );
                     }
                 }
-
             }
-            PopulateAssignedDefectCheckboxes(itemToUpdate);
-            ViewBag.SupplierId = new SelectList(_context.Suppliers, "SupplierId", "SupplierName", itemToUpdate.SupplierId);
-            return View(itemToUpdate);
+            return View(supplier);
         }
 
-        // GET: Item/Delete/5
+        // GET: Supplier/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Items == null)
+            if (id == null || _context.Suppliers == null)
             {
                 return NotFound();
             }
 
-            var item = await _context.Items
-                .Include(i => i.Supplier)
-                .FirstOrDefaultAsync(m => m.ItemId == id);
-
-            if (item == null)
+            var supplier = await _context.Suppliers.FirstOrDefaultAsync(m => m.SupplierId == id);
+            if (supplier == null)
             {
                 return NotFound();
             }
 
-            return View(item);
+            return View(supplier);
         }
 
-        // POST: Item/Delete/5
+        // POST: Supplier/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Items == null)
+            if (_context.Suppliers == null)
             {
-                return Problem("Entity set 'HaverNiagaraContext.Items'  is null.");
+                return Problem("There are no Suppliers to delete");
             }
-            var item = await _context.Items.FindAsync(id);
-            if (item != null)
+            var supplier = await _context.Suppliers.FindAsync(id);
+
+            try
             {
-                _context.Items.Remove(item);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private SelectList SupplierSelectList(int? selectedId)
-        {
-            return new SelectList(_context.Suppliers.OrderBy(s => s.SupplierName), "SupplierId", "SupplierName", selectedId);
-        }
-        private SelectList DefectSelectList(int? selectedId)
-        {
-            return new SelectList(_context.Defects.OrderBy(i => i.DefectName).Select(i => new { i.DefectId, i.DefectName })
-            .Distinct(), "DefectId", "DefectName", selectedId);
-        }
-        private void PopulateDropDownList(Supplier supplier = null, Defect defect = null)
-        {
-            ViewData["SupplierID"] = SupplierSelectList(supplier?.SupplierId);
-            ViewData["DefectID"] = DefectSelectList(defect?.DefectId);
-        }
-
-        private void PopulateAssignedDefectCheckboxes(Item item)
-        {
-            var allDefects = _context.Defects
-                .Select(d => new { d.DefectId, d.DefectName })
-                .Distinct();
-
-            var currentItemDefectIDs = new HashSet<int>(item.ItemDefects.Select(id => id.DefectId)); //checar
-            var checkBoxes = new List<CheckOptionVM>();
-            foreach (var defect in allDefects)
-            {
-                checkBoxes.Add(new CheckOptionVM
+                if (supplier != null)
                 {
-                    ID = defect.DefectId,
-                    DisplayText = defect.DefectName,
-                    Assigned = currentItemDefectIDs.Contains(defect.DefectId)
-                });
-            }
-            ViewData["DefectOptions"] = checkBoxes;
-        }
+                    _context.Suppliers.Remove(supplier);
+                }
 
-        private void UpdateDefectItemsCheckboxes(string[] selectedDefects, Item itemToUpdate)
-        {
-            if (selectedDefects == null)
-            {
-                itemToUpdate.ItemDefects = new List<ItemDefect>();
-                return;
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-
-            var selectedDefectsHS = new HashSet<string>(selectedDefects);
-            var defectItemsHS = new HashSet<int>(itemToUpdate.ItemDefects.Select(id => id.DefectId));
-            foreach (var defect in _context.Defects)
+            catch (DbUpdateException dex)
             {
-                if (selectedDefectsHS.Contains(defect.DefectId.ToString()))
+                if (dex.GetBaseException().Message.Contains("FOREIGN KEY constraint failed"))
                 {
-                    if (!defectItemsHS.Contains(defect.DefectId))
-                    {
-                        itemToUpdate.ItemDefects.Add(new ItemDefect { ItemId = itemToUpdate.ItemId, DefectId = defect.DefectId });
-                    }
+                    ModelState.AddModelError(
+                        "",
+                        "Unable to Delete Supplier. Remember, you cannot delete a Supplier that has a NCR in the system."
+                    );
                 }
                 else
                 {
-                    if (defectItemsHS.Contains(defect.DefectId))
-                    {
-                        ItemDefect itemDefectToRemove = itemToUpdate.ItemDefects.FirstOrDefault(id => id.DefectId == defect.DefectId);
-                        if (itemDefectToRemove != null) _context.Remove(itemDefectToRemove);
-                    }
+                    ModelState.AddModelError(
+                        "",
+                        "Unable to save changes. Try again, and if the problem persists see your system administrator."
+                    );
                 }
             }
+            return View(supplier);
+        }
+
+        public async Task<IActionResult> SupplierReport(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var ncrData = await _context
+                .Ncrs.Include(n => n.NcrQa)
+                .ThenInclude(qa => qa.Item)
+                .ThenInclude(i => i.Supplier)
+                .Include(n => n.NcrQa)
+                .ThenInclude(qa => qa.Item)
+                .ThenInclude(i => i.ItemDefects)
+                .ThenInclude(i => i.Defect)
+                .Include(n => n.NcrEng)
+                .ThenInclude(e => e.EngDispositionType)
+                .Include(n => n.NcrOperation)
+                .ThenInclude(o => o.FollowUpType)
+                .FirstOrDefaultAsync(n => n.NcrId == id);
+
+            if (ncrData == null)
+            {
+                return NotFound();
+            }
+
+            NcrSupplierReportDTO reportDto = new NcrSupplierReportDTO
+            {
+                NcrNumber = ncrData.NcrNumber,
+                NcrStatus = ncrData.NcrStatus,
+                SupplierName = ncrData.NcrQa?.Item?.Supplier?.SupplierName ?? "Not Available",
+                NcrQaOrderNumber = ncrData.NcrQa?.NcrQaOrderNumber ?? "Not Available",
+                ItemSAP = ncrData.NcrQa?.Item?.ItemNumber ?? 0,
+                ItemName = ncrData.NcrQa?.Item?.ItemName ?? "Not Available",
+                NcrQaQuanReceived = ncrData.NcrQa?.NcrQaQuanReceived ?? 0,
+                NcrQaQuanDefective = ncrData.NcrQa?.NcrQaQuanDefective ?? 0,
+                NcrQaDefect = ncrData.NcrQa?.Defect.DefectName ?? "Not Available",
+                NcrQaDescriptionOfDefect =
+                    ncrData.NcrQa?.NcrQaDescriptionOfDefect ?? "Not Available",
+                EngDispositionType =
+                    ncrData.NcrEng?.EngDispositionType?.EngDispositionTypeName ?? "Not Available",
+                EngDispositionDescription =
+                    ncrData.NcrEng?.NcrEngDispositionDescription ?? "Not Available",
+                OpDispositionType =
+                    ncrData.NcrOperation?.OpDispositionType?.OpDispositionTypeName
+                    ?? "Not Available",
+                OperationDescription =
+                    ncrData.NcrOperation?.NcrPurchasingDescription ?? "Not Available",
+            };
+
+            foreach (var itemDefect in ncrData.NcrQa.Item.ItemDefects)
+            {
+                if (itemDefect.Defect != null && itemDefect.Defect.DefectName != null)
+                {
+                    reportDto.DefectNames.Add(itemDefect.Defect.DefectName);
+                }
+                else
+                {
+                    reportDto.DefectNames.Add("No Defect Available");
+                }
+            }
+
+            return View("SupplierReport", reportDto);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Upload(IFormFile file)
         {
-            if (file.ContentType != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            if (
+                file.ContentType
+                != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
             {
-                TempData["ErrorMessage"] = "Invalid file type. Please upload an Excel file (.xlsx). \n";
+                TempData["ErrorMessage"] =
+                    "Invalid file type. Please upload an Excel file (.xlsx).";
                 return RedirectToAction(nameof(Index));
             }
 
-            var errorMessages = new List<string>();
-            int successfulRows = 0;
+            var errorMessages = new List<string>(); // Initialize a list to store error messages
+            int expectedSuccessRows = 0;
+            var validSuppliers = new List<Supplier>();
 
             using (var stream = new MemoryStream())
             {
@@ -424,127 +498,106 @@ namespace HaverDevProject.Controllers
                 {
                     ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
                     int rowCount = worksheet.Dimension.Rows;
+                    expectedSuccessRows = rowCount - 1;
 
                     for (int row = 2; row <= rowCount; row++)
                     {
-                        var transaction = _context.Database.BeginTransaction(); // Start transaction for each row
-                        try
+
+                        var supplierCodeStr = worksheet.Cells[row, 1].Value?.ToString().Trim();
+                        var supplierName = worksheet.Cells[row, 2].Value?.ToString().Trim();
+                        var contactName = worksheet.Cells[row, 3].Value?.ToString().Trim();
+                        var email = worksheet.Cells[row, 4].Value?.ToString().Trim();
+
+                        // Supplier Code and Supplier Name are required
+                        if (string.IsNullOrWhiteSpace(supplierCodeStr))
                         {
-                            var itemNumber = worksheet.Cells[row, 1].Value?.ToString().Trim();
-                            var itemName = worksheet.Cells[row, 2].Value?.ToString().Trim();
-                            var supplierCode = worksheet.Cells[row, 3].Value?.ToString().Trim();
-                            var supplierName = worksheet.Cells[row, 4].Value?.ToString().Trim();
-                            var defectTypeName = worksheet.Cells[row, 5].Value?.ToString().Trim();
+                            errorMessages.Add($"Row {row}: Supplier Code is required.");
+                        }
 
-                            if (string.IsNullOrEmpty(itemNumber))
-                            {
-                                errorMessages.Add($"Row {row}: Item Number is required.");
-                            }
+                        if (string.IsNullOrWhiteSpace(supplierName))
+                        {
+                            errorMessages.Add($"Row {row}: Supplier Name is required.");
+                        }
 
-                            if (string.IsNullOrEmpty(itemName))
-                            {
-                                errorMessages.Add($"Row {row}: Item Name is required.");
-                            }
+                        // Check if Supplier Code is a number
+                        if (!int.TryParse(supplierCodeStr, out int supplierCode))
+                        {
+                            errorMessages.Add($"Row {row}: Supplier Code must be a number.");
+                        }
 
-                            var existingItem = await _context.Items.FirstOrDefaultAsync(i => i.ItemNumber.ToString() == itemNumber);
-                            if (existingItem != null)
-                            {
-                                errorMessages.Add($"Row {row}: Item with Item Number {itemNumber} already exists.");
-                            }
+                        var existingSupplier = await _context
+                            .Suppliers.AsNoTracking() // Use AsNoTracking for read-only query
+                            .FirstOrDefaultAsync(s =>
+                                s.SupplierCode == supplierCodeStr
+                                && s.SupplierName == supplierName
+                            );
 
-                            int supplierId = 0;
-                            if (!string.IsNullOrEmpty(supplierCode) && !string.IsNullOrEmpty(supplierName))
-                            {
-                                var supplier = await _context.Suppliers
-                                                              .FirstOrDefaultAsync(s => s.SupplierCode == supplierCode && s.SupplierName == supplierName);
-                                if (supplier == null)
-                                {
-                                    supplier = new Supplier { SupplierCode = supplierCode, SupplierName = supplierName };
-                                    _context.Suppliers.Add(supplier);
-                                    await _context.SaveChangesAsync(); // Ensure SupplierId is generated
-                                }
-                                supplierId = supplier.SupplierId;
-                            }
-                            else if (!string.IsNullOrEmpty(supplierCode) || !string.IsNullOrEmpty(supplierName))
-                            {
-                                errorMessages.Add($"Both Supplier Code and Supplier Name are required.");
-                            }
-                            else
-                            {
-                                // Handle "NO SUPPLIER PROVIDED" case
-                                var defaultSupplier = await _context.Suppliers
-                                                                     .FirstOrDefaultAsync(s => s.SupplierName == "NO SUPPLIER PROVIDED");
-                                if (defaultSupplier == null)
-                                {
-                                    defaultSupplier = new Supplier { SupplierName = "NO SUPPLIER PROVIDED" };
-                                    _context.Suppliers.Add(defaultSupplier);
-                                    await _context.SaveChangesAsync();
-                                }
-                                supplierId = defaultSupplier.SupplierId;
-                            }
+                        if (existingSupplier != null)
+                        {
+                            errorMessages.Add(
+                                $"Row {row}: Supplier with Supplier Code {supplierCodeStr} and Supplier Name {supplierName} already exists."
+                            );
+                        }
 
-                            var item = new Item
+                        if (!errorMessages.Any())
+                        {
+                            var newSupplier = new Supplier
                             {
-                                ItemNumber = Int32.Parse(itemNumber),
-                                ItemName = itemName,
-                                SupplierId = supplierId
+                                SupplierCode = supplierCodeStr,
+                                SupplierName = supplierName,
+                                SupplierContactName = string.IsNullOrWhiteSpace(contactName)
+                                    ? null
+                                    : contactName,
+                                SupplierEmail = string.IsNullOrWhiteSpace(email) ? null : email
                             };
 
-                            _context.Items.Add(item);
-                            await _context.SaveChangesAsync();
-
-                            if (!string.IsNullOrEmpty(defectTypeName))
-                            {
-                                var defect = await _context.Defects.FirstOrDefaultAsync(d => d.DefectName == defectTypeName);
-                                if (defect == null)
-                                {
-                                    defect = new Defect { DefectName = defectTypeName };
-                                    _context.Defects.Add(defect);
-                                    await _context.SaveChangesAsync();
-                                }
-
-                                var itemDefect = new ItemDefect
-                                {
-                                    ItemId = item.ItemId,
-                                    DefectId = defect.DefectId
-                                };
-
-                                _context.ItemDefects.Add(itemDefect);
-                                await _context.SaveChangesAsync();
-                            }
-
-                            transaction.Commit(); // Commit transaction if all operations succeed
-                            successfulRows++;
-                        }
-                        catch (Exception)
-                        {
-                            transaction.Rollback(); // Rollback transaction on error
+                            validSuppliers.Add(newSupplier);
                         }
                     }
                 }
             }
 
-            if (errorMessages.Any())
+            if (validSuppliers.Count != expectedSuccessRows)
             {
-                TempData["ErrorMessage"] = $"Fix error(s) and try to upload again: {string.Join(" ", errorMessages)}";
+                TempData["ErrorMessage"] =
+                    $"Fix error(s) and try to upload again: {string.Join(" ", errorMessages)}";
             }
             else
             {
-                TempData["SuccessMessage"] = $"File uploaded successfully. {successfulRows} row(s) were added.";
+                foreach (var item in validSuppliers)
+                {
+                    var transaction = _context.Database.BeginTransaction(); // Start transaction for each row
+
+                    try
+                    {
+                        _context.Suppliers.Add(item);
+                        await _context.SaveChangesAsync();
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        break;
+                    }
+                }
+
+                TempData["SuccessMessage"] =
+                    $"File uploaded successfully. {expectedSuccessRows} rows added.";
 
             }
+
             return RedirectToAction(nameof(Index));
         }
-
 
         public IActionResult Upload()
         {
             return View("UploadExcel");
         }
 
-        private bool ItemExists(int id)
+        private bool SupplierExists(int id)
         {
-            return _context.Items.Any(e => e.ItemId == id);
+            return _context.Suppliers.Any(e => e.SupplierId == id);
         }
     }
 }
