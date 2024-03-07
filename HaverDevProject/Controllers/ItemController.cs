@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using HaverDevProject.ViewModels;
 using Microsoft.AspNetCore.Http.HttpResults;
 using OfficeOpenXml;
+using SQLitePCL;
 
 namespace HaverDevProject.Controllers
 {
@@ -138,7 +139,7 @@ namespace HaverDevProject.Controllers
                 }
 
             }
-            
+
             //Set sort for next time
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
@@ -236,7 +237,7 @@ namespace HaverDevProject.Controllers
             }
             var item = await _context.Items
                 .Include(d => d.ItemDefects).ThenInclude(id => id.Defect)
-                .Include(i => i.Supplier)                
+                .Include(i => i.Supplier)
                 .FirstOrDefaultAsync(d => d.ItemId == id);
 
             if (item == null)
@@ -256,8 +257,8 @@ namespace HaverDevProject.Controllers
         public async Task<IActionResult> Edit(int id, string[] selectedOptions)
         {
             var itemToUpdate = await _context.Items
-                .Include(d => d.ItemDefects).ThenInclude(id =>id.Defect)
-                .Include (i => i.Supplier)
+                .Include(d => d.ItemDefects).ThenInclude(id => id.Defect)
+                .Include(i => i.Supplier)
                 .FirstOrDefaultAsync(i => i.ItemId == id);
 
             if (itemToUpdate == null)
@@ -333,7 +334,7 @@ namespace HaverDevProject.Controllers
             {
                 _context.Items.Remove(item);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -412,7 +413,9 @@ namespace HaverDevProject.Controllers
                 TempData["ErrorMessage"] = "Invalid file type. Please upload an Excel file (.xlsx). \n";
                 return RedirectToAction(nameof(Index));
             }
+
             var errorMessages = new List<string>();
+            int successfulRows = 0;
 
             using (var stream = new MemoryStream())
             {
@@ -433,15 +436,20 @@ namespace HaverDevProject.Controllers
                             var supplierName = worksheet.Cells[row, 4].Value?.ToString().Trim();
                             var defectTypeName = worksheet.Cells[row, 5].Value?.ToString().Trim();
 
-                            if (string.IsNullOrEmpty(itemNumber) || string.IsNullOrEmpty(itemName))
+                            if (string.IsNullOrEmpty(itemNumber))
                             {
-                                errorMessages.Add($"Item Number and Item Name are required. \n");
+                                errorMessages.Add($"Row {row}: Item Number is required.");
+                            }
+
+                            if (string.IsNullOrEmpty(itemName))
+                            {
+                                errorMessages.Add($"Row {row}: Item Name is required.");
                             }
 
                             var existingItem = await _context.Items.FirstOrDefaultAsync(i => i.ItemNumber.ToString() == itemNumber);
                             if (existingItem != null)
                             {
-                                errorMessages.Add($"Item with Item Number {itemNumber} already exists. \n");
+                                errorMessages.Add($"Row {row}: Item with Item Number {itemNumber} already exists.");
                             }
 
                             int supplierId = 0;
@@ -459,7 +467,7 @@ namespace HaverDevProject.Controllers
                             }
                             else if (!string.IsNullOrEmpty(supplierCode) || !string.IsNullOrEmpty(supplierName))
                             {
-                                errorMessages.Add($"Both Supplier Code and Supplier Name are required. \n");
+                                errorMessages.Add($"Both Supplier Code and Supplier Name are required.");
                             }
                             else
                             {
@@ -506,11 +514,11 @@ namespace HaverDevProject.Controllers
                             }
 
                             transaction.Commit(); // Commit transaction if all operations succeed
+                            successfulRows++;
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
                             transaction.Rollback(); // Rollback transaction on error
-                            errorMessages.Add($"Row {row}: {ex.Message}");
                         }
                     }
                 }
@@ -522,11 +530,12 @@ namespace HaverDevProject.Controllers
             }
             else
             {
-                TempData["SuccessMessage"] = "File uploaded successfully.";
+                TempData["SuccessMessage"] = $"File uploaded successfully. {successfulRows} row(s) were added.";
 
             }
             return RedirectToAction(nameof(Index));
         }
+
 
         public IActionResult Upload()
         {
@@ -535,7 +544,7 @@ namespace HaverDevProject.Controllers
 
         private bool ItemExists(int id)
         {
-          return _context.Items.Any(e => e.ItemId == id);
+            return _context.Items.Any(e => e.ItemId == id);
         }
     }
 }
