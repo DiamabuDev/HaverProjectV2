@@ -404,7 +404,7 @@ namespace HaverDevProject.Controllers
                           .Include(ne => ne.Drawing)
                         .Include(n => n.EngDefectPhotos)
                         .AsNoTracking()
-                        .FirstOrDefaultAsync(ne => ne.NcrId == id);
+                        .FirstOrDefaultAsync(ne => ne.NcrEngId == id);
             //var ncrEng = await _context.NcrEngs.FindAsync(id);
 
             if (ncrEng == null)
@@ -447,11 +447,12 @@ namespace HaverDevProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, NcrEngDTO ncrEngDTO, List<IFormFile> Photos)
         {
-            ncrEngDTO.NcrId = id;
-            if (id != ncrEngDTO.NcrId)
-            {
-                return NotFound();
-            }
+
+            //ncrEngDTO.NcrEngId = id;
+            //if (id != ncrEngDTO.NcrEngId)
+            //{
+            //    return NotFound();
+            //}
 
             if (ModelState.IsValid)
             {
@@ -460,18 +461,17 @@ namespace HaverDevProject.Controllers
                 {
                     var ncrEng = await _context.NcrEngs
                         .Include(ne => ne.Drawing)
-                        .FirstOrDefaultAsync(ne => ne.NcrId == id);
+                        .FirstOrDefaultAsync(ne => ne.NcrEngId == id);
 
                     //ncrEng.NcrEngId = ncrEngDTO.NcrEngId;
-                    //ncrEng.Ncr.NcrNumber = ncrEngDTO.NcrNumber;
-                    //ncrEng.Ncr.NcrStatus = ncrEngDTO.NcrStatus;
+
                     ncrEng.NcrEngCustomerNotification = ncrEngDTO.NcrEngCustomerNotification;
                     ncrEng.NcrEngDispositionDescription = ncrEngDTO.NcrEngDispositionDescription;
                     ncrEng.NcrEngCreationDate = ncrEngDTO.NcrEngCreationDate;
                     ncrEng.NcrEngStatusFlag = ncrEngDTO.NcrEngStatusFlag;
                     ncrEng.NcrEngUserId = ncrEngDTO.NcrEngUserId;
                     ncrEng.EngDispositionTypeId = ncrEngDTO.EngDispositionTypeId;
-                    ncrEng.NcrId = ncrEngDTO.NcrId;
+                   // ncrEng.NcrId = ncrEngDTO.NcrId;
                     ncrEng.DrawingId = ncrEngDTO.DrawingId;
                     ncrEng.DrawingRequireUpdating = ncrEngDTO.DrawingRequireUpdating;
                     ncrEng.DrawingOriginalRevNumber = ncrEngDTO.DrawingOriginalRevNumber;
