@@ -8,7 +8,8 @@
     <h1><i class="bi bi-caret-right-fill"></i>Quality Inspector</h1>
 </div>
 
-<div class="col-md-8 col-10 mx-auto">    
+<div class="col-md-8 col-10 mx-auto">   
+    <partial name="_addSupplierModal" />
     <form asp-action="Edit" method="post" enctype="multipart/form-data">
         <input type="hidden" asp-for="NcrQaId" />
         <input type="hidden" asp-for="NcrId" />
@@ -43,7 +44,7 @@
                 <div class="row">       
                     <div class="form-group">
                         <label class="pb-3">
-                            <strong>Identify Process Applicable:</strong> 
+                            <strong>Identify Process Applicable</strong> 
                             <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Supplier or Rec-Insp)</small> 
                             <span class="fw-bold text-danger">*</span></label>
                         <div class="text-center">
@@ -62,7 +63,7 @@
                     <div class="col-6">
                         <div class="form-group">
                             <label asp-for="NcrQaOrderNumber" class="control-label">
-                                <strong>PO or Prod. No.: </strong>
+                                <strong>PO or Prod. No. </strong>
                                 <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Enter a valid value">(e.g. 4500730930)</small> 
                                 <span class="fw-bold text-danger">*</span></label>
                             <input asp-for="NcrQaOrderNumber" class="form-control" type="number" step="1" />
@@ -84,7 +85,7 @@
                     <div class="col-6">
                         <div class="form-group">
                             <label asp-for="NcrQaQuanReceived" class="control-label">
-                                <strong>Quantity Received: </strong>
+                                <strong>Quantity Received </strong>
                                 <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Enter a numeric value">(e.g. 150)</small> 
                                 <span class="fw-bold text-danger">*</span></label>
                             <input asp-for="NcrQaQuanReceived" class="form-control" />
@@ -94,7 +95,7 @@
                     <div class="col-6">
                         <div class="form-group">
                             <label asp-for="NcrQaQuanDefective" class="control-label">
-                                <strong>Quantity Defective:</strong> 
+                                <strong>Quantity Defective</strong> 
                                 <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Enter a numeric value">(e.g. 25)</small> 
                                 <span class="fw-bold text-danger">*</span></label>
                             <input asp-for="NcrQaQuanDefective" class="form-control" />
@@ -105,16 +106,35 @@
                 <div class="row">     
                     <div class="form-group">
                         <label class="control-label">
-                            <strong>Supplier: Supplier: </strong>
+                            <strong>Supplier </strong>
                             <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Lawrence Sintered Metals.)</small> 
                             <span class="fw-bold text-danger">*</span></label>
-                        <select class="form-control" id="SupplierId" name="SupplierId" asp-items="ViewBag.SupplierId" asp-for="SupplierId" required>
-                            <option value="0">Select Supplier</option>
-                        </select>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                            <button class="btn btn-outline-secondary" id="nowAddSupplier" data-bs-toggle="modal" data-bs-target="#addSupplierModal" type="button">&#x2795;</button>
+                            </div>
+                            <select class="form-control" id="SupplierId" name="SupplierId" asp-items="ViewBag.SupplierId" asp-for="SupplierId" required>
+                                <option value="0">Select Supplier</option>
+                            </select>
+                        </div>
                     </div>
+
+                    @* <div class="form-group">
+                        <label class="control-label">Supplier</label>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary" id="nowAddMedicalTrial" data-bs-toggle="modal" data-bs-target="#addMedicalTrialModal" type="button">&#x2795;</button>
+                            </div>
+                            <select asp-for="SupplierId" class="form-control" asp-items="ViewBag.SupplierId">
+                                <option value="">None</option>
+                            </select>
+                        </div>
+                    </div> *@
+
+
                     <div class="form-group">
                         <label asp-for="ItemId" class="control-label">
-                            <strong>Item: </strong>
+                            <strong>Item </strong>
                             <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Panel.)</small> <span class="fw-bold text-danger">*</span></label>
                         <select asp-for="ItemId" id="ItemId" class="form-control" asp-items="ViewBag.ItemId" required>
                             <option value="0">Select a Supplier First</option>
@@ -123,7 +143,7 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="DefectId" class="control-label">
-                            <strong>Defect: </strong>
+                            <strong>Defect </strong>
                             <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Surface to house internal components.)</small> 
                             <span class="fw-bold text-danger">*</span></label>
                         <select asp-for="DefectId" class="form-control" id="DefectId" name="DefectId" asp-items="ViewBag.DefectId">
@@ -133,7 +153,7 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="NcrQaDescriptionOfDefect" class="control-label">
-                            <strong>Description of Defect: </strong>
+                            <strong>Description of Defect </strong>
                             <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Enter the required description">(e.g. Dimensions outside of control parameters.)</small> 
                             <span class="fw-bold text-danger">*</span></label>
                         <textarea asp-for="NcrQaDescriptionOfDefect" class="form-control"></textarea>
@@ -141,7 +161,7 @@
                     </div>
                    
                     <div class="form-group">
-                        <label class="control-label"> <strong>Current Photos:</strong></label>
+                        <label class="control-label"> <strong>Current Photos</strong></label>
                         <div class="ml-md-3">
                             @{
                                 int fileCount = Model.ItemDefectPhotos.Count;
@@ -172,13 +192,13 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label custom-file-label"><strong>Upload Photos:</strong></label>
+                        <label class="control-label custom-file-label"><strong>Upload Photos</strong></label>
                         <input type="file" class="form-control" name="Photos" multiple="multiple" />
                     </div>
 
                     <div class="form-group">
                         <label asp-for="NcrQaDefectVideo" class="control-label">
-                            <strong>Video Links: </strong>
+                            <strong>Video Links </strong>
                             <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Add multiple video links separated by a comma">(e.g. https://haverniagara.com, https://www.google.ca)</small>
                         </label>
                         <input asp-for="NcrQaDefectVideo" class="form-control" />
@@ -190,7 +210,7 @@
                     <div class="col-6">                                           
                         <div class="form-group">
                             <label class="pb-3">
-                                <strong>Item marked Nonconforming: </strong>
+                                <strong>Item marked Nonconforming </strong>
                                 <span class="fw-bold text-danger">*</span></label>
                             <div class="text-center">
                                 <div class="form-check form-check-inline">
@@ -238,7 +258,7 @@
             <div class="card-footer">
                 <div class="form-group d-flex justify-content-end mt-2">
                     <div>
-                        <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn btn-primary ">
+                        <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn custom-btn-color ">
                             <i class="bi bi-arrow-90deg-left"></i> Back to NCR List
                         </button>
                     </div>

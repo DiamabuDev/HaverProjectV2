@@ -587,9 +587,13 @@ namespace HaverDevProject.Controllers
                 ViewData["SupplierId"] = SupplierSelectCreateList(null);
                 ViewData["ItemId"] = ItemSelectList(null, null);
             }
-        }  
-        
+        }
 
+        [HttpGet]
+        public JsonResult GetSuppliers(int? id)
+        {
+            return Json(SupplierSelectCreateList(id));
+        }
 
 
         [HttpGet]
