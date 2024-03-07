@@ -216,7 +216,7 @@
                 <div class="form-group d-flex justify-content-end mt-2">
                     <div>
                         <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn custom-btn-color ">
-                            <i class="bi bi-arrow-90deg-left"></i> Back to NCR List
+                            <i class="bi bi-arrow-90deg-left"></i> Back to NCR Log
                         </button>
                     </div>
                     <div>
@@ -289,12 +289,74 @@
         }
     });
 </script>
-    <script>
-        $(document).ready(function () {
-            $('[data-tooltip="true"]').tooltip({
-                title: 'Add New Supplier'
-            });
+<!--Script for tooltip in Add New Supplier button-->
+<script>
+    $(document).ready(function () {
+        $('[data-tooltip="true"]').tooltip({
+            title: 'Add New Supplier'
         });
-    </script>
+    });
+</script>
+
+<!--Script for tooltip in Add New Supplier button-->
+<script type="text/javascript">
+        $('#submitSupplierCreate').click(function (event) {
+        event.preventDefault();
+        ClearErrors();
+            var form = $('#createSupplierForm');
+        if (form.valid()) {
+            $.ajax({
+                type: "POST",
+                url: form.attr('action'),
+                data: form.serialize(),
+                success: function () {
+                    $('#addSupplierModal').modal('hide');
+                },
+                error: function (xhr) { //Note: xhr is the XMLHttpRequest
+                    var errorMessages = [];
+                    switch (xhr.status) {
+                        case 401:
+                            errorMessages.push("You must be logged in first.");
+                            break;
+                        case 403:
+                            errorMessages.push("You are not authorized for this action.");
+                            break;
+                        default:
+                            //Messages coming from the Model State Errors
+                            //We split on the | delimeter and the .slice removes the last one
+                            errorMessages = xhr.responseText.split("|").slice(0, -1);
+                    }
+                    //This checks if there are any elements with some content
+                    //and if not then it provides a default feedback message.
+                    if (!errorMessages.some((str) => str !== "")) {
+                        errorMessages.push("Error: Unable to complete operation");
+                    }
+                    //Put the messages in the ErrorList ul contained in the 'ValidaitonSummary' div.
+                    var ul = document.getElementById("ErrorList");
+                    for (var i = 0; i < errorMessages.length; i++) {
+                        var errorMessage = errorMessages[i];
+                        var li = document.createElement("li");
+                        li.innerHTML = errorMessage;
+                        ul.appendChild(li);
+                    }
+                }
+            });
+        }
+        return false;
+    });
+    $('#addSupplierModal').on('hide.bs.modal', function () {
+            document.getElementById("createSupplierForm").reset();//to clear the data in the popup form
+        ClearErrors();
+            var selectedOption = $('#SupplierId').val();//Return to the current selected value
+            refreshDDL('SupplierId', '/NcrQa/GetSuppliers/' + selectedOption, false, null, true, 'Select a Supplier First', true);
+    });
+    function ClearErrors() {
+        //Empty out the list of validation errors if there are any
+        var ul = document.getElementById("ErrorList");
+        while (ul.firstChild) {
+            ul.removeChild(ul.firstChild);
+        }
+    }
+</script>
 
 }
