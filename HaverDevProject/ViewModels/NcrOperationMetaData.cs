@@ -13,6 +13,9 @@ namespace HaverDevProject.ViewModels
         [Column("ncrId")]
         [Display(Name = "NCR")]
         public int NcrId { get; set; }
+        [Column("ncrOpCreationDate")]
+        [Display(Name = "NCR Creation Date")]
+        public DateTime NcrOpCreationDate { get; set; }
 
         [Column("opDispositionTypeId")]
         [Display(Name = "Purchasing's Preliminary Decision")]

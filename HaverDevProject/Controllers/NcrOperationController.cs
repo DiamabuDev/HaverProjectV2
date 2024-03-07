@@ -467,12 +467,13 @@ namespace HaverDevProject.Controllers
                     ncrOperation.NcrOperationVideo = ncrOperationDTO.NcrOperationVideo;
                     ncrOperation.OpDefectPhotos = ncrOperationDTO.OpDefectPhotos;
 
+
                     _context.Update(ncrOperation);
                     await _context.SaveChangesAsync();
 
 
                     //var ncr = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrOperation.NcrId);
-                    ////ncr.NcrPhase = NcrPhase.Operations;
+                    //ncr.NcrPhase = NcrPhase.Procurement;
                     //ncr.NcrLastUpdated = DateTime.Now;
                     //_context.Update(ncr);
                     //await _context.SaveChangesAsync();
