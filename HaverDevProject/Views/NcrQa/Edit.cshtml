@@ -114,8 +114,9 @@
                                 <button class="btn btn-outline-secondary custom-btn-color" id="nowAddSupplier" data-bs-toggle="modal" data-bs-target="#addSupplierModal" type="button" data-tooltip="true"><i class='bi-plus-square-dotted'></i></button>
                             </div>
                             <select class="form-control" id="SupplierId" name="SupplierId" asp-items="ViewBag.SupplierId" asp-for="SupplierId" required>
-                                <option value="0">Select Supplier</option>
+                                <option value="">Select Supplier</option>
                             </select>
+                            <span asp-validation-for="SupplierId" class="text-danger"></span>
                         </div>
                     </div>
 
@@ -310,7 +311,7 @@
         });
     </script>
 
-    <!--Script for tooltip in Add New Supplier button-->
+    <!--Script for Add New Supplier button-->
     <script type="text/javascript">
         $('#submitSupplierCreate').click(function (event) {
             event.preventDefault();

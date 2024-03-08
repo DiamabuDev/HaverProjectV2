@@ -9,7 +9,9 @@
 </div>
 
 <div class="col-md-8 col-10 mx-auto"> 
+    
     <partial name="_addSupplierModal" />
+    
     <form asp-action="Create" method="post" enctype="multipart/form-data">
         <div class="card border-2">
             <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
@@ -101,31 +103,53 @@
                     </div>
                 </div>
                 <div class="row">     
+
                     <div class="form-group">
                         <label class="control-label">
                             <strong>Supplier </strong>
                             <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Lawrence Sintered Metals.)</small>
-                            <span class="fw-bold text-danger">*</span></label>
+                            <span class="fw-bold text-danger">*</span>
+                        </label>
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
-                                <button class="btn btn-outline-secondary custom-btn-color" id="nowAddSupplier" data-bs-toggle="modal" data-bs-target="#addSupplierModal" type="button" data-tooltip="true"><i class='bi-plus-square-dotted'></i></button>
-                            </div>                        
-                        <select class="form-control" id="SupplierId" name="SupplierId" asp-items="ViewBag.SupplierId" required>
-                            <option value="0">Select Supplier</option>
+                                <button class="btn btn-outline-secondary custom-btn-color" id="nowAddSupplier" data-bs-toggle="modal" data-bs-target="#addSupplierModal" type="button" data-tooltip-supplier="true"><i class='bi-plus-square-dotted'></i></button>
+                            </div>
+                            <select class="form-control" id="SupplierId" name="SupplierId" asp-items="ViewBag.SupplierId" asp-for="SupplierId" required>
+                                <option value="">Select Supplier</option>
+                            </select>                            
+                        </div>
+                        <span asp-validation-for="SupplierId" class="text-danger"></span>
+                    </div>
+
+                    @* <div class="form-group">
+                        <label class="control-label">
+                            <strong>Supplier </strong>
+                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Lawrence Sintered Metals.)</small>
+                            <span class="fw-bold text-danger">*</span></label>
+                        <div class="input-group mb-1">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary custom-btn-color" id="nowAddSupplier" data-bs-toggle="modal" data-bs-target="#addSupplierModal" type="button" data-tooltip-supplier="true"><i class='bi-plus-square-dotted'></i></button>
+                            </div>
+                            <select asp-for="SupplierId" class="form-control" id="SupplierId" name="SupplierId" asp-items="ViewBag.SupplierId">
+                            <option value="">Select Supplier</option>
                         </select>
                         </div>
-                    </div>
+                        <span asp-validation-for="SupplierId" class="text-danger"></span>
+                    </div> *@
                     <div class="form-group">
                         <label asp-for="ItemId" class="control-label">
                             <strong>Item </strong>
                             <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Panel.)</small> 
                             <span class="fw-bold text-danger">*</span></label>
-                        
-                            <select asp-for="ItemId" class="form-control" asp-items="ViewBag.ItemId" required>
-                                <option value="0">Select a Supplier First</option>
+                        <div class="input-group mb-1">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary custom-btn-color" id="nowAddItem" data-bs-toggle="modal" data-bs-target="#addItemModal" type="button" data-tooltip-item="true"><i class='bi-plus-square-dotted'></i></button>
+                            </div>
+                            <select asp-for="ItemId" id="ItemId" class="form-control" name="ItemId" asp-items="ViewBag.ItemId">
+                                <option value="">Select a Supplier First</option>
                             </select>
-                            <span asp-validation-for="ItemId" class="text-danger"></span>
-                        
+                        </div>
+                            <span asp-validation-for="ItemId" class="text-danger"></span>                        
                     </div>
                     <div class="form-group">
                         <label asp-for="DefectId" class="control-label">
@@ -144,13 +168,7 @@
                             <span class="fw-bold text-danger">*</span></label>
                         <textarea asp-for="NcrQaDescriptionOfDefect" class="form-control"></textarea>
                         <span asp-validation-for="NcrQaDescriptionOfDefect" class="text-danger"></span>
-                    </div>
-                    @* <div class="form-group">
-                        <label class="control-label custom-file-label">Defect Photo File:</label>
-                        <div class="input-group mb-3">
-                            <input type="file" class="form-control" name="pictures" id="pictures">
-                        </div>
-                    </div> *@
+                    </div>                    
                     <div class="form-group">
                         <label class="control-label custom-file-label"><strong>Upload Photos</strong></label>
                         <div class="input-group mb-3">
@@ -229,7 +247,7 @@
         </div>
     </form>        
 </div>
-
+<partial name="_addItemModal" />
 <div class="modal" tabindex="-1" role="dialog" id="engineerDispositionModal">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -258,10 +276,12 @@
         });
     </script>
     <script type="text/javascript">
-        $('#SupplierId').change(function () {
+        $('#SupplierId').change(function () {            
             var selectedSupplier = $("#SupplierId").val();
             var URL = "/NcrQa/GetItems/?SupplierId=" + selectedSupplier;
             refreshDDL('ItemId', URL, true, 'No items related with the supplier selected', true, "Select an item", true);
+            // Set the value of DefectId dropdown to an empty string
+            $('#DefectId').val('');
         });
     </script>
     <script type="text/javascript">
@@ -289,74 +309,163 @@
         }
     });
 </script>
-<!--Script for tooltip in Add New Supplier button-->
+<!--Script for tooltips-->
 <script>
     $(document).ready(function () {
-        $('[data-tooltip="true"]').tooltip({
-            title: 'Add New Supplier'
-        });
+        initializeTooltip('Add New Supplier', '[data-tooltip-supplier="true"]');
+        initializeTooltip('Add New Item', '[data-tooltip-item="true"]');
     });
-</script>
 
-<!--Script for tooltip in Add New Supplier button-->
-<script type="text/javascript">
-        $('#submitSupplierCreate').click(function (event) {
-        event.preventDefault();
-        ClearErrors();
-            var form = $('#createSupplierForm');
-        if (form.valid()) {
-            $.ajax({
-                type: "POST",
-                url: form.attr('action'),
-                data: form.serialize(),
-                success: function () {
-                    $('#addSupplierModal').modal('hide');
-                },
-                error: function (xhr) { //Note: xhr is the XMLHttpRequest
-                    var errorMessages = [];
-                    switch (xhr.status) {
-                        case 401:
-                            errorMessages.push("You must be logged in first.");
-                            break;
-                        case 403:
-                            errorMessages.push("You are not authorized for this action.");
-                            break;
-                        default:
-                            //Messages coming from the Model State Errors
-                            //We split on the | delimeter and the .slice removes the last one
-                            errorMessages = xhr.responseText.split("|").slice(0, -1);
-                    }
-                    //This checks if there are any elements with some content
-                    //and if not then it provides a default feedback message.
-                    if (!errorMessages.some((str) => str !== "")) {
-                        errorMessages.push("Error: Unable to complete operation");
-                    }
-                    //Put the messages in the ErrorList ul contained in the 'ValidaitonSummary' div.
-                    var ul = document.getElementById("ErrorList");
-                    for (var i = 0; i < errorMessages.length; i++) {
-                        var errorMessage = errorMessages[i];
-                        var li = document.createElement("li");
-                        li.innerHTML = errorMessage;
-                        ul.appendChild(li);
-                    }
-                }
-            });
-        }
-        return false;
-    });
-    $('#addSupplierModal').on('hide.bs.modal', function () {
-            document.getElementById("createSupplierForm").reset();//to clear the data in the popup form
-        ClearErrors();
-            var selectedOption = $('#SupplierId').val();//Return to the current selected value
-            refreshDDL('SupplierId', '/NcrQa/GetSuppliers/' + selectedOption, false, null, true, 'Select a Supplier First', true);
-    });
-    function ClearErrors() {
-        //Empty out the list of validation errors if there are any
-        var ul = document.getElementById("ErrorList");
-        while (ul.firstChild) {
-            ul.removeChild(ul.firstChild);
-        }
+    function initializeTooltip(title, selector) {        
+        $(selector).tooltip({
+            title: title
+        });
     }
 </script>
+
+<!--Script Add New Supplier button-->
+    <script type="text/javascript">
+        $('#submitSupplierCreate').click(function (event) {
+            event.preventDefault();
+            ClearErrors();
+            var form = $('#createSupplierForm');
+            if (form.valid()) {
+                $.ajax({
+                    type: "POST",
+                    url: form.attr('action'),
+                    data: form.serialize(),
+                    success: function () {
+                        $('#addSupplierModal').modal('hide');
+                    },
+                    error: function (xhr) { //Note: xhr is the XMLHttpRequest
+                        var errorMessages = [];
+                        switch (xhr.status) {
+                            case 401:
+                                errorMessages.push("You must be logged in first.");
+                                break;
+                            case 403:
+                                errorMessages.push("You are not authorized for this action.");
+                                break;
+                            default:
+                                //Messages coming from the Model State Errors
+                                //We split on the | delimeter and the .slice removes the last one
+                                errorMessages = xhr.responseText.split("|").slice(0, -1);
+                        }
+                        //This checks if there are any elements with some content
+                        //and if not then it provides a default feedback message.
+                        if (!errorMessages.some((str) => str !== "")) {
+                            errorMessages.push("Error: Unable to complete operation");
+                        }
+                        //Put the messages in the ErrorList ul contained in the 'ValidaitonSummary' div.
+                        var ul = document.getElementById("ErrorList");
+                        for (var i = 0; i < errorMessages.length; i++) {
+                            var errorMessage = errorMessages[i];
+                            var li = document.createElement("li");
+                            li.innerHTML = errorMessage;
+                            ul.appendChild(li);
+                        }
+                    }
+                });
+            }
+            return false;
+        });
+        $('#addSupplierModal').on('hide.bs.modal', function () {
+            document.getElementById("createSupplierForm").reset();//to clear the data in the popup form
+            ClearErrors();
+            var selectedOption = $('#SupplierId').val();//Return to the current selected value
+            refreshDDL('SupplierId', '/NcrQa/GetSuppliers/' + selectedOption, false, null, true, 'Select a Supplier First', true);
+        });
+        function ClearErrors() {
+            //Empty out the list of validation errors if there are any
+            var ul = document.getElementById("ErrorList");
+            while (ul.firstChild) {
+                ul.removeChild(ul.firstChild);
+            }
+        }
+    </script>
+
+
+    <!--Script for tooltip in Add New Item button-->
+    <script type="text/javascript">
+
+        $('#SupplierId').change(function () {
+            var supplierId = $(this).val();
+            // console.log("SupplierId:", supplierId);
+            // Asiggn value to the field
+            $('#addItemModal').find('#SupplierId').val(supplierId);
+        });
+
+
+
+        $('#submitItemCreate').click(function (event) {            
+            event.preventDefault();
+            ClearErrors();
+            var form = $('#createItemForm');
+            if (form.valid()) 
+            {
+
+                // Obtener el SupplierId del botón que abrió el modal
+                var supplierId = $('#nowAddItem').data('supplier-id');
+
+                // Agregar el SupplierId al formulario antes de la solicitud AJAX
+                form.append('<input type="hidden" name="SupplierId" value="' + supplierId + '" />');
+
+                
+
+
+
+                $.ajax({
+                    type: "POST",
+                    url: form.attr('action'),
+                    data: form.serialize(),
+                    success: function () {
+                        $('#addItemModal').modal('hide');
+                    },
+                    error: function (xhr) { //Note: xhr is the XMLHttpRequest
+                        var errorMessages = [];
+                        switch (xhr.status) {
+                            case 401:
+                                errorMessages.push("You must be logged in first.");
+                                break;
+                            case 403:
+                                errorMessages.push("You are not authorized for this action.");
+                                break;
+                            default:
+                                //Messages coming from the Model State Errors
+                                //We split on the | delimeter and the .slice removes the last one
+                                errorMessages = xhr.responseText.split("|").slice(0, -1);
+                        }
+                        //This checks if there are any elements with some content
+                        //and if not then it provides a default feedback message.
+                        if (!errorMessages.some((str) => str !== "")) {
+                            errorMessages.push("Error: Unable to complete operation");
+                        }
+                        //Put the messages in the ErrorList ul contained in the 'ValidaitonSummary' div.
+                        var ul = document.getElementById("ErrorList");
+                        for (var i = 0; i < errorMessages.length; i++) {
+                            var errorMessage = errorMessages[i];
+                            var li = document.createElement("li");
+                            li.innerHTML = errorMessage;
+                            ul.appendChild(li);
+                        }
+                    }
+                });
+            }
+            return false;
+        });
+        $('#addItemModal').on('hide.bs.modal', function () {
+            document.getElementById("createItemForm").reset();//to clear the data in the popup form
+            ClearErrors();
+            var selectedOption = $('#ItemId').val();//Return to the current selected value
+            refreshDDL('SupplierId', '/NcrQa/GetItems/' + selectedOption, false, null, true, 'Select an Item', true);
+        });
+        function ClearErrors() {
+            //Empty out the list of validation errors if there are any
+            var ul = document.getElementById("ErrorList");
+            while (ul.firstChild) {
+                ul.removeChild(ul.firstChild);
+            }
+        }
+    </script>
 
 }

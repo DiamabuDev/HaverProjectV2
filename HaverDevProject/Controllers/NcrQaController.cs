@@ -279,6 +279,8 @@ namespace HaverDevProject.Controllers
             ncr.NcrQaEngDispositionRequired = true; //Yes
             
             PopulateDropDownLists();
+            //ViewData["SupplierId"] = SupplierSelectCreateList(null);
+
             return View(ncr);
         }
 
