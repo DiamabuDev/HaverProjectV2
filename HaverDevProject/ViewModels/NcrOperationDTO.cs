@@ -31,12 +31,20 @@ namespace HaverDevProject.ViewModels
         public string NcrOperationVideo { get; set; }
         public ICollection<OpDefectPhoto> OpDefectPhotos { get; set; } = new HashSet<OpDefectPhoto>();
 
+
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
+            //Create a validation for car number if car is true
+            if (Car && string.IsNullOrEmpty(CarNumber))
+            {
+                yield return new ValidationResult( "Car # is required when is selected.",new[] { nameof(Car), nameof(CarNumber) });
+            }
+
             if (FollowUp && (!FollowUpTypeId.HasValue || !ExpectedDate.HasValue))
             {
                 yield return new ValidationResult(
-                    "Follow-up Type and Expected Date are required when Follow-up is selected.",
+                    "Car # is required when is selected.",
                     new[] { nameof(FollowUp), nameof(FollowUpType), nameof(ExpectedDate) });
             }
         }

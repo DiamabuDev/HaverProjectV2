@@ -368,6 +368,7 @@ namespace HaverDevProject.Controllers
                         CarNumber = ncrOperationDTO.CarNumber,
                         FollowUp = ncrOperationDTO.FollowUp,
                         ExpectedDate = ncrOperationDTO.ExpectedDate,
+                        NcrOpCreationDate = DateTime.Now,
                         FollowUpTypeId = ncrOperationDTO.FollowUpTypeId,
                         UpdateOp = DateTime.Now,
                         NcrPurchasingUserId = 1,
