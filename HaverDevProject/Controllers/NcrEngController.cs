@@ -56,6 +56,7 @@ namespace HaverDevProject.Controllers
 
             
             PopulateDropDownLists();
+            GetNcrs();
 
             var ncrEng = _context.NcrEngs
                 .Include(n => n.EngDispositionType)
@@ -64,11 +65,15 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
                 .Include(n => n.Drawing)
-                .Where(n => n.Ncr.NcrPhase != NcrPhase.Archive)
+                .Where(n => n.Ncr.NcrPhase != NcrPhase.Archive &&
+                (n.Ncr.NcrPhase == NcrPhase.Engineer ||
+                 n.Ncr.NcrPhase == NcrPhase.Operations ||
+                 n.Ncr.NcrPhase == NcrPhase.Procurement ||
+                 n.Ncr.NcrPhase == NcrPhase.ReInspection ||
+                 n.Ncr.NcrPhase == NcrPhase.Closed))
                 .AsNoTracking();
 
-            
-            GetNcrs();
+
 
             //Filtering values
             if (!String.IsNullOrEmpty(filter))
