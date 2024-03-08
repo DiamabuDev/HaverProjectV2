@@ -306,9 +306,10 @@ namespace HaverDevProject.Controllers
             ncr.NcrNumber = ncrNumber; // Set the NcrNumber from the parameter
             ncr.NcrOpCreationDate = DateTime.Now;
             ncr.UpdateOp = DateTime.Now;
+            ncr.ExpectedDate = DateTime.Now;
             ncr.NcrStatus = true; // Active
-            ncr.FollowUp = false;
-            ncr.Car = false;
+            ncr.FollowUp = true;
+            ncr.Car = true;
 
             var readOnlyDetails = await _context.Ncrs
                 .Include(n => n.NcrQa)
@@ -362,7 +363,7 @@ namespace HaverDevProject.Controllers
 
                     NcrOperation ncrOperation = new NcrOperation
                     {
-                        NcrId = ncrIdObt, // Assign the NcrId from the found Ncr entity
+                        NcrId = ncrIdObt,
                         OpDispositionTypeId = ncrOperationDTO.OpDispositionTypeId,
                         NcrPurchasingDescription = ncrOperationDTO.NcrPurchasingDescription,
                         Car = ncrOperationDTO.Car,
@@ -370,7 +371,7 @@ namespace HaverDevProject.Controllers
                         FollowUp = ncrOperationDTO.FollowUp,
                         ExpectedDate = ncrOperationDTO.ExpectedDate,
                         FollowUpTypeId = ncrOperationDTO.FollowUpTypeId,
-                        UpdateOp = DateTime.Today,
+                        UpdateOp = DateTime.Now,
                         NcrPurchasingUserId = 1,
                         OpDefectPhotos = ncrOperationDTO.OpDefectPhotos,
                         NcrOperationVideo = ncrOperationDTO.NcrOperationVideo
@@ -441,7 +442,7 @@ namespace HaverDevProject.Controllers
                 Car = ncrOperation.Car,
                 CarNumber = ncrOperation.CarNumber,
                 FollowUp = ncrOperation.FollowUp,
-                ExpectedDate = ncrOperation.ExpectedDate,
+                ExpectedDate = DateTime.Now,
                 FollowUpTypeId = ncrOperation.FollowUpTypeId,
                 UpdateOp = ncrOperation.UpdateOp,
                 NcrPurchasingUserId = ncrOperation.NcrPurchasingUserId,
