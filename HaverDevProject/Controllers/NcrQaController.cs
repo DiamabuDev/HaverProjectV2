@@ -280,6 +280,8 @@ namespace HaverDevProject.Controllers
             ncr.NcrQaEngDispositionRequired = true; //Yes
             
             PopulateDropDownLists();
+            //ViewData["SupplierId"] = SupplierSelectCreateList(null);
+
             return View(ncr);
         }
 
@@ -588,9 +590,15 @@ namespace HaverDevProject.Controllers
                 ViewData["SupplierId"] = SupplierSelectCreateList(null);
                 ViewData["ItemId"] = ItemSelectList(null, null);
             }
-        }  
-        
+        }
 
+        [HttpGet]
+        public JsonResult GetSuppliers(int? id)
+        {
+            return Json(SupplierSelectCreateList(id));
+        }
+
+        
 
 
         [HttpGet]
