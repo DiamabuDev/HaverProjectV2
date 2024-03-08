@@ -50,7 +50,7 @@
 
                             @* <label asp-for="EngDispositionTypeId" class="control-label"></label> *@
                             <select asp-for="EngDispositionTypeId" class="form-control"
-                                    asp-items="ViewBag.EngDispositionTypeId"></select>
+                                    asp-items="ViewBag.EngDispositionTypeId" id="engDispositionSelect"></select>
                         </div>
                     </div>
                 </div>
@@ -72,16 +72,17 @@
                     <div class="col-12">
                         <div class="form-group">
                             <strong>Disposition </strong> (Sequence of work steps required when 'repair' or 'rework'
-                            indicated)
+                            indicated) <span class="fw-bold text-danger">*</span>
                             @* <label asp-for="NcrEngDispositionDescription" class="control-label"></label> *@
-                            <textarea asp-for="NcrEngDispositionDescription" class="form-control"></textarea>
+                            <textarea asp-for="NcrEngDispositionDescription" class="form-control" id="ncrDispositionDescription"></textarea>
                             <span asp-validation-for="NcrEngDispositionDescription" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
 
+
                 <div class="form-group">
-                    <label class="control-label"> Current Photos</label>
+                    <label class="control-label"> <strong>Current Photos </strong></label>
                     <div class="ml-md-3">
                         @{
                             int fileCount = Model.EngDefectPhotos.Count;
@@ -271,6 +272,21 @@
             });
         });
     </script>
+
+@*     <script>
+        const engDispositionSelect = document.getElementById('engDispositionSelect');
+        const ncrDispositionDescription = document.getElementById('ncrDispositionDescription');
+        engDispositionSelect.addEventListener('change', function () {
+            const selectedValue = engDispositionSelect.value;
+            if (selectedValue == 1 || selectedValue == 4) {
+                ncrDispositionDescription.value = 'N/A';
+                ncrDispositionDescription.readOnly = true;
+            } else {
+                ncrDispositionDescription.value = '';
+                ncrDispositionDescription.readOnly = false;
+            }
+        });
+    </script> *@
 
     <script>
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
