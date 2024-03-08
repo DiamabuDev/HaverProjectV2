@@ -248,9 +248,7 @@ namespace HaverDevProject.Controllers
             var pagedData = await PaginatedList<NcrOperation>.CreateAsync(ncrOperation.AsNoTracking(), page ?? 1, pageSize);
 
             return View(pagedData);
-        }
-
-    
+        }   
 
 
     // GET: NcrOperation/Details/5
@@ -298,15 +296,44 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: NcrOperation/Create
-        public IActionResult Create(string ncrNumber)
+        public async Task<IActionResult> Create(string ncrNumber)
         {
+            int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
+
             NcrOperationDTO ncr = new NcrOperationDTO();
             ncr.NcrNumber = ncrNumber; // Set the NcrNumber from the parameter
             ncr.NcrOpCreationDate = DateTime.Now;
             ncr.UpdateOp = DateTime.Now;
+            ncr.ExpectedDate = DateTime.Now;
             ncr.NcrStatus = true; // Active
-            ncr.FollowUp = false;
-            ncr.Car = false;
+            ncr.FollowUp = true;
+            ncr.Car = true;
+
+            var readOnlyDetails = await _context.Ncrs
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.Item)
+                        .ThenInclude(item => item.Supplier)
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.Item)
+                        .ThenInclude(item => item.ItemDefects)
+                            .ThenInclude(defect => defect.Defect)
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.ItemDefectPhotos)
+                .Include(n => n.NcrEng)
+                    .ThenInclude(eng => eng.EngDispositionType)
+                .Include(n => n.NcrEng)
+                    .ThenInclude(eng => eng.Drawing)
+                .Include(n => n.NcrEng)
+                    .ThenInclude(eng => eng.EngDefectPhotos)
+                .FirstOrDefaultAsync(n => n.NcrId == ncrId);
+
+            ViewBag.IsNCRQaView = false;
+            ViewBag.IsNCREngView = false;
+            ViewBag.IsNCROpView = false;
+            ViewBag.IsNCRProcView = false;
+            ViewBag.IsNCRReInspView = false;
+
+            ViewBag.ncrDetails = readOnlyDetails;
 
             PopulateDropDownLists();
             //ViewData["FollowUpTypeId"] = new SelectList(_context.FollowUpTypes, "FollowUpTypeId", "FollowUpTypeName");
@@ -334,15 +361,16 @@ namespace HaverDevProject.Controllers
 
                     NcrOperation ncrOperation = new NcrOperation
                     {
-                        NcrId = ncrIdObt, // Assign the NcrId from the found Ncr entity
+                        NcrId = ncrIdObt,
                         OpDispositionTypeId = ncrOperationDTO.OpDispositionTypeId,
                         NcrPurchasingDescription = ncrOperationDTO.NcrPurchasingDescription,
                         Car = ncrOperationDTO.Car,
                         CarNumber = ncrOperationDTO.CarNumber,
                         FollowUp = ncrOperationDTO.FollowUp,
                         ExpectedDate = ncrOperationDTO.ExpectedDate,
+                        NcrOpCreationDate = DateTime.Now,
                         FollowUpTypeId = ncrOperationDTO.FollowUpTypeId,
-                        UpdateOp = DateTime.Today,
+                        UpdateOp = DateTime.Now,
                         NcrPurchasingUserId = 1,
                         OpDefectPhotos = ncrOperationDTO.OpDefectPhotos,
                         NcrOperationVideo = ncrOperationDTO.NcrOperationVideo
@@ -413,7 +441,7 @@ namespace HaverDevProject.Controllers
                 Car = ncrOperation.Car,
                 CarNumber = ncrOperation.CarNumber,
                 FollowUp = ncrOperation.FollowUp,
-                ExpectedDate = ncrOperation.ExpectedDate,
+                ExpectedDate = DateTime.Now,
                 FollowUpTypeId = ncrOperation.FollowUpTypeId,
                 UpdateOp = ncrOperation.UpdateOp,
                 NcrPurchasingUserId = ncrOperation.NcrPurchasingUserId,
@@ -422,6 +450,31 @@ namespace HaverDevProject.Controllers
                 OpDefectPhotos = ncrOperation.OpDefectPhotos,
             };
 
+            var readOnlyDetails = await _context.Ncrs
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.Item)
+                        .ThenInclude(item => item.Supplier)
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.Item)
+                        .ThenInclude(item => item.ItemDefects)
+                            .ThenInclude(defect => defect.Defect)
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.ItemDefectPhotos)
+                .Include(n => n.NcrEng)
+                    .ThenInclude(eng => eng.EngDispositionType)
+                .Include(n => n.NcrEng)
+                    .ThenInclude(eng => eng.Drawing)
+                .Include(n => n.NcrEng)
+                    .ThenInclude(eng => eng.EngDefectPhotos)
+                .FirstOrDefaultAsync(n => n.NcrId == id);
+
+            ViewBag.IsNCRQaView = false;
+            ViewBag.IsNCREngView = false;
+            ViewBag.IsNCROpView = false;
+            ViewBag.IsNCRProcView = false;
+            ViewBag.IsNCRReInspView = false;
+
+            ViewBag.ncrDetails = readOnlyDetails;
 
             ViewData["FollowUpTypeId"] = new SelectList(_context.FollowUpTypes, "FollowUpTypeId", "FollowUpTypeName", ncrOperation.FollowUpTypeId);
             //ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrOperation.NcrId);
@@ -434,16 +487,33 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, NcrOperationDTO ncrOperationDTO, List<IFormFile> Photos)
+        public async Task<IActionResult> Edit(int id, int NcrId, NcrOperationDTO ncrOperationDTO, List<IFormFile> Photos)
         {
-            ncrOperationDTO.NcrOpId = id;
-            if (id != ncrOperationDTO.NcrOpId)
-            {
-                return NotFound();
-            }
+            //ncrOperationDTO.NcrOpId = id;
+            //if (id != ncrOperationDTO.NcrOpId)
+            //{
+            //    return NotFound();
+            //}
 
             if (ModelState.IsValid)
             {
+                //var ncrToUpdate = await _context.Ncrs
+                //    .AsNoTracking()
+                //    .FirstOrDefaultAsync(n => n.NcrId == NcrId);
+
+                //if (ncrToUpdate == null)
+                //{
+                //    return NotFound();
+                //}
+                //else
+                //{
+                //    ncrToUpdate.NcrPhase = NcrPhase.Procurement;
+                //    ncrToUpdate.NcrLastUpdated = DateTime.Now;
+
+                //    _context.Ncrs.Update(ncrToUpdate);
+                //    await _context.SaveChangesAsync();
+                //}
+
                 await AddPictures(ncrOperationDTO, Photos);
                 try
                 {
@@ -680,6 +750,19 @@ namespace HaverDevProject.Controllers
                 ViewData["OpDispositionTypeId"] = OpDispositionTypeSelectList(null);
                 ViewData["FollowUpTypeId"] = FollowUpTypeSelectList(null);
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeletePhoto(int photoId)
+        {
+            var photo = await _context.OpDefectPhotos.FindAsync(photoId);
+            if (photo != null)
+            {
+                _context.OpDefectPhotos.Remove(photo);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Photo deleted successfully." });
+            }
+            return Json(new { success = false, message = "Photo not found." });
         }
     }
 }

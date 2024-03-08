@@ -48,7 +48,7 @@ namespace HaverDevProject.Controllers
                 StartDate = temp;
             }
 
-            string[] sortOptions = new[] { "Created", "Acceptable", "Supplier", "NCR #", "Last Updated" };
+            string[] sortOptions = new[] { "Created", "Acceptable", "Supplier", "NCR #", "Last Updated", "Inspected By", "Phase" };
 
             var ncrReInspect = _context.NcrReInspects
                 .Include(n => n.Ncr)
@@ -153,6 +153,21 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:NcrReInspectAcceptable"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
+            else if (sortField == "Inspected By")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncrReInspect = ncrReInspect
+                        .OrderBy(p => p.NcrReInspectId);
+                    ViewData["filterApplied:NcrReInspectUserId"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrReInspect = ncrReInspect
+                        .OrderByDescending(p => p.NcrReInspectId);
+                    ViewData["filterApplied:NcrReInspectUserId"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
             else if (sortField == "Supplier")
             {
                 if (sortDirection == "asc")
@@ -166,6 +181,21 @@ namespace HaverDevProject.Controllers
                     ncrReInspect = ncrReInspect
                         .OrderByDescending(p => p.Ncr.NcrQa.Item.Supplier.SupplierName);
                     ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Phase")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncrReInspect = ncrReInspect
+                        .OrderBy(p => p.Ncr.NcrPhase);
+                    ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncrReInspect = ncrReInspect
+                        .OrderByDescending(p => p.Ncr.NcrPhase);
+                    ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
             else
@@ -241,25 +271,50 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: NcrReInspect/Create
-        public IActionResult Create(string ncrNumber)
+        public async Task<IActionResult> Create(string ncrNumber)
         {
-            //NcrReInspect ncrReInspect = _context.NcrReInspects
-            //    .Include(nr => nr.Ncr)
-            //    .FirstOrDefault(nr => nr.Ncr.NcrNumber == ncrNumber);
-
             int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
 
-            Ncr ncr = _context.Ncrs.FirstOrDefault(n => n.NcrId == ncrId);
+            var ncr = await _context.Ncrs
+                .Include(n => n.NcrQa)
+                        .ThenInclude(qa => qa.Item)
+                          .ThenInclude(item => item.Supplier)
+                      .Include(n => n.NcrQa)
+                        .ThenInclude(qa => qa.Item)
+                          .ThenInclude(item => item.ItemDefects)
+                            .ThenInclude(defect => defect.Defect)
+                      .Include(n => n.NcrQa)
+                        .ThenInclude(qa => qa.ItemDefectPhotos)
+                      .Include(n => n.NcrEng)
+                        .ThenInclude(eng => eng.EngDispositionType)
+                      .Include(n => n.NcrEng)
+                        .ThenInclude(eng => eng.Drawing)
+                      .Include(n => n.NcrEng)
+                        .ThenInclude(eng => eng.EngDefectPhotos)
+                      .Include(n => n.NcrOperation)
+                        .ThenInclude(op => op.OpDispositionType)
+                      .Include(n => n.NcrOperation)
+                        .ThenInclude(op => op.FollowUpType)
+                      .Include(n => n.NcrOperation)
+                        .ThenInclude(op => op.OpDefectPhotos)
+                      .Include(n => n.NcrProcurement)
+                        .ThenInclude(proc => proc.ProcDefectPhotos)
+                .FirstOrDefaultAsync(n => n.NcrId == ncrId);
 
             NcrReInspect ncrReInspect = new NcrReInspect
             {
+                Ncr = ncr,
                 NcrId = ncrId,
                 NcrReInspectCreationDate = DateTime.Now,
                 NcrNumber = ncrNumber
             };
-            
 
-            //ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncr.NcrId);
+            ViewBag.IsNCRQaView = false;
+            ViewBag.IsNCREngView = false;
+            ViewBag.IsNCROpView = false;
+            ViewBag.IsNCRProcView = false;
+            ViewBag.IsNCRReInspView = false;
+
             return View(ncrReInspect);
         }
 
@@ -292,7 +347,7 @@ namespace HaverDevProject.Controllers
                     _context.Ncrs.Update(ncrToUpdate);
                     await _context.SaveChangesAsync();
 
-                    TempData["SuccessMessage"] = "NCR created successfully!";
+                    TempData["SuccessMessage"] = "NCR closed successfully!";
                     int ncrReInspectId = ncrReInspect.NcrReInspectId;
                     return RedirectToAction("Details", new { id = ncrReInspectId });
                 }
@@ -619,6 +674,58 @@ namespace HaverDevProject.Controllers
 
             //Ncr Format
             return $"{currentYear}-{nextConsecutiveNumberString}";
+        }
+
+        public async Task<IActionResult> ArchiveNcr(int id)
+        {
+            var ncrToUpdate = await _context.Ncrs
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(n => n.NcrId == id);
+
+            if (ncrToUpdate != null)
+            {
+                //Update the phase
+                ncrToUpdate.NcrPhase = NcrPhase.Archive;
+
+                //saving the values
+                _context.Ncrs.Update(ncrToUpdate);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "NCR Archive successfully!";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "NCR not found for archiving.";
+                return RedirectToAction("Index");
+            }
+
+        }
+
+        public async Task<IActionResult> RestoreNcr(int id)
+        {
+            var ncrToUpdate = await _context.Ncrs
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(n => n.NcrId == id);
+
+            if (ncrToUpdate != null)
+            {
+                //Update the phase
+                ncrToUpdate.NcrPhase = NcrPhase.Closed;
+
+                //saving the values
+                _context.Ncrs.Update(ncrToUpdate);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "NCR Restore successfully!";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "NCR not found for archiving.";
+                return RedirectToAction("Index");
+            }
+
         }
 
         private bool NcrReInspectExists(int id)

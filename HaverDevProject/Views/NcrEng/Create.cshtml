@@ -6,11 +6,17 @@
 
 <div class="col-md-8 col-10 mx-auto">
     <h1><i class="bi bi-caret-right-fill"></i>Engineer</h1>
-</div>
-
-<div class="col-md-8 col-10 mx-auto">
+    <button class="btn custom-details-btn icon-drop text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#details" aria-expanded="false" aria-controls="details">
+        Details <i class="bi bi-chevron-down"></i>
+    </button>
+    <div class="collapse" id="details">
+        @if (ViewBag.ncrDetails.NcrQa != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", (NcrQa)ViewBag.ncrDetails.NcrQa)
+        }
+    </div>
     <form asp-action="Create" method="post" enctype="multipart/form-data">
-        <div class="card border-2">
+        <div class="card border-2 mt-2">
             <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
                 <div>
                     <h2 class="m-0">Add to NCR</h2>
@@ -40,7 +46,7 @@
                 <div class="row">
                     <div class="col-12">                      
                         <div class="form-group">
-                            <label asp-for="EngDispositionTypeId" class="control-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option"><strong>HBC Engineering: </strong> (indicate disposition by selecting one of the following)  </span> <span class="fw-bold text-danger">*</span></label>
+                            <label asp-for="EngDispositionTypeId" class="control-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option"><strong>HBC Engineering </strong> (indicate disposition by selecting one of the following)  </span> <span class="fw-bold text-danger">*</span></label>
                             <select asp-for="EngDispositionTypeId" class="form-control" asp-items="ViewBag.EngDispositionTypeId">
                                 <option value="">Select Disposition</option>
                             </select>
@@ -64,7 +70,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="form-group">
-                            <strong>Disposition:</strong> (Sequence of work steps required when 'repair' or 'rework' indicated)
+                            <strong>Disposition</strong> (Sequence of work steps required when 'repair' or 'rework' indicated) <span class="fw-bold text-danger">*</span>
                             @* <label asp-for="NcrEngDispositionDescription" class="control-label"></label> *@
                             <textarea asp-for="NcrEngDispositionDescription" class="form-control"></textarea>
                             <span asp-validation-for="NcrEngDispositionDescription" class="text-danger"></span>
@@ -74,7 +80,7 @@
 
 
                 <div class="form-group">
-                    <label class="control-label custom-file-label"> <strong>Upload Photos: </strong></label>
+                    <label class="control-label custom-file-label"> <strong>Upload Photos </strong></label>
                     <div class="input-group mb-3">
                         <input type="file" class="form-control" name="Photos" multiple="multiple" />
                     </div>

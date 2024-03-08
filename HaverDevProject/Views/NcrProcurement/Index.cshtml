@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1><i class="bi bi-caret-right-fill"></i> Non-Conformance Reports / Procurement</h1>
+<h1><i class="bi bi-caret-right-fill"></i> Procurement Non-Conformance Reports</h1>
 
 
 <!-- Modal -->
@@ -113,10 +113,16 @@
                         @Html.Raw(ViewData["filterApplied:Supplier"])
                     </button>
                 </th>
-                <th class="d-none d-md-table-cell col-3">
+                <th class="d-none d-md-table-cell col-auto">
                     <button type="submit" name="actionButton" value="Supplier Return" class="btn text-light custom-btn-text-start">
                         Supplier Return
                         @Html.Raw(ViewData["filterApplied:Supplier Return"])
+                    </button>
+                </th>
+                <th class="d-none d-md-table-cell col-auto">
+                    <button type="submit" name="actionButton" value="SAP" class="btn text-light custom-btn-text-start">
+                        SAP Completed
+                        @Html.Raw(ViewData["filterApplied:SAP"])
                     </button>
                 </th>
                 <th class="d-none d-md-table-cell">
@@ -135,7 +141,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var item in Model.Where(ncr => ncr.Ncr.NcrPhase != NcrPhase.Archive))
             {
                 <tr>
                     <td class="ps-1 @((item.Ncr.NcrStatus == true) ? "stillactive" : "closed" )">
@@ -150,23 +156,23 @@
                     <td class="col-3">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrQa.Item.Supplier.SupplierName)
                     </td>
-                    <td class="d-none d-md-table-cell col-3">
-                        @if (item.NcrProcSupplierReturnReq)
-                        {
-                            <span class="badge bg-success">Yes</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-danger">No</span>
-                        }
+                    <td class="col-auto">
+                        <span class="badge @(item.NcrProcSupplierReturnReq ? "bg-success" : "bg-danger")">
+                            @(item.NcrProcSupplierReturnReq ? "Yes" : "No")
+                        </span>
                     </td>
-
+                    <td class="col-auto">
+                        <span class="badge @(item.NcrProcSAPReturnCompleted ? "bg-success" : "bg-danger")">
+                            @(item.NcrProcSAPReturnCompleted ? "Yes" : "No")
+                        </span>
+                    </td>
                     <td class="d-none d-md-table-cell">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrPhase)
                     </td>
                     <td class="d-none d-xxl-table-cell">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrLastUpdated)
                     </td>
+                    
                     @*                     <td class="d-none d-md-table-cell">
                 @Html.DisplayFor(modelItem => item.Ncr.NcrEng.UpdatedOn)
                 </td> *@
@@ -175,9 +181,11 @@
                 </td> *@
 
                     <td>
-                        @* @Html.ActionLink("Edit", "Edit", new { id = item.NcrEngId }) *@
-                        <a asp-action="Edit" asp-route-id="@item.NcrId" class="btn text-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
-                        <a asp-action="Details" asp-route-id="@item.NcrId" class="btn text-primary" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
+                        @if (item.Ncr.NcrPhase != NcrPhase.Closed)
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.NcrProcurementId" class="btn text-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
+                        }
+                        <a asp-action="Details" asp-route-id="@item.NcrProcurementId" class="btn text-primary" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
                         @* <a asp-action="Delete" asp-route-id="@item.NcrQaId">Delete</a> *@
                     </td>
                 </tr>
@@ -202,7 +210,7 @@
                 type: 'GET',
                 success: function (data) {
                     // Update the content of the indicator
-                    $('#pendingCountIndicator').html('<i class="bi bi-bell-fill"></i> Pending Ncrs:  ' + data);
+                    $('#pendingCountIndicator').html('<i class="bi bi-bell-fill"></i> Pending NCRs:  ' + data);
                 },
                 error: function () {
                     console.error('Error fetching pending count');

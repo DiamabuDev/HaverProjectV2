@@ -56,6 +56,7 @@ namespace HaverDevProject.Controllers
 
             
             PopulateDropDownLists();
+            GetNcrs();
 
             var ncrEng = _context.NcrEngs
                 .Include(n => n.EngDispositionType)
@@ -64,11 +65,15 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
                 .Include(n => n.Drawing)
-                .Where(n => n.Ncr.NcrPhase != NcrPhase.Archive)
+                .Where(n => n.Ncr.NcrPhase != NcrPhase.Archive &&
+                (n.Ncr.NcrPhase == NcrPhase.Engineer ||
+                 n.Ncr.NcrPhase == NcrPhase.Operations ||
+                 n.Ncr.NcrPhase == NcrPhase.Procurement ||
+                 n.Ncr.NcrPhase == NcrPhase.ReInspection ||
+                 n.Ncr.NcrPhase == NcrPhase.Closed))
                 .AsNoTracking();
 
-            
-            GetNcrs();
+
 
             //Filtering values
             if (!String.IsNullOrEmpty(filter))
@@ -300,8 +305,10 @@ namespace HaverDevProject.Controllers
 
 
         // GET: NcrEng/Create
-        public IActionResult Create(string ncrNumber)
+        public async Task<IActionResult> Create(string ncrNumber)
         {
+            int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
+            
             NcrEngDTO ncr = new NcrEngDTO();
             ncr.NcrNumber = ncrNumber; // Set the NcrNumber from the parameter
             ncr.DrawingRevDate = DateTime.Now;
@@ -312,8 +319,27 @@ namespace HaverDevProject.Controllers
 
             //ncr.NcrStatus = true; // Active
 
+            var readOnlyDetails = await _context.Ncrs
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.Item)
+                        .ThenInclude(item => item.Supplier)
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.Item)
+                        .ThenInclude(item => item.ItemDefects)
+                            .ThenInclude(defect => defect.Defect)
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.ItemDefectPhotos)
+                .FirstOrDefaultAsync(n => n.NcrId == ncrId);
+
+            ViewBag.IsNCRQaView = false;
+            ViewBag.IsNCREngView = false;
+            ViewBag.IsNCROpView = false;
+            ViewBag.IsNCRProcView = false;
+            ViewBag.IsNCRReInspView = false;
+
+            ViewBag.ncrDetails = readOnlyDetails;
+
             PopulateDropDownLists();
-            //ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName");
             return View(ncr);
         }
 
@@ -336,8 +362,6 @@ namespace HaverDevProject.Controllers
 
                     //PopulateDropDownLists();
                     await AddPictures(ncrEngDTO, Photos);
-
-
 
                     NcrEng ncrEng = new NcrEng
                     {
@@ -368,8 +392,6 @@ namespace HaverDevProject.Controllers
                     _context.Ncrs.Update(ncr);
                     await _context.SaveChangesAsync();
 
-
-
                     TempData["SuccessMessage"] = "NCR saved successfully!";
                     int ncrEngId = ncrEng.NcrEngId;
                     return RedirectToAction("Details", new { id = ncrEngId });
@@ -382,7 +404,7 @@ namespace HaverDevProject.Controllers
             }
             catch (DbUpdateException )
             {
-                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");         
+                ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");         
             }
 
             PopulateDropDownLists();
@@ -404,7 +426,8 @@ namespace HaverDevProject.Controllers
                           .Include(ne => ne.Drawing)
                         .Include(n => n.EngDefectPhotos)
                         .AsNoTracking()
-                        .FirstOrDefaultAsync(ne => ne.NcrId == id);
+                        .FirstOrDefaultAsync(ne => ne.NcrEngId == id);
+
             //var ncrEng = await _context.NcrEngs.FindAsync(id);
 
             if (ncrEng == null)
@@ -434,9 +457,27 @@ namespace HaverDevProject.Controllers
                 EngDefectPhotos = ncrEng.EngDefectPhotos,
                 NcrEngDefectVideo = ncrEng.NcrEngDefectVideo,
                 NcrPhase = ncrEng.NcrPhase
-
             };
 
+            var readOnlyDetails = await _context.Ncrs
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.Item)
+                        .ThenInclude(item => item.Supplier)
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.Item)
+                        .ThenInclude(item => item.ItemDefects)
+                            .ThenInclude(defect => defect.Defect)
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.ItemDefectPhotos)
+                .FirstOrDefaultAsync(n => n.NcrId == id);
+
+            ViewBag.IsNCRQaView = false;
+            ViewBag.IsNCREngView = false;
+            ViewBag.IsNCROpView = false;
+            ViewBag.IsNCRProcView = false;
+            ViewBag.IsNCRReInspView = false;
+
+            ViewBag.ncrDetails = readOnlyDetails;
 
             ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName", ncrEng.EngDispositionTypeId);
             return View(ncrEngDTO);
@@ -447,11 +488,12 @@ namespace HaverDevProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, NcrEngDTO ncrEngDTO, List<IFormFile> Photos)
         {
-            ncrEngDTO.NcrId = id;
-            if (id != ncrEngDTO.NcrId)
-            {
-                return NotFound();
-            }
+
+            //ncrEngDTO.NcrEngId = id;
+            //if (id != ncrEngDTO.NcrEngId)
+            //{
+            //    return NotFound();
+            //}
 
             if (ModelState.IsValid)
             {
@@ -460,18 +502,17 @@ namespace HaverDevProject.Controllers
                 {
                     var ncrEng = await _context.NcrEngs
                         .Include(ne => ne.Drawing)
-                        .FirstOrDefaultAsync(ne => ne.NcrId == id);
+                        .FirstOrDefaultAsync(ne => ne.NcrEngId == id);
 
                     //ncrEng.NcrEngId = ncrEngDTO.NcrEngId;
-                    //ncrEng.Ncr.NcrNumber = ncrEngDTO.NcrNumber;
-                    //ncrEng.Ncr.NcrStatus = ncrEngDTO.NcrStatus;
+
                     ncrEng.NcrEngCustomerNotification = ncrEngDTO.NcrEngCustomerNotification;
                     ncrEng.NcrEngDispositionDescription = ncrEngDTO.NcrEngDispositionDescription;
                     ncrEng.NcrEngCreationDate = ncrEngDTO.NcrEngCreationDate;
                     ncrEng.NcrEngStatusFlag = ncrEngDTO.NcrEngStatusFlag;
                     ncrEng.NcrEngUserId = ncrEngDTO.NcrEngUserId;
                     ncrEng.EngDispositionTypeId = ncrEngDTO.EngDispositionTypeId;
-                    ncrEng.NcrId = ncrEngDTO.NcrId;
+                   // ncrEng.NcrId = ncrEngDTO.NcrId;
                     ncrEng.DrawingId = ncrEngDTO.DrawingId;
                     ncrEng.DrawingRequireUpdating = ncrEngDTO.DrawingRequireUpdating;
                     ncrEng.DrawingOriginalRevNumber = ncrEngDTO.DrawingOriginalRevNumber;
@@ -620,6 +661,19 @@ namespace HaverDevProject.Controllers
             {
                 ViewData["EngDispositionTypeId"] = EngDispositionTypeSelectList(null);
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeletePhoto(int photoId)
+        {
+            var photo = await _context.EngDefectPhotos.FindAsync(photoId);
+            if (photo != null)
+            {
+                _context.EngDefectPhotos.Remove(photo);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Photo deleted successfully." });
+            }
+            return Json(new { success = false, message = "Photo not found." });
         }
     }
 }

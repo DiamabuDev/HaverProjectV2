@@ -1,8 +1,6 @@
 ﻿@model HaverDevProject.Models.NcrProcurement
 
-<div class="container-fluid mt-3">
-    <div class="row justify-content-center">
-        <div id="ProcSection" class="col-md-10 mx-0">
+<div class="mt-2">
             <button class="btn custom-header-bg icon-drop text-start mb-0" type="button" data-bs-toggle="collapse" data-bs-target="#procurementSection" aria-expanded="@ViewBag.IsNCRProcView.ToString().ToLower()" aria-controls="procurementSection">
                 Procurement <i class="bi bi-chevron-down"></i>
             </button>
@@ -94,7 +92,7 @@
                                 <tbody>
                                     <tr>
                                         <td class="three-cols">R. May</td>
-                                        <td class="three-cols">@Model.Ncr.NcrQa.NcrQacreationDate.ToString("yyyy-MM-dd")</td>
+                                        <td class="three-cols">@Model.NcrProcCreated.ToString("yyyy-MM-dd")</td>
                                         <td class="three-cols">
                                             @{
                                                 if (Model.UpdatedOn.HasValue)
@@ -128,7 +126,7 @@
                                     Images
                                 </div>
                                 <div class="card-body pb-0">
-                                    <div class="row">
+                                    <div class="row justify-content-center">
                                         @{
                                             if (Model.ProcDefectPhotos != null && Model.ProcDefectPhotos.Any())
                                             {
@@ -151,6 +149,9 @@
                             }
                             @if (hasVideos)
                             {
+                                <div class="card-header">
+                                    Videos
+                                </div>
                                 <div class="card-body">
                                     @if (Model.NcrProcDefectVideo != null)
                                     {
@@ -166,7 +167,4 @@
                     }
                 </div>
             </div>
-        </div>
-    </div>
 </div>
-

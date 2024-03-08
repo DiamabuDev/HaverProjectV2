@@ -1,7 +1,7 @@
 ﻿@model HaverDevProject.Models.NcrEng
-<div class="container-fluid mt-3">
-    <div class="row justify-content-center">
-        <div id="EngSection" class="col-md-10 mx-0">
+
+<div class="mt-2">
+
             <button class="btn custom-header-bg icon-drop text-start mb-0" type="button" data-bs-toggle="collapse" data-bs-target="#engineerRepSection" aria-expanded="@ViewBag.IsNCREngView.ToString().ToLower()" aria-controls="engineerRepSection">
                 Engineer <i class="bi bi-chevron-down"></i>
             </button>
@@ -39,35 +39,39 @@
                             </tbody>
                         </table>
                     </div>
+                    @if (Model.DrawingRequireUpdating == true)
+                    {
                     <div class="card">
-                        <div class="card-header">
-                            Drawing
-                        </div>
-                        <div class="card-body pb-0 pt-0">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th class="four-cols">Original Rev. Number</th>
-                                        <th class="four-cols">Updated Rev. Number</th>
-                                        <th class="four-cols">Name of Engineer</th>
-                                        <th class="four-cols">Revision Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="four-cols">@Model.DrawingOriginalRevNumber</td>
-                                        <td class="four-cols">@Model.DrawingUpdatedRevNumber</td>
-                                        <td> J. Laferty</td>
-                                        @*  <td class="four-cols">@Model.Drawing.NcrEngId</td> *@
-                                        <td class="four-cols">@Model.DrawingRevDate</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                  
+                            <div class="card-header">
+                                Drawing
+                            </div>
 
-                </div>
-                <div class="card">
+                            <div class="card-body pb-0 pt-0">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th class="four-cols">Original Rev. Number</th>
+                                            <th class="four-cols">Updated Rev. Number</th>
+                                            <th class="four-cols">Revision Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="four-cols">@Model.DrawingOriginalRevNumber</td>
+                                            <td class="four-cols">@Model.DrawingUpdatedRevNumber</td>
+                                            <td class="four-cols">@Model.DrawingRevDate</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            </div>
+
+                            
+                        }
+                        </div>
+                        <div class="card">
                     <div class="card-body pb-0">
                         <table class="table m-0">
                             <thead class="custom-light-bg">
@@ -114,7 +118,7 @@
                                 Images
                             </div>
                             <div class="card-body pb-0">
-                                <div class="row">
+                                <div class="row justify-content-center">
                                     @{
                                         if (Model.EngDefectPhotos != null && Model.EngDefectPhotos.Any())
                                         {
@@ -137,6 +141,7 @@
                         }
                         @if (hasVideos)
                         {
+
                             <div class="card-header">
                                 Videos
                             </div>
@@ -154,6 +159,4 @@
                     </div>
                 }
             </div>
-        </div>
-    </div>
 </div>

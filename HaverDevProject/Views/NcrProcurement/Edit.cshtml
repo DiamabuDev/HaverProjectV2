@@ -4,11 +4,29 @@
     ViewData["Title"] = "Edit";
 }
 
-
-
 <div class="col-md-8 col-10 mx-auto">
+    <h1><i class="bi bi-caret-right-fill"></i>Procurement</h1>
+    <button class="btn custom-details-btn icon-drop text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#details" aria-expanded="false" aria-controls="details">
+        Details <i class="bi bi-chevron-down"></i>
+    </button>
+    <div class="collapse" id="details">
+        @if (ViewBag.ncrDetails.NcrQa != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", (NcrQa)ViewBag.ncrDetails.NcrQa)
+        }
+
+        @if (ViewBag.ncrDetails.NcrEng != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCREngDetailsPartial.cshtml", (NcrEng)ViewBag.ncrDetails.NcrEng)
+        }
+
+        @if (ViewBag.ncrDetails.NcrOperation != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCROpDetailsPartial.cshtml", (NcrOperation)ViewBag.ncrDetails.NcrOperation)
+        }
+    </div>
     <form asp-action="Edit" method="post" enctype="multipart/form-data">
-        <div class="card border-2">
+        <div class="card border-2 mt-2">
             <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
                 <div>
                     <h2 class="m-0">Edit NCR</h2>
@@ -40,7 +58,7 @@
                     <div class="col-6">
                         <div class="form-group">
                             <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No if Supplier Requested a Return"><strong>Supplier Return Request </strong><span class="fw-bold text-danger">*</span></label>
-                            <div class="text-center">
+                            <div>
                                 <div class="form-check form-check-inline">
                                     <input type="radio" class="form-check-input" asp-for="NcrProcSupplierReturnReq" value="true" checked />
                                     <label class="form-check-label">Yes</label>
@@ -55,7 +73,7 @@
                     <div class="col-6">
                         <div class="form-group">
                             <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No if the Product is to be Disposed on Site"><strong>Dispose on Site? </strong><span class="fw-bold text-danger">*</span></label>
-                            <div class="text-center">
+                            <div>
                                 <div class="form-check form-check-inline">
                                     <input type="radio" class="form-check-input" asp-for="NcrProcDisposedAllowed" value="true" checked />
                                     <label class="form-check-label">Yes</label>
@@ -71,14 +89,14 @@
                 <div class="row supplier-return-fields">
                     <div class="col-6">
                         <div class="form-group">
-                            <label asp-for="SupplierReturnMANum" class="control-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Return Material Authorization Number"><strong>Supplier RMA # </strong></label>
+                            <label asp-for="SupplierReturnMANum" class="control-label"><strong>Supplier RMA # </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Return Material Authorization Number">(e.g. RT20062090)</small></label>
                             <input asp-for="SupplierReturnMANum" class="form-control" />
                             <span asp-validation-for="SupplierReturnMANum" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="form-group"> 
-                            <label asp-for="SupplierReturnName" class="control-label" class="control-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Name of Delivery Service"><strong>Carrier Name </strong></label>
+                            <label asp-for="SupplierReturnName" class="control-label"><strong>Carrier Name </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Name of Delivery Service">(e.g. Purolator)</small></label>
                             <input asp-for="SupplierReturnName" class="form-control" />
                             <span asp-validation-for="SupplierReturnName" class="text-danger"></span>
                         </div>
@@ -87,7 +105,7 @@
                 <div class="row supplier-return-fields">
                     <div class="col-6">
                         <div class="form-group">
-                            <label asp-for="NcrProcExpectedDate" class="control-label" class="control-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Product Expected Return Date"><strong>Expected Date </strong></label>
+                            <label asp-for="NcrProcExpectedDate" class="control-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Product Expected Return Date"><strong>Expected Date </strong></label>
                             <input asp-for="NcrProcExpectedDate" class="form-control" type="date" 
                                    value="@(Model.NcrProcExpectedDate.HasValue ? Model.NcrProcExpectedDate.Value.ToString("yyyy-MM-dd") : string.Empty)" />
                             <span asp-validation-for="NcrProcExpectedDate" class="text-danger"></span>
@@ -95,7 +113,7 @@
                     </div>
                     <div class="col-6">
                         <div class="form-group">
-                            <label asp-for="SupplierReturnAccount" class="control-label" class="control-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Account Number for the Return Request"><strong>Account # </strong></label>
+                            <label asp-for="SupplierReturnAccount" class="control-label"><strong>Account # </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Account Number for the Return Request">(e.g. 946735)</small></label>
                             <input asp-for="SupplierReturnAccount" class="form-control" /> 
                             <span asp-validation-for="SupplierReturnAccount" class="text-danger"></span>
                         </div>
@@ -104,8 +122,8 @@
                 <div class="row">
                     <div class="col-6">
                         <div class="form-group">
-                            <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No if the Supplier has been Billed"><strong>Suppleir Billed </strong><span class="fw-bold text-danger">*</span></label>
-                            <div class="text-center">
+                            <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No if the Supplier has been Billed"><strong>Supplier Billed </strong><span class="fw-bold text-danger">*</span></label>
+                            <div>
                                 <div class="form-check form-check-inline">
                                     <input type="radio" class="form-check-input" asp-for="NcrProcSupplierBilled" value="true" checked />
                                     <label class="form-check-label">Yes</label>
@@ -120,7 +138,7 @@
                     <div class="col-6">
                         <div class="form-group">
                             <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No if the Supplier Credit is Expected"><strong>Supplier Credit Expected </strong><span class="fw-bold text-danger">*</span></label>
-                            <div class="text-center">
+                            <div>
                                 <div class="form-check form-check-inline">
                                     <input type="radio" class="form-check-input" asp-for="NcrProcCreditExpected" value="true" checked />
                                     <label class="form-check-label">Yes</label>
@@ -135,8 +153,8 @@
                 </div>
                 <div class="row">
                     <div class="form-group">
-                        <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No for SAP Return Completion"><strong>SAP Return Completed </strong><span class="fw-bold text-danger">*</span></label>
-                        <div class="text-center">
+                        <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No Check Yes or No if Sales Return Process is Completed"><strong>SAP Return Completed </strong><span class="fw-bold text-danger">*</span></label>
+                        <div>
                             <div class="form-check form-check-inline">
                                 <input type="radio" class="form-check-input" asp-for="NcrProcSAPReturnCompleted" value="true" checked />
                                 <label class="form-check-label">Yes</label>
@@ -148,49 +166,41 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="form-group">
-                    <label class="control-label"> Current Photos:</label>
+                    <label class="control-label"><strong>Current Photos:</strong></label>
                     <div class="ml-md-3">
-                        @{
-                            int fileCount = Model.ProcDefectPhotos.Count;
-                            if (fileCount > 0)
+                        <div id="photoListContainer">
+                            @if (Model.ProcDefectPhotos.Any())
                             {
-                                var firstFile = Model.ProcDefectPhotos.FirstOrDefault(); ;
-                                if (fileCount > 1)
-                                {
-                                    <a class="" role="button" data-bs-toggle="collapse" href="#collapsePhotos@(Model.NcrProcurementId)"
-                                       aria-expanded="false" aria-controls="collapsePhotos@(Model.NcrProcurementId)">
-                                        <span class="badge bg-info">@fileCount</span> Photos...
-                                    </a>
-                                    <div class="collapse" id="collapsePhotos@(Model.NcrProcurementId)">
-                                        @{
-                                            foreach (var d in Model.ProcDefectPhotos)
-                                            {
-                                                <a asp-controller="NcrProcurement" asp-action="Download"
-                                                   asp-route-id="@d.ProcDefectPhotoId">@d.FileName</a> <br />
-                                            }
-                                        }
-                                    </div>
-                                }
-                                else
-                                {
-                                    <a asp-controller="NcrProcurement" asp-action="Download"
-                                       asp-route-id="@firstFile.ProcDefectPhotoId">@firstFile.FileName</a>
-                                }
+                                int fileCount = Model.ProcDefectPhotos.Count;
+                                <a class="" role="button" data-bs-toggle="collapse" href="#collapsePhotos@(Model.NcrProcurementId)" aria-expanded="false" aria-controls="collapsePhotos@(Model.NcrProcurementId)">
+                                    <span class="badge bg-info" id="photoCounter">@fileCount</span> Photos...
+                                </a>
+                                <div class="collapse" id="collapsePhotos@(Model.NcrProcurementId)">
+                                    @foreach (var d in Model.ProcDefectPhotos)
+                                    {
+                                        <div id="photo-@d.ProcDefectPhotoId" class="d-flex align-items-center mb-2">
+                                            <a asp-controller="NcrEng" asp-action="Download" asp-route-id="@d.ProcDefectPhotoId">@d.FileName</a>
+                                            <button type="button" class="btn btn-danger btn-sm ms-2" onclick="deletePhoto(@d.ProcDefectPhotoId)"><i class="bi bi-trash"></i></button>
+                                        </div>
+                                    }
+                                </div>
                             }
-                        }
+                            else
+                            {
+                                <p id="noPhotosMessage">No photos to display.</p>
+                            }
+                        </div>
                     </div>
                 </div>
-
                 <div class="form-group">
-                    <label class="control-label custom-file-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Choose a Photo to Upload"><strong>Upload Photos: </strong></label>
+                    <label class="control-label custom-file-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Choose a Photo to Upload"><strong>Upload Photos </strong></label>
                     <div class="input-group mb-3">
                         <input type="file" class="form-control" name="photos" multiple="multiple" />
                     </div>
                 </div>
                 <div class="form-group">
-                    <label asp-for="NcrProcDefectVideo" class="control-label"><strong>Video Links </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Link to desired Videos">(e.g. https://haverniagara.com/)</small></label>
+                    <label asp-for="NcrProcDefectVideo" class="control-label"><strong>Video Links </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Add multiple video links separated by a comma">(e.g. https://haverniagara.com, https://www.google.ca)</small></label>
                     <input asp-for="NcrProcDefectVideo" class="form-control" />
                     <span asp-validation-for="NcrProcDefectVideo" class="text-danger"></span>
                 </div>
@@ -199,12 +209,12 @@
                 <div class="form-group d-flex justify-content-end mt-2">
                     <div>
                         <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn custom-btn-color">
-                            <i class="bi bi-arrow-90deg-left"></i> Back to NCR List
+                            <i class="bi bi-arrow-90deg-left"></i> Back to NCR Log
                         </button>
                     </div>
                     <div>
                         <button type="submit" class="btn btn-primary ms-4">
-                            <i class='bi-plus-square-dotted'></i> Save
+                            <i class='bi bi-floppy'></i> Save
                         </button>
                     </div>
                 </div>
@@ -249,11 +259,72 @@
         });
     </script>
     <script>
+        $(document).ready(function () {
+            // Function to show/hide elements and manage validation based on SupplierReturnRequest value
+            function toggleSupplierReturnFields() {
+                var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
+                var supplierRMAField = $('#SupplierReturnMANum');
+                var carrierNameField = $('#SupplierReturnName');
+                var accountField = $('#SupplierReturnAccount');
+
+                // Check the value of SupplierReturnRequest and toggle the required attribute accordingly
+                if (supplierReturnRequest === 'true') {
+                    // Set required attribute
+                    supplierRMAField.prop('required', true);
+                    carrierNameField.prop('required', true);
+                    accountField.prop('required', true);
+                } else {
+                    // Remove required attribute
+                    supplierRMAField.prop('required', false);
+                    carrierNameField.prop('required', false);
+                    accountField.prop('required', false);
+                }
+            }
+
+            // Call the function on page load
+            toggleSupplierReturnFields();
+
+            // Bind the function to the change event of SupplierReturnRequest radio buttons
+            $('input[name="NcrProcSupplierReturnReq"]').change(function () {
+                toggleSupplierReturnFields();
+            });
+        });
+    </script>
+    <script>
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl);
         });
     </script>
+    <script>
+        function deletePhoto(photoId) {
+            if (!confirm("Are you sure you want to delete this photo?")) return;
 
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("DeletePhoto", "NcrProcurement")',
+                data: { photoId: photoId },
+                success: function (response) {
+                    if (response.success) {
+                        $("#photo-" + photoId).remove();
 
+                        var currentCount = parseInt($("#photoCounter").text());
+                        var newCount = currentCount - 1;
+
+                        if (newCount > 0) {
+                            $("#photoCounter").text(newCount);
+                        } else {
+                            $("#photoListContainer").html('<p>No photos to display.</p>');
+                        }
+                        alert("Photo deleted sucessfully!");
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert("An error occurred. Please try again.");
+                }
+            });
+        }
+    </script>
 }

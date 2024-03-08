@@ -529,17 +529,16 @@ namespace HaverDevProject.Controllers
                         if (string.IsNullOrWhiteSpace(supplierCodeStr))
                         {
                             errorMessages.Add($"Row {row}: Supplier Code is required.");
+                        }                        
+                        // Check if Supplier Code is a number
+                        if (!int.TryParse(supplierCodeStr, out int supplierCode))
+                        {
+                            errorMessages.Add($"Row {row}: Supplier Code must be a number.");
                         }
 
                         if (string.IsNullOrWhiteSpace(supplierName))
                         {
                             errorMessages.Add($"Row {row}: Supplier Name is required.");
-                        }
-
-                        // Check if Supplier Code is a number
-                        if (!int.TryParse(supplierCodeStr, out int supplierCode))
-                        {
-                            errorMessages.Add($"Row {row}: Supplier Code must be a number.");
                         }
 
                         var existingSupplier = await _context
@@ -576,8 +575,14 @@ namespace HaverDevProject.Controllers
 
             if (validSuppliers.Count != expectedSuccessRows)
             {
-                TempData["ErrorMessage"] =
-                    $"Fix error(s) and try to upload again: {string.Join(" ", errorMessages)}";
+                if (errorMessages.Count > 10)
+                {
+                    TempData["ErrorMessage"] = $"There are errors in {errorMessages.Count} rows. Please review and fix the errors before uploading again.";
+                }else
+                {
+                    TempData["ErrorMessage"] =
+                         $"Fix error(s) and try to upload again: <br><li>{string.Join("<li>", errorMessages)}";
+                }
             }
             else
             {
@@ -592,7 +597,7 @@ namespace HaverDevProject.Controllers
 
                         transaction.Commit();
                     }
-                    catch (Exception /*ex*/)
+                    catch (Exception)
                     {
                         transaction.Rollback();
                         break;

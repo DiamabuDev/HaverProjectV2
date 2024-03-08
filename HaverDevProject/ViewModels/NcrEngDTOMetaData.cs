@@ -40,6 +40,7 @@ public class NcrEngDTOMetaData
     [StringLength(300, ErrorMessage = "Only 300 characters for disposition description.")]
     [DataType(DataType.MultilineText)]
     [Unicode(false)]
+    [Required(ErrorMessage = "You must include a disposition description")]
     public string NcrEngDispositionDescription { get; set; }
 
     public bool NcrEngStatusFlag { get; set; }

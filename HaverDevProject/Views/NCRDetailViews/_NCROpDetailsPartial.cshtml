@@ -1,8 +1,6 @@
 ﻿@model HaverDevProject.Models.NcrOperation
 
-<div class="container-fluid mt-3">
-    <div class="row justify-content-center">
-        <div id="OpSection" class="col-md-10 mx-0">
+<div class="mt-2">
             <button class="btn custom-header-bg icon-drop text-start mb-0" type="button" data-bs-toggle="collapse" data-bs-target="#purchSection" aria-expanded="@ViewBag.IsNCROpView.ToString().ToLower()" aria-controls="purchSection">
                 Operations <i class="bi bi-chevron-down"></i>
             </button>
@@ -66,7 +64,7 @@
 
                                 <tr>
                                     <td class="three-cols">L. Pentland</td>
-                                    <td class="three-cols">@Model.Ncr.NcrLastUpdated.ToString("yyyy-MM-dd")</td>
+                                    <td class="three-cols">@Model.NcrOpCreationDate.ToString("yyyy-MM-dd")</td>
                                     <td class="three-cols">
                                         @{
                                             if (Model.UpdatedOn.HasValue)
@@ -101,7 +99,7 @@
                                 </div>
 
                                 <div class="card-body pb-0">
-                                    <div class="row">
+                                    <div class="row justify-content-center">
                                         @{
                                             if (Model.OpDefectPhotos != null && Model.OpDefectPhotos.Any())
                                             {
@@ -124,6 +122,9 @@
                             }
                             @if (hasVideos)
                             {
+                                <div class="card-header">
+                                    Videos
+                                </div>
                                 <div class="card-body">
                                     @if (Model.NcrOperationVideo != null)
                                     {
@@ -139,6 +140,4 @@
                     }
                 </div>
             </div>
-        </div>
-    </div>
 </div>

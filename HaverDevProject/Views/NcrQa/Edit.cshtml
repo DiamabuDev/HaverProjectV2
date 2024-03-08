@@ -160,35 +160,32 @@
                         <textarea asp-for="NcrQaDescriptionOfDefect" class="form-control"></textarea>
                         <span asp-validation-for="NcrQaDescriptionOfDefect" class="text-danger"></span>
                     </div>
-                   
+
                     <div class="form-group">
-                        <label class="control-label"> <strong>Current Photos</strong></label>
+                        <label class="control-label"><strong>Current Photos </strong></label>
                         <div class="ml-md-3">
-                            @{
-                                int fileCount = Model.ItemDefectPhotos.Count;
-                                if (fileCount > 0)
+                            <div id="photoListContainer">
+                                @if (Model.ItemDefectPhotos.Any())
                                 {
-                                    var firstFile = Model.ItemDefectPhotos.FirstOrDefault(); ;
-                                    if (fileCount > 1)
-                                    {
-                                        <a class="" role="button" data-bs-toggle="collapse" href="#collapsePhotos@(Model.NcrQaId)" aria-expanded="false" aria-controls="collapsePhotos@(Model.NcrQaId)">
-                                            <span class="badge bg-info">@fileCount</span> Photos...
-                                        </a>
-                                        <div class="collapse" id="collapsePhotos@(Model.NcrQaId)">
-                                            @{
-                                                foreach (var d in Model.ItemDefectPhotos)
-                                                {
-                                                    <a asp-controller="NcrQa" asp-action="Download" asp-route-id="@d.ItemDefectPhotoId">@d.FileName</a> <br />
-                                                }
-                                            }
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <a asp-controller="NcrQa" asp-action="Download" asp-route-id="@firstFile.ItemDefectPhotoId">@firstFile.FileName</a>
-                                    }
+                                    int fileCount = Model.ItemDefectPhotos.Count;
+                                    <a class="" role="button" data-bs-toggle="collapse" href="#collapsePhotos@(Model.NcrQaId)" aria-expanded="false" aria-controls="collapsePhotos@(Model.NcrQaId)">
+                                        <span class="badge bg-info" id="photoCounter">@fileCount</span> Photos...
+                                    </a>
+                                    <div class="collapse" id="collapsePhotos@(Model.NcrQaId)">
+                                        @foreach (var d in Model.ItemDefectPhotos)
+                                        {
+                                            <div id="photo-@d.ItemDefectPhotoId" class="d-flex align-items-center mb-2">
+                                                <a asp-controller="NcrQa" asp-action="Download" asp-route-id="@d.ItemDefectPhotoId">@d.FileName</a>
+                                                <button type="button" class="btn btn-danger btn-sm ms-2" onclick="deletePhoto(@d.ItemDefectPhotoId)"><i class="bi bi-trash"></i></button>
+                                            </div>
+                                        }
+                                    </div>
                                 }
-                            }
+                                else
+                                {
+                                    <p id="noPhotosMessage">No photos to display.</p>
+                                }
+                            </div>
                         </div>
                     </div>
 
@@ -242,7 +239,6 @@
                             </div>                        
                         </div>
                     </div>
-
                 </div>
                 <div class="row">
                     <p>
@@ -300,8 +296,6 @@
             refreshDDL('DefectId', URL, true, 'No defects related with the item selected', false, null, true);
         });
     </script>
-
-
     <!--Script for tooltip in Add New Supplier button-->
     <script>
         $(document).ready(function () {
@@ -368,7 +362,7 @@
             var ul = document.getElementById("ErrorList");
             while (ul.firstChild) {
                 ul.removeChild(ul.firstChild);
-            }
+            }=======
         }
     </script>
 }

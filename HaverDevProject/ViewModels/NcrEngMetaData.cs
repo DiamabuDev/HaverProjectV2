@@ -22,7 +22,8 @@ public class NcrEngMetaData
 	[StringLength(300, ErrorMessage = "Only 300 characters for disposition description.")]
 	[DataType(DataType.MultilineText)]
 	[Unicode(false)]
-	public string NcrEngDispositionDescription { get; set; }
+    [Required(ErrorMessage = "You must include a disposition description")]
+    public string NcrEngDispositionDescription { get; set; }
 
     [Display(Name = "Date")]
     [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]

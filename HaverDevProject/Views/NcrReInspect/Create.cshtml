@@ -6,11 +6,39 @@
 
 <div class="col-md-8 col-10 mx-auto">
     <h1><i class="bi bi-caret-right-fill"></i>Reinspection</h1>
-</div>
+    
+    <button class="btn custom-details-btn icon-drop text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#details" aria-expanded="false" aria-controls="details">
+        Details <i class="bi bi-chevron-down"></i>
+    </button>
+    <div class="collapse" id="details">
+        @if (Model.Ncr.NcrQa != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", Model.Ncr.NcrQa)
+        }
 
-<div class="col-md-8 col-10 mx-auto">
-    <form asp-action="Create" method="post" enctype="multipart/form-data">
-        <div class="card border-2">
+        @if (Model.Ncr.NcrEng != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCREngDetailsPartial.cshtml", Model.Ncr.NcrEng)
+        }
+
+        @if (Model.Ncr.NcrOperation != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCROpDetailsPartial.cshtml", Model.Ncr.NcrOperation)
+        }
+
+        @if (Model.Ncr.NcrProcurement != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRProcDetailsPartial.cshtml", Model.Ncr.NcrProcurement)
+        }
+
+        @if (Model.Ncr.NcrReInspect != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRReInspDetailsPartial.cshtml", Model.Ncr.NcrReInspect)
+        }
+    </div>
+
+    <form asp-action="Create" method="post" enctype="multipart/form-data" id="reInspectFormId">
+        <div class="card border-2 mt-2">
             <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
                 <div>
                     <h2 class="m-0">Add to NCR</h2>
@@ -41,15 +69,16 @@
                 <div class="row">
                     <div class="col-6">
                         <div class="form-group">
-                            <label class="pb-3"><b>Reinspection Acceptable? </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Is this NCR Reinspection Acceptable?">(Y/N)</small></label>
+                            <label class="pb-3"><b>Reinspection Acceptable? </b><small data-bs-toggle="tooltip" data-bs-placement="top" 
+                                data-bs-custom-class="custom-tooltip" data-bs-title="Is this NCR Reinspection Acceptable?">(Y/N)</small></label>
                             <span class="fw-bold text-danger">*</span>
                             <div class="text-left">
                                 <div class="form-check form-check-inline">
-                                    <input type="radio" class="form-check-input" id="true" asp-for="NcrReInspectAcceptable" value="true" />
+                                    <input type="radio" class="form-check-input" asp-for="NcrReInspectAcceptable" value="true" />
                                     <label class="form-check-label">Yes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input type="radio" class="form-check-input" id="false" asp-for="NcrReInspectAcceptable" value="false" />
+                                    <input type="radio" class="form-check-input" asp-for="NcrReInspectAcceptable" value="false" />
                                     <label class="form-check-label">No</label>
                                 </div>
                             </div>
@@ -83,7 +112,7 @@
                                     
                 </div> *@
                 <div class="form-group">
-                    <label class="control-label custom-file-label"><b>Upload Photos:</b></label>
+                    <label class="control-label custom-file-label"><b>Upload Photos</b></label>
                     <input type="file" class="form-control" name="Photos" multiple="multiple" />
                 </div>      
                 <div class="form-group">
@@ -98,19 +127,54 @@
             <div class="card-footer">
                 <div class="form-group d-flex justify-content-end mt-2">
                     <div>
-                        <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn btn-primary ">
-                            <i class="bi bi-arrow-90deg-left"></i> Back to NCR List
+                        <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn custom-btn-color">
+                            <i class="bi bi-arrow-90deg-left"></i> Back to the NCR Log
                         </button>
                     </div>
                     <div>
-                        <button type="submit" class="btn btn-primary ms-4" onclick="NewNcr()">
-                            <i class='bi-plus-square-dotted'></i> Create Reinspection
+                        <button type="submit" class="btn btn-primary ms-4" onclick="showCloseReinspectionModal()" id="btnSaveAndClose">
+                            <i class='bi bi-floppy'></i> Save and Close
                         </button>
                     </div>
                 </div>
             </div>
         </div>
     </form>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" id="acceptableReinspectionModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Not Acceptable NCR Reinspection</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Warning:</strong> This reinspection has been marked as <b>not acceptable</b>. You will need to create a new NCR.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" id="closeReinspectionModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Save and Close NCR</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Warning:</strong> By accepting, you will be closing this NCR and will <b>no longer</b> be able to edit. Proceed?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnNo" data-bs-dismiss="modal">No</button>
+                <button type="button" class="btn btn-primary" id="btnYes">Yes</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 @* <hr />
@@ -150,7 +214,6 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-
     <script>
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
@@ -170,4 +233,53 @@
             }
         }
     </script>
- *@}
+ *@
+
+    <script>
+        function showAcceptableReinspectionModal() {
+            $('#acceptableReinspectionModal').modal('show');
+        }
+
+        function hideAcceptableReinspectionModal() {
+            $('#acceptableReinspectionModal').modal('hide');
+        }
+
+        $('input[name="NcrReInspectAcceptable"]').change(function () {
+            console.log("Change event triggered for NcrReInspectAcceptable radio buttons.");
+            var ncrReInspectAcceptable = $(this).val();
+            if (ncrReInspectAcceptable === "false") {
+                console.log("Showing the modal...");
+                showAcceptableReinspectionModal();
+            } else {
+                console.log("Hiding the modal...");
+                hideAcceptableReinspectionModal();
+            }
+        });
+    </script>
+
+    <script>
+        document.getElementById('btnSaveAndClose').addEventListener('click', function (event) {
+            event.preventDefault();
+
+            showCloseReinspectionModal();
+
+            $('#closeReinspectionModal').on('hidden.bs.modal', function () {
+                document.getElementById('reInspectFormId').submit();
+            });
+        });
+
+        function showCloseReinspectionModal() {
+            $('#closeReinspectionModal').modal('show');
+
+            document.getElementById('btnYes').addEventListener('click', function () {
+                document.getElementById('btnSaveAndClose').click();
+                hideCloseReinspectionModal();
+            });
+        }
+
+        function hideCloseReinspectionModal() {
+            $('#closeReinspectionModal').modal('hide');
+        }
+    </script>
+
+}

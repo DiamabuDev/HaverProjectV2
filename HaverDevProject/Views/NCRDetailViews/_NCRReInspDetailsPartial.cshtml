@@ -1,8 +1,7 @@
 ﻿@model HaverDevProject.Models.NcrReInspect
 
-<div class="container-fluid mt-3">
-    <div class="row justify-content-center">
-        <div id="ReInspSection" class="col-md-10 mx-0">
+<div class="mt-2">
+
             <button class="btn custom-header-bg icon-drop text-start mb-0" type="button" data-bs-toggle="collapse" data-bs-target="#reInspectSection" aria-expanded="@ViewBag.IsNCRReInspView.ToString().ToLower()" aria-controls="reInspectSection">
                 Re-Inspection <i class="bi bi-chevron-down"></i>
             </button>
@@ -15,11 +14,7 @@
                                     <th class="two-cols-1">Acceptable</th>
                                     <th class="two-cols">New NCR #</th>
                                 </tr>
-                            </thead>
-                        </table>
-                    </div>
-                    <div class="card-body pb-0 pt-0">
-                        <table class="table">
+                            </thead>                
                             <tbody>
                                 <tr>
                                     <td class="two-cols-1">
@@ -28,10 +23,8 @@
                                     <td class="two-cols">
                                         @(Model.NcrReInspectNewNcrNumber == null ? "N/A" : Model.NcrReInspectNewNcrNumber.ToString())
                                     </td>
-
                                 </tr>
                             </tbody>
-
                         </table>
                     </div>
                 </div>
@@ -91,7 +84,7 @@
                             </div>
 
                             <div class="card-body pb-0">
-                                <div class="row">
+                                <div class="row justify-content-center">
                                     @{
                                         if (Model.NcrReInspectPhotos != null && Model.NcrReInspectPhotos.Any())
                                         {
@@ -114,6 +107,9 @@
                         }
                         @if (hasVideos)
                         {
+                            <div class="card-header">
+                                Videos
+                            </div>
                             <div class="card-body">
                                 @if (Model.NcrReInspectDefectVideo != null)
                                 {
@@ -128,6 +124,4 @@
                     </div>
                 }
             </div>
-        </div>
-    </div>
 </div>
