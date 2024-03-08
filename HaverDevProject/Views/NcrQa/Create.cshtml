@@ -282,6 +282,12 @@
             refreshDDL('ItemId', URL, true, 'No items related with the supplier selected', true, "Select an item", true);
             // Set the value of DefectId dropdown to an empty string
             $('#DefectId').val('');
+
+
+            //Validado... carga la lista del modal para crear un nuevo item
+            refreshDDL('ItemSupplierId', '/NcrQa/GetSuppliers/' + selectedSupplier, true, 'No items related with the supplier selected', true, "Select an item", true);
+                      
+
         });
     </script>
     <script type="text/javascript">
@@ -385,35 +391,31 @@
     </script>
 
 
-    <!--Script for tooltip in Add New Item button-->
+    <!--Script for Add New Item button-->
     <script type="text/javascript">
 
-        $('#SupplierId').change(function () {
-            var supplierId = $(this).val();
-            // console.log("SupplierId:", supplierId);
-            // Asiggn value to the field
-            $('#addItemModal').find('#SupplierId').val(supplierId);
-        });
+        // $('#SupplierId').change(function () {
+        //     var supplierId = $(this).val();
+        //     // console.log("SupplierId:", supplierId);
+        //     // Asiggn value to the field
+        //     $('#addItemModal').find('#SupplierId').val(supplierId);
+        // });
 
 
 
-        $('#submitItemCreate').click(function (event) {            
+        $('#submitItemCreate').click(function (event) {
+            
+
             event.preventDefault();
             ClearErrors();
             var form = $('#createItemForm');
             if (form.valid()) 
             {
-
-                // Obtener el SupplierId del botón que abrió el modal
-                var supplierId = $('#nowAddItem').data('supplier-id');
-
+                
                 // Agregar el SupplierId al formulario antes de la solicitud AJAX
-                form.append('<input type="hidden" name="SupplierId" value="' + supplierId + '" />');
+                // form.append('<input type="hidden" name="SupplierId" value="' + supplierId + '" />');
 
                 
-
-
-
                 $.ajax({
                     type: "POST",
                     url: form.attr('action'),
@@ -456,8 +458,10 @@
         $('#addItemModal').on('hide.bs.modal', function () {
             document.getElementById("createItemForm").reset();//to clear the data in the popup form
             ClearErrors();
-            var selectedOption = $('#ItemId').val();//Return to the current selected value
-            refreshDDL('SupplierId', '/NcrQa/GetItems/' + selectedOption, false, null, true, 'Select an Item', true);
+
+            var selectedOption = $('#SupplierId').val();//Return to the current selected value
+            var URLItem = "/NcrQa/GetItems/?SupplierId=" + selectedOption;
+            refreshDDL('ItemId', URLItem, true, 'No items related with the supplier selected', true, 'Select an Item', true);
         });
         function ClearErrors() {
             //Empty out the list of validation errors if there are any
@@ -467,5 +471,8 @@
             }
         }
     </script>
+
+    @* var URL = "/NcrQa/GetItems/?SupplierId=" + selectedSupplier;
+            refreshDDL('ItemId', URL, true, 'No items related with the supplier selected', true, "Select an item", true); *@
 
 }

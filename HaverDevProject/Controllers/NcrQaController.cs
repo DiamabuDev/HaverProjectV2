@@ -597,6 +597,8 @@ namespace HaverDevProject.Controllers
             return Json(SupplierSelectCreateList(id));
         }
 
+        
+
 
         [HttpGet]
         public JsonResult GetItems(int SupplierId)
