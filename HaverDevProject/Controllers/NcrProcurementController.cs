@@ -470,6 +470,38 @@ namespace HaverDevProject.Controllers
                 ProcDefectPhotos = ncrProc.ProcDefectPhotos,
             };
 
+            var readOnlyDetails = await _context.Ncrs
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.Item)
+                        .ThenInclude(item => item.Supplier)
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.Item)
+                        .ThenInclude(item => item.ItemDefects)
+                            .ThenInclude(defect => defect.Defect)
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.ItemDefectPhotos)
+                .Include(n => n.NcrEng)
+                    .ThenInclude(eng => eng.EngDispositionType)
+                .Include(n => n.NcrEng)
+                    .ThenInclude(eng => eng.Drawing)
+                .Include(n => n.NcrEng)
+                    .ThenInclude(eng => eng.EngDefectPhotos)
+                .Include(n => n.NcrOperation)
+                    .ThenInclude(op => op.OpDispositionType)
+                .Include(n => n.NcrOperation)
+                    .ThenInclude(op => op.FollowUpType)
+                .Include(n => n.NcrOperation)
+                    .ThenInclude(op => op.OpDefectPhotos)
+                .FirstOrDefaultAsync(n => n.NcrId == id);
+
+            ViewBag.IsNCRQaView = false;
+            ViewBag.IsNCREngView = false;
+            ViewBag.IsNCROpView = false;
+            ViewBag.IsNCRProcView = false;
+            ViewBag.IsNCRReInspView = false;
+
+            ViewBag.ncrDetails = readOnlyDetails;
+
             ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrProc.NcrId);
             return View(ncrProcDTO);
         }
@@ -694,6 +726,19 @@ namespace HaverDevProject.Controllers
                 ViewData["SupplierId"] = SupplierSelectCreateList(null);
                 ViewData["ItemId"] = ItemSelectList(null, null);
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeletePhoto(int photoId)
+        {
+            var photo = await _context.ProcDefectPhotos.FindAsync(photoId);
+            if (photo != null)
+            {
+                _context.ProcDefectPhotos.Remove(photo);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Photo deleted successfully." });
+            }
+            return Json(new { success = false, message = "Photo not found." });
         }
         private bool NcrProcurementExists(int id)
         {

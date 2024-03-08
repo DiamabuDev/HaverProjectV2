@@ -44,7 +44,7 @@ namespace HaverDevProject.ViewModels
 
         [Display(Name = "Quantity Defective")]
         [Required(ErrorMessage = "You must provide the Quantity Defective.")]
-        [Range(1, int.MaxValue, ErrorMessage = "Quantity Received must be greater than 0.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Quantity Defective must be greater than 0.")]
         public int NcrQaQuanDefective { get; set; }
 
         [Display(Name = "Description of Defect")]

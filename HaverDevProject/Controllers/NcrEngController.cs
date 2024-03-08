@@ -56,6 +56,7 @@ namespace HaverDevProject.Controllers
 
             
             PopulateDropDownLists();
+            GetNcrs();
 
             var ncrEng = _context.NcrEngs
                 .Include(n => n.EngDispositionType)
@@ -64,11 +65,15 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
                 .Include(n => n.Drawing)
-                .Where(n => n.Ncr.NcrPhase != NcrPhase.Archive)
+                .Where(n => n.Ncr.NcrPhase != NcrPhase.Archive &&
+                (n.Ncr.NcrPhase == NcrPhase.Engineer ||
+                 n.Ncr.NcrPhase == NcrPhase.Operations ||
+                 n.Ncr.NcrPhase == NcrPhase.Procurement ||
+                 n.Ncr.NcrPhase == NcrPhase.ReInspection ||
+                 n.Ncr.NcrPhase == NcrPhase.Closed))
                 .AsNoTracking();
 
-            
-            GetNcrs();
+
 
             //Filtering values
             if (!String.IsNullOrEmpty(filter))
@@ -422,6 +427,7 @@ namespace HaverDevProject.Controllers
                         .Include(n => n.EngDefectPhotos)
                         .AsNoTracking()
                         .FirstOrDefaultAsync(ne => ne.NcrEngId == id);
+
             //var ncrEng = await _context.NcrEngs.FindAsync(id);
 
             if (ncrEng == null)
@@ -451,9 +457,27 @@ namespace HaverDevProject.Controllers
                 EngDefectPhotos = ncrEng.EngDefectPhotos,
                 NcrEngDefectVideo = ncrEng.NcrEngDefectVideo,
                 NcrPhase = ncrEng.NcrPhase
-
             };
 
+            var readOnlyDetails = await _context.Ncrs
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.Item)
+                        .ThenInclude(item => item.Supplier)
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.Item)
+                        .ThenInclude(item => item.ItemDefects)
+                            .ThenInclude(defect => defect.Defect)
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.ItemDefectPhotos)
+                .FirstOrDefaultAsync(n => n.NcrId == id);
+
+            ViewBag.IsNCRQaView = false;
+            ViewBag.IsNCREngView = false;
+            ViewBag.IsNCROpView = false;
+            ViewBag.IsNCRProcView = false;
+            ViewBag.IsNCRReInspView = false;
+
+            ViewBag.ncrDetails = readOnlyDetails;
 
             ViewData["EngDispositionTypeId"] = new SelectList(_context.EngDispositionTypes, "EngDispositionTypeId", "EngDispositionTypeName", ncrEng.EngDispositionTypeId);
             return View(ncrEngDTO);
@@ -637,6 +661,19 @@ namespace HaverDevProject.Controllers
             {
                 ViewData["EngDispositionTypeId"] = EngDispositionTypeSelectList(null);
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeletePhoto(int photoId)
+        {
+            var photo = await _context.EngDefectPhotos.FindAsync(photoId);
+            if (photo != null)
+            {
+                _context.EngDefectPhotos.Remove(photo);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Photo deleted successfully." });
+            }
+            return Json(new { success = false, message = "Photo not found." });
         }
     }
 }

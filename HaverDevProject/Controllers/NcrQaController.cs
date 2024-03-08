@@ -12,6 +12,7 @@ using HaverDevProject.Utilities;
 using HaverDevProject.ViewModels;
 using System.Numerics;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.AspNetCore.Hosting;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HaverDevProject.Controllers
@@ -279,6 +280,8 @@ namespace HaverDevProject.Controllers
             ncr.NcrQaEngDispositionRequired = true; //Yes
             
             PopulateDropDownLists();
+            //ViewData["SupplierId"] = SupplierSelectCreateList(null);
+
             return View(ncr);
         }
 
@@ -587,9 +590,15 @@ namespace HaverDevProject.Controllers
                 ViewData["SupplierId"] = SupplierSelectCreateList(null);
                 ViewData["ItemId"] = ItemSelectList(null, null);
             }
-        }  
-        
+        }
 
+        [HttpGet]
+        public JsonResult GetSuppliers(int? id)
+        {
+            return Json(SupplierSelectCreateList(id));
+        }
+
+        
 
 
         [HttpGet]
@@ -702,6 +711,18 @@ namespace HaverDevProject.Controllers
 
         }
 
+        [HttpPost]
+        public async Task<IActionResult> DeletePhoto(int photoId)
+        {
+            var photo = await _context.ItemDefectPhotos.FindAsync(photoId);
+            if (photo != null)
+            {
+                _context.ItemDefectPhotos.Remove(photo);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Photo deleted successfully." });
+            }
+            return Json(new { success = false, message = "Photo not found." });
+        }
 
         private bool NcrQaExists(int id)
         {

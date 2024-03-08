@@ -6,11 +6,17 @@
 
 <div class="col-md-8 col-10 mx-auto">
     <h1><i class="bi bi-caret-right-fill"></i>Engineer</h1>
-</div>
-
-<div class="col-md-8 col-10 mx-auto">
+    <button class="btn custom-details-btn icon-drop text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#details" aria-expanded="false" aria-controls="details">
+        Details <i class="bi bi-chevron-down"></i>
+    </button>
+    <div class="collapse" id="details">
+        @if (ViewBag.ncrDetails.NcrQa != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", (NcrQa)ViewBag.ncrDetails.NcrQa)
+        }
+    </div>
     <form asp-action="Edit" method="post" enctype="multipart/form-data">
-        <div class="card border-2">
+        <div class="card border-2 mt-2">
             <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
                 <div>
                     <h2 class="m-0">Edit NCR</h2>
@@ -50,7 +56,7 @@
 
                             @* <label asp-for="EngDispositionTypeId" class="control-label"></label> *@
                             <select asp-for="EngDispositionTypeId" class="form-control"
-                                    asp-items="ViewBag.EngDispositionTypeId"></select>
+                                    asp-items="ViewBag.EngDispositionTypeId" id="engDispositionSelect"></select>
                         </div>
                     </div>
                 </div>
@@ -72,48 +78,40 @@
                     <div class="col-12">
                         <div class="form-group">
                             <strong>Disposition </strong> (Sequence of work steps required when 'repair' or 'rework'
-                            indicated)
+                            indicated) <span class="fw-bold text-danger">*</span>
                             @* <label asp-for="NcrEngDispositionDescription" class="control-label"></label> *@
-                            <textarea asp-for="NcrEngDispositionDescription" class="form-control"></textarea>
+                            <textarea asp-for="NcrEngDispositionDescription" class="form-control" id="ncrDispositionDescription"></textarea>
                             <span asp-validation-for="NcrEngDispositionDescription" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
-
                 <div class="form-group">
-                    <label class="control-label"> Current Photos</label>
+                    <label class="control-label"><strong>Current Photos:</strong></label>
                     <div class="ml-md-3">
-                        @{
-                            int fileCount = Model.EngDefectPhotos.Count;
-                            if (fileCount > 0)
+                        <div id="photoListContainer">
+                            @if (Model.EngDefectPhotos.Any())
                             {
-                                var firstFile = Model.EngDefectPhotos.FirstOrDefault(); ;
-                                if (fileCount > 1)
-                                {
-                                    <a class="" role="button" data-bs-toggle="collapse" href="#collapsePhotos@(Model.NcrEngId)"
-                                       aria-expanded="false" aria-controls="collapsePhotos@(Model.NcrEngId)">
-                                        <span class="badge bg-info">@fileCount</span> Photos...
-                                    </a>
-                                    <div class="collapse" id="collapsePhotos@(Model.NcrEngId)">
-                                        @{
-                                            foreach (var d in Model.EngDefectPhotos)
-                                            {
-                                                <a asp-controller="NcrEng" asp-action="Download"
-                                                   asp-route-id="@d.EngDefectPhotoId">@d.FileName</a> <br />
-                                            }
-                                        }
-                                    </div>
-                                }
-                                else
-                                {
-                                    <a asp-controller="NcrEng" asp-action="Download"
-                                       asp-route-id="@firstFile.EngDefectPhotoId">@firstFile.FileName</a>
-                                }
+                                int fileCount = Model.EngDefectPhotos.Count;
+                                <a class="" role="button" data-bs-toggle="collapse" href="#collapsePhotos@(Model.NcrEngId)" aria-expanded="false" aria-controls="collapsePhotos@(Model.NcrEngId)">
+                                    <span class="badge bg-info" id="photoCounter">@fileCount</span> Photos...
+                                </a>
+                                <div class="collapse" id="collapsePhotos@(Model.NcrEngId)">
+                                    @foreach (var d in Model.EngDefectPhotos)
+                                    {
+                                        <div id="photo-@d.EngDefectPhotoId" class="d-flex align-items-center mb-2">
+                                            <a asp-controller="NcrEng" asp-action="Download" asp-route-id="@d.EngDefectPhotoId">@d.FileName</a>
+                                            <button type="button" class="btn btn-danger btn-sm ms-2" onclick="deletePhoto(@d.EngDefectPhotoId)"><i class="bi bi-trash"></i></button>
+                                        </div>
+                                    }
+                                </div>
                             }
-                        }
+                            else
+                            {
+                                <p id="noPhotosMessage">No photos to display.</p>
+                            }
+                        </div>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label class="control-label custom-file-label"> <strong>Upload Photos </strong></label>
                     <div class="input-group mb-3">
@@ -272,10 +270,56 @@
         });
     </script>
 
+@*     <script>
+        const engDispositionSelect = document.getElementById('engDispositionSelect');
+        const ncrDispositionDescription = document.getElementById('ncrDispositionDescription');
+        engDispositionSelect.addEventListener('change', function () {
+            const selectedValue = engDispositionSelect.value;
+            if (selectedValue == 1 || selectedValue == 4) {
+                ncrDispositionDescription.value = 'N/A';
+                ncrDispositionDescription.readOnly = true;
+            } else {
+                ncrDispositionDescription.value = '';
+                ncrDispositionDescription.readOnly = false;
+            }
+        });
+    </script> *@
+
     <script>
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl);
         });
+    </script>
+    <script>
+        function deletePhoto(photoId) {
+            if (!confirm("Are you sure you want to delete this photo?")) return;
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("DeletePhoto", "NcrEng")', 
+                data: { photoId: photoId },
+                success: function (response) {
+                    if (response.success) {
+                        $("#photo-" + photoId).remove();
+
+                        var currentCount = parseInt($("#photoCounter").text());
+                        var newCount = currentCount - 1;
+
+                        alert("Photo deleted sucessfully!");
+                        if (newCount > 0) {
+                            $("#photoCounter").text(newCount);
+                        } else {
+                            $("#photoListContainer").html('<p>No photos to display.</p>');
+                        }
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert("An error occurred. Please try again.");
+                }
+            });
+        }
     </script>
 }
