@@ -221,7 +221,7 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: Ncr/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, NcrPhase section)
         {
             if (id == null || _context.Ncrs == null)
             {
@@ -229,15 +229,41 @@ namespace HaverDevProject.Controllers
             }
 
             var ncr = await _context.Ncrs
+                .Include(n => n.NcrQa)
+                .Include(n => n.NcrQa).ThenInclude(n => n.Item)
+                .Include(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects)
+                .Include(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects).ThenInclude(n => n.Defect)
+                .Include(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
+                .Include(n => n.NcrQa).ThenInclude(n => n.ItemDefectPhotos)
+                .Include(n => n.NcrEng)
+                .Include(n => n.NcrEng).ThenInclude(n => n.EngDispositionType)
+                .Include(n => n.NcrEng).ThenInclude(n => n.Drawing)
+                .Include(n => n.NcrEng).ThenInclude(n => n.EngDefectPhotos)
+                .Include(n => n.NcrOperation)
+                .Include(n => n.NcrOperation).ThenInclude(n => n.OpDispositionType)
+                .Include(n => n.NcrOperation).ThenInclude(n => n.FollowUpType)
+                .Include(n => n.NcrOperation).ThenInclude(n => n.OpDefectPhotos)
+                .Include(n => n.NcrProcurement)
+                .Include(n => n.NcrProcurement).ThenInclude(n => n.ProcDefectPhotos)
+                .Include(n => n.NcrReInspect)
+                .Include(n => n.NcrReInspect).ThenInclude(n => n.NcrReInspectPhotos)
                 .FirstOrDefaultAsync(m => m.NcrId == id);
+
             if (ncr == null)
             {
                 return NotFound();
             }
 
+            ViewBag.IsNCRQaView = true;
+            ViewBag.IsNCREngView = false;
+            ViewBag.IsNCROpView = false;
+            ViewBag.IsNCRProcView = false;
+            ViewBag.IsNCRReInspView = false;
+
+            ViewBag.NCRSectionId = id;
+
             return View(ncr);
         }
-
         // GET: Ncr/Create
         public IActionResult Create()
         {
@@ -388,6 +414,57 @@ namespace HaverDevProject.Controllers
                 ViewData["SupplierId"] = SupplierSelectCreateList(null);
                 ViewData["ItemId"] = ItemSelectList(null, null);
             }
+        }
+        public async Task<IActionResult> ArchiveNcr(int id)
+        {
+            var ncrToUpdate = await _context.Ncrs
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(n => n.NcrId == id);
+
+            if (ncrToUpdate != null)
+            {
+                //Update the phase
+                ncrToUpdate.NcrPhase = NcrPhase.Archive;
+
+                //saving the values
+                _context.Ncrs.Update(ncrToUpdate);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "NCR Archive successfully!";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "NCR not found for archiving.";
+                return RedirectToAction("Index");
+            }
+
+        }
+
+        public async Task<IActionResult> RestoreNcr(int id)
+        {
+            var ncrToUpdate = await _context.Ncrs
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(n => n.NcrId == id);
+
+            if (ncrToUpdate != null)
+            {
+                //Update the phase
+                ncrToUpdate.NcrPhase = NcrPhase.Closed;
+
+                //saving the values
+                _context.Ncrs.Update(ncrToUpdate);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "NCR Restore successfully!";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "NCR not found for archiving.";
+                return RedirectToAction("Index");
+            }
+
         }
 
         private bool NcrExists(int id)
