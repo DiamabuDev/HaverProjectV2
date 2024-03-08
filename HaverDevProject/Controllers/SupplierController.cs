@@ -580,7 +580,7 @@ namespace HaverDevProject.Controllers
 
                         transaction.Commit();
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         transaction.Rollback();
                         break;

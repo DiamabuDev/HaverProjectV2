@@ -23,12 +23,12 @@
                 <div class="row">
                     <div class="form-group">
                         <label asp-for="ItemNumber" class="control-label">SAP No. <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="SAP No. that identifies the Item">(e.g. 207956254)</small> <span class="fw-bold text-danger">*</span></label>
-                        <input asp-for="ItemNumber" class="form-control" placeholder="Item Number" />
+                        <input asp-for="ItemNumber" class="form-control" placeholder="SAP No." />
                         <span asp-validation-for="ItemNumber" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="ItemName" class="control-label">Name <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Item Name">(e.g. Screw 1/4" .120)</small> <span class="fw-bold text-danger">*</span></label>
-                        <input asp-for="ItemName" class="form-control" placeholder="Item Name" />
+                        <label asp-for="ItemName" class="control-label">Name / Description <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Item Name / Description">(e.g. Screw 1/4" .120)</small> <span class="fw-bold text-danger">*</span></label>
+                        <input asp-for="ItemName" class="form-control" placeholder="Name / Description" />
                         <span asp-validation-for="ItemName" class="text-danger"></span>
                     </div>
                     @* <div class="form-group">
@@ -36,7 +36,7 @@
                         <input asp-for="ItemDescription" class="form-control" placeholder="Item Description" />
                         <span asp-validation-for="ItemDescription" class="text-danger"></span>
                     </div> *@
-                    <div class="form-group">
+                    @* <div class="form-group">
                         <label asp-for="SupplierId" class="control-label">Supplier <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Item Supplier">(e.g. LAWRENCE SINTERED METALS)</small> <span class="fw-bold text-danger">*</span></label>
                         <select asp-for="SupplierId" class="form-control" asp-items="ViewBag.SupplierId">
                             <option value="">Select a Supplier</option>
@@ -70,7 +70,7 @@
                             </table>
                         </div>
                     </div>
-
+ *@
                 </div>
             </div>
             <div class="card-footer">
