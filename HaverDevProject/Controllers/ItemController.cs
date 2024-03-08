@@ -200,6 +200,8 @@ namespace HaverDevProject.Controllers
                     }
                 }
 
+                item.SupplierId = GetDefaultSupplierId();
+
                 if (ModelState.IsValid)
                 {
                     _context.Add(item);
@@ -224,7 +226,7 @@ namespace HaverDevProject.Controllers
                     ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
                 }
             }
-            ViewBag.SupplierId = new SelectList(_context.Suppliers, "SupplierId", "SupplierName", item.SupplierId);
+            //ViewBag.SupplierId = new SelectList(_context.Suppliers, "SupplierId", "SupplierName", item.SupplierId);
             return View(item);
         }
 
@@ -415,7 +417,8 @@ namespace HaverDevProject.Controllers
             }
 
             var errorMessages = new List<string>();
-            int successfulRows = 0;
+            int expectedSuccessRows = 0;
+            var validItems = new List<Item>();
 
             using (var stream = new MemoryStream())
             {
@@ -424,115 +427,101 @@ namespace HaverDevProject.Controllers
                 {
                     ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
                     int rowCount = worksheet.Dimension.Rows;
+                    expectedSuccessRows = rowCount - 1;
 
                     for (int row = 2; row <= rowCount; row++)
                     {
-                        var transaction = _context.Database.BeginTransaction(); // Start transaction for each row
-                        try
+                        var itemNumberStr = worksheet.Cells[row, 1].Value?.ToString().Trim();
+                        var itemName = worksheet.Cells[row, 2].Value?.ToString().Trim();
+                            
+                        if (string.IsNullOrEmpty(itemNumberStr))
                         {
-                            var itemNumber = worksheet.Cells[row, 1].Value?.ToString().Trim();
-                            var itemName = worksheet.Cells[row, 2].Value?.ToString().Trim();
-                            var supplierCode = worksheet.Cells[row, 3].Value?.ToString().Trim();
-                            var supplierName = worksheet.Cells[row, 4].Value?.ToString().Trim();
-                            var defectTypeName = worksheet.Cells[row, 5].Value?.ToString().Trim();
+                             errorMessages.Add($"Row {row}: Item SAP Number is required.");
+                        }
 
-                            if (string.IsNullOrEmpty(itemNumber))
-                            {
-                                errorMessages.Add($"Row {row}: Item Number is required.");
-                            }
+                        if (!int.TryParse(itemNumberStr, out int itemNumber))
+                        {
+                            errorMessages.Add($"Row {row}: SAP Number must be a number.");
+                        }
 
-                            if (string.IsNullOrEmpty(itemName))
-                            {
-                                errorMessages.Add($"Row {row}: Item Name is required.");
-                            }
+                        if (string.IsNullOrEmpty(itemName))
+                        {
+                            errorMessages.Add($"Row {row}: Item Name / Description is required.");
+                        }
 
-                            var existingItem = await _context.Items.FirstOrDefaultAsync(i => i.ItemNumber.ToString() == itemNumber);
-                            if (existingItem != null)
-                            {
-                                errorMessages.Add($"Row {row}: Item with Item Number {itemNumber} already exists.");
-                            }
+                        var existingItem = await _context.Items
+                           .AsNoTracking()
+                           .FirstOrDefaultAsync(i => i.ItemNumber == itemNumber);
 
-                            int supplierId = 0;
-                            if (!string.IsNullOrEmpty(supplierCode) && !string.IsNullOrEmpty(supplierName))
-                            {
-                                var supplier = await _context.Suppliers
-                                                              .FirstOrDefaultAsync(s => s.SupplierCode == supplierCode && s.SupplierName == supplierName);
-                                if (supplier == null)
-                                {
-                                    supplier = new Supplier { SupplierCode = supplierCode, SupplierName = supplierName };
-                                    _context.Suppliers.Add(supplier);
-                                    await _context.SaveChangesAsync(); // Ensure SupplierId is generated
-                                }
-                                supplierId = supplier.SupplierId;
-                            }
-                            else if (!string.IsNullOrEmpty(supplierCode) || !string.IsNullOrEmpty(supplierName))
-                            {
-                                errorMessages.Add($"Both Supplier Code and Supplier Name are required.");
-                            }
-                            else
-                            {
-                                // Handle "NO SUPPLIER PROVIDED" case
-                                var defaultSupplier = await _context.Suppliers
+                         if (existingItem != null)
+                         {
+                            errorMessages.Add($"Row {row}: Item with SAP Number {itemNumber} already exists.");
+                         }
+
+                         int supplierId = 0;
+                            
+                         var defaultSupplier = await _context.Suppliers
                                                                      .FirstOrDefaultAsync(s => s.SupplierName == "NO SUPPLIER PROVIDED");
-                                if (defaultSupplier == null)
+                         if (defaultSupplier == null)
+                         {
+                             defaultSupplier = new Supplier { SupplierName = "NO SUPPLIER PROVIDED" };
+                             _context.Suppliers.Add(defaultSupplier);
+                             await _context.SaveChangesAsync();
+                         }
+                         supplierId = defaultSupplier.SupplierId;
+
+                          if(!errorMessages.Any())
+                          {
+                                var newItem = new Item
                                 {
-                                    defaultSupplier = new Supplier { SupplierName = "NO SUPPLIER PROVIDED" };
-                                    _context.Suppliers.Add(defaultSupplier);
-                                    await _context.SaveChangesAsync();
-                                }
-                                supplierId = defaultSupplier.SupplierId;
-                            }
-
-                            var item = new Item
-                            {
-                                ItemNumber = Int32.Parse(itemNumber),
-                                ItemName = itemName,
-                                SupplierId = supplierId
-                            };
-
-                            _context.Items.Add(item);
-                            await _context.SaveChangesAsync();
-
-                            if (!string.IsNullOrEmpty(defectTypeName))
-                            {
-                                var defect = await _context.Defects.FirstOrDefaultAsync(d => d.DefectName == defectTypeName);
-                                if (defect == null)
-                                {
-                                    defect = new Defect { DefectName = defectTypeName };
-                                    _context.Defects.Add(defect);
-                                    await _context.SaveChangesAsync();
-                                }
-
-                                var itemDefect = new ItemDefect
-                                {
-                                    ItemId = item.ItemId,
-                                    DefectId = defect.DefectId
+                                    ItemNumber = Int32.Parse(itemNumberStr),
+                                    ItemName = itemName,
+                                    SupplierId = supplierId
                                 };
 
-                                _context.ItemDefects.Add(itemDefect);
-                                await _context.SaveChangesAsync();
-                            }
-
-                            transaction.Commit(); // Commit transaction if all operations succeed
-                            successfulRows++;
-                        }
-                        catch (Exception)
-                        {
-                            transaction.Rollback(); // Rollback transaction on error
-                        }
+                            validItems.Add(newItem);
+                          }   
                     }
                 }
             }
 
-            if (errorMessages.Any())
+            if (validItems.Count != expectedSuccessRows)
             {
-                TempData["ErrorMessage"] = $"Fix error(s) and try to upload again: {string.Join(" ", errorMessages)}";
+                if (errorMessages.Count > 10)
+                {
+                    TempData["ErrorMessage"] = $"There are errors in {errorMessages.Count} rows. Please review and fix the errors before uploading again.";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] =
+                         $"Fix error(s) and try to upload again: <br><li>{string.Join("<li>", errorMessages)}";
+                }
             }
             else
             {
-                TempData["SuccessMessage"] = $"File uploaded successfully. {successfulRows} row(s) were added.";
+                foreach (var item in validItems)
+                {
+                    var transaction = _context.Database.BeginTransaction(); // Start transaction for each row
+
+                    try
+                    {
+                        _context.Items.Add(item);
+                        await _context.SaveChangesAsync();
+
+                        transaction.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        break;
+                    }
+                }
+
+                TempData["SuccessMessage"] =
+                    $"File uploaded successfully. {expectedSuccessRows} rows added.";
 
             }
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -541,6 +530,29 @@ namespace HaverDevProject.Controllers
         {
             return View("UploadExcel");
         }
+
+        private int GetDefaultSupplierId()
+        {
+            var defaultSupplier = _context.Suppliers.FirstOrDefault(s => s.SupplierName == "NO SUPPLIER PROVIDED");
+            // If the default supplier is found, return its ID
+            if (defaultSupplier != null)
+            {
+                return defaultSupplier.SupplierId;
+            }
+            else
+            {
+                var newSupplier = new Supplier
+                {
+                    SupplierCode = "000000",
+                    SupplierName = "NO SUPPLIER PROVIDED"
+                };
+                _context.Suppliers.Add(newSupplier);
+                _context.SaveChanges(); // Save the new supplier to the database
+
+                return newSupplier.SupplierId; // Return the ID of the newly created supplier
+            }
+        }
+
 
         private bool ItemExists(int id)
         {
