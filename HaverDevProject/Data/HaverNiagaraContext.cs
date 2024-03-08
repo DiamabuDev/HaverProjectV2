@@ -198,6 +198,10 @@ public partial class HaverNiagaraContext : DbContext
             entity.HasOne(d => d.Defect).WithMany(p => p.NcrQas)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_ncrQa_defect");
+
+            entity.HasOne(d => d.Supplier).WithMany(p => p.NcrQas)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_ncrQa_supplier");
         });
 
         modelBuilder.Entity<NcrReInspect>(entity =>
