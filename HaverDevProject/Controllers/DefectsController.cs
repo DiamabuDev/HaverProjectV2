@@ -27,16 +27,16 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: Defects
-        public async Task<IActionResult> Index(string SearchName, int? ItemID, int? page, int? pageSizeID,
+        public async Task<IActionResult> Index(string SearchName, /*int? ItemID,*/ int? page, int? pageSizeID,
             string actionButton, string sortDirection = "asc", string sortField = "Defect")
         {
             //List of sort options.
             string[] sortOptions = new[] { "Defect", "Description", "Item" };
 
-            PopulateDropDownList();
+            //PopulateDropDownList();
 
             var defects = _context.Defects
-                .Include(d => d.ItemDefects).ThenInclude(id => id.Item)
+                //.Include(d => d.ItemDefects).ThenInclude(id => id.Item)
                 .AsNoTracking();
 
             //Filterig values                       
@@ -45,10 +45,10 @@ namespace HaverDevProject.Controllers
                 defects = defects.Where(d => d.DefectName.ToUpper().Contains(SearchName.ToUpper()));
             }
 
-            if (ItemID.HasValue)
-            {
-                defects = defects.Where(d => d.ItemDefects.Any(id => id.ItemId == ItemID));
-            }
+            //if (ItemID.HasValue)
+            //{
+            //    defects = defects.Where(d => d.ItemDefects.Any(id => id.ItemId == ItemID));
+            //}
 
             //Sorting columns
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
@@ -82,38 +82,38 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:DefectName"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
-            else if (sortField == "Description")
-            {
-                if (sortDirection == "asc")
-                {
-                    defects = defects
-                        .OrderBy(d => d.DefectDesription);
-                    ViewData["filterApplied:Description"] = "<i class='bi bi-sort-up'></i>";
+            //else if (sortField == "Description")
+            //{
+            //    if (sortDirection == "asc")
+            //    {
+            //        defects = defects
+            //            .OrderBy(d => d.DefectDesription);
+            //        ViewData["filterApplied:Description"] = "<i class='bi bi-sort-up'></i>";
 
-                }
-                else
-                {
-                    defects = defects
-                        .OrderByDescending(d => d.DefectDesription);
-                    ViewData["filterApplied:Description"] = "<i class='bi bi-sort-down'></i>";
-                }
-            }
-            else //Sorting by Item
-            {
-                if (sortDirection == "asc")
-                {
-                    defects = defects
-                        .OrderBy(d => d.ItemDefects.Select(id => id.Item.ItemName).FirstOrDefault()).AsNoTracking();
-                    ViewData["filterApplied:Item"] = "<i class='bi bi-sort-up'></i>";
+            //    }
+            //    else
+            //    {
+            //        defects = defects
+            //            .OrderByDescending(d => d.DefectDesription);
+            //        ViewData["filterApplied:Description"] = "<i class='bi bi-sort-down'></i>";
+            //    }
+            //}
+            //else //Sorting by Item
+            //{
+            //    if (sortDirection == "asc")
+            //    {
+            //        defects = defects
+            //            .OrderBy(d => d.ItemDefects.Select(id => id.Item.ItemName).FirstOrDefault()).AsNoTracking();
+            //        ViewData["filterApplied:Item"] = "<i class='bi bi-sort-up'></i>";
 
-                }
-                else
-                {
-                    defects = defects
-                        .OrderByDescending(d => d.ItemDefects.Select(id => id.Item.ItemName).FirstOrDefault()).AsNoTracking();
-                    ViewData["filterApplied:Item"] = "<i class='bi bi-sort-down'></i>";
-                }
-            }
+            //    }
+            //    else
+            //    {
+            //        defects = defects
+            //            .OrderByDescending(d => d.ItemDefects.Select(id => id.Item.ItemName).FirstOrDefault()).AsNoTracking();
+            //        ViewData["filterApplied:Item"] = "<i class='bi bi-sort-down'></i>";
+            //    }
+            //}
 
             //Set sort for next time
             ViewData["sortField"] = sortField;
@@ -136,7 +136,7 @@ namespace HaverDevProject.Controllers
             }
 
             var defect = await _context.Defects
-                .Include(d => d.ItemDefects).ThenInclude(id => id.Item)
+                //.Include(d => d.ItemDefects).ThenInclude(id => id.Item)
                 .FirstOrDefaultAsync(m => m.DefectId == id);
             if (defect == null)
             {
@@ -150,7 +150,7 @@ namespace HaverDevProject.Controllers
         public IActionResult Create()
         {
             Defect defect = new Defect();
-            PopulateAssignedItemCheckboxes(defect);
+            //PopulateAssignedItemCheckboxes(defect);
             return View();
         }
 
@@ -159,18 +159,18 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DefectId,DefectName,DefectDesription")] Defect defect, string[] selectedOptions)
+        public async Task<IActionResult> Create([Bind("DefectId,DefectName,DefectDesription")] Defect defect/*, string[] selectedOptions*/)
         {
             try
             {
-                if (selectedOptions != null)
-                {
-                    foreach (var condition in selectedOptions)
-                    {
-                        var itemToAdd = new ItemDefect { DefectId = defect.DefectId, ItemId = int.Parse(condition) };
-                        defect.ItemDefects.Add(itemToAdd);
-                    }
-                }
+                //if (selectedOptions != null)
+                //{
+                //    foreach (var condition in selectedOptions)
+                //    {
+                //        var itemToAdd = new ItemDefect { DefectId = defect.DefectId, ItemId = int.Parse(condition) };
+                //        defect.ItemDefects.Add(itemToAdd);
+                //    }
+                //}
                 if (ModelState.IsValid)
                 {
                     _context.Add(defect);
@@ -188,7 +188,7 @@ namespace HaverDevProject.Controllers
             {
                 ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
             }
-            PopulateAssignedItemCheckboxes(defect);
+            //PopulateAssignedItemCheckboxes(defect);
             return View(defect);
         }
 
@@ -202,7 +202,7 @@ namespace HaverDevProject.Controllers
             }
 
             var defect = await _context.Defects
-               .Include(d => d.ItemDefects).ThenInclude(id => id.Item)
+               //.Include(d => d.ItemDefects).ThenInclude(id => id.Item)
                .FirstOrDefaultAsync(d => d.DefectId == id);
 
             if (defect == null)
@@ -210,7 +210,7 @@ namespace HaverDevProject.Controllers
                 return NotFound();
             }
 
-            PopulateAssignedItemCheckboxes(defect);
+            //PopulateAssignedItemCheckboxes(defect);
             return View(defect);
         }
 
@@ -219,11 +219,11 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, string[] selectedOptions)
+        public async Task<IActionResult> Edit(int id/*, string[] selectedOptions*/)
         {
 
             var defectToUpdate = await _context.Defects
-                .Include(d => d.ItemDefects).ThenInclude(id => id.Item)
+                //.Include(d => d.ItemDefects).ThenInclude(id => id.Item)
                .FirstOrDefaultAsync(d => d.DefectId == id);
 
             if (defectToUpdate == null)
@@ -231,10 +231,10 @@ namespace HaverDevProject.Controllers
                 return NotFound();
             }
 
-            UpdateDefectItemsCheckboxes(selectedOptions, defectToUpdate);
+            //UpdateDefectItemsCheckboxes(selectedOptions, defectToUpdate);
 
             if (await TryUpdateModelAsync<Defect>(defectToUpdate, "",
-                d => d.DefectName, d => d.DefectDesription))
+                d => d.DefectName/*, d => d.DefectDesription*/))
             {
                 try
                 {
@@ -252,7 +252,7 @@ namespace HaverDevProject.Controllers
                     ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
                 }
             }
-            PopulateAssignedItemCheckboxes(defectToUpdate);
+            //PopulateAssignedItemCheckboxes(defectToUpdate);
             return View(defectToUpdate);
         }
 
@@ -294,65 +294,65 @@ namespace HaverDevProject.Controllers
         }
 
 
-        private void PopulateAssignedItemCheckboxes(Defect defect)
-        {
-            var allItems = _context.Items
-                .Select(i => new { i.ItemId, i.ItemName })
-                .Distinct();
+        //private void PopulateAssignedItemCheckboxes(Defect defect)
+        //{
+        //    var allItems = _context.Items
+        //        .Select(i => new { i.ItemId, i.ItemName })
+        //        .Distinct();
 
-            var currentItemDefectIDs = new HashSet<int>(defect.ItemDefects.Select(id => id.ItemId));
-            var checkBoxes = new List<CheckOptionVM>();
-            foreach (var item in allItems)
-            {
-                checkBoxes.Add(new CheckOptionVM
-                {
-                    ID = item.ItemId,
-                    DisplayText = item.ItemName, // Assuming Item has an ItemName property
-                    Assigned = currentItemDefectIDs.Contains(item.ItemId)
-                });
-            }
-            ViewData["ItemOptions"] = checkBoxes;
-        }
+        //    var currentItemDefectIDs = new HashSet<int>(defect.ItemDefects.Select(id => id.ItemId));
+        //    var checkBoxes = new List<CheckOptionVM>();
+        //    foreach (var item in allItems)
+        //    {
+        //        checkBoxes.Add(new CheckOptionVM
+        //        {
+        //            ID = item.ItemId,
+        //            DisplayText = item.ItemName, // Assuming Item has an ItemName property
+        //            Assigned = currentItemDefectIDs.Contains(item.ItemId)
+        //        });
+        //    }
+        //    ViewData["ItemOptions"] = checkBoxes;
+        //}
 
-        private void UpdateDefectItemsCheckboxes(string[] selectedItems, Defect defectToUpdate)
-        {
-            if (selectedItems == null)
-            {
-                defectToUpdate.ItemDefects = new List<ItemDefect>();
-                return;
-            }
+        //private void UpdateDefectItemsCheckboxes(string[] selectedItems, Defect defectToUpdate)
+        //{
+        //    if (selectedItems == null)
+        //    {
+        //        defectToUpdate.ItemDefects = new List<ItemDefect>();
+        //        return;
+        //    }
 
-            var selectedItemsHS = new HashSet<string>(selectedItems);
-            var defectItemsHS = new HashSet<int>(defectToUpdate.ItemDefects.Select(id => id.ItemId));
-            foreach (var item in _context.Items)
-            {
-                if (selectedItemsHS.Contains(item.ItemId.ToString()))
-                {
-                    if (!defectItemsHS.Contains(item.ItemId))
-                    {
-                        defectToUpdate.ItemDefects.Add(new ItemDefect { DefectId = defectToUpdate.DefectId, ItemId = item.ItemId });
-                    }
-                }
-                else
-                {
-                    if (defectItemsHS.Contains(item.ItemId))
-                    {
-                        ItemDefect itemDefectToRemove = defectToUpdate.ItemDefects.FirstOrDefault(id => id.ItemId == item.ItemId);
-                        if (itemDefectToRemove != null) _context.Remove(itemDefectToRemove);
-                    }
-                }
-            }
-        }
+        //    var selectedItemsHS = new HashSet<string>(selectedItems);
+        //    var defectItemsHS = new HashSet<int>(defectToUpdate.ItemDefects.Select(id => id.ItemId));
+        //    foreach (var item in _context.Items)
+        //    {
+        //        if (selectedItemsHS.Contains(item.ItemId.ToString()))
+        //        {
+        //            if (!defectItemsHS.Contains(item.ItemId))
+        //            {
+        //                defectToUpdate.ItemDefects.Add(new ItemDefect { DefectId = defectToUpdate.DefectId, ItemId = item.ItemId });
+        //            }
+        //        }
+        //        else
+        //        {
+        //            if (defectItemsHS.Contains(item.ItemId))
+        //            {
+        //                ItemDefect itemDefectToRemove = defectToUpdate.ItemDefects.FirstOrDefault(id => id.ItemId == item.ItemId);
+        //                if (itemDefectToRemove != null) _context.Remove(itemDefectToRemove);
+        //            }
+        //        }
+        //    }
+        //}
 
-        private SelectList ItemSelectList(int? selectedId)
-        {
-            return new SelectList(_context.Items.OrderBy(i => i.ItemName).Select(i => new { i.ItemId, i.ItemName })
-            .Distinct(), "ItemId", "ItemName", selectedId);
-        }
-        private void PopulateDropDownList(Item item = null)
-        {
-            ViewData["ItemID"] = ItemSelectList(item?.ItemId);
-        }
+        //private SelectList ItemSelectList(int? selectedId)
+        //{
+        //    return new SelectList(_context.Items.OrderBy(i => i.ItemName).Select(i => new { i.ItemId, i.ItemName })
+        //    .Distinct(), "ItemId", "ItemName", selectedId);
+        //}
+        //private void PopulateDropDownList(Item item = null)
+        //{
+        //    ViewData["ItemID"] = ItemSelectList(item?.ItemId);
+        //}
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -424,8 +424,8 @@ namespace HaverDevProject.Controllers
 
                             var newDefect = new Defect
                             {
-                                DefectName = defectName,
-                                DefectDesription = defectDescription
+                                DefectName = defectName/*,*/
+                                //DefectDesription = defectDescription
                             };
 
                             _context.Defects.Add(newDefect);

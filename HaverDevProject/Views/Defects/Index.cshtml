@@ -47,12 +47,12 @@
                         @Html.Raw(ViewData["filterApplied:DefectName"])
                     </button>
                 </th>
-                <th class="big-col">
+                @* <th class="big-col">
                     <button type="submit" name="actionButton" value="Description" class="btn text-light custom-btn-text-start">
                         Description
                         @Html.Raw(ViewData["filterApplied:Description"])
                     </button>
-                </th>
+                </th> *@
                 @* <th>
                     <button type="submit" name="actionButton" value="Item" class="btn text-light custom-btn-text-start">
                         Items
@@ -70,9 +70,9 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.DefectName)
                     </td>
-                    <td>
+                    @* <td>
                         @Html.DisplayFor(modelItem => item.DefectDesription)
-                    </td>
+                    </td> *@
 
                     @* <td custom-hover">
                         @{
