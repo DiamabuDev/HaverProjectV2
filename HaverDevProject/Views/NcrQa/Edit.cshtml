@@ -292,10 +292,10 @@
                         var currentCount = parseInt($("#photoCounter").text());
                         var newCount = currentCount - 1;
 
+                        alert("Photo deleted sucessfully!");
                         if (newCount > 0) {
                             $("#photoCounter").text(newCount);
                         } else {
-                            // If no more photos, replace the list with a message
                             $("#photoListContainer").html('<p>No photos to display.</p>');
                         }
                     } else {

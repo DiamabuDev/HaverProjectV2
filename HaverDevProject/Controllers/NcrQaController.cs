@@ -711,10 +711,8 @@ namespace HaverDevProject.Controllers
             {
                 _context.ItemDefectPhotos.Remove(photo);
                 await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Photo deleted successfully.";
                 return Json(new { success = true, message = "Photo deleted successfully." });
             }
-            TempData["ErrorMessage"] = "Photo not found.";
             return Json(new { success = false, message = "Photo not found." });
         }
 
