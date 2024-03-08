@@ -139,35 +139,32 @@
                         <textarea asp-for="NcrQaDescriptionOfDefect" class="form-control"></textarea>
                         <span asp-validation-for="NcrQaDescriptionOfDefect" class="text-danger"></span>
                     </div>
-                   
+
                     <div class="form-group">
-                        <label class="control-label"> <strong>Current Photos:</strong></label>
+                        <label class="control-label"><strong>Current Photos:</strong></label>
                         <div class="ml-md-3">
-                            @{
-                                int fileCount = Model.ItemDefectPhotos.Count;
-                                if (fileCount > 0)
+                            <div id="photoListContainer">
+                                @if (Model.ItemDefectPhotos.Any())
                                 {
-                                    var firstFile = Model.ItemDefectPhotos.FirstOrDefault(); ;
-                                    if (fileCount > 1)
-                                    {
-                                        <a class="" role="button" data-bs-toggle="collapse" href="#collapsePhotos@(Model.NcrQaId)" aria-expanded="false" aria-controls="collapsePhotos@(Model.NcrQaId)">
-                                            <span class="badge bg-info">@fileCount</span> Photos...
-                                        </a>
-                                        <div class="collapse" id="collapsePhotos@(Model.NcrQaId)">
-                                            @{
-                                                foreach (var d in Model.ItemDefectPhotos)
-                                                {
-                                                    <a asp-controller="NcrQa" asp-action="Download" asp-route-id="@d.ItemDefectPhotoId">@d.FileName</a> <br />
-                                                }
-                                            }
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <a asp-controller="NcrQa" asp-action="Download" asp-route-id="@firstFile.ItemDefectPhotoId">@firstFile.FileName</a>
-                                    }
+                                    int fileCount = Model.ItemDefectPhotos.Count;
+                                    <a class="" role="button" data-bs-toggle="collapse" href="#collapsePhotos@(Model.NcrQaId)" aria-expanded="false" aria-controls="collapsePhotos@(Model.NcrQaId)">
+                                        <span class="badge bg-info" id="photoCounter">@fileCount</span> Photos...
+                                    </a>
+                                    <div class="collapse" id="collapsePhotos@(Model.NcrQaId)">
+                                        @foreach (var d in Model.ItemDefectPhotos)
+                                        {
+                                            <div id="photo-@d.ItemDefectPhotoId" class="d-flex align-items-center mb-2">
+                                                <a asp-controller="NcrQa" asp-action="Download" asp-route-id="@d.ItemDefectPhotoId">@d.FileName</a>
+                                                <button type="button" class="btn btn-danger btn-sm ms-2" onclick="deletePhoto(@d.ItemDefectPhotoId)">Delete</button>
+                                            </div>
+                                        }
+                                    </div>
                                 }
-                            }
+                                else
+                                {
+                                    <p id="noPhotosMessage">No photos to display.</p>
+                                }
+                            </div>
                         </div>
                     </div>
 
@@ -221,7 +218,6 @@
                             </div>                        
                         </div>
                     </div>
-
                 </div>
                 <div class="row">
                     <p>
@@ -278,5 +274,38 @@
             var URL = "/NcrQa/GetDefects/?ItemId=" + selectedItemId;
             refreshDDL('DefectId', URL, true, 'No defects related with the item selected', false, null, true);
         });
+    </script>
+    <script>
+        function deletePhoto(photoId) {
+            if (!confirm("Are you sure you want to delete this photo?")) return;
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("DeletePhoto", "NcrQa")', // Ensure this is correctly pointing to your deletion endpoint
+                data: { photoId: photoId },
+                success: function (response) {
+                    if (response.success) {
+                        // Remove the photo element
+                        $("#photo-" + photoId).remove();
+
+                        // Update the counter
+                        var currentCount = parseInt($("#photoCounter").text());
+                        var newCount = currentCount - 1;
+
+                        if (newCount > 0) {
+                            $("#photoCounter").text(newCount);
+                        } else {
+                            // If no more photos, replace the list with a message
+                            $("#photoListContainer").html('<p>No photos to display.</p>');
+                        }
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert("An error occurred. Please try again.");
+                }
+            });
+        }
     </script>
 }
