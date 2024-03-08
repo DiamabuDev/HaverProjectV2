@@ -85,13 +85,13 @@
         <thead class="custom-header-bg">
             <tr>
                 <th></th>
-                <th class="d-none d-md-table-cell">
+                <th class="d-none d-md-table-cell col-auto">
                     <button type="submit" name="actionButton" value="Created" class="btn text-light custom-btn-text-start">
                         Created
                         @Html.Raw(ViewData["filterApplied:Created"])
                     </button>
                 </th>
-                <th>
+                <th class="d-none d-md-table-cell col-auto">
                     <button type="submit" name="actionButton" value="NCR #" class="btn text-light custom-btn-text-start">
                         NCR #
                         @Html.Raw(ViewData["filterApplied:Ncr"])
@@ -103,18 +103,18 @@
                         @Html.Raw(ViewData["filterApplied:Supplier"])
                     </button>
                 </th>
-                <th class="d-none d-md-table-cell col-3">
+                <th class="d-none d-md-table-cell col-auto">
                     <button type="submit" name="actionButton" value="Acceptable" class="btn text-light custom-btn-text-start">
                         Acceptable
                         @Html.Raw(ViewData["filterApplied:NcrReInspectAcceptable"])
                     </button>
                 </th>
-@*                 <th class="d-none d-md-table-cell">
+                <th class="d-none d-md-table-cell col-auto">
                     <button type="submit" name="actionButton" value="Inspected By" class="btn text-light custom-btn-text-start">
                         Inspected By
                         @Html.Raw(ViewData["filterApplied:NcrReInspectUserId"])
                     </button>
-                </th> *@
+                </th>
                 <th>
                     <button type="submit" name="actionButton" value="Phase" class="btn text-light custom-btn-text-start">
                         Phase
@@ -158,10 +158,10 @@
                     @* <td>
                         @Html.DisplayFor(modelItem => item.NcrReInspectAcceptable)
                     </td> *@
-                    <td class="col-3">
+                    <td class="col-1">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrQa.Item.Supplier.SupplierName)
                     </td>
-                    <td class="d-none d-md-table-cell col-3">
+                    <td class="col-auto">
                         @if (item.NcrReInspectAcceptable)
                         {
                             <text>Yes</text>
@@ -174,26 +174,26 @@
                     @* <td class="col-1">
                         @Html.DisplayFor(modelItem => item.NcrReInspectUserId)
                     </td> *@
-@*                     <td class="d-none d-md-table-cell col-3">
+                    <td class="col-auto">
                         @if (item.NcrReInspectUserId == 1)
                         {
-                            <text>Bob</text>
+                            <text>J. Doe</text>
                         }
                         else if (item.NcrReInspectUserId == 2)
                         {
-                            <text>John</text>
+                            <text>E. Xample</text>
                         }
                         else if (item.NcrReInspectUserId == 3)
                         {
-                            <text>Paul</text>
+                            <text>S. Ample</text>
                         }
                         else
                         {
-                            <text>Dave</text>
+                            <text>T. Est</text>
                         }
                     </td>
-                *@
-                    <td>
+
+                    <td class="d-none d-md-table-cell">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrPhase)
                     </td>
                     <td class="d-none d-xxl-table-cell">
@@ -219,6 +219,16 @@
                         }
 
                         <a asp-action="Details" asp-route-id="@item.NcrReInspectId" class="btn text-primary" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
+
+                        @if (item.Ncr.NcrPhase == NcrPhase.Closed)
+                        {
+                            <a asp-action="ArchiveNcr" asp-route-id="@item.Ncr.NcrId" class="btn btn-danger" data-bs-toggle="tooltip" title="Archive NCR"><i class="bi bi-archive-fill"></i></a>
+                        }
+
+                        @if (item.Ncr.NcrPhase == NcrPhase.Archive)
+                        {
+                            <a asp-action="RestoreNcr" asp-route-id="@item.Ncr.NcrId" class="btn btn-success" data-bs-toggle="tooltip" title="Restore NCR"><i class="bi bi-archive-fill"></i></a>
+                        }
 
                     </td>
                 </tr>
