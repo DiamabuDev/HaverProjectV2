@@ -120,22 +120,7 @@
                         </div>
                         <span asp-validation-for="SupplierId" class="text-danger"></span>
                     </div>
-
-                    @* <div class="form-group">
-                        <label class="control-label">
-                            <strong>Supplier </strong>
-                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Lawrence Sintered Metals.)</small>
-                            <span class="fw-bold text-danger">*</span></label>
-                        <div class="input-group mb-1">
-                            <div class="input-group-prepend">
-                                <button class="btn btn-outline-secondary custom-btn-color" id="nowAddSupplier" data-bs-toggle="modal" data-bs-target="#addSupplierModal" type="button" data-tooltip-supplier="true"><i class='bi-plus-square-dotted'></i></button>
-                            </div>
-                            <select asp-for="SupplierId" class="form-control" id="SupplierId" name="SupplierId" asp-items="ViewBag.SupplierId">
-                            <option value="">Select Supplier</option>
-                        </select>
-                        </div>
-                        <span asp-validation-for="SupplierId" class="text-danger"></span>
-                    </div> *@
+                    
                     <div class="form-group">
                         <label asp-for="ItemId" class="control-label">
                             <strong>Item </strong>
@@ -282,12 +267,8 @@
             refreshDDL('ItemId', URL, true, 'No items related with the supplier selected', true, "Select an item", true);
             // Set the value of DefectId dropdown to an empty string
             $('#DefectId').val('');
-
-
-            //Validado... carga la lista del modal para crear un nuevo item
             refreshDDL('ItemSupplierId', '/NcrQa/GetSuppliers/' + selectedSupplier, true, 'No items related with the supplier selected', true, "Select an item", true);
-                      
-
+                   
         });
     </script>
     <script type="text/javascript">
@@ -390,32 +371,15 @@
         }
     </script>
 
-
     <!--Script for Add New Item button-->
-    <script type="text/javascript">
+    <script type="text/javascript">       
 
-        // $('#SupplierId').change(function () {
-        //     var supplierId = $(this).val();
-        //     // console.log("SupplierId:", supplierId);
-        //     // Asiggn value to the field
-        //     $('#addItemModal').find('#SupplierId').val(supplierId);
-        // });
-
-
-
-        $('#submitItemCreate').click(function (event) {
-            
-
+        $('#submitItemCreate').click(function (event) {            
             event.preventDefault();
             ClearErrors();
             var form = $('#createItemForm');
             if (form.valid()) 
-            {
-                
-                // Agregar el SupplierId al formulario antes de la solicitud AJAX
-                // form.append('<input type="hidden" name="SupplierId" value="' + supplierId + '" />');
-
-                
+            {                
                 $.ajax({
                     type: "POST",
                     url: form.attr('action'),
@@ -470,9 +434,5 @@
                 ul.removeChild(ul.firstChild);
             }
         }
-    </script>
-
-    @* var URL = "/NcrQa/GetItems/?SupplierId=" + selectedSupplier;
-            refreshDDL('ItemId', URL, true, 'No items related with the supplier selected', true, "Select an item", true); *@
-
+    </script>    
 }
