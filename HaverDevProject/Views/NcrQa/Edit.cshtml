@@ -155,7 +155,7 @@
                                         {
                                             <div id="photo-@d.ItemDefectPhotoId" class="d-flex align-items-center mb-2">
                                                 <a asp-controller="NcrQa" asp-action="Download" asp-route-id="@d.ItemDefectPhotoId">@d.FileName</a>
-                                                <button type="button" class="btn btn-danger btn-sm ms-2" onclick="deletePhoto(@d.ItemDefectPhotoId)">Delete</button>
+                                                <button type="button" class="btn btn-danger btn-sm ms-2" onclick="deletePhoto(@d.ItemDefectPhotoId)"><i class="bi bi-trash"></i></button>
                                             </div>
                                         }
                                     </div>
@@ -285,10 +285,8 @@
                 data: { photoId: photoId },
                 success: function (response) {
                     if (response.success) {
-                        // Remove the photo element
                         $("#photo-" + photoId).remove();
 
-                        // Update the counter
                         var currentCount = parseInt($("#photoCounter").text());
                         var newCount = currentCount - 1;
 

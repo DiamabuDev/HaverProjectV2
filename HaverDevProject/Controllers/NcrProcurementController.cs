@@ -727,6 +727,19 @@ namespace HaverDevProject.Controllers
                 ViewData["ItemId"] = ItemSelectList(null, null);
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> DeletePhoto(int photoId)
+        {
+            var photo = await _context.ProcDefectPhotos.FindAsync(photoId);
+            if (photo != null)
+            {
+                _context.ProcDefectPhotos.Remove(photo);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Photo deleted successfully." });
+            }
+            return Json(new { success = false, message = "Photo not found." });
+        }
         private bool NcrProcurementExists(int id)
         {
             return _context.NcrProcurements.Any(e => e.NcrProcurementId == id);

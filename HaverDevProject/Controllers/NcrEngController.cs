@@ -662,5 +662,18 @@ namespace HaverDevProject.Controllers
                 ViewData["EngDispositionTypeId"] = EngDispositionTypeSelectList(null);
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> DeletePhoto(int photoId)
+        {
+            var photo = await _context.EngDefectPhotos.FindAsync(photoId);
+            if (photo != null)
+            {
+                _context.EngDefectPhotos.Remove(photo);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Photo deleted successfully." });
+            }
+            return Json(new { success = false, message = "Photo not found." });
+        }
     }
 }

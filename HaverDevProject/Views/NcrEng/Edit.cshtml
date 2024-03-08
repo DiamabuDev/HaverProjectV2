@@ -85,42 +85,33 @@
                         </div>
                     </div>
                 </div>
-
-
                 <div class="form-group">
-                    <label class="control-label"> <strong>Current Photos </strong></label>
+                    <label class="control-label"><strong>Current Photos:</strong></label>
                     <div class="ml-md-3">
-                        @{
-                            int fileCount = Model.EngDefectPhotos.Count;
-                            if (fileCount > 0)
+                        <div id="photoListContainer">
+                            @if (Model.EngDefectPhotos.Any())
                             {
-                                var firstFile = Model.EngDefectPhotos.FirstOrDefault(); ;
-                                if (fileCount > 1)
-                                {
-                                    <a class="" role="button" data-bs-toggle="collapse" href="#collapsePhotos@(Model.NcrEngId)"
-                                       aria-expanded="false" aria-controls="collapsePhotos@(Model.NcrEngId)">
-                                        <span class="badge bg-info">@fileCount</span> Photos...
-                                    </a>
-                                    <div class="collapse" id="collapsePhotos@(Model.NcrEngId)">
-                                        @{
-                                            foreach (var d in Model.EngDefectPhotos)
-                                            {
-                                                <a asp-controller="NcrEng" asp-action="Download"
-                                                   asp-route-id="@d.EngDefectPhotoId">@d.FileName</a> <br />
-                                            }
-                                        }
-                                    </div>
-                                }
-                                else
-                                {
-                                    <a asp-controller="NcrEng" asp-action="Download"
-                                       asp-route-id="@firstFile.EngDefectPhotoId">@firstFile.FileName</a>
-                                }
+                                int fileCount = Model.EngDefectPhotos.Count;
+                                <a class="" role="button" data-bs-toggle="collapse" href="#collapsePhotos@(Model.NcrEngId)" aria-expanded="false" aria-controls="collapsePhotos@(Model.NcrEngId)">
+                                    <span class="badge bg-info" id="photoCounter">@fileCount</span> Photos...
+                                </a>
+                                <div class="collapse" id="collapsePhotos@(Model.NcrEngId)">
+                                    @foreach (var d in Model.EngDefectPhotos)
+                                    {
+                                        <div id="photo-@d.EngDefectPhotoId" class="d-flex align-items-center mb-2">
+                                            <a asp-controller="NcrEng" asp-action="Download" asp-route-id="@d.EngDefectPhotoId">@d.FileName</a>
+                                            <button type="button" class="btn btn-danger btn-sm ms-2" onclick="deletePhoto(@d.EngDefectPhotoId)"><i class="bi bi-trash"></i></button>
+                                        </div>
+                                    }
+                                </div>
                             }
-                        }
+                            else
+                            {
+                                <p id="noPhotosMessage">No photos to display.</p>
+                            }
+                        </div>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label class="control-label custom-file-label"> <strong>Upload Photos </strong></label>
                     <div class="input-group mb-3">
@@ -299,5 +290,36 @@
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl);
         });
+    </script>
+    <script>
+        function deletePhoto(photoId) {
+            if (!confirm("Are you sure you want to delete this photo?")) return;
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("DeletePhoto", "NcrEng")', 
+                data: { photoId: photoId },
+                success: function (response) {
+                    if (response.success) {
+                        $("#photo-" + photoId).remove();
+
+                        var currentCount = parseInt($("#photoCounter").text());
+                        var newCount = currentCount - 1;
+
+                        alert("Photo deleted sucessfully!");
+                        if (newCount > 0) {
+                            $("#photoCounter").text(newCount);
+                        } else {
+                            $("#photoListContainer").html('<p>No photos to display.</p>');
+                        }
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert("An error occurred. Please try again.");
+                }
+            });
+        }
     </script>
 }

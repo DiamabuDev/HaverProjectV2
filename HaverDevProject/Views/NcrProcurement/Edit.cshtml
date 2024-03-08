@@ -166,41 +166,33 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="form-group">
-                    <label class="control-label"> <strong>Current Photos</strong></label>
+                    <label class="control-label"><strong>Current Photos:</strong></label>
                     <div class="ml-md-3">
-                        @{
-                            int fileCount = Model.ProcDefectPhotos.Count;
-                            if (fileCount > 0)
+                        <div id="photoListContainer">
+                            @if (Model.ProcDefectPhotos.Any())
                             {
-                                var firstFile = Model.ProcDefectPhotos.FirstOrDefault(); ;
-                                if (fileCount > 1)
-                                {
-                                    <a class="" role="button" data-bs-toggle="collapse" href="#collapsePhotos@(Model.NcrProcurementId)"
-                                       aria-expanded="false" aria-controls="collapsePhotos@(Model.NcrProcurementId)">
-                                        <span class="badge bg-info">@fileCount</span> Photos...
-                                    </a>
-                                    <div class="collapse" id="collapsePhotos@(Model.NcrProcurementId)">
-                                        @{
-                                            foreach (var d in Model.ProcDefectPhotos)
-                                            {
-                                                <a asp-controller="NcrProcurement" asp-action="Download"
-                                                   asp-route-id="@d.ProcDefectPhotoId">@d.FileName</a> <br />
-                                            }
-                                        }
-                                    </div>
-                                }
-                                else
-                                {
-                                    <a asp-controller="NcrProcurement" asp-action="Download"
-                                       asp-route-id="@firstFile.ProcDefectPhotoId">@firstFile.FileName</a>
-                                }
+                                int fileCount = Model.ProcDefectPhotos.Count;
+                                <a class="" role="button" data-bs-toggle="collapse" href="#collapsePhotos@(Model.NcrProcurementId)" aria-expanded="false" aria-controls="collapsePhotos@(Model.NcrProcurementId)">
+                                    <span class="badge bg-info" id="photoCounter">@fileCount</span> Photos...
+                                </a>
+                                <div class="collapse" id="collapsePhotos@(Model.NcrProcurementId)">
+                                    @foreach (var d in Model.ProcDefectPhotos)
+                                    {
+                                        <div id="photo-@d.ProcDefectPhotoId" class="d-flex align-items-center mb-2">
+                                            <a asp-controller="NcrEng" asp-action="Download" asp-route-id="@d.ProcDefectPhotoId">@d.FileName</a>
+                                            <button type="button" class="btn btn-danger btn-sm ms-2" onclick="deletePhoto(@d.ProcDefectPhotoId)"><i class="bi bi-trash"></i></button>
+                                        </div>
+                                    }
+                                </div>
                             }
-                        }
+                            else
+                            {
+                                <p id="noPhotosMessage">No photos to display.</p>
+                            }
+                        </div>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label class="control-label custom-file-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Choose a Photo to Upload"><strong>Upload Photos </strong></label>
                     <div class="input-group mb-3">
@@ -304,6 +296,35 @@
             return new bootstrap.Tooltip(tooltipTriggerEl);
         });
     </script>
+    <script>
+        function deletePhoto(photoId) {
+            if (!confirm("Are you sure you want to delete this photo?")) return;
 
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("DeletePhoto", "NcrProcurement")',
+                data: { photoId: photoId },
+                success: function (response) {
+                    if (response.success) {
+                        $("#photo-" + photoId).remove();
 
+                        var currentCount = parseInt($("#photoCounter").text());
+                        var newCount = currentCount - 1;
+
+                        if (newCount > 0) {
+                            $("#photoCounter").text(newCount);
+                        } else {
+                            $("#photoListContainer").html('<p>No photos to display.</p>');
+                        }
+                        alert("Photo deleted sucessfully!");
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert("An error occurred. Please try again.");
+                }
+            });
+        }
+    </script>
 }
