@@ -41,7 +41,7 @@
                         <div class="form-group">
                             <strong>Date</strong>
                             @* <label asp-for="NcrNumber" class="control-label"></label> *@
-                            <input asp-for="NcrEngCreationDate" class="form-control" readonly />
+                            <input asp-for="NcrEngCompleteDate" class="form-control" readonly />
                         </div>
                     </div>
                 </div>
@@ -270,20 +270,28 @@
         });
     </script>
 
-@*     <script>
+    <script>
         const engDispositionSelect = document.getElementById('engDispositionSelect');
         const ncrDispositionDescription = document.getElementById('ncrDispositionDescription');
+
+        const selectedValue = engDispositionSelect.value;
+        if (selectedValue == 1 || selectedValue == 4) {
+            ncrDispositionDescription.value = 'N/A';
+            ncrDispositionDescription.readOnly = true;
+        }
+
         engDispositionSelect.addEventListener('change', function () {
             const selectedValue = engDispositionSelect.value;
             if (selectedValue == 1 || selectedValue == 4) {
                 ncrDispositionDescription.value = 'N/A';
                 ncrDispositionDescription.readOnly = true;
-            } else {
+            }
+            else {
                 ncrDispositionDescription.value = '';
                 ncrDispositionDescription.readOnly = false;
             }
         });
-    </script> *@
+    </script>
 
     <script>
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));

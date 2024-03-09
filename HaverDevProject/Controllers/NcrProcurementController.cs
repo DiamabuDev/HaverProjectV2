@@ -64,7 +64,7 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
-                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
                 //.Where(n => n.Ncr.NcrPhase == NcrPhase.ReInspection)
                 .AsNoTracking();
 
@@ -100,7 +100,7 @@ namespace HaverDevProject.Controllers
             }
             if (SupplierID.HasValue)
             {
-                ncrProc = ncrProc.Where(n => n.Ncr.NcrQa.Item.Supplier.SupplierId == SupplierID);
+                ncrProc = ncrProc.Where(n => n.Ncr.NcrQa.Supplier.SupplierId == SupplierID);
             }
             if (StartDate == EndDate)
             {
@@ -147,13 +147,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     ncrProc = ncrProc
-                        .OrderBy(p => p.Ncr.NcrQa.Item.Supplier.SupplierName);
+                        .OrderBy(p => p.Ncr.NcrQa.Supplier.SupplierName);
                     ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncrProc = ncrProc
-                        .OrderByDescending(p => p.Ncr.NcrQa.Item.Supplier.SupplierName);
+                        .OrderByDescending(p => p.Ncr.NcrQa.Supplier.SupplierName);
                     ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -256,6 +256,7 @@ namespace HaverDevProject.Controllers
 
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
+            ViewData["filter"] = filter;
 
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, ControllerName());
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
@@ -279,9 +280,8 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.ProcDefectPhotos)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
-                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects)
-                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects).ThenInclude(n => n.Defect)
-                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Defect)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.ItemDefectPhotos)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrEng)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrEng).ThenInclude(n => n.EngDispositionType)
@@ -325,12 +325,11 @@ namespace HaverDevProject.Controllers
 
             var readOnlyDetails = await _context.Ncrs
                 .Include(n => n.NcrQa)
-                    .ThenInclude(qa => qa.Item)
                         .ThenInclude(item => item.Supplier)
                 .Include(n => n.NcrQa)
-                    .ThenInclude(qa => qa.Item)
-                        .ThenInclude(item => item.ItemDefects)
                             .ThenInclude(defect => defect.Defect)
+                .Include(n => n.NcrQa)
+                            .ThenInclude(i => i.Item)
                 .Include(n => n.NcrQa)
                     .ThenInclude(qa => qa.ItemDefectPhotos)
                 .Include(n => n.NcrEng)
@@ -472,11 +471,10 @@ namespace HaverDevProject.Controllers
 
             var readOnlyDetails = await _context.Ncrs
                 .Include(n => n.NcrQa)
-                    .ThenInclude(qa => qa.Item)
-                        .ThenInclude(item => item.Supplier)
+                    .ThenInclude(item => item.Supplier)
                 .Include(n => n.NcrQa)
-                    .ThenInclude(qa => qa.Item)
-                        .ThenInclude(item => item.ItemDefects)
+                    .ThenInclude(item => item.Item)
+                .Include(n => n.NcrQa)
                             .ThenInclude(defect => defect.Defect)
                 .Include(n => n.NcrQa)
                     .ThenInclude(qa => qa.ItemDefectPhotos)
@@ -622,18 +620,16 @@ namespace HaverDevProject.Controllers
         {
 
             List<Ncr> pendings = _context.Ncrs
-                .Include(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
+                .Include(n => n.NcrQa).ThenInclude(n => n.Supplier)
                 .Where(n => n.NcrPhase == NcrPhase.Procurement)
                 .ToList();
-
-
 
             // Extract relevant data for the client-side
             var ncrs = pendings.Select(ncr => new
             {
                 NcrId = ncr.NcrId,
                 NcrNumber = ncr.NcrNumber,
-                SupplierName = ncr.NcrQa.Item.Supplier.SupplierName
+                SupplierName = ncr.NcrQa.Supplier.SupplierName
             }).ToList();
 
             return Json(ncrs);
@@ -692,40 +688,36 @@ namespace HaverDevProject.Controllers
         private SelectList SupplierSelectList()
         {
             return new SelectList(_context.Suppliers
-                .Where(s => s.SupplierName != "NO SUPPLIER PROVIDED")
+                .Where(s => s.SupplierStatus == true && s.SupplierName != "NO SUPPLIER PROVIDED")
                 .OrderBy(s => s.SupplierName), "SupplierId", "SupplierName");
         }
-        private SelectList SupplierSelectCreateList(int? selectedId)
-        {
-            return new SelectList(_context.Suppliers
-                .Where(s => s.SupplierStatus == true && s.SupplierName != "NO SUPPLIER PROVIDED")
-                .OrderBy(s => s.SupplierName), "SupplierId", "SupplierName", selectedId);
-        }
+        //private SelectList SupplierSelectCreateList(int? selectedId)
+        //{
+        //    return new SelectList(_context.Suppliers
+        //        .Where(s => s.SupplierStatus == true && s.SupplierName != "NO SUPPLIER PROVIDED")
+        //        .OrderBy(s => s.SupplierName), "SupplierId", "SupplierName", selectedId);
+        //}
 
-        private SelectList ItemSelectList(int? SupplierID, int? selectedId)
+        private SelectList ItemSelectList()
         {
-            var query = from c in _context.Items
-                        where c.SupplierId == SupplierID
-                        select c;
-            return new SelectList(query.OrderBy(i => i.ItemName), "ItemId", "ItemName", selectedId);
+            return new SelectList(_context.Items
+                .OrderBy(s => s.ItemName), "ItemId", "ItemName");
+
+            //var query = from c in _context.Items
+            //            where c.SupplierId == SupplierID
+            //            select c;
+            //return new SelectList(query.OrderBy(i => i.ItemName), "ItemId", "ItemName", selectedId);            
         }
 
         private void PopulateDropDownLists(NcrQa ncrQa = null)
-        {
-            if ((ncrQa?.ItemId).HasValue)
-            {
+        {            
                 if (ncrQa.Item == null)
                 {
                     ncrQa.Item = _context.Items.Find(ncrQa.ItemId);
                 }
-                ViewData["SupplierId"] = SupplierSelectCreateList(ncrQa?.Item.Supplier.SupplierId);
-                ViewData["ItemId"] = ItemSelectList(ncrQa.Item.SupplierId, ncrQa.ItemId);
-            }
-            else
-            {
-                ViewData["SupplierId"] = SupplierSelectCreateList(null);
-                ViewData["ItemId"] = ItemSelectList(null, null);
-            }
+                ViewData["SupplierId"] = SupplierSelectList();
+                ViewData["ItemId"] = ItemSelectList();
+            
         }
 
         [HttpPost]

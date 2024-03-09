@@ -63,7 +63,7 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.NcrEng)
                 .Include(n => n.Ncr)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
-                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
                 .Include(n => n.OpDispositionType)
                 .Include(n => n.FollowUpType)
                 .AsNoTracking();
@@ -147,13 +147,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     ncrOperation = ncrOperation
-                        .OrderBy(p => p.Ncr.NcrQa.Item.Supplier.SupplierName);
+                        .OrderBy(p => p.Ncr.NcrQa.Supplier.SupplierName);
                     ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncrOperation = ncrOperation
-                        .OrderByDescending(p => p.Ncr.NcrQa.Item.Supplier.SupplierName);
+                        .OrderByDescending(p => p.Ncr.NcrQa.Supplier.SupplierName);
                     ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -242,6 +242,7 @@ namespace HaverDevProject.Controllers
 
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
+            ViewData["filter"] = filter;
 
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, ControllerName());
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
@@ -263,9 +264,9 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.FollowUpType)
                 .Include(n => n.Ncr)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
-                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects)
-                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects).ThenInclude(n => n.Defect)
-                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(i => i.Item)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Defect)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.ItemDefectPhotos)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrEng)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrEng).ThenInclude(n => n.EngDispositionType)
@@ -311,11 +312,10 @@ namespace HaverDevProject.Controllers
 
             var readOnlyDetails = await _context.Ncrs
                 .Include(n => n.NcrQa)
-                    .ThenInclude(qa => qa.Item)
                         .ThenInclude(item => item.Supplier)
                 .Include(n => n.NcrQa)
-                    .ThenInclude(qa => qa.Item)
-                        .ThenInclude(item => item.ItemDefects)
+                        .ThenInclude(item => item.Item)
+                .Include(n => n.NcrQa)
                             .ThenInclude(defect => defect.Defect)
                 .Include(n => n.NcrQa)
                     .ThenInclude(qa => qa.ItemDefectPhotos)
@@ -416,7 +416,9 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.NcrEng)
                 .Include(n => n.Ncr)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
-                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Defect)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
                 .Include(n => n.OpDispositionType)
                 .Include(n => n.FollowUpType)
                 .Include(n => n.OpDefectPhotos)
@@ -452,12 +454,11 @@ namespace HaverDevProject.Controllers
 
             var readOnlyDetails = await _context.Ncrs
                 .Include(n => n.NcrQa)
-                    .ThenInclude(qa => qa.Item)
                         .ThenInclude(item => item.Supplier)
                 .Include(n => n.NcrQa)
-                    .ThenInclude(qa => qa.Item)
-                        .ThenInclude(item => item.ItemDefects)
-                            .ThenInclude(defect => defect.Defect)
+                        .ThenInclude(defect => defect.Defect)
+                .Include(n => n.NcrQa)
+                        .ThenInclude(defect => defect.Item)
                 .Include(n => n.NcrQa)
                     .ThenInclude(qa => qa.ItemDefectPhotos)
                 .Include(n => n.NcrEng)
@@ -652,7 +653,7 @@ namespace HaverDevProject.Controllers
             //    .ToList();
 
             List<Ncr> pendings = _context.Ncrs
-                .Include(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
+                .Include(n => n.NcrQa).ThenInclude(n => n.Supplier)
                 .Where(n => n.NcrPhase == NcrPhase.Operations)
                 .ToList();
 
@@ -663,7 +664,7 @@ namespace HaverDevProject.Controllers
             {
                 NcrId = ncr.NcrId,
                 NcrNumber = ncr.NcrNumber,
-                SupplierName = ncr.NcrQa.Item.Supplier.SupplierName
+                SupplierName = ncr.NcrQa.Supplier.SupplierName
             }).ToList();
 
             return Json(ncrs);

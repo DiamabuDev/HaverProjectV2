@@ -63,14 +63,16 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
                 .Include(n => n.Ncr)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
-                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
                 .Include(n => n.Drawing)
-                .Where(n => n.Ncr.NcrPhase != NcrPhase.Archive &&
-                (n.Ncr.NcrPhase == NcrPhase.Engineer ||
-                 n.Ncr.NcrPhase == NcrPhase.Operations ||
-                 n.Ncr.NcrPhase == NcrPhase.Procurement ||
-                 n.Ncr.NcrPhase == NcrPhase.ReInspection ||
-                 n.Ncr.NcrPhase == NcrPhase.Closed))
+                .Where(n => n.Ncr.NcrPhase != NcrPhase.Archive
+                //&&
+                //(n.Ncr.NcrPhase == NcrPhase.Engineer ||
+                // n.Ncr.NcrPhase == NcrPhase.Operations ||
+                // n.Ncr.NcrPhase == NcrPhase.Procurement ||
+                // n.Ncr.NcrPhase == NcrPhase.ReInspection ||
+                // n.Ncr.NcrPhase == NcrPhase.Closed)
+                 )
                 .AsNoTracking();
 
 
@@ -154,13 +156,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     ncrEng = ncrEng
-                        .OrderBy(p => p.Ncr.NcrQa.Item.Supplier.SupplierName);
+                        .OrderBy(p => p.Ncr.NcrQa.Supplier.SupplierName);
                     ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncrEng = ncrEng
-                        .OrderByDescending(p => p.Ncr.NcrQa.Item.Supplier.SupplierName);
+                        .OrderByDescending(p => p.Ncr.NcrQa.Supplier.SupplierName);
                     ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -250,6 +252,7 @@ namespace HaverDevProject.Controllers
 
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
+            ViewData["filter"] = filter;
 
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, ControllerName());
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
@@ -271,9 +274,8 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
                 .Include(n => n.Ncr)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
-                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects)
-                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects).ThenInclude(n => n.Defect)
-                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Defect)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.ItemDefectPhotos)
                 .Include(n => n.Drawing)
                 .Include(n => n.EngDefectPhotos)
@@ -312,7 +314,7 @@ namespace HaverDevProject.Controllers
             NcrEngDTO ncr = new NcrEngDTO();
             ncr.NcrNumber = ncrNumber; // Set the NcrNumber from the parameter
             ncr.DrawingRevDate = DateTime.Now;
-            ncr.NcrEngCreationDate = DateTime.Now;
+            ncr.NcrEngCompleteDate = DateTime.Now;
             ncr.DrawingOriginalRevNumber = 1;
             ncr.DrawingRequireUpdating = false;
             ncr.NcrEngCustomerNotification = false;
@@ -321,15 +323,16 @@ namespace HaverDevProject.Controllers
 
             var readOnlyDetails = await _context.Ncrs
                 .Include(n => n.NcrQa)
-                    .ThenInclude(qa => qa.Item)
                         .ThenInclude(item => item.Supplier)
                 .Include(n => n.NcrQa)
-                    .ThenInclude(qa => qa.Item)
-                        .ThenInclude(item => item.ItemDefects)
-                            .ThenInclude(defect => defect.Defect)
+                        .ThenInclude(defect => defect.Item)
+                .Include(n => n.NcrQa)
+                        .ThenInclude(defect => defect.Defect)
                 .Include(n => n.NcrQa)
                     .ThenInclude(qa => qa.ItemDefectPhotos)
                 .FirstOrDefaultAsync(n => n.NcrId == ncrId);
+
+            ncr.NcrEngCreationDate = readOnlyDetails.NcrQa.NcrQacreationDate;
 
             ViewBag.IsNCRQaView = false;
             ViewBag.IsNCREngView = false;
@@ -370,7 +373,8 @@ namespace HaverDevProject.Controllers
                         NcrEngDispositionDescription = ncrEngDTO.NcrEngDispositionDescription,
                         NcrEngStatusFlag = ncrEngDTO.NcrEngStatusFlag,
                         NcrEngUserId = 1,
-                        NcrEngCreationDate = DateTime.Now,
+                        NcrEngCompleteDate = DateTime.Now,
+                        NcrEngCreationDate = ncrEngDTO.NcrEngCreationDate,
                         EngDispositionTypeId = ncrEngDTO.EngDispositionTypeId,
                         DrawingId = ncrEngDTO.DrawingId,
                         DrawingRequireUpdating = ncrEngDTO.DrawingRequireUpdating,
@@ -424,6 +428,7 @@ namespace HaverDevProject.Controllers
                         .Include(ne => ne.Ncr)
                           .Include(ne => ne.EngDispositionType)
                           .Include(ne => ne.Drawing)
+                          //.Include(ne => ne.Ncr).ThenInclude(ne=>ne.NcrQa)
                         .Include(n => n.EngDefectPhotos)
                         .AsNoTracking()
                         .FirstOrDefaultAsync(ne => ne.NcrEngId == id);
@@ -444,6 +449,7 @@ namespace HaverDevProject.Controllers
                 NcrEngCustomerNotification = ncrEng.NcrEngCustomerNotification,
                 NcrEngDispositionDescription = ncrEng.NcrEngDispositionDescription,
                 NcrEngCreationDate = ncrEng.NcrEngCreationDate,
+                NcrEngCompleteDate = ncrEng.NcrEngCompleteDate,
                 NcrEngStatusFlag = ncrEng.NcrEngStatusFlag,
                 NcrEngUserId = ncrEng.NcrEngUserId,
                 EngDispositionTypeId = ncrEng.EngDispositionTypeId,
@@ -461,11 +467,10 @@ namespace HaverDevProject.Controllers
 
             var readOnlyDetails = await _context.Ncrs
                 .Include(n => n.NcrQa)
-                    .ThenInclude(qa => qa.Item)
                         .ThenInclude(item => item.Supplier)
                 .Include(n => n.NcrQa)
-                    .ThenInclude(qa => qa.Item)
-                        .ThenInclude(item => item.ItemDefects)
+                            .ThenInclude(defect => defect.Item)
+                .Include(n => n.NcrQa)
                             .ThenInclude(defect => defect.Defect)
                 .Include(n => n.NcrQa)
                     .ThenInclude(qa => qa.ItemDefectPhotos)
@@ -509,6 +514,7 @@ namespace HaverDevProject.Controllers
                     ncrEng.NcrEngCustomerNotification = ncrEngDTO.NcrEngCustomerNotification;
                     ncrEng.NcrEngDispositionDescription = ncrEngDTO.NcrEngDispositionDescription;
                     ncrEng.NcrEngCreationDate = ncrEngDTO.NcrEngCreationDate;
+                    ncrEng.NcrEngCompleteDate = ncrEngDTO.NcrEngCompleteDate;
                     ncrEng.NcrEngStatusFlag = ncrEngDTO.NcrEngStatusFlag;
                     ncrEng.NcrEngUserId = ncrEngDTO.NcrEngUserId;
                     ncrEng.EngDispositionTypeId = ncrEngDTO.EngDispositionTypeId;
@@ -568,7 +574,7 @@ namespace HaverDevProject.Controllers
         {
 
             List<Ncr> pendings = _context.Ncrs
-                .Include(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
+                .Include(n => n.NcrQa).ThenInclude(n => n.Supplier)
                 .Where(n => n.NcrPhase == NcrPhase.Engineer)
                 .ToList();
 
@@ -579,7 +585,7 @@ namespace HaverDevProject.Controllers
             {
                 NcrId = ncr.NcrId,
                 NcrNumber = ncr.NcrNumber,
-                SupplierName = ncr.NcrQa.Item.Supplier.SupplierName
+                SupplierName = ncr.NcrQa.Supplier.SupplierName
             }).ToList();
 
             return Json(ncrs);

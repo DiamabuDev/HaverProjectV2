@@ -4,118 +4,70 @@
     ViewData["Title"] = "Index";
 }
 
-<h1><i class="bi bi-caret-right-fill"></i>Defect Types</h1>
+<div class="col-md-7 col-10 mx-auto">
+    <h1><i class="bi bi-caret-right-fill"></i>Defect Types</h1>
 
-<form id="defectForm" asp-action="Index" method="get">
-    <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
-    <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
-    <input type="hidden" id="filter" name="filter" value="@ViewData["filter"]" />
+    <form id="defectForm" asp-action="Index" method="get">
+        <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
+        <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
+        <input type="hidden" id="filter" name="filter" value="@ViewData["filter"]" />
     
-    <div class="row mt-3 mb-2">
-        <div class="d-flex justify-content-end">
-            <a asp-action="Create" class="btn btn-primary me-2"> <i class="bi bi-plus-square-dotted"></i> Create New Defect Type</a>
-            <a asp-action="Upload" class="btn btn-primary"> <i class="bi bi-upload"></i> Upload Defect Types</a>
+        <div class="row mt-3 mb-2">
+            <div class="d-flex justify-content-end">
+                <a asp-action="Create" class="btn btn-primary me-2"> <i class="bi bi-plus-square-dotted"></i> Create New Defect Type</a>
+                <a asp-action="Upload" class="btn btn-primary"> <i class="bi bi-upload"></i> Upload Defect Types</a>
+            </div>
         </div>
-    </div>
 
-    <div class="form-horizontal">
-        <div class="card card-body bg-custom-color mb-2">
-            <div class="row d-flex align-items-center">               
+        <div class="form-horizontal">
+            <div class="card card-body bg-custom-color mb-2">
+                <div class="row d-flex align-items-center">               
                 
-                <div class="form-group col-lg-5 col-md-5 col-sm-10 col-10">
-                    <label class="control-label mb-1">Find by Defect Type:</label>
-                    @Html.TextBox("SearchName", null, new { @class = "form-control" })
-                </div>
-@*                 <div class="form-group col-lg-4 col-md-5 col-sm-10 col-10">
-                    <label class="control-label">Filter by Item:</label>
-                    @Html.DropDownList("ItemID", null, "All Items", htmlAttributes: new { @class = "form-control" })
-                </div> *@
-                <div class="form-group col-lg-6 col-md-6 col-sm-10 col-8 align-self-end">
-                    <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary mt-4 ms-2" />
-                    <a asp-action="Index" class="btn btn-outline-dark mt-4 ms-4">Clear</a>
+                    <div class="form-group col-5">
+                        <label class="control-label mb-1">Find by Defect Type:</label>
+                        @Html.TextBox("SearchName", null, new { @class = "form-control" })
+                    </div>
+                    <div class="form-group col-5 align-self-end">
+                        <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary mt-4 ms-2" />
+                        <a asp-action="Index" class="btn btn-outline-dark mt-4 ms-4">Clear</a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <table class="table table-hover table-striped">
-        <thead class="custom-header-bg">
-            <tr>
-                <th></th>
-                <th class="two-cols-1">
-                    <button type="submit" name="actionButton" value="Defect" class="btn text-light custom-btn-text-start">
-                        Defect Type
-                        @Html.Raw(ViewData["filterApplied:DefectName"])
-                    </button>
-                </th>
-                <th class="big-col">
-                    <button type="submit" name="actionButton" value="Description" class="btn text-light custom-btn-text-start">
-                        Description
-                        @Html.Raw(ViewData["filterApplied:Description"])
-                    </button>
-                </th>
-                @* <th>
-                    <button type="submit" name="actionButton" value="Item" class="btn text-light custom-btn-text-start">
-                        Items
-                        @Html.Raw(ViewData["filterApplied:Item"])
-                    </button>
-                </th> *@
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
+        <table class="table table-hover table-striped">
+            <thead class="custom-header-bg">
                 <tr>
-                    <td></td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.DefectName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.DefectDesription)
-                    </td>
-
-                    @* <td custom-hover">
-                        @{
-                            int itemCount = item.ItemDefects.Count;
-                            if (itemCount > 0)
-                            {
-                                var sortedItems = item.ItemDefects.OrderBy(id => id.Item.ItemName).ToList();
-
-                                string firstItem = sortedItems.FirstOrDefault().Item.ItemName;
-                                if (itemCount > 1)
-                                {
-                                    string itemList = "";
-                                    for (int i = 1; i < itemCount; i++) //Skip the first because we have it already
-                                    {
-                                        itemList += sortedItems[i].Item.ItemName + " <br />";
-                                    }
-                                <a class="text-dark custom-link" role="button" data-bs-toggle="collapse" href="#collapseItem@(item.DefectId)"
-                                   aria-expanded="false" aria-controls="collapseItem@(item.DefectId)">
-                                        @firstItem <span class="badge btn-primary">@itemCount</span>
-                                </a>
-                                <div class="collapse" id="collapseItem@(item.DefectId)">
-                                        @Html.Raw(itemList)
-                                </div>
-                                }
-                                else
-                                {
-                                    @firstItem
-                                }
-                            }
-                        }
-                    </td> *@
-
-
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.DefectId" class="btn text-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
-                        <a asp-action="Details" asp-route-id="@item.DefectId" class="btn text-primary" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
-                    </td>
+                    <th></th>
+                    <th class="two-cols">
+                        <button type="submit" name="actionButton" value="Defect" class="btn text-light custom-btn-text-start">
+                            Defect Type
+                            @Html.Raw(ViewData["filterApplied:DefectName"])
+                        </button>
+                    </th>
+                    <th></th>
                 </tr>
-            }
-        </tbody>
-    </table>
-    <partial name="_PagingNavBar" />
-</form>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td></td>
+                        <td class="two-cols">
+                            @Html.DisplayFor(modelItem => item.DefectName)
+                        </td>                   
+
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.DefectId" class="btn text-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
+                            <a asp-action="Details" asp-route-id="@item.DefectId" class="btn text-primary" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <partial name="_PagingNavBar" />
+    </form>
+</div>
+
 @section Scripts {
     <script type="text/javascript">
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))

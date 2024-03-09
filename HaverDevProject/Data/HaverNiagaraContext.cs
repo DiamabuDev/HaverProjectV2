@@ -52,7 +52,7 @@ public partial class HaverNiagaraContext : DbContext
 
     public virtual DbSet<Item> Items { get; set; }
 
-    public virtual DbSet<ItemDefect> ItemDefects { get; set; }
+    //public virtual DbSet<ItemDefect> ItemDefects { get; set; }
 
     public virtual DbSet<ItemDefectPhoto> ItemDefectPhotos { get; set; }
 
@@ -110,13 +110,13 @@ public partial class HaverNiagaraContext : DbContext
         {
             entity.HasKey(e => e.ItemId).HasName("pk_item_itemId");
 
-            entity.HasOne(d => d.Supplier).WithMany(p => p.Items)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_item_supplier");
+            //entity.HasOne(d => d.Supplier).WithMany(p => p.Items)
+            //    .OnDelete(DeleteBehavior.ClientSetNull)
+            //    .HasConstraintName("fk_item_supplier");
         });  
 
-        modelBuilder.Entity<ItemDefect>()
-            .HasKey(t => new { t.ItemId, t.DefectId });
+        //modelBuilder.Entity<ItemDefect>()
+        //    .HasKey(t => new { t.ItemId, t.DefectId });
 
         modelBuilder.Entity<ItemDefectPhoto>(entity =>
         {
@@ -194,6 +194,14 @@ public partial class HaverNiagaraContext : DbContext
             entity.HasOne(d => d.Item).WithMany(p => p.NcrQas)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_ncrQa_item");
+
+            entity.HasOne(d => d.Defect).WithMany(p => p.NcrQas)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_ncrQa_defect");
+
+            entity.HasOne(d => d.Supplier).WithMany(p => p.NcrQas)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_ncrQa_supplier");
         });
 
         modelBuilder.Entity<NcrReInspect>(entity =>

@@ -21,7 +21,7 @@
                             <tbody>
                                 <tr>
                                     <td class="four-cols">@(Model.NcrQaProcessApplicable == true ? "Supplier or Rec-Insp" : "WIP (Production Order)")</td>
-                                    <td class="four-cols">@Model.Item.Supplier.SupplierName</td>
+                                    <td class="four-cols">@Model.Supplier.SupplierName</td>
                                     <td class="four-cols">@Model.NcrQaOrderNumber</td>
                                     <td class="four-cols">@Model.NcrQaSalesOrder</td>
                                 </tr>
