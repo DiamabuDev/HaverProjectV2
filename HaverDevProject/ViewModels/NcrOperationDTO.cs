@@ -31,8 +31,6 @@ namespace HaverDevProject.ViewModels
         public string NcrOperationVideo { get; set; }
         public ICollection<OpDefectPhoto> OpDefectPhotos { get; set; } = new HashSet<OpDefectPhoto>();
 
-
-
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             //Create a validation for car number if car is true
