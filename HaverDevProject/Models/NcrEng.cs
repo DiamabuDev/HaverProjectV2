@@ -13,12 +13,10 @@ namespace HaverDevProject.Models;
 [Table("ncrEng")]
 public class NcrEng : Auditable
 {
-
     public int NcrEngId { get; set; }
     public bool NcrEngCustomerNotification { get; set; } = false;
     public string NcrEngDispositionDescription { get; set; }
     public bool NcrEngStatusFlag { get; set; }
-
     public DateTime NcrEngCompleteDate { get; set; }
     public DateTime NcrEngCreationDate { get; set; }
     public NcrPhase NcrPhase { get; set; }

@@ -75,8 +75,6 @@ namespace HaverDevProject.Controllers
                  )
                 .AsNoTracking();
 
-
-
             //Filtering values
             if (!String.IsNullOrEmpty(filter))
             {
@@ -248,8 +246,7 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:Status"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
-
-
+            
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
             ViewData["filter"] = filter;

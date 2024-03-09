@@ -674,59 +674,6 @@ namespace HaverDevProject.Controllers
             //Ncr Format
             return $"{currentYear}-{nextConsecutiveNumberString}";
         }
-
-        public async Task<IActionResult> ArchiveNcr(int id)
-        {
-            var ncrToUpdate = await _context.Ncrs
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(n => n.NcrId == id);
-
-            if (ncrToUpdate != null)
-            {
-                //Update the phase
-                ncrToUpdate.NcrPhase = NcrPhase.Archive;
-
-                //saving the values
-                _context.Ncrs.Update(ncrToUpdate);
-                await _context.SaveChangesAsync();
-
-                TempData["SuccessMessage"] = "NCR Archive successfully!";
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                TempData["ErrorMessage"] = "NCR not found for archiving.";
-                return RedirectToAction("Index");
-            }
-
-        }
-
-        public async Task<IActionResult> RestoreNcr(int id)
-        {
-            var ncrToUpdate = await _context.Ncrs
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(n => n.NcrId == id);
-
-            if (ncrToUpdate != null)
-            {
-                //Update the phase
-                ncrToUpdate.NcrPhase = NcrPhase.Closed;
-
-                //saving the values
-                _context.Ncrs.Update(ncrToUpdate);
-                await _context.SaveChangesAsync();
-
-                TempData["SuccessMessage"] = "NCR Restore successfully!";
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                TempData["ErrorMessage"] = "NCR not found for archiving.";
-                return RedirectToAction("Index");
-            }
-
-        }
-
         private bool NcrReInspectExists(int id)
         {
             return _context.NcrReInspects.Any(e => e.NcrReInspectId == id);
