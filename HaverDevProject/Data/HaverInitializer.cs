@@ -22,7 +22,7 @@ namespace HaverDevProject.Data
             try
             {
                 context.Database.EnsureDeleted();
-                //context.Database.EnsureCreated();
+                context.Database.EnsureCreated();
                 //context.Database.Migrate();
 
 
@@ -263,7 +263,8 @@ namespace HaverDevProject.Data
                         new Defect
                         {
                             DefectName = "Poor Paint finish"
-                        }, new Defect
+                        }, 
+                        new Defect
                         {
                             DefectName = "Poor quality surface finish"
                         },
@@ -411,6 +412,7 @@ namespace HaverDevProject.Data
                             NcrQaProcessApplicable = false,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Bearing Housing").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Delivery quality").DefectId,
+                            SupplierId = 1,
                             NcrQaOrderNumber = "4500695162",
                             NcrQaQuanReceived = 10,
                             NcrQaQuanDefective = 8,
@@ -426,6 +428,7 @@ namespace HaverDevProject.Data
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-138").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Bearing Housing").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect dimensions").DefectId,
+                            SupplierId = 3,
                             NcrQaOrderNumber = "4500695429",
                             NcrQaQuanReceived = 5,
                             NcrQaQuanDefective = 5,
@@ -441,6 +444,7 @@ namespace HaverDevProject.Data
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-139").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Bearing Housing").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect dimensions").DefectId,
+                            SupplierId = 1,
                             NcrQaProcessApplicable = false,
                             NcrQaOrderNumber = "4500684525",
                             NcrQaQuanReceived = 12,
@@ -457,6 +461,7 @@ namespace HaverDevProject.Data
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-140").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Backing Shield").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect hardware").DefectId,
+                            SupplierId = 2,
                             NcrQaOrderNumber = "4500683983",
                             NcrQaQuanReceived = 28,
                             NcrQaQuanDefective = 14,
@@ -472,6 +477,7 @@ namespace HaverDevProject.Data
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-141").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Side Arm").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect specification").DefectId,
+                            SupplierId = 4,
                             NcrQaOrderNumber = "4500694121",
                             NcrQaQuanReceived = 2,
                             NcrQaQuanDefective = 2,
@@ -487,6 +493,7 @@ namespace HaverDevProject.Data
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-001").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Backing Shield").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect hardware").DefectId,
+                            SupplierId = 3,
                             NcrQaProcessApplicable = false,
                             NcrQaOrderNumber = "4500681790",
                             NcrQaQuanReceived = 1,
@@ -503,6 +510,7 @@ namespace HaverDevProject.Data
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-002").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Bearing Housing").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Delivery quality").DefectId,
+                            SupplierId = 1,
                             NcrQaOrderNumber = "4500671162",
                             NcrQaQuanReceived = 9,
                             NcrQaQuanDefective = 8,
@@ -518,6 +526,7 @@ namespace HaverDevProject.Data
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-003").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Side Arm").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect specification").DefectId,
+                            SupplierId = 1,
                             NcrQaOrderNumber = "4500685546",
                             NcrQaQuanReceived = 4,
                             NcrQaQuanDefective = 1,
@@ -533,6 +542,7 @@ namespace HaverDevProject.Data
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-004").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Side Arm").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect specification").DefectId,
+                            SupplierId = 5,
                             NcrQaOrderNumber = "4500683210",
                             NcrQaQuanReceived = 15,
                             NcrQaQuanDefective = 10,
@@ -548,6 +558,7 @@ namespace HaverDevProject.Data
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-005").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Bearing Housing").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Delivery quality").DefectId,
+                            SupplierId = 4,
                             NcrQaProcessApplicable = false,
                             NcrQaOrderNumber = "4500700595",
                             NcrQaQuanReceived = 17,
@@ -564,6 +575,7 @@ namespace HaverDevProject.Data
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-006").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Side Arm").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect specification").DefectId,
+                            SupplierId = 3,
                             NcrQaOrderNumber = "4500695645",
                             NcrQaQuanReceived = 12,
                             NcrQaQuanDefective = 2,
@@ -579,6 +591,7 @@ namespace HaverDevProject.Data
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-007").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Backing Shield").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect hardware").DefectId,
+                            SupplierId = 4,
                             NcrQaOrderNumber = "4500691574",
                             NcrQaQuanReceived = 24,
                             NcrQaQuanDefective = 6,

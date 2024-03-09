@@ -280,6 +280,8 @@ namespace HaverDevProject.Controllers
                       .Include(n => n.NcrQa)
                             .ThenInclude(defect => defect.Defect)
                       .Include(n => n.NcrQa)
+                            .ThenInclude(i => i.Item)
+                      .Include(n => n.NcrQa)
                         .ThenInclude(qa => qa.ItemDefectPhotos)
                       .Include(n => n.NcrEng)
                         .ThenInclude(eng => eng.EngDispositionType)
