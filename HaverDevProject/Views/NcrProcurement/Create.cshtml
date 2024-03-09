@@ -99,14 +99,14 @@
                 <div class="row supplier-return-fields">
                     <div class="col-6">
                         <div class="form-group">
-                            <label asp-for="SupplierReturnMANum" class="control-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Return Material Authorization Number"><strong>Supplier RMA # </strong><span class="fw-bold text-danger"></span></label>
+                            <label asp-for="SupplierReturnMANum" class="control-label"><strong>Supplier RMA # </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Return Material Authorization Number">(e.g. RT20062090)</small></label>
                             <input asp-for="SupplierReturnMANum" class="form-control" id="RMA"/>
                             <span asp-validation-for="SupplierReturnMANum" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="form-group">
-                            <label asp-for="SupplierReturnName" class="control-label" class="control-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Name of Delivery Service"> <strong>Carrier Name </strong> <span class="fw-bold text-danger"></span></label>
+                            <label asp-for="SupplierReturnName" class="control-label"><strong>Carrier Name </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Name of Delivery Service">(e.g. Purolator)</small></label>
                             <input asp-for="SupplierReturnName" class="form-control" id="Carrier"/>
                             <span asp-validation-for="SupplierReturnName" class="text-danger"></span>
                         </div>
@@ -122,7 +122,7 @@
                     </div>
                     <div class="col-6">
                         <div class="form-group">
-                            <label asp-for="SupplierReturnAccount" class="control-label" class="control-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Account Number for the Return Request"> <strong>Account # </strong> <span class="fw-bold text-danger"></span></label>
+                            <label asp-for="SupplierReturnAccount" class="control-label"><strong>Account # </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Account Number for the Return Request">(e.g. 946735)</small></label>
                             <input asp-for="SupplierReturnAccount" class="form-control" id="Account"/>
                             <span asp-validation-for="SupplierReturnAccount" class="text-danger"></span>
                         </div>
@@ -162,7 +162,7 @@
                 </div>
                 <div class="row">
                     <div class="form-group">
-                        <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No Check Yes or No if Sales Return Process is Completed"> <strong>SAP Return Completed </strong> <span class="fw-bold text-danger">*</span></label>
+                        <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No if the Sales Return Process is Completed"> <strong>SAP Return Completed </strong> <span class="fw-bold text-danger">*</span></label>
                         <div>
                             <div class="form-check form-check-inline">
                                 <input type="radio" class="form-check-input" asp-for="NcrProcSAPReturnCompleted" value="true" checked />
@@ -171,6 +171,13 @@
                             <div class="form-check form-check-inline">
                                 <input type="radio" class="form-check-input" asp-for="NcrProcSAPReturnCompleted" value="false" />
                                 <label class="form-check-label">No</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label asp-for="NcrProcRejectedValue" class="control-label"><strong>Total Cost </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Total Cost of Rejected Product">(e.g. 11,675)</small></label>
+                                <input asp-for="NcrProcRejectedValue" class="form-control" />
+                                <span asp-validation-for="NcrProcRejectedValue" class="text-danger"></span>
                             </div>
                         </div>
                     </div>
@@ -191,7 +198,7 @@
                 <div class="form-group d-flex justify-content-end mt-2">
                     <div>
                         <button type="button" onclick="location.href='@ViewData["returnURL"]'" class="btn custom-btn-color">
-                            <i class="bi bi-arrow-90deg-left"></i> Back to NCR Log
+                            <i class="bi bi-arrow-90deg-left"></i> Back to the NCR Log
                         </button>
                     </div>
                     <div>

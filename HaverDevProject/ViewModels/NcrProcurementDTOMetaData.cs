@@ -49,6 +49,13 @@ namespace HaverDevProject.Models
         [Column("ncrProcSupplierBilled")]
         public bool NcrProcSupplierBilled { get; set; }
 
+        [Display(Name = "Total Rejected Value")]
+        [Required(ErrorMessage = "Total Rejected Value is required.")]
+        [Column("ncrProcRejectedValue")]
+        [DataType(DataType.Currency)]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
+        public decimal NcrProcRejectedValue { get; set; }
+
         public bool NcrProcFlagStatus { get; set; }
 
         [Display(Name = "Procurement")]
