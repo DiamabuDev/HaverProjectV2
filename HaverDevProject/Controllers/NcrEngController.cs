@@ -65,12 +65,14 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
                 .Include(n => n.Drawing)
-                .Where(n => n.Ncr.NcrPhase != NcrPhase.Archive &&
-                (n.Ncr.NcrPhase == NcrPhase.Engineer ||
-                 n.Ncr.NcrPhase == NcrPhase.Operations ||
-                 n.Ncr.NcrPhase == NcrPhase.Procurement ||
-                 n.Ncr.NcrPhase == NcrPhase.ReInspection ||
-                 n.Ncr.NcrPhase == NcrPhase.Closed))
+                .Where(n => n.Ncr.NcrPhase != NcrPhase.Archive
+                //&&
+                //(n.Ncr.NcrPhase == NcrPhase.Engineer ||
+                // n.Ncr.NcrPhase == NcrPhase.Operations ||
+                // n.Ncr.NcrPhase == NcrPhase.Procurement ||
+                // n.Ncr.NcrPhase == NcrPhase.ReInspection ||
+                // n.Ncr.NcrPhase == NcrPhase.Closed)
+                 )
                 .AsNoTracking();
 
 
