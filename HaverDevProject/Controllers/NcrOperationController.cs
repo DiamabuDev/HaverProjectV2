@@ -432,7 +432,7 @@ namespace HaverDevProject.Controllers
             {
                 NcrOpId = ncrOperation.NcrOpId,
                 NcrNumber = ncrOperation.Ncr.NcrNumber,
-                NcrOpCreationDate = ncrOperation.Ncr.NcrQa.NcrQacreationDate,
+                NcrOpCreationDate = ncrOperation.Ncr.NcrEng.NcrEngCreationDate,
                 NcrId = ncrOperation.NcrId,
                 Ncr = ncrOperation.Ncr,
                 OpDispositionTypeId = ncrOperation.OpDispositionTypeId,
@@ -489,30 +489,30 @@ namespace HaverDevProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, int NcrId, NcrOperationDTO ncrOperationDTO, List<IFormFile> Photos)
         {
-            //ncrOperationDTO.NcrOpId = id;
-            //if (id != ncrOperationDTO.NcrOpId)
-            //{
-            //    return NotFound();
-            //}
+            ncrOperationDTO.NcrOpId = id;
+            if (id != ncrOperationDTO.NcrOpId)
+            {
+                return NotFound();
+            }
 
             if (ModelState.IsValid)
             {
-                //var ncrToUpdate = await _context.Ncrs
-                //    .AsNoTracking()
-                //    .FirstOrDefaultAsync(n => n.NcrId == NcrId);
+                var ncrToUpdate = await _context.Ncrs
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(n => n.NcrId == NcrId);
 
-                //if (ncrToUpdate == null)
-                //{
-                //    return NotFound();
-                //}
-                //else
-                //{
-                //    ncrToUpdate.NcrPhase = NcrPhase.Procurement;
-                //    ncrToUpdate.NcrLastUpdated = DateTime.Now;
+                if (ncrToUpdate == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    //ncrToUpdate.NcrPhase = NcrPhase.Procurement;
+                    ncrToUpdate.NcrLastUpdated = DateTime.Now;
 
-                //    _context.Ncrs.Update(ncrToUpdate);
-                //    await _context.SaveChangesAsync();
-                //}
+                    _context.Ncrs.Update(ncrToUpdate);
+                    await _context.SaveChangesAsync();
+                }
 
                 await AddPictures(ncrOperationDTO, Photos);
                 try
@@ -536,14 +536,14 @@ namespace HaverDevProject.Controllers
                     ncrOperation.NcrPurchasingUserId = 1;
                     ncrOperation.NcrOperationVideo = ncrOperationDTO.NcrOperationVideo;
                     ncrOperation.OpDefectPhotos = ncrOperationDTO.OpDefectPhotos;
-
+                    ncrOperation.Ncr.NcrLastUpdated = DateTime.Now;
 
                     _context.Update(ncrOperation);
                     await _context.SaveChangesAsync();
 
 
                     //var ncr = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrOperation.NcrId);
-                    //ncr.NcrPhase = NcrPhase.Procurement;
+                    ////ncr.NcrPhase = NcrPhase.Procurement;
                     //ncr.NcrLastUpdated = DateTime.Now;
                     //_context.Update(ncr);
                     //await _context.SaveChangesAsync();

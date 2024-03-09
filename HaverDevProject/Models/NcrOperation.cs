@@ -11,6 +11,19 @@ namespace HaverDevProject.Models;
 [ModelMetadataType(typeof(NcrOperationMetaData))]
 public class NcrOperation : Auditable
 {
+    public int DaysSinceCreated
+
+    {
+
+        get
+
+        {
+
+            return (DateTime.Now - NcrOpCreationDate).Days;
+
+        }
+
+    }
     public int NcrOpId { get; set; }
     public int NcrId { get; set; }
     public Ncr Ncr { get; set; }
@@ -29,14 +42,4 @@ public class NcrOperation : Auditable
     public NcrEng NcrEng { get; set; }
     public string NcrOperationVideo { get; set; }
     public ICollection<OpDefectPhoto> OpDefectPhotos { get; set; } = new HashSet<OpDefectPhoto>();
-
-    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-    {
-        if (FollowUp && (!FollowUpTypeId.HasValue || !ExpectedDate.HasValue))
-        {
-            yield return new ValidationResult(
-                "Follow-up Type and Expected Date are required when Follow-up is selected.",
-                new[] { nameof(FollowUp), nameof(FollowUpType), nameof(ExpectedDate) });
-        }
-    }
 }
