@@ -192,8 +192,8 @@ namespace HaverDevProject.Controllers
                 return NotFound();
             }
 
-            var supplier = await _context
-                .Suppliers.Include(s => s.Items)
+            var supplier = await _context.Suppliers
+                .Include(s => s.NcrQas).ThenInclude(s => s.Item)
                 .ThenInclude(s => s.NcrQas)
                 .ThenInclude(s => s.Ncr)
                 .AsNoTracking()
@@ -203,15 +203,17 @@ namespace HaverDevProject.Controllers
                 return NotFound();
             }
 
-            var supplierViewModel = new SupplierDetailsViewModel
-            {
-                Supplier = supplier,
-                RelatedNCRs =
-                    supplier.Items.FirstOrDefault()?.NcrQas?.Select(nqa => nqa.Ncr).ToList()
-                    ?? new List<Ncr>()
-            };
+            //var supplierViewModel = new SupplierDetailsViewModel
+            //{
+            //    Supplier = supplier,
+            //    RelatedNCRs =
+            //    supplier.NcrQas.Items.FirstOrDefault()?.Select(nqa => nqa.Ncr).ToList()
+            //        //supplier.Items.FirstOrDefault()?.NcrQas?.Select(nqa => nqa.Ncr).ToList()
+            //        ?? new List<Ncr>()
+            //};
 
-            return View(supplierViewModel);
+            return View(supplier);
+            //return View(supplierViewModel);
         }
 
         // GET: Supplier/Create
@@ -266,21 +268,21 @@ namespace HaverDevProject.Controllers
                 }
             }
 
-            //Decide if we need to send the Validaiton Errors directly to the client
-            if (!ModelState.IsValid && Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-            {
-                //Was an AJAX request so build a message with all validation errors
-                string errorMessage = "";
-                foreach (var modelState in ViewData.ModelState.Values)
-                {
-                    foreach (ModelError error in modelState.Errors)
-                    {
-                        errorMessage += error.ErrorMessage + "|";
-                    }
-                }
-                //Note: returning a BadRequest results in HTTP Status code 400
-                return BadRequest(errorMessage);
-            }
+            ////Decide if we need to send the Validaiton Errors directly to the client
+            //if (!ModelState.IsValid && Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            //{
+            //    //Was an AJAX request so build a message with all validation errors
+            //    string errorMessage = "";
+            //    foreach (var modelState in ViewData.ModelState.Values)
+            //    {
+            //        foreach (ModelError error in modelState.Errors)
+            //        {
+            //            errorMessage += error.ErrorMessage + "|";
+            //        }
+            //    }
+            //    //Note: returning a BadRequest results in HTTP Status code 400
+            //    return BadRequest(errorMessage);
+            //}
 
             return View(supplier);
         }
@@ -435,11 +437,10 @@ namespace HaverDevProject.Controllers
             var ncrData = await _context
                 .Ncrs.Include(n => n.NcrQa)
                 .ThenInclude(qa => qa.Item)
+                .Include(n => n.NcrQa) 
                 .ThenInclude(i => i.Supplier)
                 .Include(n => n.NcrQa)
-                .ThenInclude(qa => qa.Item)
-                .ThenInclude(i => i.ItemDefects)
-                .ThenInclude(i => i.Defect)
+                .ThenInclude(qa => qa.Defect)
                 .Include(n => n.NcrEng)
                 .ThenInclude(e => e.EngDispositionType)
                 .Include(n => n.NcrOperation)
@@ -455,7 +456,7 @@ namespace HaverDevProject.Controllers
             {
                 NcrNumber = ncrData.NcrNumber,
                 NcrStatus = ncrData.NcrStatus,
-                SupplierName = ncrData.NcrQa?.Item?.Supplier?.SupplierName ?? "Not Available",
+                SupplierName = ncrData.NcrQa?.Supplier?.SupplierName ?? "Not Available",
                 NcrQaOrderNumber = ncrData.NcrQa?.NcrQaOrderNumber ?? "Not Available",
                 ItemSAP = ncrData.NcrQa?.Item?.ItemNumber ?? 0,
                 ItemName = ncrData.NcrQa?.Item?.ItemName ?? "Not Available",
@@ -475,17 +476,17 @@ namespace HaverDevProject.Controllers
                     ncrData.NcrOperation?.NcrPurchasingDescription ?? "Not Available",
             };
 
-            foreach (var itemDefect in ncrData.NcrQa.Item.ItemDefects)
-            {
-                if (itemDefect.Defect != null && itemDefect.Defect.DefectName != null)
-                {
-                    reportDto.DefectNames.Add(itemDefect.Defect.DefectName);
-                }
-                else
-                {
-                    reportDto.DefectNames.Add("No Defect Available");
-                }
-            }
+            //foreach (var itemDefect in ncrData.NcrQa.Item.ItemDefects)
+            //{
+            //    if (itemDefect.Defect != null && itemDefect.Defect.DefectName != null)
+            //    {
+            //        reportDto.DefectNames.Add(itemDefect.Defect.DefectName);
+            //    }
+            //    else
+            //    {
+            //        reportDto.DefectNames.Add("No Defect Available");
+            //    }
+            //}
 
             return View("SupplierReport", reportDto);
         }

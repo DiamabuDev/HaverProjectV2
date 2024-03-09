@@ -48,8 +48,12 @@ public partial class Supplier
     [Display(Name = "Status")]
     [Column("supplierStatus")]
     public bool SupplierStatus { get; set; } = true; //Default value is true (active)
-
-    [Display(Name = "Items")]
+    
     [InverseProperty("Supplier")]
-    public virtual ICollection<Item> Items { get; set; } = new List<Item>();
+    public ICollection<NcrQa> NcrQas { get; set; } = new HashSet<NcrQa>();
+
+    //[Display(Name = "Items")]
+    //[InverseProperty("Supplier")]
+    //public virtual ICollection<Item> Items { get; set; } = new List<Item>();
+
 }

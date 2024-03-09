@@ -29,11 +29,11 @@ namespace HaverDevProject.Data
                 if (!context.Suppliers.Any())
                 {
                     context.Suppliers.AddRange(
-                        new Supplier
-                        {
-                            SupplierCode = "000000",
-                            SupplierName = "NO SUPPLIER PROVIDED"
-                        },
+                        //new Supplier
+                        //{
+                        //    SupplierCode = "000000",
+                        //    SupplierName = "NO SUPPLIER PROVIDED"
+                        //},
                         new Supplier
                         {
                             SupplierCode = "793254",
@@ -168,86 +168,86 @@ namespace HaverDevProject.Data
                         new Item
                         {
                             ItemNumber = 10342455,
-                            ItemName = "Bearing Housing",
-                            ItemDescription = "Protective enclosure for bearings.",
-                            SupplierId = context.Suppliers.FirstOrDefault(f => f.SupplierName == "INTEGRITY WOVEN WIRE").SupplierId
+                            ItemName = "Bearing Housing"
+                            //ItemDescription = "Protective enclosure for bearings.",
+                            //SupplierId = context.Suppliers.FirstOrDefault(f => f.SupplierName == "INTEGRITY WOVEN WIRE").SupplierId
                         },
                         new Item
                         {
                             ItemNumber = 10482834,
-                            ItemName = "Backing Shield",
-                            ItemDescription = "Shield for internal components.",
-                            SupplierId = context.Suppliers.FirstOrDefault(f => f.SupplierName == "FLO COMPONENTS LTD.").SupplierId
+                            ItemName = "Backing Shield"
+                            //ItemDescription = "Shield for internal components.",
+                            //SupplierId = context.Suppliers.FirstOrDefault(f => f.SupplierName == "FLO COMPONENTS LTD.").SupplierId
                         },
                         new Item
                         {
                             ItemNumber = 11536261,
-                            ItemName = "Side Arm",
-                            ItemDescription = "Structural component for reinforcement.",
-                            SupplierId = context.Suppliers.FirstOrDefault(f => f.SupplierName == "AJAX TOCCO").SupplierId
+                            ItemName = "Side Arm"
+                            //ItemDescription = "Structural component for reinforcement.",
+                            //SupplierId = context.Suppliers.FirstOrDefault(f => f.SupplierName == "AJAX TOCCO").SupplierId
                         },
                         new Item
                         {
                             ItemNumber = 11854290,
-                            ItemName = "Panel",
-                            ItemDescription = "Surface to house internal components.",
-                            SupplierId = context.Suppliers.FirstOrDefault(f => f.SupplierName == "HINGSTON METAL FABRICATORS").SupplierId
+                            ItemName = "Panel"
+                            //ItemDescription = "Surface to house internal components.",
+                            //SupplierId = context.Suppliers.FirstOrDefault(f => f.SupplierName == "HINGSTON METAL FABRICATORS").SupplierId
                         },
                         new Item
                         {
                             ItemNumber = 10344215,
-                            ItemName = "Jig Washer",
-                            ItemDescription = "Used to separate heavy and light minerals",
-                            SupplierId = context.Suppliers.FirstOrDefault(f => f.SupplierName == "HOTZ ENVIRONMENTAL SERVICES").SupplierId
+                            ItemName = "Jig Washer"
+                            //ItemDescription = "Used to separate heavy and light minerals",
+                            //SupplierId = context.Suppliers.FirstOrDefault(f => f.SupplierName == "HOTZ ENVIRONMENTAL SERVICES").SupplierId
                         },
                         new Item
                         {
                             ItemNumber = 10482863,
-                            ItemName = "Screen",
-                            ItemDescription = "Flat stationary for grading",
-                            SupplierId = context.Suppliers.FirstOrDefault(f => f.SupplierName == "BLACK CREEK METAL").SupplierId
+                            ItemName = "Screen"
+                            //ItemDescription = "Flat stationary for grading",
+                            //SupplierId = context.Suppliers.FirstOrDefault(f => f.SupplierName == "BLACK CREEK METAL").SupplierId
                         },
                         new Item
                         {
                             ItemNumber = 11536287,
-                            ItemName = "Conveyor",
-                            ItemDescription = "Belt and roller transportation system",
-                            SupplierId = context.Suppliers.FirstOrDefault(f => f.SupplierName == "POLYMER EXTRUSIONS INC").SupplierId
+                            ItemName = "Conveyor"
+                            //ItemDescription = "Belt and roller transportation system",
+                            //SupplierId = context.Suppliers.FirstOrDefault(f => f.SupplierName == "POLYMER EXTRUSIONS INC").SupplierId
                         },
                         new Item
                         {
                             ItemNumber = 11854266,
-                            ItemName = "Rotary Kiln",
-                            ItemDescription = "Cyclindrical vessel to process feedstock",
-                            SupplierId = context.Suppliers.FirstOrDefault(f => f.SupplierName == "DON CASSELMAN & SON LTD").SupplierId
+                            ItemName = "Rotary Kiln"
+                            //ItemDescription = "Cyclindrical vessel to process feedstock",
+                            //SupplierId = context.Suppliers.FirstOrDefault(f => f.SupplierName == "DON CASSELMAN & SON LTD").SupplierId
                         },
                         new Item
                         {
                             ItemNumber = 10344216,
-                            ItemName = "Liner",
-                            ItemDescription = "Sleeve designed to withstand corrosion",
-                            SupplierId = context.Suppliers.FirstOrDefault(f => f.SupplierName == "W S TYLER - PARTICLE & FINE").SupplierId
+                            ItemName = "Liner"
+                            //ItemDescription = "Sleeve designed to withstand corrosion",
+                            //SupplierId = context.Suppliers.FirstOrDefault(f => f.SupplierName == "W S TYLER - PARTICLE & FINE").SupplierId
                         },
                         new Item
                         {
                             ItemNumber = 10482864,
-                            ItemName = "Spherical Roller Bearing",
-                            ItemDescription = "Low friction angular misalignment",
-                            SupplierId = context.Suppliers.FirstOrDefault(f => f.SupplierName == "LAWRENCE SINTERED METALS").SupplierId
+                            ItemName = "Spherical Roller Bearing"
+                            //ItemDescription = "Low friction angular misalignment",
+                            //SupplierId = context.Suppliers.FirstOrDefault(f => f.SupplierName == "LAWRENCE SINTERED METALS").SupplierId
                         },
                         new Item
                         {
                             ItemNumber = 11536288,
-                            ItemName = "Cyconical Bore",
-                            ItemDescription = "Cylinder component for reinforcement.",
-                            SupplierId = context.Suppliers.FirstOrDefault(f => f.SupplierName == "FASTENAL COMPANY").SupplierId
+                            ItemName = "Cyconical Bore"
+                            //ItemDescription = "Cylinder component for reinforcement.",
+                            //SupplierId = context.Suppliers.FirstOrDefault(f => f.SupplierName == "FASTENAL COMPANY").SupplierId
                         },
                         new Item
                         {
                             ItemNumber = 11854267,
-                            ItemName = "Spherical Roller Washer",
-                            ItemDescription = "Spherical rolling element and a sliding coated Haver-Bush.",
-                            SupplierId = context.Suppliers.FirstOrDefault(f => f.SupplierName == "HBC ENGINEERING").SupplierId
+                            ItemName = "Spherical Roller Washer"
+                            //ItemDescription = "Spherical rolling element and a sliding coated Haver-Bush.",
+                            //SupplierId = context.Suppliers.FirstOrDefault(f => f.SupplierName == "HBC ENGINEERING").SupplierId
                         });
 
                     context.SaveChanges();
@@ -258,122 +258,55 @@ namespace HaverDevProject.Data
                     context.Defects.AddRange(
                         new Defect
                         {
-                            DefectName = "Design Error(Drawing)",
-                            DefectDesription = "Incorrect hardware was delivered due to a design error in the drawing."
+                            DefectName = "Design Error(Drawing)"
                         },
                         new Defect
                         {
-                            DefectName = "Poor Paint finish",
-                            DefectDesription = "The delivered item has an unsatisfactory paint finish."
-                        }, new Defect
+                            DefectName = "Poor Paint finish"
+                        }, 
+                        new Defect
                         {
-                            DefectName = "Poor quality surface finish",
-                            DefectDesription = "The surface finish of the delivered item does not meet quality standards."
+                            DefectName = "Poor quality surface finish"
                         },
                         new Defect
                         {
-                            DefectName = "Poor Weld quality",
-                            DefectDesription = "The welding quality of the delivered item is subpar."
+                            DefectName = "Poor Weld quality"
                         },
                         new Defect
                         {
-                            DefectName = "Missing Items",
-                            DefectDesription = "Some components or items are missing from the delivery."
+                            DefectName = "Missing Items"
                         },
                         new Defect
                         {
-                            DefectName = "Broken / Twisted Wires",
-                            DefectDesription = "The wires in the delivered item are broken or twisted."
+                            DefectName = "Broken / Twisted Wires"
                         },
                         new Defect
                         {
-                            DefectName = "Out of Crimp",
-                            DefectDesription = "The crimping of connectors or terminals is not within acceptable limits."
+                            DefectName = "Out of Crimp"
                         },
                         new Defect
                         {
-                            DefectName = "Incorrect Center Hole Punching",
-                            DefectDesription = "The center hole punching in the delivered item is inaccurate."
-                        },
-                        //Holes not tapped
-                        //Incorrect hole(size, locations, missing)
-                        //Incorrect thread size
-                        //Not Painted
-                        //Incorrect fit
-                        //Incorrect weld size
-                        //Incorrect Hook / Hook Orientation
-                        //Incorrect Center Hole Punching
-                        //Missing Center Hole Punching
-                        //Incorrect labelling
-                        //Drawing not updated
-                        //Incorrect material
-                        //Finishing error(M.W.STC)
-                        //Incorrect component(FMP package)
-                        new Defect
-                        {
-                            DefectName = "Incorrect hardware",
-                            DefectDesription = "Incorrect hardware was delivered."
+                            DefectName = "Incorrect Center Hole Punching"
                         },
                         new Defect
                         {
-                            DefectName = "Delivery quality",
-                            DefectDesription = "Quality of hardware was poor."
+                            DefectName = "Incorrect hardware"
                         },
                         new Defect
                         {
-                            DefectName = "Incorrect specification",
-                            DefectDesription = "Hardware did not match the specifications."
+                            DefectName = "Delivery quality"
                         },
                         new Defect
                         {
-                            DefectName = "Incorrect dimensions",
-                            DefectDesription = "Hardware has improper dimensions."
+                            DefectName = "Incorrect specification"
+                        },
+                        new Defect
+                        {
+                            DefectName = "Incorrect dimensions"
                         });
 
                     context.SaveChanges();
-                }
-
-                if (!context.ItemDefects.Any())
-                {
-                    context.ItemDefects.AddRange(
-                        new ItemDefect
-                        {                            
-                            ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Bearing Housing").ItemId,
-                            DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Delivery quality").DefectId
-                        },
-                        new ItemDefect
-                        {
-                            ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Bearing Housing").ItemId,
-                            DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect dimensions").DefectId
-                        },
-                        new ItemDefect
-                        {
-                            ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Backing Shield").ItemId,
-                            DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect hardware").DefectId
-                        },
-                        new ItemDefect
-                        {
-                            ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Side Arm").ItemId,
-                            DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect specification").DefectId
-                        },
-                        new ItemDefect
-                        {
-                            ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Side Arm").ItemId,
-                            DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect dimensions").DefectId
-                        },
-                        new ItemDefect
-                        {
-                            ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Side Arm").ItemId,
-                            DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Delivery quality").DefectId
-                        },
-                        new ItemDefect
-                        {
-                            ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Panel").ItemId,
-                            DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect dimensions").DefectId
-                        });
-
-                    context.SaveChanges();
-                }                               
+                }                                            
 
                 if (!context.Ncrs.Any())
                 {
@@ -479,6 +412,7 @@ namespace HaverDevProject.Data
                             NcrQaProcessApplicable = false,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Bearing Housing").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Delivery quality").DefectId,
+                            SupplierId = 1,
                             NcrQaOrderNumber = "4500695162",
                             NcrQaQuanReceived = 10,
                             NcrQaQuanDefective = 8,
@@ -494,6 +428,7 @@ namespace HaverDevProject.Data
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-138").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Bearing Housing").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect dimensions").DefectId,
+                            SupplierId = 3,
                             NcrQaOrderNumber = "4500695429",
                             NcrQaQuanReceived = 5,
                             NcrQaQuanDefective = 5,
@@ -509,6 +444,7 @@ namespace HaverDevProject.Data
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-139").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Bearing Housing").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect dimensions").DefectId,
+                            SupplierId = 1,
                             NcrQaProcessApplicable = false,
                             NcrQaOrderNumber = "4500684525",
                             NcrQaQuanReceived = 12,
@@ -525,6 +461,7 @@ namespace HaverDevProject.Data
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-140").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Backing Shield").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect hardware").DefectId,
+                            SupplierId = 2,
                             NcrQaOrderNumber = "4500683983",
                             NcrQaQuanReceived = 28,
                             NcrQaQuanDefective = 14,
@@ -540,6 +477,7 @@ namespace HaverDevProject.Data
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-141").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Side Arm").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect specification").DefectId,
+                            SupplierId = 4,
                             NcrQaOrderNumber = "4500694121",
                             NcrQaQuanReceived = 2,
                             NcrQaQuanDefective = 2,
@@ -555,6 +493,7 @@ namespace HaverDevProject.Data
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-001").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Backing Shield").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect hardware").DefectId,
+                            SupplierId = 3,
                             NcrQaProcessApplicable = false,
                             NcrQaOrderNumber = "4500681790",
                             NcrQaQuanReceived = 1,
@@ -571,6 +510,7 @@ namespace HaverDevProject.Data
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-002").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Bearing Housing").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Delivery quality").DefectId,
+                            SupplierId = 1,
                             NcrQaOrderNumber = "4500671162",
                             NcrQaQuanReceived = 9,
                             NcrQaQuanDefective = 8,
@@ -586,6 +526,7 @@ namespace HaverDevProject.Data
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-003").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Side Arm").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect specification").DefectId,
+                            SupplierId = 1,
                             NcrQaOrderNumber = "4500685546",
                             NcrQaQuanReceived = 4,
                             NcrQaQuanDefective = 1,
@@ -601,6 +542,7 @@ namespace HaverDevProject.Data
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-004").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Side Arm").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect specification").DefectId,
+                            SupplierId = 5,
                             NcrQaOrderNumber = "4500683210",
                             NcrQaQuanReceived = 15,
                             NcrQaQuanDefective = 10,
@@ -616,6 +558,7 @@ namespace HaverDevProject.Data
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-005").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Bearing Housing").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Delivery quality").DefectId,
+                            SupplierId = 4,
                             NcrQaProcessApplicable = false,
                             NcrQaOrderNumber = "4500700595",
                             NcrQaQuanReceived = 17,
@@ -632,6 +575,7 @@ namespace HaverDevProject.Data
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-006").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Side Arm").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect specification").DefectId,
+                            SupplierId = 3,
                             NcrQaOrderNumber = "4500695645",
                             NcrQaQuanReceived = 12,
                             NcrQaQuanDefective = 2,
@@ -647,6 +591,7 @@ namespace HaverDevProject.Data
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-007").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Backing Shield").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect hardware").DefectId,
+                            SupplierId = 4,
                             NcrQaOrderNumber = "4500691574",
                             NcrQaQuanReceived = 24,
                             NcrQaQuanDefective = 6,

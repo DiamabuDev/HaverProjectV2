@@ -13,6 +13,7 @@ using HaverDevProject.ViewModels;
 using System.Numerics;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.AspNetCore.Hosting;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HaverDevProject.Controllers
@@ -59,7 +60,7 @@ namespace HaverDevProject.Controllers
 
             var ncrQa = _context.NcrQas
                 //.Include(n => n.Item).ThenInclude(n => n.ItemDefects).ThenInclude(n => n.Defect)
-                .Include(n => n.Item.Supplier)
+                .Include(n => n.Supplier)
                 .Include(n => n.Defect)
                 .Include(n => n.Ncr)
                 .AsNoTracking();
@@ -95,7 +96,7 @@ namespace HaverDevProject.Controllers
             }
             if (SupplierID.HasValue)
             {
-                ncrQa = ncrQa.Where(n => n.Item.Supplier.SupplierId == SupplierID); 
+                ncrQa = ncrQa.Where(n => n.Supplier.SupplierId == SupplierID); 
             }
             if (StartDate == EndDate)
             {
@@ -142,13 +143,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     ncrQa = ncrQa
-                        .OrderBy(p => p.Item.ItemDefects.FirstOrDefault().Defect.DefectName); 
+                        .OrderBy(p => p.Defect.DefectName); 
                     ViewData["filterApplied:Defect"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncrQa = ncrQa
-                        .OrderByDescending(p => p.Item.ItemDefects.FirstOrDefault().Defect.DefectName);  
+                        .OrderByDescending(p => p.Defect.DefectName);  
                     ViewData["filterApplied:Defect"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -157,13 +158,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     ncrQa = ncrQa
-                        .OrderBy(p => p.Item.Supplier.SupplierName); 
+                        .OrderBy(p => p.Supplier.SupplierName); 
                     ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncrQa = ncrQa
-                        .OrderByDescending(p => p.Item.Supplier.SupplierName);
+                        .OrderByDescending(p => p.Supplier.SupplierName);
                     ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -235,7 +236,8 @@ namespace HaverDevProject.Controllers
 
             var ncrQa = await _context.NcrQas
                 .Include(n => n.Ncr)
-                .Include(n => n.Item).ThenInclude(i => i.Supplier)
+                .Include(i => i.Supplier)
+                .Include(i => i.Item)
                 .Include(n => n.Defect)
                 .Include(n => n.ItemDefectPhotos)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrEng)
@@ -328,6 +330,7 @@ namespace HaverDevProject.Controllers
                     ItemDefectPhotos = ncrQaDTO.ItemDefectPhotos,
                     NcrQauserId = 1,  //Change when we have this information
                     NcrId = ncrIdObt,
+                    SupplierId = ncrQaDTO.SupplierId,
                     ItemId = ncrQaDTO.ItemId,
                     DefectId = ncrQaDTO.DefectId,
                     NcrQaEngDispositionRequired = ncrQaDTO.NcrQaEngDispositionRequired
@@ -358,7 +361,7 @@ namespace HaverDevProject.Controllers
 
             var ncrQa = await _context.NcrQas
                 .Include(n =>n.Ncr)
-                .Include(n =>n.Item).ThenInclude(n => n.Supplier)
+                .Include(n => n.Supplier)
                 .Include(n =>n.Defect)
                 .Include(n =>n.ItemDefectPhotos)
                 .AsNoTracking()
@@ -381,7 +384,7 @@ namespace HaverDevProject.Controllers
                 NcrQaQuanDefective = ncrQa.NcrQaQuanDefective,
                 NcrQaDescriptionOfDefect = ncrQa.NcrQaDescriptionOfDefect,
                 NcrId = ncrQa.NcrId,                
-                SupplierId = ncrQa.Item.SupplierId,
+                SupplierId = ncrQa.SupplierId,
                 NcrNumber = ncrQa.Ncr.NcrNumber,
                 ItemId = ncrQa.ItemId,
                 DefectId = ncrQa.DefectId,
@@ -427,7 +430,7 @@ namespace HaverDevProject.Controllers
                 // Go get the ncrQa to update
                 var ncrQaToUpdate = await _context.NcrQas
                     .Include(n => n.Item)
-                    .Include(n => n.Item).ThenInclude(n => n.Supplier)
+                    .Include(n => n.Supplier)
                     .Include(n => n.Defect)
                     .Include(n => n.ItemDefectPhotos)
                     .AsNoTracking()
@@ -457,6 +460,8 @@ namespace HaverDevProject.Controllers
                         ncrQaToUpdate.Item = null;
                         ncrQaToUpdate.DefectId = ncrQaDTO.DefectId;
                         ncrQaToUpdate.Defect = null;
+                        ncrQaToUpdate.SupplierId = ncrQaDTO.SupplierId;
+                        ncrQaToUpdate.Supplier = null;
                         ncrQaToUpdate.NcrQaEngDispositionRequired = ncrQaDTO.NcrQaEngDispositionRequired;
                         ncrQaToUpdate.ItemDefectPhotos = ncrQaDTO.ItemDefectPhotos;                   
 
@@ -556,66 +561,75 @@ namespace HaverDevProject.Controllers
         private SelectList SupplierSelectList()
         {
             return new SelectList(_context.Suppliers
-                .Where(s => s.SupplierName != "NO SUPPLIER PROVIDED")
+                .Where(s => s.SupplierStatus == true && s.SupplierName != "NO SUPPLIER PROVIDED")
                 .OrderBy(s => s.SupplierName), "SupplierId", "SupplierName");
         }
-        private SelectList SupplierSelectCreateList(int? selectedId)
+        //private SelectList SupplierSelectCreateList(int? selectedId)
+        //{
+        //    return new SelectList(_context.Suppliers
+        //        .Where(s => s.SupplierStatus == true && s.SupplierName != "NO SUPPLIER PROVIDED")
+        //        .OrderBy(s => s.SupplierName), "SupplierId", "SupplierName", selectedId);
+        //}
+
+        private SelectList ItemSelectList()
         {
-            return new SelectList(_context.Suppliers
-                .Where(s => s.SupplierStatus == true && s.SupplierName != "NO SUPPLIER PROVIDED")
-                .OrderBy(s => s.SupplierName), "SupplierId", "SupplierName", selectedId);
+            return new SelectList(_context.Items
+                .OrderBy(s => s.ItemName), "ItemId", "ItemName");
+
+            //var query = from c in _context.Items
+            //            where c.SupplierId == SupplierID
+            //            select c;
+            //return new SelectList(query.OrderBy(i => i.ItemName), "ItemId", "ItemName", selectedId);            
         }
 
-        private SelectList ItemSelectList(int? SupplierID, int? selectedId)
+        private SelectList DefectSelectList()
         {
-            var query = from c in _context.Items
-                        where c.SupplierId == SupplierID
-                        select c;
-            return new SelectList(query.OrderBy(i => i.ItemName), "ItemId", "ItemName", selectedId);            
+            return new SelectList(_context.Defects
+                .OrderBy(s => s.DefectName), "DefectId", "DefectName");                       
         }
 
-        private void PopulateDropDownLists(NcrQa ncrQa = null)
+        //private void PopulateDropDownLists(NcrQa ncrQa = null)
+        //{
+        //    if ((ncrQa?.ItemId).HasValue)
+        //    {   
+        //        if (ncrQa.Item == null)
+        //        {
+        //            ncrQa.Item = _context.Items.Find(ncrQa.ItemId);
+        //        }
+        //        ViewData["SupplierId"] = SupplierSelectCreateList(ncrQa?.Supplier.SupplierId);
+        //        ViewData["ItemId"] = ItemSelectList(ncrQa.SupplierId, ncrQa.ItemId);
+        //    }
+        //    else
+        //    {
+        //        ViewData["SupplierId"] = SupplierSelectCreateList(null);
+        //        ViewData["ItemId"] = ItemSelectList(null, null);
+        //    }
+        //}
+
+        private void PopulateDropDownLists()
+        {            
+            ViewData["SupplierId"] = SupplierSelectList();
+            ViewData["ItemId"] = ItemSelectList();       
+        }
+
+
+        [HttpGet]
+        public JsonResult GetSuppliers()
         {
-            if ((ncrQa?.ItemId).HasValue)
-            {   
-                if (ncrQa.Item == null)
-                {
-                    ncrQa.Item = _context.Items.Find(ncrQa.ItemId);
-                }
-                ViewData["SupplierId"] = SupplierSelectCreateList(ncrQa?.Item.Supplier.SupplierId);
-                ViewData["ItemId"] = ItemSelectList(ncrQa.Item.SupplierId, ncrQa.ItemId);
-            }
-            else
-            {
-                ViewData["SupplierId"] = SupplierSelectCreateList(null);
-                ViewData["ItemId"] = ItemSelectList(null, null);
-            }
+            return Json(SupplierSelectList());
+        }        
+
+
+        [HttpGet]
+        public JsonResult GetItems()
+        {
+            return Json(ItemSelectList());
         }
 
         [HttpGet]
-        public JsonResult GetSuppliers(int? id)
+        public JsonResult GetDefects()
         {
-            return Json(SupplierSelectCreateList(id));
-        }
-
-        
-
-
-        [HttpGet]
-        public JsonResult GetItems(int SupplierId)
-        {
-            return Json(ItemSelectList(SupplierId, null));
-        }
-
-        [HttpGet]
-        public JsonResult GetDefects(int ItemId)
-        {
-            var defects = _context.ItemDefects
-                .Where(id => id.ItemId == ItemId)
-                .Select(id => new { id.DefectId, id.Defect.DefectName })
-                .ToList();
-
-            return Json(new SelectList(defects, "DefectId", "DefectName"));
+            return Json(DefectSelectList());
         }
          
         private async Task AddPictures(NcrQaDTO ncrQaDTO, List<IFormFile> pictures)
