@@ -438,7 +438,8 @@ namespace HaverDevProject.Controllers
             {
                 NcrOpId = ncrOperation.NcrOpId,
                 NcrNumber = ncrOperation.Ncr.NcrNumber,
-                NcrOpCreationDate = ncrOperation.Ncr.NcrEng.NcrEngCreationDate,
+                NcrOpCreationDate = ncrOperation.NcrOpCreationDate,
+                NcrOpCompleteDate = ncrOperation.NcrOpCompleteDate,
                 NcrId = ncrOperation.NcrId,
                 Ncr = ncrOperation.Ncr,
                 OpDispositionTypeId = ncrOperation.OpDispositionTypeId,
@@ -532,6 +533,8 @@ namespace HaverDevProject.Controllers
 
                     ncrOperation.OpDispositionTypeId = ncrOperationDTO.OpDispositionTypeId;
                     ncrOperation.NcrPurchasingDescription = ncrOperationDTO.NcrPurchasingDescription;
+                    ncrOperation.NcrOpCreationDate = ncrOperationDTO.NcrOpCreationDate;
+                    ncrOperation.NcrOpCompleteDate = ncrOperationDTO.NcrOpCompleteDate;
                     ncrOperation.Car = ncrOperationDTO.Car;
                     ncrOperation.CarNumber = ncrOperationDTO.CarNumber;
                     ncrOperation.FollowUp = ncrOperationDTO.FollowUp;
