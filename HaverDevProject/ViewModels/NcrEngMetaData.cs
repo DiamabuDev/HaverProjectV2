@@ -9,7 +9,21 @@ namespace HaverDevProject.ViewModels;
 
 public class NcrEngMetaData
 {
-	[Key]
+    public int DaysSinceCreated
+
+    {
+
+        get
+
+        {
+
+            return (DateTime.Now - NcrEngCreationDate).Days;
+
+        }
+
+    }
+
+    [Key]
 	[Column("ncrEngId")]
 	public int NcrEngId { get; set; }
 
