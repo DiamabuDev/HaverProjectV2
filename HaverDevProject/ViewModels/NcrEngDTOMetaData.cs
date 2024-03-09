@@ -9,7 +9,19 @@ namespace HaverDevProject.ViewModels;
 
 public class NcrEngDTOMetaData
 {
+    public int DaysSinceCreated
 
+    {
+
+        get
+
+        {
+
+            return (DateTime.Now - NcrEngCreationDate).Days;
+
+        }
+
+    }
 
     [Key]
     [Column("ncrEngId")]
