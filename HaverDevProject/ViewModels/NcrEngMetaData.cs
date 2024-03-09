@@ -42,6 +42,11 @@ public class NcrEngMetaData
     [Display(Name = "Date")]
     [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
     [DataType(DataType.Date)]
+    public DateTime NcrEngCompleteDate { get; set; }
+
+    [Display(Name = "Date")]
+    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+    [DataType(DataType.Date)]
     public DateTime NcrEngCreationDate { get; set; }
     public bool NcrEngStatusFlag { get; set; }
 

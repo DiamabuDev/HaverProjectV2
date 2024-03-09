@@ -28,6 +28,11 @@ public class NcrEngDTOMetaData
     [Display(Name = "Date")]
     [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
     [DataType(DataType.Date)]
+    public DateTime NcrEngCompleteDate { get; set; }
+
+    [Display(Name = "Date")]
+    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+    [DataType(DataType.Date)]
     public DateTime NcrEngCreationDate { get; set; }
 
     [Display(Name = "Customer Notification")]
