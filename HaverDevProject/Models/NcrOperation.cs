@@ -27,6 +27,7 @@ public class NcrOperation : Auditable
     public int NcrOpId { get; set; }
     public int NcrId { get; set; }
     public Ncr Ncr { get; set; }
+    public DateTime NcrOpCompleteDate { get; set; }
     public DateTime NcrOpCreationDate { get; set; }
     public int OpDispositionTypeId { get; set; }
     public virtual OpDispositionType OpDispositionType { get; set; }

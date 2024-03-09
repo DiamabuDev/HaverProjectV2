@@ -14,6 +14,11 @@ namespace HaverDevProject.ViewModels
         [Display(Name = "NCR")]
         public int NcrId { get; set; }
 
+        [Display(Name = "Date")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [DataType(DataType.Date)]
+        public DateTime NcrEngCompleteDate { get; set; }
+
         [Column("ncrOpCreationDate")]
         [Display(Name = "NCR Creation Date")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
@@ -52,7 +57,7 @@ namespace HaverDevProject.ViewModels
         [Column("ncrExpectedDate")]
         [Display(Name = "Expected Date")]
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? ExpectedDate { get; set; }
 
         [Column("ncrFollowUpType")]
