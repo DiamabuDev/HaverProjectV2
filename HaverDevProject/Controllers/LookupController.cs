@@ -18,13 +18,13 @@ namespace HaverDevProject.Controllers
             ViewData["Tab"] = Tab;
             return View();
         }
-        //public PartialViewResult ProcessApplicable()
-        //{
-        //    ViewData["proAppId"] = new
-        //        SelectList(_context.ProcessApplicables
-        //        .OrderBy(a => a.ProAppName), "ProAppId", "ProAppName");
-        //    return PartialView("_ProcessApplicable");
-        //}
+        public PartialViewResult DefectType()
+        {
+            ViewData["defectTypeId"] = new
+               SelectList(_context.Defects
+                .OrderBy(a => a.DefectName), "DefectId", "DefectName");
+            return PartialView("_DefectType");
+        }
         public PartialViewResult EngDispositionType()
         {
             ViewData["engDispositionTypeId"] = new
@@ -39,14 +39,6 @@ namespace HaverDevProject.Controllers
                 .OrderBy(a => a.FollowUpTypeName), "FollowUpTypeId", "FollowUpTypeName");
             return PartialView("_FollowUpType");
         }
-
-        //public PartialViewResult StatusUpdate()
-        //{
-        //    ViewData["StatusUpdateId"] = new
-        //        SelectList(_context.StatusUpdates
-        //        .OrderBy(a => a.StatusUpdateName), "StatusUpdateId", "StatusUpdateName");
-        //    return PartialView("_StatusUpdate");
-        //}
 
         public PartialViewResult OpDispositionType()
         {

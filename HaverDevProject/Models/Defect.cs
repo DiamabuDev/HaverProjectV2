@@ -21,15 +21,6 @@ public class Defect
     [Unicode(false)]
     public string DefectName { get; set; }
 
-    //[Display(Name = "Description")]
-    //[Column("defectDesription")]
-    //[StringLength(300)]
-    //[Unicode(false)]
-    //public string DefectDesription { get; set; }
-
-    //[InverseProperty("Defect")]
-    //public ICollection<ItemDefect> ItemDefects { get; set; } = new HashSet<ItemDefect>();
-
     [InverseProperty("Defect")]
     public ICollection<NcrQa> NcrQas { get; set; } = new HashSet<NcrQa>();
 }

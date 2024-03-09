@@ -32,7 +32,6 @@ public class NcrQa : Auditable
     public Defect Defect { get; set; }
     public int SupplierId { get; set; }
     public Supplier Supplier { get; set; }
-
     public string NcrQaDefectVideo { get; set; }
     public ICollection<ItemDefectPhoto> ItemDefectPhotos { get; set; } = new HashSet<ItemDefectPhoto>();   
 }

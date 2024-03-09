@@ -194,8 +194,7 @@ namespace HaverDevProject.Controllers
 
             var supplier = await _context.Suppliers
                 .Include(s => s.NcrQas).ThenInclude(s => s.Item)
-                .ThenInclude(s => s.NcrQas)
-                .ThenInclude(s => s.Ncr)
+                .Include(s => s.NcrQas).ThenInclude(s => s.Ncr)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.SupplierId == id);
             if (supplier == null)
@@ -203,17 +202,15 @@ namespace HaverDevProject.Controllers
                 return NotFound();
             }
 
-            //var supplierViewModel = new SupplierDetailsViewModel
-            //{
-            //    Supplier = supplier,
-            //    RelatedNCRs =
-            //    supplier.NcrQas.Items.FirstOrDefault()?.Select(nqa => nqa.Ncr).ToList()
-            //        //supplier.Items.FirstOrDefault()?.NcrQas?.Select(nqa => nqa.Ncr).ToList()
-            //        ?? new List<Ncr>()
-            //};
+            var supplierViewModel = new SupplierDetailsViewModel
+            {
+                Supplier = supplier,
+                RelatedNCRs =
+                supplier.NcrQas.Select(nqa => nqa.Ncr).ToList()
+                    ?? new List<Ncr>()
+            };
 
-            return View(supplier);
-            //return View(supplierViewModel);
+            return View(supplierViewModel);
         }
 
         // GET: Supplier/Create
@@ -476,18 +473,6 @@ namespace HaverDevProject.Controllers
                     ncrData.NcrOperation?.NcrPurchasingDescription ?? "Not Available",
             };
 
-            //foreach (var itemDefect in ncrData.NcrQa.Item.ItemDefects)
-            //{
-            //    if (itemDefect.Defect != null && itemDefect.Defect.DefectName != null)
-            //    {
-            //        reportDto.DefectNames.Add(itemDefect.Defect.DefectName);
-            //    }
-            //    else
-            //    {
-            //        reportDto.DefectNames.Add("No Defect Available");
-            //    }
-            //}
-
             return View("SupplierReport", reportDto);
         }
 
@@ -495,19 +480,15 @@ namespace HaverDevProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Upload(IFormFile file)
         {
-            if (
-                file.ContentType
-                != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
+            if (file.ContentType != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             {
-                TempData["ErrorMessage"] =
-                    "Invalid file type. Please upload an Excel file (.xlsx).";
+                TempData["ErrorMessage"] = "Invalid file type. Please upload an Excel file (.xlsx).";
                 return RedirectToAction(nameof(Index));
             }
 
-            var errorMessages = new List<string>(); // Initialize a list to store error messages
-            int expectedSuccessRows = 0;
-            var validSuppliers = new List<Supplier>();
+            var errorMessages = new List<string>();
+            var supplierDictionary = new Dictionary<int, (string SupplierName, string ContactName, string Email)>();
+            int successCount = 0;
 
             using (var stream = new MemoryStream())
             {
@@ -516,100 +497,100 @@ namespace HaverDevProject.Controllers
                 {
                     ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
                     int rowCount = worksheet.Dimension.Rows;
-                    expectedSuccessRows = rowCount - 1;
 
                     for (int row = 2; row <= rowCount; row++)
                     {
-
                         var supplierCodeStr = worksheet.Cells[row, 1].Value?.ToString().Trim();
                         var supplierName = worksheet.Cells[row, 2].Value?.ToString().Trim();
                         var contactName = worksheet.Cells[row, 3].Value?.ToString().Trim();
                         var email = worksheet.Cells[row, 4].Value?.ToString().Trim();
 
-                        // Supplier Code and Supplier Name are required
                         if (string.IsNullOrWhiteSpace(supplierCodeStr))
                         {
                             errorMessages.Add($"Row {row}: Supplier Code is required.");
-                        }                        
-                        // Check if Supplier Code is a number
-                        if (!int.TryParse(supplierCodeStr, out int supplierCode))
-                        {
-                            errorMessages.Add($"Row {row}: Supplier Code must be a number.");
+                            continue;
                         }
 
                         if (string.IsNullOrWhiteSpace(supplierName))
                         {
                             errorMessages.Add($"Row {row}: Supplier Name is required.");
+                            continue;
                         }
 
-                        var existingSupplier = await _context
-                            .Suppliers.AsNoTracking() // Use AsNoTracking for read-only query
-                            .FirstOrDefaultAsync(s =>
-                                s.SupplierCode == supplierCodeStr
-                                && s.SupplierName == supplierName
-                            );
-
-                        if (existingSupplier != null)
+                        if (!int.TryParse(supplierCodeStr, out int supplierCode))
                         {
-                            errorMessages.Add(
-                                $"Row {row}: Supplier with Supplier Code {supplierCodeStr} and Supplier Name {supplierName} already exists."
-                            );
+                            errorMessages.Add($"Row {row}: Supplier Code must be a number.");
+                            continue;
                         }
 
-                        if (!errorMessages.Any())
+                        if (supplierDictionary.ContainsKey(supplierCode))
                         {
-                            var newSupplier = new Supplier
-                            {
-                                SupplierCode = supplierCodeStr,
-                                SupplierName = supplierName,
-                                SupplierContactName = string.IsNullOrWhiteSpace(contactName)
-                                    ? null
-                                    : contactName,
-                                SupplierEmail = string.IsNullOrWhiteSpace(email) ? null : email
-                            };
-
-                            validSuppliers.Add(newSupplier);
+                            TempData["ErrorMessage"] = $"Duplicate Supplier Code {supplierCode} found in the Excel file.";
+                            return RedirectToAction(nameof(Index));
                         }
+
+                        supplierDictionary[supplierCode] = (supplierName, contactName, email);
                     }
                 }
             }
 
-            if (validSuppliers.Count != expectedSuccessRows)
+            if (errorMessages.Count > 10)
             {
-                if (errorMessages.Count > 10)
-                {
-                    TempData["ErrorMessage"] = $"There are errors in {errorMessages.Count} rows. Please review and fix the errors before uploading again.";
-                }else
-                {
-                    TempData["ErrorMessage"] =
-                         $"Fix error(s) and try to upload again: <br><li>{string.Join("<li>", errorMessages)}";
-                }
+                TempData["ErrorMessage"] = $"There are errors in {errorMessages.Count} rows. Please review and fix the errors before uploading again.";
+                return RedirectToAction(nameof(Index));
             }
-            else
+            else if (errorMessages.Any())
             {
-                foreach (var item in validSuppliers)
-                {
-                    var transaction = _context.Database.BeginTransaction(); // Start transaction for each row
-
-                    try
-                    {
-                        _context.Suppliers.Add(item);
-                        await _context.SaveChangesAsync();
-
-                        transaction.Commit();
-                    }
-                    catch (Exception)
-                    {
-                        transaction.Rollback();
-                        break;
-                    }
-                }
-
-                TempData["SuccessMessage"] =
-                    $"File uploaded successfully. {expectedSuccessRows} rows added.";
-
+                TempData["ErrorMessage"] = $"Errors found: <br><li>{string.Join("<li>", errorMessages)}";
+                return RedirectToAction(nameof(Index));
             }
 
+            foreach (var (supplierCode, supplierInfo) in supplierDictionary)
+            {
+                var existingSupplier = await _context.Suppliers.FirstOrDefaultAsync(s => s.SupplierCode == supplierCode.ToString());
+
+                if (existingSupplier != null)
+                {
+                    bool updated = false;
+                    if (existingSupplier.SupplierName != supplierInfo.SupplierName)
+                    {
+                        existingSupplier.SupplierName = supplierInfo.SupplierName;
+                        updated = true;
+                    }
+                    if (existingSupplier.SupplierContactName != supplierInfo.ContactName) // Check if contact name has changed
+                    {
+                        existingSupplier.SupplierContactName = supplierInfo.ContactName;
+                        updated = true;
+                    }
+                    if (existingSupplier.SupplierEmail != supplierInfo.Email) // Check if email has changed
+                    {
+                        existingSupplier.SupplierEmail = supplierInfo.Email;
+                        updated = true;
+                    }
+
+                    if (updated)
+                    {
+                        _context.Suppliers.Update(existingSupplier);
+                        successCount++; // Increment success count if any field is updated
+                    }
+                }
+                else
+                {
+                    var newSupplier = new Supplier
+                    {
+                        SupplierCode = supplierCode.ToString(),
+                        SupplierName = supplierInfo.SupplierName,
+                        SupplierContactName = !string.IsNullOrWhiteSpace(supplierInfo.ContactName) ? supplierInfo.ContactName : null,
+                        SupplierEmail = !string.IsNullOrWhiteSpace(supplierInfo.Email) ? supplierInfo.Email : null,
+                    };
+                    _context.Suppliers.Add(newSupplier);
+                    successCount++; // Increment success count for new additions
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = $"File processed successfully. {successCount} suppliers have been added or updated.";
             return RedirectToAction(nameof(Index));
         }
 
