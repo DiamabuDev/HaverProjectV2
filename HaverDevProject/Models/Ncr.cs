@@ -11,7 +11,7 @@ namespace HaverDevProject.Models;
 [Table("ncr")]
 public class Ncr
 {    
-    public int NcrId { get; set; }    
+    public int NcrId { get; set; }      
     public string NcrNumber { get; set; }      
     public DateTime NcrLastUpdated { get; set; }        
     public bool NcrStatus { get; set; }
@@ -20,5 +20,8 @@ public class Ncr
     public virtual NcrOperation NcrOperation { get; set; }    
     public virtual NcrQa NcrQa { get; set; }
     public virtual NcrProcurement NcrProcurement { get; set; }
-    public virtual NcrReInspect NcrReInspect { get; set; }  
+    public virtual NcrReInspect NcrReInspect { get; set; }
+    public int? ParentId { get; set; } 
+    public virtual Ncr ParentNcr { get; set; }
+    public virtual ICollection<Ncr> ChildNcrs { get; set; } = new List<Ncr>();
 }
