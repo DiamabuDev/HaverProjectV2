@@ -57,6 +57,15 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.NcrQa.Defect)
                 .AsNoTracking();
 
+            foreach (var ncrItem in ncr)
+            {
+                if (ncrItem.NcrQa.NcrQacreationDate.AddYears(5) <= DateTime.UtcNow)
+                {
+                    // Call the ArchiveNcr method for this specific item
+                    await ArchiveDateNcr(ncrItem.NcrId);
+                }
+            }
+
             //Filterig values            
             if (!String.IsNullOrEmpty(filter))
             {
@@ -350,12 +359,21 @@ namespace HaverDevProject.Controllers
 
             var ncr = await _context.Ncrs
                 .FirstOrDefaultAsync(m => m.NcrId == id);
-            if (ncr == null)
-            {
-                return NotFound();
-            }
 
-            return View(ncr);
+            if (ncr != null)
+            {
+
+                _context.Ncrs.Remove(ncr);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "NCR deleted successfully!";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "NCR could not be deleted.";
+                return RedirectToAction("Index");
+            }
         }
 
         // POST: Ncr/Delete/5
@@ -367,48 +385,54 @@ namespace HaverDevProject.Controllers
             {
                 return Problem("Entity set 'HaverNiagaraContext.Ncrs'  is null.");
             }
+
             var ncr = await _context.Ncrs.FindAsync(id);
             if (ncr != null)
             {
                 _context.Ncrs.Remove(ncr);
+                await _context.SaveChangesAsync();
             }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return RedirectToAction("Index");
         }
 
         private SelectList SupplierSelectList()
         {
             return new SelectList(_context.Suppliers
-                .Where(s => s.SupplierStatus == true && s.SupplierName != "NO SUPPLIER PROVIDED")
+                .Where(s => s.SupplierName != "NO SUPPLIER PROVIDED")
                 .OrderBy(s => s.SupplierName), "SupplierId", "SupplierName");
         }
-        //private SelectList SupplierSelectCreateList(int? selectedId)
-        //{
-        //    return new SelectList(_context.Suppliers
-        //        .Where(s => s.SupplierStatus == true && s.SupplierName != "NO SUPPLIER PROVIDED")
-        //        .OrderBy(s => s.SupplierName), "SupplierId", "SupplierName", selectedId);
-        //}
-
-        private SelectList ItemSelectList()
+        private SelectList SupplierSelectCreateList(int? selectedId)
         {
-            return new SelectList(_context.Items
-                .OrderBy(s => s.ItemName), "ItemId", "ItemName");
-
-            //var query = from c in _context.Items
-            //            where c.SupplierId == SupplierID
-            //            select c;
-            //return new SelectList(query.OrderBy(i => i.ItemName), "ItemId", "ItemName", selectedId);            
+            return new SelectList(_context.Suppliers
+                .Where(s => s.SupplierStatus == true && s.SupplierName != "NO SUPPLIER PROVIDED")
+                .OrderBy(s => s.SupplierName), "SupplierId", "SupplierName", selectedId);
         }
 
+        //private SelectList ItemSelectList(int? SupplierID, int? selectedId)
+        //{
+        //    var query = from c in _context.Suppliers
+        //                where c.SupplierId == SupplierID
+        //                select c;
+        //    return new SelectList(query.OrderBy(i => i.ItemName), "ItemId", "ItemName", selectedId);
+        //}
 
-
-
-
-        private void PopulateDropDownLists()
-        {            
-            ViewData["SupplierId"] = SupplierSelectList();
-            ViewData["ItemId"] = ItemSelectList();           
+        private void PopulateDropDownLists(Ncr ncr = null)
+        {
+            if ((ncr?.NcrQa.ItemId).HasValue)
+            {
+                if (ncr.NcrQa.Item == null)
+                {
+                    ncr.NcrQa.Item = _context.Items.Find(ncr.NcrQa.ItemId);
+                }
+                ViewData["SupplierId"] = SupplierSelectCreateList(ncr?.NcrQa.Supplier.SupplierId);
+                //ViewData["ItemId"] = ItemSelectList(ncr.NcrQa.SupplierId, ncr.NcrQa.ItemId);
+            }
+            else
+            {
+                ViewData["SupplierId"] = SupplierSelectCreateList(null);
+                //ViewData["ItemId"] = ItemSelectList(null, null);
+            }
         }
         public async Task<IActionResult> ArchiveNcr(int id)
         {
@@ -435,7 +459,29 @@ namespace HaverDevProject.Controllers
             }
 
         }
+        public async Task<IActionResult> ArchiveDateNcr(int id)
+        {
+            var ncrToUpdate = await _context.Ncrs
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(n => n.NcrId == id);
 
+            if (ncrToUpdate != null)
+            {
+                //Update the phase
+                ncrToUpdate.NcrPhase = NcrPhase.Archive;
+
+                //saving the values
+                _context.Ncrs.Update(ncrToUpdate);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
+
+        }
         public async Task<IActionResult> RestoreNcr(int id)
         {
             var ncrToUpdate = await _context.Ncrs
@@ -461,6 +507,7 @@ namespace HaverDevProject.Controllers
             }
 
         }
+
 
         private bool NcrExists(int id)
         {

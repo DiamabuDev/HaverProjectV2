@@ -10,6 +10,19 @@ namespace HaverDevProject.Models
     [ModelMetadataType(typeof(NcrProcurementDTOMetaData))]
     public class NcrProcurementDTO : Auditable
     {
+        public int DaysSinceCreated
+
+        {
+
+            get
+
+            {
+
+                return (DateTime.Now - NcrProcCreated).Days;
+
+            }
+
+        }
         public string NcrNumber { get; set; }
 
         public bool NcrStatus { get; set; } = true;
@@ -27,6 +40,8 @@ namespace HaverDevProject.Models
         public bool NcrProcCreditExpected { get; set; }
 
         public bool NcrProcSupplierBilled { get; set; }
+
+        public decimal NcrProcRejectedValue { get; set; }
 
         public bool NcrProcFlagStatus { get; set; }
 
