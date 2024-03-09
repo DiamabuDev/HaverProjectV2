@@ -149,7 +149,7 @@ namespace HaverDevProject.Controllers
         // GET: Defects/Create
         public IActionResult Create()
         {
-            Defect defect = new Defect();
+            //Defect defect = new Defect();
             //PopulateAssignedItemCheckboxes(defect);
             return View();
         }

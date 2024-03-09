@@ -177,7 +177,7 @@ namespace HaverDevProject.Controllers
         public IActionResult Create()
         {
             //PopulateDropDownList();
-            Item item = new Item();
+            //Item item = new Item();
             //PopulateAssignedDefectCheckboxes(item);
             return View();
         }
