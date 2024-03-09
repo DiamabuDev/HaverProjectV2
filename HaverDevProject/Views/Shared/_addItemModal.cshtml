@@ -8,9 +8,7 @@
             </div>
             <div class="modal-body px-4">
                 @{
-                    var item = new HaverDevProject.Models.Item();
-                    // var supplierId = ViewData["SupplierId"] as int?; // get SupplierId from ViewData
-                    // item.SupplierId = supplierId ?? 0;
+                    var item = new HaverDevProject.Models.Item();                    
                     <partial name="_ItemCreate" model="item" />
                 }
             </div>

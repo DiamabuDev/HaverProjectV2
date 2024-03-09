@@ -9,9 +9,9 @@
 </div>
 
 <div class="col-md-8 col-10 mx-auto"> 
-    
+    <partial name="_addItemModal" />
     <partial name="_addSupplierModal" />
-
+    
     <form asp-action="Create" method="post" enctype="multipart/form-data">
         <div class="card border-2">
             <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
@@ -237,7 +237,7 @@
         </div>
     </form>        
 </div>
-<partial name="_addItemModal" />
+
 <div class="modal" tabindex="-1" role="dialog" id="engineerDispositionModal">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -265,24 +265,25 @@
             return new bootstrap.Tooltip(tooltipTriggerEl);
         });
     </script>
-    <script type="text/javascript">
+    @* <script type="text/javascript">
         $('#SupplierId').change(function () {            
             var selectedSupplier = $("#SupplierId").val();
             var URL = "/NcrQa/GetItems/?SupplierId=" + selectedSupplier;
             refreshDDL('ItemId', URL, true, 'No items related with the supplier selected', true, "Select an item", true);
-            // Set the value of DefectId dropdown to an empty string
-            $('#DefectId').val('');
-            refreshDDL('ItemSupplierId', '/NcrQa/GetSuppliers/' + selectedSupplier, true, 'No items related with the supplier selected', true, "Select an item", true);
+            
+            // // Set the value of DefectId dropdown to an empty string
+            // $('#DefectId').val('');
+            // refreshDDL('ItemSupplierId', '/NcrQa/GetSuppliers/' + selectedSupplier, true, 'No items related with the supplier selected', true, "Select an item", true);
                    
         });
-    </script>
-    <script type="text/javascript">
+    </script> *@
+    @* <script type="text/javascript">
         $('#ItemId').change(function () {
             var selectedItemId = $("#ItemId").val();
             var URL = "/NcrQa/GetDefects/?ItemId=" + selectedItemId;
             refreshDDL('DefectId', URL, true, 'No defects related with the item selected', false, null, true);
         });
-    </script>
+    </script> *@
     <script>
     function showEngineerDispositionModal() {
         $('#engineerDispositionModal').modal('show');
@@ -319,7 +320,7 @@
     <script type="text/javascript">
         $('#submitSupplierCreate').click(function (event) {
             event.preventDefault();
-            ClearErrors();
+            ClearErrorsSupplier();
             var form = $('#createSupplierForm');
             if (form.valid()) {
                 $.ajax({
@@ -349,7 +350,7 @@
                             errorMessages.push("Error: Unable to complete operation");
                         }
                         //Put the messages in the ErrorList ul contained in the 'ValidaitonSummary' div.
-                        var ul = document.getElementById("ErrorList");
+                        var ul = document.getElementById("ErrorListSupplier");
                         for (var i = 0; i < errorMessages.length; i++) {
                             var errorMessage = errorMessages[i];
                             var li = document.createElement("li");
@@ -363,13 +364,13 @@
         });
         $('#addSupplierModal').on('hide.bs.modal', function () {
             document.getElementById("createSupplierForm").reset();//to clear the data in the popup form
-            ClearErrors();
+            ClearErrorsSupplier();
             var selectedOption = $('#SupplierId').val();//Return to the current selected value
             refreshDDL('SupplierId', '/NcrQa/GetSuppliers/' + selectedOption, false, null, true, 'Select a Supplier First', true);
         });
-        function ClearErrors() {
+        function ClearErrorsSupplier() {
             //Empty out the list of validation errors if there are any
-            var ul = document.getElementById("ErrorList");
+            var ul = document.getElementById("ErrorListSupplier");
             while (ul.firstChild) {
                 ul.removeChild(ul.firstChild);
             }
@@ -377,9 +378,9 @@
     </script>
 
     <!--Script for Add New Item button-->
-    <script type="text/javascript">       
+    <script type="text/javascript">
 
-        $('#submitItemCreate').click(function (event) {            
+        $('#submitItemCreate').click(function (event) {
             event.preventDefault();
             ClearErrors();
             var form = $('#createItemForm');
@@ -412,7 +413,7 @@
                             errorMessages.push("Error: Unable to complete operation");
                         }
                         //Put the messages in the ErrorList ul contained in the 'ValidaitonSummary' div.
-                        var ul = document.getElementById("ErrorList");
+                        var ul = document.getElementById("ErrorListItem");
                         for (var i = 0; i < errorMessages.length; i++) {
                             var errorMessage = errorMessages[i];
                             var li = document.createElement("li");
@@ -428,13 +429,13 @@
             document.getElementById("createItemForm").reset();//to clear the data in the popup form
             ClearErrors();
 
-            var selectedOption = $('#SupplierId').val();//Return to the current selected value
-            var URLItem = "/NcrQa/GetItems/?SupplierId=" + selectedOption;
+            var selectedOption = $('#ItemId').val();//Return to the current selected value            
+            var URLItem = "/NcrQa/GetItems/";
             refreshDDL('ItemId', URLItem, true, 'No items related with the supplier selected', true, 'Select an Item', true);
         });
         function ClearErrors() {
             //Empty out the list of validation errors if there are any
-            var ul = document.getElementById("ErrorList");
+            var ul = document.getElementById("ErrorListItem");
             while (ul.firstChild) {
                 ul.removeChild(ul.firstChild);
             }
