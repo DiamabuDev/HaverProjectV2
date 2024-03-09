@@ -65,7 +65,7 @@
                                 <strong>PO or Prod. No. </strong>
                                 <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Enter a valid value">(e.g. 4500730930)</small>
                                 <span class="fw-bold text-danger">*</span></label>
-                            <input asp-for="NcrQaOrderNumber" class="form-control" type="number" step="1" />
+                            <input asp-for="NcrQaOrderNumber" class="form-control" type="number" step="1" id="OrderNumber"/>
                             <span asp-validation-for="NcrQaOrderNumber" class="text-danger"></span>
                         </div>
                     </div>
@@ -75,7 +75,7 @@
                                 <strong>Sales Order No. </strong>
                                 <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Enter a valid value">(e.g. Stock)</small>
                                 <span class="fw-bold text-danger">*</span></label>
-                            <input asp-for="NcrQaSalesOrder" class="form-control" />
+                            <input asp-for="NcrQaSalesOrder" class="form-control" id="SalesOrder"/>
                             <span asp-validation-for="NcrQaSalesOrder" class="text-danger"></span>
                         </div>
                     </div>
@@ -87,7 +87,7 @@
                                 <strong>Quantity Received </strong>
                                 <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Enter a numeric value">(e.g. 150)</small>
                                 <span class="fw-bold text-danger">*</span></label>
-                            <input asp-for="NcrQaQuanReceived" class="form-control" />
+                            <input asp-for="NcrQaQuanReceived" class="form-control" id="Received"/>
                             <span asp-validation-for="NcrQaQuanReceived" class="text-danger"></span>
                         </div>
                     </div>
@@ -97,7 +97,7 @@
                                 <strong>Quantity Defective</strong> 
                                 <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Enter a numeric value">(e.g. 25)</small>
                                 <span class="fw-bold text-danger">*</span></label>
-                            <input asp-for="NcrQaQuanDefective" class="form-control" />
+                            <input asp-for="NcrQaQuanDefective" class="form-control" id="Defective"/>
                             <span asp-validation-for="NcrQaQuanDefective" class="text-danger"></span>
                         </div>
                     </div>
@@ -114,7 +114,7 @@
                             <div class="input-group-prepend">
                                 <button class="btn btn-outline-secondary custom-btn-color" id="nowAddSupplier" data-bs-toggle="modal" data-bs-target="#addSupplierModal" type="button" data-tooltip-supplier="true"><i class='bi-plus-square-dotted'></i></button>
                             </div>
-                            <select class="form-control" id="SupplierId" name="SupplierId" asp-items="ViewBag.SupplierId" asp-for="SupplierId" required>
+                            <select class="form-control" id="SupplierId" name="SupplierId" asp-items="ViewBag.SupplierId" asp-for="SupplierId" id="Supplier" required>
                                 <option value="">Select Supplier</option>
                             </select>                            
                         </div>
@@ -130,7 +130,7 @@
                             <div class="input-group-prepend">
                                 <button class="btn btn-outline-secondary custom-btn-color" id="nowAddItem" data-bs-toggle="modal" data-bs-target="#addItemModal" type="button" data-tooltip-item="true"><i class='bi-plus-square-dotted'></i></button>
                             </div>
-                            <select asp-for="ItemId" id="ItemId" class="form-control" name="ItemId" asp-items="ViewBag.ItemId">
+                            <select asp-for="ItemId" id="ItemId" class="form-control" name="ItemId" asp-items="ViewBag.ItemId" id="Item">
                                 <option value="">Select a Supplier First</option>
                             </select>
                         </div>
@@ -141,7 +141,7 @@
                             <strong>Defect </strong>
                             <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Surface to house internal components.)</small> 
                             <span class="fw-bold text-danger">*</span></label>
-                        <select asp-for="DefectId" class="form-control" id="DefectId" name="DefectId" asp-items="ViewBag.DefectId">
+                        <select asp-for="DefectId" class="form-control" id="DefectId" name="DefectId" asp-items="ViewBag.DefectId" id="Defect">
                             <option value="0">Select an Item First</option>
                         </select>
                         <span asp-validation-for="DefectId" class="text-danger"></span>
@@ -151,7 +151,7 @@
                             <strong>Description of Defect </strong>
                             <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Enter the required description">(e.g. Dimensions outside of control parameters.)</small> 
                             <span class="fw-bold text-danger">*</span></label>
-                        <textarea asp-for="NcrQaDescriptionOfDefect" class="form-control"></textarea>
+                        <textarea asp-for="NcrQaDescriptionOfDefect" class="form-control" id="Description"></textarea>
                         <span asp-validation-for="NcrQaDescriptionOfDefect" class="text-danger"></span>
                     </div>                    
                     <div class="form-group">
@@ -166,7 +166,7 @@
                             <strong>Video Links </strong>
                             <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Add multiple video links separated by a comma">(e.g. https://haverniagara.com, https://www.google.ca)</small>
                         </label>
-                        <input asp-for="NcrQaDefectVideo" class="form-control" />
+                        <input asp-for="NcrQaDefectVideo" class="form-control" id="Video"/>
                         <span asp-validation-for="NcrQaDefectVideo" class="text-danger"></span>
                     </div>
                 </div>
@@ -225,6 +225,11 @@
                     <div>
                         <button type="submit" class="btn btn-primary ms-4">
                             <i class='bi-plus-square-dotted'></i> Create
+                        </button>
+                    </div>
+                    <div>
+                        <button type="button" id=test class="btn btn-warning ms-4">
+                            <i class='bi-box-arrow-in-down'></i> Test
                         </button>
                     </div>
                 </div>
@@ -435,4 +440,21 @@
             }
         }
     </script>    
+
+    @* Test button for live demo *@
+    <script>
+        const button = document.getElementById('test');
+        button.addEventListener('click', test);
+        function test() {
+            document.getElementById("OrderNumber").value = 4500745599;
+            document.getElementById("SalesOrder").value = 10401235;
+            document.getElementById("Received").value = 16;
+            document.getElementById("Defective").value = 6;
+            // document.getElementById("Supplier").value = 8;
+            // document.getElementById("Item").value = 8;
+            // document.getElementById("Defect").value = 8;
+            document.getElementById("Description").value = 'See photos. Packing slip and package labels do not match the actual dimensions of the washers.';
+            document.getElementById("Video").value = "https://haverniagara.com/, https://www.google.ca";
+        }
+    </script>
 }
