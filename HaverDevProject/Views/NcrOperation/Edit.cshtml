@@ -1,4 +1,4 @@
-﻿@model HaverDevProject.ViewModels.NcrOperationDTO
+@model HaverDevProject.ViewModels.NcrOperationDTO
 
 @{
     ViewData["Title"] = "Edit";
@@ -208,6 +208,65 @@
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            // Function to show/hide elements and manage validation based on Car value
+            function toggleCarFields() {
+                var carValue = $('input[name="Car"]:checked').val();
+                var carNumberField = $('#CarNumber');
+
+                // Check the value of Car and toggle the required and disabled attributes accordingly
+                if (carValue === 'true') {
+                    // Set required attribute and enable the input
+                    carNumberField.prop('required', true);
+                    carNumberField.prop('disabled', false);
+                } else {
+                    // Remove required attribute and disable the input
+                    carNumberField.prop('required', false);
+                    carNumberField.prop('disabled', true);
+                }
+            }
+
+            // Call the function on page load
+            toggleCarFields();
+
+            // Bind the function to the change event of the Car radio buttons
+            $('input[name="Car"]').change(function () {
+                toggleCarFields();
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            // Function to show/hide elements and manage validation based on FollowUp value
+            function toggleFollowUpFields() {
+                var followUpValue = $('input[name="FollowUp"]:checked').val();
+                var followUpTypeField = $('#FollowUpTypeId');
+                var expectedDateField = $('#ExpectedDate');
+
+                // Check the value of FollowUp and toggle the required attribute accordingly
+                if (followUpValue === 'true') {
+                    // Set required attribute
+                    followUpTypeField.prop('required', true);
+                    expectedDateField.prop('required', true);
+                } else {
+                    // Remove required attribute
+                    followUpTypeField.prop('required', false);
+                    expectedDateField.prop('required', false);
+                }
+            }
+
+            // Call the function on page load
+            toggleFollowUpFields();
+
+            // Bind the function to the change event of the FollowUp radio buttons
+            $('input[name="FollowUp"]').change(function () {
+                toggleFollowUpFields();
+            });
         });
     </script>
 
