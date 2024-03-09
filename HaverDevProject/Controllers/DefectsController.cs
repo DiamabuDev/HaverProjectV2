@@ -246,7 +246,7 @@ namespace HaverDevProject.Controllers
             }
 
             var errorMessages = new List<string>();
-            var seenDefectNames = new HashSet<string>(); // Tracks defect names seen in the current upload
+            var defectsFromExcel = new HashSet<string>();
 
             using (var stream = new MemoryStream())
             {
@@ -256,65 +256,50 @@ namespace HaverDevProject.Controllers
                     ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
                     int rowCount = worksheet.Dimension.Rows;
 
-                    // First pass: Validate all rows
                     for (int row = 2; row <= rowCount; row++)
                     {
                         var defectName = worksheet.Cells[row, 1].Value?.ToString().Trim();
-
-                        // Check for required field
                         if (string.IsNullOrWhiteSpace(defectName))
                         {
                             errorMessages.Add($"Row {row}: Defect Type Name is required.");
                             continue;
                         }
-
-                        // Check for in-memory duplicates
-                        if (seenDefectNames.Contains(defectName))
-                        {
-                            errorMessages.Add($"Row {row}: Defect Type with Defect Type Name {defectName} is duplicated in the file.");
-                            continue;
-                        }
-
-                        // Check for duplicates in the database
-                        if (await _context.Defects.AsNoTracking().AnyAsync(d => d.DefectName == defectName))
-                        {
-                            errorMessages.Add($"Row {row}: Defect Type with Defect Type Name {defectName} already exists in the database.");
-                            continue;
-                        }
-
-                        seenDefectNames.Add(defectName); // Mark this defect name as seen
+                        defectsFromExcel.Add(defectName);
                     }
 
-                    // If errors were found, stop and return errors
                     if (errorMessages.Any())
                     {
                         TempData["ErrorMessage"] = $"Please fix the following errors and try again: {string.Join(" ", errorMessages)}";
                         return RedirectToAction(nameof(Index));
                     }
 
-                    // Second pass: Insert rows into the database, since no errors were found
-                    int successfulRows = 0;
-                    foreach (var defectName in seenDefectNames)
+                    var existingDefectNames = await _context.Defects
+                                            .Where(d => defectsFromExcel.Contains(d.DefectName))
+                                            .Select(d => d.DefectName)
+                                            .ToListAsync();
+                    var newDefectNames = defectsFromExcel.Except(existingDefectNames);
+
+                    int addedCount = 0;
+                    foreach (var defectName in newDefectNames)
                     {
-                        var row = worksheet.Cells[worksheet.Dimension.Start.Row, 1, worksheet.Dimension.End.Row, 1]
-                                            .FirstOrDefault(cell => cell.Value.ToString().Trim() == defectName);
-
-                        if (row != null)
-                        {
-                            var defectDescription = worksheet.Cells[row.Start.Row, 2].Value?.ToString().Trim();
-
-                            var newDefect = new Defect
-                            {
-                                DefectName = defectName
-                            };
-
-                            _context.Defects.Add(newDefect);
-                            successfulRows++;
-                        }
+                        var newDefect = new Defect { DefectName = defectName };
+                        _context.Defects.Add(newDefect);
+                        addedCount++;
                     }
 
-                    await _context.SaveChangesAsync();
-                    TempData["SuccessMessage"] = $"File uploaded successfully. {successfulRows} row(s) were added.";
+                    if (addedCount > 0)
+                    {
+                        await _context.SaveChangesAsync();
+                        TempData["SuccessMessage"] = $"File uploaded successfully. {addedCount} new defect(s) were added.";
+                    }
+                    else if (defectsFromExcel.Count > 0)
+                    {
+                        TempData["ErrorMessage"] = "No new defects were added because they already exist in the database.";
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "The uploaded file contains no defect names or they are not correctly formatted.";
+                    }
                 }
             }
 
