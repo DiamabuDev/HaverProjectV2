@@ -66,6 +66,7 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
                 .Include(n => n.OpDispositionType)
                 .Include(n => n.FollowUpType)
+                .Where(n => n.Ncr.NcrPhase != NcrPhase.Archive)
                 .AsNoTracking();
 
             GetNcrs();
@@ -303,7 +304,7 @@ namespace HaverDevProject.Controllers
 
             NcrOperationDTO ncr = new NcrOperationDTO();
             ncr.NcrNumber = ncrNumber; // Set the NcrNumber from the parameter
-            ncr.NcrOpCreationDate = DateTime.Now;
+            ncr.NcrOpCompleteDate = DateTime.Now;
             ncr.UpdateOp = DateTime.Now;
             ncr.ExpectedDate = DateTime.Now;
             ncr.NcrStatus = true; // Active
@@ -326,6 +327,8 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.NcrEng)
                     .ThenInclude(eng => eng.EngDefectPhotos)
                 .FirstOrDefaultAsync(n => n.NcrId == ncrId);
+
+            ncr.NcrOpCreationDate = readOnlyDetails.NcrEng.NcrEngCreationDate;
 
             ViewBag.IsNCRQaView = false;
             ViewBag.IsNCREngView = false;
@@ -368,7 +371,8 @@ namespace HaverDevProject.Controllers
                         CarNumber = ncrOperationDTO.CarNumber,
                         FollowUp = ncrOperationDTO.FollowUp,
                         ExpectedDate = ncrOperationDTO.ExpectedDate,
-                        NcrOpCreationDate = DateTime.Now,
+                        NcrOpCompleteDate = DateTime.Now,
+                        NcrOpCreationDate = ncrOperationDTO.NcrOpCreationDate,
                         FollowUpTypeId = ncrOperationDTO.FollowUpTypeId,
                         UpdateOp = DateTime.Now,
                         NcrPurchasingUserId = 1,
