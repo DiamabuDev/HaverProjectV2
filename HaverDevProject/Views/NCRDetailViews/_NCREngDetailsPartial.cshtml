@@ -77,14 +77,14 @@
                             <thead class="custom-light-bg">
                                 <tr>
                                     <th class="three-cols">Engineer</th>
-                                    <th class="three-cols">Section Creation Date</th>
+                                    <th class="three-cols">Creation Date</th>
                                     <th class="three-cols">Last Updated</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td class="three-cols">B. Bastion</td>
-                                    <td class="three-cols">@Model.NcrEngCreationDate.ToString("yyyy-MM-dd")</td>
+                                    <td class="three-cols">@Model.Ncr.NcrQa.NcrQacreationDate.ToString("yyyy-MM-dd")</td>
                                     <td class="three-cols">
                                         @{
                                             if (Model.UpdatedOn.HasValue)

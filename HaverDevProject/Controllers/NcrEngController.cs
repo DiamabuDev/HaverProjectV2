@@ -314,7 +314,7 @@ namespace HaverDevProject.Controllers
             NcrEngDTO ncr = new NcrEngDTO();
             ncr.NcrNumber = ncrNumber; // Set the NcrNumber from the parameter
             ncr.DrawingRevDate = DateTime.Now;
-            ncr.NcrEngCreationDate = DateTime.Now;
+            ncr.NcrEngCompleteDate = DateTime.Now;
             ncr.DrawingOriginalRevNumber = 1;
             ncr.DrawingRequireUpdating = false;
             ncr.NcrEngCustomerNotification = false;
@@ -331,6 +331,8 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.NcrQa)
                     .ThenInclude(qa => qa.ItemDefectPhotos)
                 .FirstOrDefaultAsync(n => n.NcrId == ncrId);
+
+            ncr.NcrEngCreationDate = readOnlyDetails.NcrQa.NcrQacreationDate;
 
             ViewBag.IsNCRQaView = false;
             ViewBag.IsNCREngView = false;
@@ -371,7 +373,8 @@ namespace HaverDevProject.Controllers
                         NcrEngDispositionDescription = ncrEngDTO.NcrEngDispositionDescription,
                         NcrEngStatusFlag = ncrEngDTO.NcrEngStatusFlag,
                         NcrEngUserId = 1,
-                        NcrEngCreationDate = DateTime.Now,
+                        NcrEngCompleteDate = DateTime.Now,
+                        NcrEngCreationDate = ncrEngDTO.NcrEngCreationDate,
                         EngDispositionTypeId = ncrEngDTO.EngDispositionTypeId,
                         DrawingId = ncrEngDTO.DrawingId,
                         DrawingRequireUpdating = ncrEngDTO.DrawingRequireUpdating,
@@ -425,6 +428,7 @@ namespace HaverDevProject.Controllers
                         .Include(ne => ne.Ncr)
                           .Include(ne => ne.EngDispositionType)
                           .Include(ne => ne.Drawing)
+                          //.Include(ne => ne.Ncr).ThenInclude(ne=>ne.NcrQa)
                         .Include(n => n.EngDefectPhotos)
                         .AsNoTracking()
                         .FirstOrDefaultAsync(ne => ne.NcrEngId == id);
@@ -445,6 +449,7 @@ namespace HaverDevProject.Controllers
                 NcrEngCustomerNotification = ncrEng.NcrEngCustomerNotification,
                 NcrEngDispositionDescription = ncrEng.NcrEngDispositionDescription,
                 NcrEngCreationDate = ncrEng.NcrEngCreationDate,
+                NcrEngCompleteDate = ncrEng.NcrEngCompleteDate,
                 NcrEngStatusFlag = ncrEng.NcrEngStatusFlag,
                 NcrEngUserId = ncrEng.NcrEngUserId,
                 EngDispositionTypeId = ncrEng.EngDispositionTypeId,
@@ -509,6 +514,7 @@ namespace HaverDevProject.Controllers
                     ncrEng.NcrEngCustomerNotification = ncrEngDTO.NcrEngCustomerNotification;
                     ncrEng.NcrEngDispositionDescription = ncrEngDTO.NcrEngDispositionDescription;
                     ncrEng.NcrEngCreationDate = ncrEngDTO.NcrEngCreationDate;
+                    ncrEng.NcrEngCompleteDate = ncrEngDTO.NcrEngCompleteDate;
                     ncrEng.NcrEngStatusFlag = ncrEngDTO.NcrEngStatusFlag;
                     ncrEng.NcrEngUserId = ncrEngDTO.NcrEngUserId;
                     ncrEng.EngDispositionTypeId = ncrEngDTO.EngDispositionTypeId;
