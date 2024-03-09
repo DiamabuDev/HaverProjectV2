@@ -61,7 +61,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="form-group">
-                            <label asp-for="OpDispositionTypeId" class="control-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Indicate disposition by selecting one of the options in the dropdown list"><b>Purchasing's Preliminary Decision</b></span> <span class="fw-bold text-danger">*</span></label>
+                            <label asp-for="OpDispositionTypeId" class="control-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Indicate disposition by selecting one of the options in the dropdown list"><b>Operations Preliminary Decision</b></span> <span class="fw-bold text-danger">*</span></label>
                             <select asp-for="OpDispositionTypeId" class="form-control" asp-items="ViewBag.OpDispositionTypeId">
                                 <option value="">Select Preliminary Decision</option>
                             </select>
@@ -72,7 +72,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="form-group">
-                            <label asp-for="NcrPurchasingDescription" class="control-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Describe your selection"><b>Description</b></span> <span class="fw-bold text-danger">*</span></label>
+                            <label asp-for="NcrPurchasingDescription" class="control-label"><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Describe your selection"><b>Description</b></span> <span class="fw-bold text-danger"> *</span></label>
                             <textarea asp-for="NcrPurchasingDescription" class="form-control"></textarea>
                             <span asp-validation-for="NcrPurchasingDescription" class="text-danger"></span>
                         </div>
@@ -96,7 +96,7 @@
                 <div class="row collapse" id="car-number-input">
                     <div class="col-6">
                         <div class="form-group">
-                            <label asp-for="CarNumber" class="control-label"></label>
+                            <label asp-for="CarNumber" class="control-label"><b>If "Yes" indicate CAR # </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Enter the Car Number">(e.g. CAR 2024-01) </small><span class="fw-bold text-danger">*</span></label>
                             <input asp-for="CarNumber" class="form-control" placeholder="Car Number" />
                             <span asp-validation-for="CarNumber" class="text-danger"></span>
                         </div>
@@ -123,7 +123,7 @@
                     <div class="row">
                         <div class="col-6">
                             <div class="form-group">
-                                <label asp-for="FollowUpTypeId" class="control-label"></label>
+                                <label asp-for="FollowUpTypeId" class="control-label"><b>If "Yes" indicate type & expected date </b><span class="fw-bold text-danger">*</span></label>
                                 <select asp-for="FollowUpTypeId" class="form-control" asp-items="ViewBag.FollowUpTypeId">
                                     <option value="">Select Follow Type</option>
                                 </select>
@@ -132,7 +132,7 @@
                         </div>
                         <div class="col-6">
                             <div class="form-group">
-                                <label asp-for="ExpectedDate" class="control-label"></label>
+                                <label> </label>
                                 <input asp-for="ExpectedDate" class="form-control date-input" value="@Model.ExpectedDate?.ToString("yyyy-MM-dd")" />
                                 <span asp-validation-for="ExpectedDate" class="text-danger"></span>
                             </div>
@@ -297,7 +297,7 @@
 
                         var currentCount = parseInt($("#photoCounter").text());
                         var newCount = currentCount - 1;
-                                               
+
                         if (newCount > 0) {
                             $("#photoCounter").text(newCount);
                         } else {
