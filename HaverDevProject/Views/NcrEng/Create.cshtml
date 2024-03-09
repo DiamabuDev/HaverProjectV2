@@ -200,8 +200,8 @@
 
     @* When Use As Is or Scrap is selected, Disposition Description will be read only with N/A text *@
     <script>
-        const engDispositionSelect = document.getElementById('engDispositionSelect');
-        const ncrDispositionDescription = document.getElementById('ncrDispositionDescription');
+        const engDispositionSelect = document.getElementById('DispositionSelect');
+        const ncrDispositionDescription = document.getElementById('Description');
         engDispositionSelect.addEventListener('change', function () {
             const selectedValue = engDispositionSelect.value;
             if (selectedValue == 1 || selectedValue == 4) {
