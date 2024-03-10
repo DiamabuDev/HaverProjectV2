@@ -288,7 +288,7 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: NcrQa/Create
-        public IActionResult Create(int? parentNcrId)
+        public IActionResult Create()
         {
             var ncrQaDTO = new NcrQaDTO();
             ncrQaDTO.NcrNumber = GetNcrNumber();
@@ -298,12 +298,7 @@ namespace HaverDevProject.Controllers
             ncrQaDTO.NcrQaItemMarNonConforming = true; //Yes
             ncrQaDTO.NcrQaEngDispositionRequired = true; //Yes
 
-            PopulateDropDownLists();
-
-            if (parentNcrId.HasValue)
-            {
-                ncrQaDTO.ParentNcrId = parentNcrId.Value;
-            }
+            PopulateDropDownLists();         
 
             return View(ncrQaDTO);
         }
@@ -324,7 +319,8 @@ namespace HaverDevProject.Controllers
                     NcrNumber = ncrQaDTO.NcrNumber,
                     NcrLastUpdated = DateTime.Now,
                     NcrStatus = ncrQaDTO.NcrStatus,
-                    NcrPhase = ncrQaDTO.NcrQaEngDispositionRequired == true ? NcrPhase.Engineer : NcrPhase.Operations
+                    NcrPhase = ncrQaDTO.NcrQaEngDispositionRequired == true ? NcrPhase.Engineer : NcrPhase.Operations,
+                    ParentId = ncrQaDTO.ParentId,
                 };
 
                 _context.Add(ncr);
@@ -360,9 +356,9 @@ namespace HaverDevProject.Controllers
                 _context.NcrQas.Add(ncrQa);
                 await _context.SaveChangesAsync();
 
-                if (ncrQaDTO.ParentNcrId.HasValue)
+                if (ncrQaDTO.ParentId.HasValue)
                 {
-                    var ncrReInspect = await _context.NcrReInspects.FirstOrDefaultAsync(n => n.NcrId == ncrQaDTO.ParentNcrId);
+                    var ncrReInspect = await _context.NcrReInspects.FirstOrDefaultAsync(n => n.NcrId == ncrQaDTO.ParentId);
                     if (ncrReInspect != null)
                     {
                         ncrReInspect.NcrReInspectNewNcrNumber = ncr.NcrNumber;
