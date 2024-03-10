@@ -15,7 +15,7 @@
     <partial name="_addDefectModal" />   
     
     <form asp-action="Create" method="post" enctype="multipart/form-data">
-        <input type=" hidden" asp-for="ParentId" value="@Context.Request.Query["parentNcrId"]" />
+        <input type="hidden" asp-for="ParentId" value="@Context.Request.Query["parentNcrId"]" />
 
         <div class="card border-2">
             <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
