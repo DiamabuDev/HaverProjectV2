@@ -12,8 +12,7 @@
     
     <partial name="_addItemModal" />
     <partial name="_addSupplierModal" />
-    <partial name="_addDefectModal" />
-    
+    <partial name="_addDefectModal" />   
     
     <form asp-action="Create" method="post" enctype="multipart/form-data">
         <div class="card border-2">
@@ -277,6 +276,7 @@
             return new bootstrap.Tooltip(tooltipTriggerEl);
         });
     </script>
+
     @* <script type="text/javascript">
         $('#SupplierId').change(function () {            
             var selectedSupplier = $("#SupplierId").val();
@@ -321,7 +321,6 @@
         initializeTooltip('Add New Item', '[data-tooltip-item="true"]');
         initializeTooltip('Add New Defect', '[data-tooltip-defect="true"]');
     });
-
     function initializeTooltip(title, selector) {        
         $(selector).tooltip({
             title: title

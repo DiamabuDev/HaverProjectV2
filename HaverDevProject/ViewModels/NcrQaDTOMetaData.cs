@@ -29,7 +29,7 @@ namespace HaverDevProject.ViewModels
 
         [Display(Name = "PO or Prod. No.")]
         [Required(ErrorMessage = "You must provide the PO or Prod. No.")]
-        [StringLength(45, ErrorMessage = "The PO or Prod. No. cannot be more than 45 characters.")]
+        [StringLength(10, ErrorMessage = "This field must be between 7 and 10 characters.", MinimumLength = 7)]
         public string NcrQaOrderNumber { get; set; }
 
         [Display(Name = "Sales Order No.")]
