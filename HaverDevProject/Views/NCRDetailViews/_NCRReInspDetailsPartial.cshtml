@@ -12,7 +12,7 @@
                             <thead>
                                 <tr>
                                     <th class="two-cols-1">Acceptable</th>
-                                    <th class="two-cols">New NCR #</th>
+                                    <th class="two-cols">@(Model.NcrReInspectAcceptable ? "" : "NCR #")</th>
                                 </tr>
                             </thead>                
                             <tbody>
@@ -21,7 +21,7 @@
                                         @(Model.NcrReInspectAcceptable ? "Yes" : "No")
                                     </td>
                                     <td class="two-cols">
-                                        @(Model.NcrReInspectNewNcrNumber == null ? "N/A" : Model.NcrReInspectNewNcrNumber.ToString())
+                                        @(Model.NcrReInspectNewNcrNumber == null ? "" : Model.NcrReInspectNewNcrNumber.ToString())
                                     </td>
                                 </tr>
                             </tbody>
@@ -41,11 +41,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td class="three-cols">
-                                        @{
-                                            var userName = Model.NcrReInspectUserId == 1 ? "Jamie" : "R. May";
-                                        }
-                                        @userName
+                                    <td class="three-cols">J. Doe
                                     </td>
                                     <td class="three-cols">@Model.NcrReInspectCreationDate.ToString("yyyy-MM-dd")</td>
                                     <td class="three-cols">

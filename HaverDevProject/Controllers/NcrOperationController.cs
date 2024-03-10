@@ -63,9 +63,10 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.NcrEng)
                 .Include(n => n.Ncr)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
-                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
                 .Include(n => n.OpDispositionType)
                 .Include(n => n.FollowUpType)
+                .Where(n => n.Ncr.NcrPhase != NcrPhase.Archive)
                 .AsNoTracking();
 
             GetNcrs();
@@ -147,13 +148,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     ncrOperation = ncrOperation
-                        .OrderBy(p => p.Ncr.NcrQa.Item.Supplier.SupplierName);
+                        .OrderBy(p => p.Ncr.NcrQa.Supplier.SupplierName);
                     ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncrOperation = ncrOperation
-                        .OrderByDescending(p => p.Ncr.NcrQa.Item.Supplier.SupplierName);
+                        .OrderByDescending(p => p.Ncr.NcrQa.Supplier.SupplierName);
                     ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -242,6 +243,7 @@ namespace HaverDevProject.Controllers
 
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
+            ViewData["filter"] = filter;
 
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, ControllerName());
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
@@ -263,9 +265,9 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.FollowUpType)
                 .Include(n => n.Ncr)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
-                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects)
-                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.ItemDefects).ThenInclude(n => n.Defect)
-                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(i => i.Item)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Defect)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.ItemDefectPhotos)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrEng)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrEng).ThenInclude(n => n.EngDispositionType)
@@ -302,7 +304,7 @@ namespace HaverDevProject.Controllers
 
             NcrOperationDTO ncr = new NcrOperationDTO();
             ncr.NcrNumber = ncrNumber; // Set the NcrNumber from the parameter
-            ncr.NcrOpCreationDate = DateTime.Now;
+            ncr.NcrOpCompleteDate = DateTime.Now;
             ncr.UpdateOp = DateTime.Now;
             ncr.ExpectedDate = DateTime.Now;
             ncr.NcrStatus = true; // Active
@@ -311,11 +313,10 @@ namespace HaverDevProject.Controllers
 
             var readOnlyDetails = await _context.Ncrs
                 .Include(n => n.NcrQa)
-                    .ThenInclude(qa => qa.Item)
                         .ThenInclude(item => item.Supplier)
                 .Include(n => n.NcrQa)
-                    .ThenInclude(qa => qa.Item)
-                        .ThenInclude(item => item.ItemDefects)
+                        .ThenInclude(item => item.Item)
+                .Include(n => n.NcrQa)
                             .ThenInclude(defect => defect.Defect)
                 .Include(n => n.NcrQa)
                     .ThenInclude(qa => qa.ItemDefectPhotos)
@@ -326,6 +327,8 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.NcrEng)
                     .ThenInclude(eng => eng.EngDefectPhotos)
                 .FirstOrDefaultAsync(n => n.NcrId == ncrId);
+
+            ncr.NcrOpCreationDate = readOnlyDetails.NcrEng.NcrEngCreationDate;
 
             ViewBag.IsNCRQaView = false;
             ViewBag.IsNCREngView = false;
@@ -368,7 +371,8 @@ namespace HaverDevProject.Controllers
                         CarNumber = ncrOperationDTO.CarNumber,
                         FollowUp = ncrOperationDTO.FollowUp,
                         ExpectedDate = ncrOperationDTO.ExpectedDate,
-                        NcrOpCreationDate = DateTime.Now,
+                        NcrOpCompleteDate = DateTime.Now,
+                        NcrOpCreationDate = ncrOperationDTO.NcrOpCreationDate,
                         FollowUpTypeId = ncrOperationDTO.FollowUpTypeId,
                         UpdateOp = DateTime.Now,
                         NcrPurchasingUserId = 1,
@@ -416,7 +420,9 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.NcrEng)
                 .Include(n => n.Ncr)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
-                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Defect)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
                 .Include(n => n.OpDispositionType)
                 .Include(n => n.FollowUpType)
                 .Include(n => n.OpDefectPhotos)
@@ -432,7 +438,8 @@ namespace HaverDevProject.Controllers
             {
                 NcrOpId = ncrOperation.NcrOpId,
                 NcrNumber = ncrOperation.Ncr.NcrNumber,
-                NcrOpCreationDate = ncrOperation.Ncr.NcrQa.NcrQacreationDate,
+                NcrOpCreationDate = ncrOperation.NcrOpCreationDate,
+                NcrOpCompleteDate = ncrOperation.NcrOpCompleteDate,
                 NcrId = ncrOperation.NcrId,
                 Ncr = ncrOperation.Ncr,
                 OpDispositionTypeId = ncrOperation.OpDispositionTypeId,
@@ -452,12 +459,11 @@ namespace HaverDevProject.Controllers
 
             var readOnlyDetails = await _context.Ncrs
                 .Include(n => n.NcrQa)
-                    .ThenInclude(qa => qa.Item)
                         .ThenInclude(item => item.Supplier)
                 .Include(n => n.NcrQa)
-                    .ThenInclude(qa => qa.Item)
-                        .ThenInclude(item => item.ItemDefects)
-                            .ThenInclude(defect => defect.Defect)
+                        .ThenInclude(defect => defect.Defect)
+                .Include(n => n.NcrQa)
+                        .ThenInclude(defect => defect.Item)
                 .Include(n => n.NcrQa)
                     .ThenInclude(qa => qa.ItemDefectPhotos)
                 .Include(n => n.NcrEng)
@@ -489,30 +495,30 @@ namespace HaverDevProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, int NcrId, NcrOperationDTO ncrOperationDTO, List<IFormFile> Photos)
         {
-            //ncrOperationDTO.NcrOpId = id;
-            //if (id != ncrOperationDTO.NcrOpId)
-            //{
-            //    return NotFound();
-            //}
+            ncrOperationDTO.NcrOpId = id;
+            if (id != ncrOperationDTO.NcrOpId)
+            {
+                return NotFound();
+            }
 
             if (ModelState.IsValid)
             {
-                //var ncrToUpdate = await _context.Ncrs
-                //    .AsNoTracking()
-                //    .FirstOrDefaultAsync(n => n.NcrId == NcrId);
+                var ncrToUpdate = await _context.Ncrs
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(n => n.NcrId == NcrId);
 
-                //if (ncrToUpdate == null)
-                //{
-                //    return NotFound();
-                //}
-                //else
-                //{
-                //    ncrToUpdate.NcrPhase = NcrPhase.Procurement;
-                //    ncrToUpdate.NcrLastUpdated = DateTime.Now;
+                if (ncrToUpdate == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    //ncrToUpdate.NcrPhase = NcrPhase.Procurement;
+                    ncrToUpdate.NcrLastUpdated = DateTime.Now;
 
-                //    _context.Ncrs.Update(ncrToUpdate);
-                //    await _context.SaveChangesAsync();
-                //}
+                    _context.Ncrs.Update(ncrToUpdate);
+                    await _context.SaveChangesAsync();
+                }
 
                 await AddPictures(ncrOperationDTO, Photos);
                 try
@@ -527,6 +533,8 @@ namespace HaverDevProject.Controllers
 
                     ncrOperation.OpDispositionTypeId = ncrOperationDTO.OpDispositionTypeId;
                     ncrOperation.NcrPurchasingDescription = ncrOperationDTO.NcrPurchasingDescription;
+                    ncrOperation.NcrOpCreationDate = ncrOperationDTO.NcrOpCreationDate;
+                    ncrOperation.NcrOpCompleteDate = ncrOperationDTO.NcrOpCompleteDate;
                     ncrOperation.Car = ncrOperationDTO.Car;
                     ncrOperation.CarNumber = ncrOperationDTO.CarNumber;
                     ncrOperation.FollowUp = ncrOperationDTO.FollowUp;
@@ -536,14 +544,14 @@ namespace HaverDevProject.Controllers
                     ncrOperation.NcrPurchasingUserId = 1;
                     ncrOperation.NcrOperationVideo = ncrOperationDTO.NcrOperationVideo;
                     ncrOperation.OpDefectPhotos = ncrOperationDTO.OpDefectPhotos;
-
+                    ncrOperation.Ncr.NcrLastUpdated = DateTime.Now;
 
                     _context.Update(ncrOperation);
                     await _context.SaveChangesAsync();
 
 
                     //var ncr = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrOperation.NcrId);
-                    //ncr.NcrPhase = NcrPhase.Procurement;
+                    ////ncr.NcrPhase = NcrPhase.Procurement;
                     //ncr.NcrLastUpdated = DateTime.Now;
                     //_context.Update(ncr);
                     //await _context.SaveChangesAsync();
@@ -652,7 +660,7 @@ namespace HaverDevProject.Controllers
             //    .ToList();
 
             List<Ncr> pendings = _context.Ncrs
-                .Include(n => n.NcrQa).ThenInclude(n => n.Item).ThenInclude(n => n.Supplier)
+                .Include(n => n.NcrQa).ThenInclude(n => n.Supplier)
                 .Where(n => n.NcrPhase == NcrPhase.Operations)
                 .ToList();
 
@@ -663,7 +671,7 @@ namespace HaverDevProject.Controllers
             {
                 NcrId = ncr.NcrId,
                 NcrNumber = ncr.NcrNumber,
-                SupplierName = ncr.NcrQa.Item.Supplier.SupplierName
+                SupplierName = ncr.NcrQa.Supplier.SupplierName
             }).ToList();
 
             return Json(ncrs);

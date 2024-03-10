@@ -10,7 +10,6 @@ namespace HaverDevProject.ViewModels;
 public class NcrEngDTOMetaData
 {
 
-
     [Key]
     [Column("ncrEngId")]
     public int NcrEngId { get; set; }
@@ -25,6 +24,11 @@ public class NcrEngDTOMetaData
     [Display(Name = "Status")]
     [Column("ncrStatus")]
     public bool NcrStatus { get; set; }
+
+    [Display(Name = "Date")]
+    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+    [DataType(DataType.Date)]
+    public DateTime NcrEngCompleteDate { get; set; }
 
     [Display(Name = "Date")]
     [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]

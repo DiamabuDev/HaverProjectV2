@@ -12,13 +12,27 @@ namespace HaverDevProject.ViewModels;
 [ModelMetadataType(typeof(NcrEngMetaData))]
 public class NcrEngDTO : Auditable
 {
+    public int DaysSinceCreated
 
+    {
+
+        get
+
+        {
+
+            return (DateTime.Now - NcrEngCreationDate).Days;
+
+        }
+
+    }
     public int NcrEngId { get; set; }
     public string NcrNumber { get; set; }
     public bool NcrStatus { get; set; } = true;
     public bool NcrEngCustomerNotification { get; set; } = false;
     public string NcrEngDispositionDescription { get; set; }
     public bool NcrEngStatusFlag { get; set; }
+    
+    public DateTime NcrEngCompleteDate { get; set; }
     public DateTime NcrEngCreationDate { get; set; }
     public NcrPhase NcrPhase { get; set; }
     public int NcrEngUserId { get; set; }

@@ -125,7 +125,8 @@
                         @Html.Raw(ViewData["filterApplied:Created"])
                     </button>
                 </th>
-                <th class =""></th>
+                <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -142,7 +143,7 @@
                         @Html.DisplayFor(modelItem => item.Ncr.NcrNumber)
                     </td>
                     <td class="col-3">
-                        @Html.DisplayFor(modelItem => item.Ncr.NcrQa.Item.Supplier.SupplierName)
+                        @Html.DisplayFor(modelItem => item.Ncr.NcrQa.Supplier.SupplierName)
                     </td>
                     <td class="col-3">
                         @Html.DisplayFor(modelItem => item.OpDispositionType.OpDispositionTypeName)
@@ -153,11 +154,18 @@
                     <td class="d-none d-md-table-cell">
                         @Html.DisplayFor(modelItem => item.UpdateOp)
                     </td>
+
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.NcrOpId" class="btn text-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
+                        @if (item.Ncr.NcrPhase != NcrPhase.Closed)
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.NcrOpId" class="btn text-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
+                        }
+
+                        <td>
                         <a asp-action="Details" asp-route-id="@item.NcrOpId" class="btn text-primary" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
                     </td>
                 </tr>
+
             }
         </tbody>
     </table>

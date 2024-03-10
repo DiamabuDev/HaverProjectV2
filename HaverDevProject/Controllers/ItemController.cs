@@ -29,37 +29,24 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: Item
-        public async Task<IActionResult> Index(string SearchCode, int? SupplierID, int? DefectID, int? page, int? pageSizeID,
+        public async Task<IActionResult> Index(string SearchCode, /*int? SupplierID, int? DefectID,*/ int? page, int? pageSizeID,
             string actionButton, string sortDirection = "asc", string sortField = "Code")
         {
             //List of sort options.
             string[] sortOptions = new[] { "Code", "Item", "Description", "Supplier", "Defect" };
 
-            PopulateDropDownList();
+            //PopulateDropDownList();
 
             var items = _context.Items
-                .Include(i => i.Supplier)
-                .Include(d => d.ItemDefects).ThenInclude(id => id.Defect)
+                //.Include(i => i.Supplier)
+                //.Include(d => d.ItemDefects).ThenInclude(id => id.Defect)
                 .AsNoTracking();
 
             //Filterig values                       
             if (!String.IsNullOrEmpty(SearchCode))
             {
-                items = items.Where(s => s.ItemName.ToUpper().Contains(SearchCode.ToUpper())
-                                        || s.Supplier.SupplierName.ToUpper().Contains(SearchCode.ToUpper()));
+                items = items.Where(s => s.ItemName.ToUpper().Contains(SearchCode.ToUpper()));
             }
-
-            if (SupplierID.HasValue)
-            {
-                items = items.Where(s => s.Supplier.SupplierId == SupplierID);
-            }
-
-            if (DefectID.HasValue)
-            {
-                items = items.Where(d => d.ItemDefects.Any(id => id.DefectId == DefectID));
-            }
-
-
             //Sorting columns
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
             {
@@ -92,7 +79,7 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:ItemNumber"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
-            else if (sortField == "Item")
+            else //if (sortField == "Item")
             {
                 if (sortDirection == "asc")
                 {
@@ -107,40 +94,7 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:ItemName"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
-            else if (sortField == "Supplier")
-            {
-                if (sortDirection == "asc")
-                {
-                    items = items
-                        .OrderBy(p => p.Supplier.SupplierName);
-                    ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-up'></i>";
-
-                }
-                else
-                {
-                    items = items
-                        .OrderByDescending(p => p.Supplier.SupplierName);
-                    ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-down'></i>";
-                }
-            }
-            else //Sorting by Item
-            {
-                if (sortDirection == "asc")
-                {
-                    items = items
-                        .OrderBy(d => d.ItemDefects.Select(id => id.Defect.DefectName).FirstOrDefault()).AsNoTracking();
-                    ViewData["filterApplied:Defect"] = "<i class='bi bi-sort-up'></i>";
-
-                }
-                else
-                {
-                    items = items
-                        .OrderByDescending(d => d.ItemDefects.Select(id => id.Defect.DefectName).FirstOrDefault()).AsNoTracking();
-                    ViewData["filterApplied:Defect"] = "<i class='bi bi-sort-down'></i>";
-                }
-
-            }
-
+            
             //Set sort for next time
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
@@ -162,8 +116,6 @@ namespace HaverDevProject.Controllers
             }
 
             var item = await _context.Items
-                .Include(i => i.Supplier)
-                .Include(d => d.ItemDefects).ThenInclude(id => id.Defect)
                 .FirstOrDefaultAsync(m => m.ItemId == id);
 
             if (item == null)
@@ -177,9 +129,6 @@ namespace HaverDevProject.Controllers
         // GET: Item/Create
         public IActionResult Create()
         {
-            PopulateDropDownList();
-            Item item = new Item();
-            PopulateAssignedDefectCheckboxes(item);
             return View();
         }
 
@@ -188,21 +137,10 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ItemId,ItemNumber,ItemName,ItemDescription,SupplierId")] Item item, string[] selectedOptions)
+        public async Task<IActionResult> Create([Bind("ItemId,ItemNumber,ItemName")] Item item)
         {
             try
             {
-                if (selectedOptions != null)
-                {
-                    foreach (var condition in selectedOptions)
-                    {
-                        var defectToAdd = new ItemDefect { ItemId = item.ItemId, DefectId = int.Parse(condition) };
-                        item.ItemDefects.Add(defectToAdd);
-                    }
-                }
-
-                item.SupplierId = GetDefaultSupplierId();
-
                 if (ModelState.IsValid)
                 {
                     _context.Add(item);
@@ -243,8 +181,6 @@ namespace HaverDevProject.Controllers
                 return BadRequest(errorMessage);
             }
 
-
-            ViewBag.SupplierId = new SelectList(_context.Suppliers, "SupplierId", "SupplierName", item.SupplierId);
             return View(item);
         }
 
@@ -256,16 +192,12 @@ namespace HaverDevProject.Controllers
                 return NotFound();
             }
             var item = await _context.Items
-                .Include(d => d.ItemDefects).ThenInclude(id => id.Defect)
-                .Include(i => i.Supplier)
                 .FirstOrDefaultAsync(d => d.ItemId == id);
 
             if (item == null)
             {
                 return NotFound();
             }
-            PopulateAssignedDefectCheckboxes(item);
-            ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierName", item.SupplierId);
             return View(item);
         }
 
@@ -274,22 +206,18 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, string[] selectedOptions)
+        public async Task<IActionResult> Edit(int id)
         {
             var itemToUpdate = await _context.Items
-                .Include(d => d.ItemDefects).ThenInclude(id => id.Defect)
-                .Include(i => i.Supplier)
+
                 .FirstOrDefaultAsync(i => i.ItemId == id);
 
             if (itemToUpdate == null)
             {
                 return NotFound();
             }
-
-            UpdateDefectItemsCheckboxes(selectedOptions, itemToUpdate);
-
             if (await TryUpdateModelAsync<Item>(itemToUpdate, "",
-                    i => i.ItemNumber, i => i.ItemName, i => i.ItemDescription))
+                    i => i.ItemNumber, i => i.ItemName))
             {
                 try
                 {
@@ -315,8 +243,6 @@ namespace HaverDevProject.Controllers
                 }
 
             }
-            PopulateAssignedDefectCheckboxes(itemToUpdate);
-            ViewBag.SupplierId = new SelectList(_context.Suppliers, "SupplierId", "SupplierName", itemToUpdate.SupplierId);
             return View(itemToUpdate);
         }
 
@@ -329,7 +255,6 @@ namespace HaverDevProject.Controllers
             }
 
             var item = await _context.Items
-                .Include(i => i.Supplier)
                 .FirstOrDefaultAsync(m => m.ItemId == id);
 
             if (item == null)
@@ -359,84 +284,19 @@ namespace HaverDevProject.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private SelectList SupplierSelectList(int? selectedId)
-        {
-            return new SelectList(_context.Suppliers.OrderBy(s => s.SupplierName), "SupplierId", "SupplierName", selectedId);
-        }
-        private SelectList DefectSelectList(int? selectedId)
-        {
-            return new SelectList(_context.Defects.OrderBy(i => i.DefectName).Select(i => new { i.DefectId, i.DefectName })
-            .Distinct(), "DefectId", "DefectName", selectedId);
-        }
-        private void PopulateDropDownList(Supplier supplier = null, Defect defect = null)
-        {
-            ViewData["SupplierID"] = SupplierSelectList(supplier?.SupplierId);
-            ViewData["DefectID"] = DefectSelectList(defect?.DefectId);
-        }
-
-        private void PopulateAssignedDefectCheckboxes(Item item)
-        {
-            var allDefects = _context.Defects
-                .Select(d => new { d.DefectId, d.DefectName })
-                .Distinct();
-
-            var currentItemDefectIDs = new HashSet<int>(item.ItemDefects.Select(id => id.DefectId)); //checar
-            var checkBoxes = new List<CheckOptionVM>();
-            foreach (var defect in allDefects)
-            {
-                checkBoxes.Add(new CheckOptionVM
-                {
-                    ID = defect.DefectId,
-                    DisplayText = defect.DefectName,
-                    Assigned = currentItemDefectIDs.Contains(defect.DefectId)
-                });
-            }
-            ViewData["DefectOptions"] = checkBoxes;
-        }
-
-        private void UpdateDefectItemsCheckboxes(string[] selectedDefects, Item itemToUpdate)
-        {
-            if (selectedDefects == null)
-            {
-                itemToUpdate.ItemDefects = new List<ItemDefect>();
-                return;
-            }
-
-            var selectedDefectsHS = new HashSet<string>(selectedDefects);
-            var defectItemsHS = new HashSet<int>(itemToUpdate.ItemDefects.Select(id => id.DefectId));
-            foreach (var defect in _context.Defects)
-            {
-                if (selectedDefectsHS.Contains(defect.DefectId.ToString()))
-                {
-                    if (!defectItemsHS.Contains(defect.DefectId))
-                    {
-                        itemToUpdate.ItemDefects.Add(new ItemDefect { ItemId = itemToUpdate.ItemId, DefectId = defect.DefectId });
-                    }
-                }
-                else
-                {
-                    if (defectItemsHS.Contains(defect.DefectId))
-                    {
-                        ItemDefect itemDefectToRemove = itemToUpdate.ItemDefects.FirstOrDefault(id => id.DefectId == defect.DefectId);
-                        if (itemDefectToRemove != null) _context.Remove(itemDefectToRemove);
-                    }
-                }
-            }
-        }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Upload(IFormFile file)
         {
             if (file.ContentType != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             {
-                TempData["ErrorMessage"] = "Invalid file type. Please upload an Excel file (.xlsx). \n";
+                TempData["ErrorMessage"] = "Invalid file type. Please upload an Excel file (.xlsx).";
                 return RedirectToAction(nameof(Index));
             }
 
             var errorMessages = new List<string>();
-            int expectedSuccessRows = 0;
-            var validItems = new List<Item>();
+            var itemDictionary = new Dictionary<int, string>();
+            int successCount = 0; 
 
             using (var stream = new MemoryStream())
             {
@@ -445,99 +305,89 @@ namespace HaverDevProject.Controllers
                 {
                     ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
                     int rowCount = worksheet.Dimension.Rows;
-                    expectedSuccessRows = rowCount - 1;
 
                     for (int row = 2; row <= rowCount; row++)
                     {
                         var itemNumberStr = worksheet.Cells[row, 1].Value?.ToString().Trim();
                         var itemName = worksheet.Cells[row, 2].Value?.ToString().Trim();
-                            
+
                         if (string.IsNullOrEmpty(itemNumberStr))
                         {
-                             errorMessages.Add($"Row {row}: Item SAP Number is required.");
-                        }
-
-                        if (!int.TryParse(itemNumberStr, out int itemNumber))
-                        {
-                            errorMessages.Add($"Row {row}: SAP Number must be a number.");
+                            errorMessages.Add($"Row {row}: Item SAP Number is required.");
+                            continue;
                         }
 
                         if (string.IsNullOrEmpty(itemName))
                         {
-                            errorMessages.Add($"Row {row}: Item Name / Description is required.");
+                            errorMessages.Add($"Row {row}: Item Name is required.");
+                            continue;
                         }
 
-                        var existingItem = await _context.Items
-                           .AsNoTracking()
-                           .FirstOrDefaultAsync(i => i.ItemNumber == itemNumber);
+                        if (!int.TryParse(itemNumberStr, out int itemNumber))
+                        {
+                            errorMessages.Add($"Row {row}: Item SAP Number must be a number.");
+                            continue;
+                        }
 
-                         if (existingItem != null)
-                         {
-                            errorMessages.Add($"Row {row}: Item with SAP Number {itemNumber} already exists.");
-                         }
+                        if (itemDictionary.ContainsKey(itemNumber))
+                        {
+                            errorMessages.Add($"Row {row}: Duplicate Item SAP Number {itemNumber} found in the Excel file.");
+                            continue;
+                        }
 
-                         int supplierId = 0;
-                            
-                         var defaultSupplier = await _context.Suppliers
-                                                                     .FirstOrDefaultAsync(s => s.SupplierName == "NO SUPPLIER PROVIDED");
-                         if (defaultSupplier == null)
-                         {
-                             defaultSupplier = new Supplier { SupplierName = "NO SUPPLIER PROVIDED" };
-                             _context.Suppliers.Add(defaultSupplier);
-                             await _context.SaveChangesAsync();
-                         }
-                         supplierId = defaultSupplier.SupplierId;
-
-                          if(!errorMessages.Any())
-                          {
-                                var newItem = new Item
-                                {
-                                    ItemNumber = Int32.Parse(itemNumberStr),
-                                    ItemName = itemName,
-                                    SupplierId = supplierId
-                                };
-
-                            validItems.Add(newItem);
-                          }   
+                        itemDictionary.Add(itemNumber, itemName);
                     }
                 }
             }
 
-            if (validItems.Count != expectedSuccessRows)
+            // Handling error feedback based on the count of errors
+            if (errorMessages.Count > 10)
             {
-                if (errorMessages.Count > 10)
-                {
-                    TempData["ErrorMessage"] = $"There are errors in {errorMessages.Count} rows. Please review and fix the errors before uploading again.";
-                }
-                else
-                {
-                    TempData["ErrorMessage"] =
-                         $"Fix error(s) and try to upload again: <br><li>{string.Join("<li>", errorMessages)}";
-                }
+                TempData["ErrorMessage"] = $"There are errors in {errorMessages.Count} rows. Please review and fix the errors before uploading again.";
+            }
+            else if (errorMessages.Any())
+            {
+                TempData["ErrorMessage"] = $"Errors found: <br><li>{string.Join("<li>", errorMessages)}";
             }
             else
             {
-                foreach (var item in validItems)
+                // Process items if there are no critical errors
+                foreach (var (itemNumber, itemName) in itemDictionary)
                 {
-                    var transaction = _context.Database.BeginTransaction(); // Start transaction for each row
+                    var existingItem = await _context.Items
+                        .FirstOrDefaultAsync(i => i.ItemNumber == itemNumber);
 
-                    try
+                    if (existingItem != null)
                     {
-                        _context.Items.Add(item);
-                        await _context.SaveChangesAsync();
-
-                        transaction.Commit();
+                        if (existingItem.ItemName != itemName)
+                        {
+                            existingItem.ItemName = itemName;
+                            _context.Items.Update(existingItem);
+                            successCount++;
+                        }
                     }
-                    catch (Exception)
+                    else
                     {
-                        transaction.Rollback();
-                        break;
+                        var newItem = new Item
+                        {
+                            ItemNumber = itemNumber,
+                            ItemName = itemName
+                        };
+                        _context.Items.Add(newItem);
+                        successCount++;
                     }
                 }
 
-                TempData["SuccessMessage"] =
-                    $"File uploaded successfully. {expectedSuccessRows} rows added.";
+                await _context.SaveChangesAsync();
+            }
 
+            if (successCount > 0 && errorMessages.Count <= 10)
+            {
+                TempData["SuccessMessage"] = $"File processed successfully. {successCount} items have been added or updated.";
+            }
+            else if (!errorMessages.Any())
+            {
+                TempData["ErrorMessage"] = "No items were added or updated. Please check the file for errors or duplicates.";
             }
 
             return RedirectToAction(nameof(Index));
@@ -547,31 +397,7 @@ namespace HaverDevProject.Controllers
         public IActionResult Upload()
         {
             return View("UploadExcel");
-        }
-
-        private int GetDefaultSupplierId()
-        {
-            var defaultSupplier = _context.Suppliers.FirstOrDefault(s => s.SupplierName == "NO SUPPLIER PROVIDED");
-            // If the default supplier is found, return its ID
-            if (defaultSupplier != null)
-            {
-                return defaultSupplier.SupplierId;
-            }
-            else
-            {
-                var newSupplier = new Supplier
-                {
-                    SupplierCode = "000000",
-                    SupplierName = "NO SUPPLIER PROVIDED"
-                };
-                _context.Suppliers.Add(newSupplier);
-                _context.SaveChanges(); // Save the new supplier to the database
-
-                return newSupplier.SupplierId; // Return the ID of the newly created supplier
-            }
-        }
-
-
+        }        
         private bool ItemExists(int id)
         {
             return _context.Items.Any(e => e.ItemId == id);

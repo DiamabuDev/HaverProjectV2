@@ -154,7 +154,7 @@
                         @Html.DisplayFor(modelItem => item.Ncr.NcrNumber)
                     </td>
                     <td class="col-3">
-                        @Html.DisplayFor(modelItem => item.Ncr.NcrQa.Item.Supplier.SupplierName)
+                        @Html.DisplayFor(modelItem => item.Ncr.NcrQa.Supplier.SupplierName)
                     </td>
                     <td class="col-auto">
                         <span class="badge @(item.NcrProcSupplierReturnReq ? "bg-success" : "bg-danger")">

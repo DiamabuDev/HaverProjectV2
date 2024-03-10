@@ -9,7 +9,21 @@ namespace HaverDevProject.ViewModels;
 
 public class NcrEngMetaData
 {
-	[Key]
+    public int DaysSinceCreated
+
+    {
+
+        get
+
+        {
+
+            return (DateTime.Now - NcrEngCreationDate).Days;
+
+        }
+
+    }
+
+    [Key]
 	[Column("ncrEngId")]
 	public int NcrEngId { get; set; }
 
@@ -24,6 +38,11 @@ public class NcrEngMetaData
 	[Unicode(false)]
     [Required(ErrorMessage = "You must include a disposition description")]
     public string NcrEngDispositionDescription { get; set; }
+
+    [Display(Name = "Date")]
+    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+    [DataType(DataType.Date)]
+    public DateTime NcrEngCompleteDate { get; set; }
 
     [Display(Name = "Date")]
     [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]

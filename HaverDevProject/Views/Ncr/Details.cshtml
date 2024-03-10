@@ -1,36 +1,42 @@
 ﻿@model HaverDevProject.Models.Ncr
 
-<div id="contentToDownload">
-    @if (Model.NcrQa != null)
-    {
-        @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", Model.NcrQa)
-        ;
-    }
+<div class="container-fluid mt-2">
+    <div class="row justify-content-center">
+        <div id="contentToDownload" class="col-md-10 mx-0">
 
-    @if (Model.NcrEng != null)
-    {
-        @await Html.PartialAsync("~/Views/NCRDetailViews/_NCREngDetailsPartial.cshtml", Model.NcrEng)
-        ;
-    }
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_HeadingDetailsNCRMain.cshtml", Model)
 
-    @if (Model.NcrOperation != null)
-    {
-        @await Html.PartialAsync("~/Views/NCRDetailViews/_NCROpDetailsPartial.cshtml", Model.NcrOperation)
-        ;
-    }
+            @if (Model.NcrQa != null)
+            {
+                @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", Model.NcrQa)
+            }
 
-    @if (Model.NcrProcurement != null)
-    {
-        @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRProcDetailsPartial.cshtml", Model.NcrProcurement)
-        ;
-    }
+            @if (Model.NcrEng != null)
+            {
+                @await Html.PartialAsync("~/Views/NCRDetailViews/_NCREngDetailsPartial.cshtml", Model.NcrEng)
+            }
 
-    @if (Model.NcrReInspect != null)
-    {
-        @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRReInspDetailsPartial.cshtml", Model.NcrReInspect)
-        ;
-    }
+            @if (Model.NcrOperation != null)
+            {
+                @await Html.PartialAsync("~/Views/NCRDetailViews/_NCROpDetailsPartial.cshtml", Model.NcrOperation)
+            }
+
+            @if (Model.NcrProcurement != null)
+            {
+                @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRProcDetailsPartial.cshtml", Model.NcrProcurement)
+            }
+
+            @if (Model.NcrReInspect != null)
+            {
+                @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRReInspDetailsPartial.cshtml", Model.NcrReInspect)
+            }
+        </div>
+    </div>
 </div>
+
+
+
+
 
 @await Html.PartialAsync("~/Views/NCRDetailViews/_ActionButtonsNCRMain.cshtml", Model);
 

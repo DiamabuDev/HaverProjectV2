@@ -22,7 +22,7 @@ public class NcrQaMetaData
     [Column("ncrQAProcessApplicable")]
     public bool NcrQaProcessApplicable { get; set; }
     [Display(Name = "Creation Date")]
-    [Required(ErrorMessage = "You must provide the date the NCR was created.")]
+    //[Required(ErrorMessage = "You must provide the date the NCR was created.")]
     [Column("ncrQACreationDate", TypeName = "date")]
     [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
     [DataType(DataType.Date)]
@@ -89,6 +89,15 @@ public class NcrQaMetaData
 
     [ForeignKey("DefectId")]
     public Defect Defect { get; set; }
+
+    //Validar
+    [Display(Name = "Supplier")]
+    [Required(ErrorMessage = "You must select a Supplier.")]
+    [Column("supplierId")]
+    public int SupplierId { get; set; }
+
+    [ForeignKey("SupplierId")]
+    public Supplier Supplier { get; set; }
 
     //Validar
     [Display(Name = "Video Link")]
