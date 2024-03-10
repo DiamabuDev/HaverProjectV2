@@ -76,7 +76,7 @@
                         @Html.Raw(ViewData["filterApplied:Supplier"])
                     </button>
                 </th>
-                <th class="d-none d-md-table-cell col-3">
+                <th class="three-cols">
                     <button type="submit" name="actionButton" value="Defect" class="btn text-light custom-btn-text-start">
                         Defect
                         @Html.Raw(ViewData["filterApplied:Defect"])
@@ -119,7 +119,7 @@
                     <td class="col-3">
                         @Html.DisplayFor(modelItem => item.Supplier.SupplierName)
                     </td>
-                    <td class="d-none d-md-table-cell col-3">
+                    <td class="three-cols">
                         @Html.DisplayFor(modelItem => item.Defect.DefectName)
                     </td>
                     <td class="d-none d-md-table-cell">
