@@ -9,7 +9,7 @@
   <partial name="_addSupplierModal" />
   <partial name="_addDefectModal" />
   
-    <h1><i class="bi bi-caret-right-fill"></i>Quality Inspector</h1>
+    <h1><i class="bi bi-caret-right-fill"></i>Quality Representative</h1>
     <button class="btn custom-details-btn icon-drop text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#details" aria-expanded="false" aria-controls="details">
         Details <i class="bi bi-chevron-down"></i>
     </button>
@@ -510,6 +510,38 @@
             while (ul.firstChild) {
                 ul.removeChild(ul.firstChild);
             }
+        }
+    </script>
+
+    <script>
+        function deletePhoto(photoId) {
+            if (!confirm("Are you sure you want to delete this photo?")) return;
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("DeletePhoto", "NcrQa")',
+                data: { photoId: photoId },
+                success: function (response) {
+                    if (response.success) {
+                        $("#photo-" + photoId).remove();
+
+                        var currentCount = parseInt($("#photoCounter").text());
+                        var newCount = currentCount - 1;
+
+                        alert("Photo deleted sucessfully!");
+                        if (newCount > 0) {
+                            $("#photoCounter").text(newCount);
+                        } else {
+                            $("#photoListContainer").html('<p>No photos to display.</p>');
+                        }
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert("An error occurred. Please try again.");
+                }
+            });
         }
     </script>
 }
