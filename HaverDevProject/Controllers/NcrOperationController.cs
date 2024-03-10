@@ -438,7 +438,8 @@ namespace HaverDevProject.Controllers
             {
                 NcrOpId = ncrOperation.NcrOpId,
                 NcrNumber = ncrOperation.Ncr.NcrNumber,
-                NcrOpCreationDate = ncrOperation.Ncr.NcrEng.NcrEngCreationDate,
+                NcrOpCreationDate = ncrOperation.NcrOpCreationDate,
+                NcrOpCompleteDate = ncrOperation.NcrOpCompleteDate,
                 NcrId = ncrOperation.NcrId,
                 Ncr = ncrOperation.Ncr,
                 OpDispositionTypeId = ncrOperation.OpDispositionTypeId,
@@ -492,33 +493,16 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, int NcrId, NcrOperationDTO ncrOperationDTO, List<IFormFile> Photos)
+        public async Task<IActionResult> Edit(int id, NcrOperationDTO ncrOperationDTO, List<IFormFile> Photos)
         {
-            ncrOperationDTO.NcrOpId = id;
-            if (id != ncrOperationDTO.NcrOpId)
-            {
-                return NotFound();
-            }
+            //ncrOperationDTO.NcrOpId = id;
+            //if (id != ncrOperationDTO.NcrOpId)
+            //{
+            //    return NotFound();
+            //}
 
             if (ModelState.IsValid)
             {
-                var ncrToUpdate = await _context.Ncrs
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(n => n.NcrId == NcrId);
-
-                if (ncrToUpdate == null)
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    //ncrToUpdate.NcrPhase = NcrPhase.Procurement;
-                    ncrToUpdate.NcrLastUpdated = DateTime.Now;
-
-                    _context.Ncrs.Update(ncrToUpdate);
-                    await _context.SaveChangesAsync();
-                }
-
                 await AddPictures(ncrOperationDTO, Photos);
                 try
                 {
@@ -526,12 +510,14 @@ namespace HaverDevProject.Controllers
                     .Include(n => n.Ncr)
                     .Include(n => n.OpDispositionType)
                     .Include(n => n.FollowUpType)
-                    .Include(n => n.OpDefectPhotos)
-                    .FirstOrDefaultAsync(ne => ne.NcrId == id);
+                    //.Include(n => n.OpDefectPhotos)
+                    .FirstOrDefaultAsync(ne => ne.NcrOpId == id);
 
 
                     ncrOperation.OpDispositionTypeId = ncrOperationDTO.OpDispositionTypeId;
                     ncrOperation.NcrPurchasingDescription = ncrOperationDTO.NcrPurchasingDescription;
+                    ncrOperation.NcrOpCreationDate = ncrOperationDTO.NcrOpCreationDate;
+                    ncrOperation.NcrOpCompleteDate = ncrOperationDTO.NcrOpCompleteDate;
                     ncrOperation.Car = ncrOperationDTO.Car;
                     ncrOperation.CarNumber = ncrOperationDTO.CarNumber;
                     ncrOperation.FollowUp = ncrOperationDTO.FollowUp;
@@ -541,17 +527,16 @@ namespace HaverDevProject.Controllers
                     ncrOperation.NcrPurchasingUserId = 1;
                     ncrOperation.NcrOperationVideo = ncrOperationDTO.NcrOperationVideo;
                     ncrOperation.OpDefectPhotos = ncrOperationDTO.OpDefectPhotos;
-                    ncrOperation.Ncr.NcrLastUpdated = DateTime.Now;
 
                     _context.Update(ncrOperation);
                     await _context.SaveChangesAsync();
 
 
-                    //var ncr = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrOperation.NcrId);
-                    ////ncr.NcrPhase = NcrPhase.Procurement;
-                    //ncr.NcrLastUpdated = DateTime.Now;
-                    //_context.Update(ncr);
-                    //await _context.SaveChangesAsync();
+                    var ncr = await _context.Ncrs.FirstOrDefaultAsync(n => n.NcrId == ncrOperation.NcrId);
+                    //ncr.NcrPhase = NcrPhase.Procurement;
+                    ncr.NcrLastUpdated = DateTime.Now;
+                    _context.Update(ncr);
+                    await _context.SaveChangesAsync();
 
                     TempData["SuccessMessage"] = "NCR edited successfully!";
                     int ncrOpId = ncrOperation.NcrOpId;

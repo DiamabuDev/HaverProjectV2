@@ -386,6 +386,7 @@ namespace HaverDevProject.Controllers
                         NcrProcSAPReturnCompleted = ncrProcDTO.NcrProcSAPReturnCompleted,
                         NcrProcCreditExpected = ncrProcDTO.NcrProcCreditExpected,
                         NcrProcSupplierBilled = ncrProcDTO.NcrProcSupplierBilled,
+                        NcrProcRejectedValue = ncrProcDTO.NcrProcRejectedValue,
                         NcrProcFlagStatus = ncrProcDTO.NcrProcFlagStatus,
                         NcrProcUserId = ncrProcDTO.NcrProcUserId,
                         NcrProcCreated = DateTime.Now,
@@ -458,6 +459,7 @@ namespace HaverDevProject.Controllers
                 NcrProcSAPReturnCompleted = ncrProc.NcrProcSAPReturnCompleted,
                 NcrProcCreditExpected = ncrProc.NcrProcCreditExpected,
                 NcrProcSupplierBilled = ncrProc.NcrProcSupplierBilled,
+                NcrProcRejectedValue = ncrProc.NcrProcRejectedValue,
                 NcrProcFlagStatus = ncrProc.NcrProcFlagStatus,
                 NcrProcUserId = ncrProc.NcrProcUserId,
                 NcrProcCreated = ncrProc.NcrProcCreated,
@@ -534,6 +536,7 @@ namespace HaverDevProject.Controllers
                     ncrProc.NcrProcSAPReturnCompleted = ncrProcDTO.NcrProcSAPReturnCompleted;
                     ncrProc.NcrProcCreditExpected = ncrProcDTO.NcrProcCreditExpected;
                     ncrProc.NcrProcSupplierBilled = ncrProcDTO.NcrProcSupplierBilled;
+                    ncrProc.NcrProcRejectedValue = ncrProcDTO.NcrProcRejectedValue;
                     ncrProc.NcrProcFlagStatus = ncrProcDTO.NcrProcFlagStatus;
                     ncrProc.NcrProcUserId = ncrProcDTO.NcrProcUserId;
                     ncrProc.NcrProcCreated = DateTime.Now;
