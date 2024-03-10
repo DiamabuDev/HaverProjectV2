@@ -168,7 +168,6 @@ namespace HaverDevProject.Controllers
             //Set sort for next time
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
-
             ViewData["filter"] = filter;
 
             //return View(await suppliers.ToListAsync());

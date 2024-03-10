@@ -581,7 +581,8 @@ namespace HaverDevProject.Controllers
         private void PopulateDropDownLists()
         {            
             ViewData["SupplierId"] = SupplierSelectList(null);
-            ViewData["ItemId"] = ItemSelectList();       
+            ViewData["ItemId"] = ItemSelectList();
+            ViewData["DefectId"] = DefectSelectList();
         }
 
 
