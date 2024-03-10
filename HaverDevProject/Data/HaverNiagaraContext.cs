@@ -145,14 +145,14 @@ public partial class HaverNiagaraContext : DbContext
                 .HasConstraintName("fk_ncrReInspectPhoto_itemDefect");
         });
 
-        modelBuilder.Entity<OpDefectPhoto>(entity =>
-        {
-            entity.HasKey(e => e.OpDefectPhotoId).HasName("pk_opDefectPhoto_opDefectPhotoId");
+        //modelBuilder.Entity<OpDefectPhoto>(entity =>
+        //{
+        //    entity.HasKey(e => e.OpDefectPhotoId).HasName("pk_opDefectPhoto_opDefectPhotoId");
 
-            entity.HasOne(d => d.NcrOperation).WithMany(p => p.OpDefectPhotos)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("fk_opDefectPhoto_itemDefect");
-        });
+        //    entity.HasOne(d => d.NcrOperation).WithMany(p => p.OpDefectPhotos)
+        //        .OnDelete(DeleteBehavior.ClientSetNull)
+        //        .HasConstraintName("fk_opDefectPhoto_itemDefect");
+        //});
 
         modelBuilder.Entity<Ncr>(entity =>
         {
@@ -177,10 +177,10 @@ public partial class HaverNiagaraContext : DbContext
 
         modelBuilder.Entity<NcrOperation>(entity =>
         {
-            entity.HasKey(e => e.NcrOpId).HasName("pk_ncrOperation_NcrOpId");
+            entity.HasKey(e => e.NcrOpId).HasName("pk_ncrOperation_ncrOpId");
 
             entity.HasOne(d => d.OpDispositionType).WithMany(p => p.NcrOperations)
-                .OnDelete(DeleteBehavior.Cascade)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_ncrOperation_opDispositionType");
         });
 
