@@ -510,7 +510,7 @@ namespace HaverDevProject.Controllers
                     .Include(n => n.Ncr)
                     .Include(n => n.OpDispositionType)
                     .Include(n => n.FollowUpType)
-                    .Include(n => n.OpDefectPhotos)
+                    //.Include(n => n.OpDefectPhotos)
                     .FirstOrDefaultAsync(ne => ne.NcrOpId == id);
 
 
