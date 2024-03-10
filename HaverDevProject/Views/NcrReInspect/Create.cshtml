@@ -6,7 +6,7 @@
 
 <div class="col-md-8 col-10 mx-auto">
     <h1><i class="bi bi-caret-right-fill"></i>Reinspection</h1>
-    
+
     <button class="btn custom-details-btn icon-drop text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#details" aria-expanded="false" aria-controls="details">
         Details <i class="bi bi-chevron-down"></i>
     </button>
@@ -57,64 +57,66 @@
                         </div>
                         <input type="hidden" asp-for="NcrId" />
                     </div>
-                          
+
                     <div class="col-6">
                         <div class="form-group">
                             <b>Date</b>
-@*                             <label asp-for="NcrReInspectCreationDate" class="control-label"><b>NCR No. </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Code to identify the NCR">(e.g. 2024-000)</small></label>
- *@                            <input asp-for="NcrReInspectCreationDate" class="form-control" readonly />
+                            @*                             <label asp-for="NcrReInspectCreationDate" class="control-label"><b>NCR No. </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Code to identify the NCR">(e.g. 2024-000)</small></label>
+                            *@                            <input asp-for="NcrReInspectCreationDate" class="form-control" readonly />
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-6">
                         <div class="form-group">
-                            <label class="pb-3"><b>Reinspection Acceptable? </b><small data-bs-toggle="tooltip" data-bs-placement="top" 
-                                data-bs-custom-class="custom-tooltip" data-bs-title="Is this NCR Reinspection Acceptable?">(Y/N)</small></label>
+                            <label class="pb-3">
+                                <b>Reinspection Acceptable? </b><small data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                       data-bs-custom-class="custom-tooltip" data-bs-title="Is this NCR Reinspection Acceptable?">(Y/N)</small>
+                            </label>
                             <span class="fw-bold text-danger">*</span>
                             <div class="text-left">
                                 <div class="form-check form-check-inline">
-                                    <input type="radio" class="form-check-input" asp-for="NcrReInspectAcceptable" value="true" />
+                                    <input type="radio" class="form-check-input" name="NcrReInspectAcceptable" asp-for="NcrReInspectAcceptable" value="true" />
                                     <label class="form-check-label">Yes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input type="radio" class="form-check-input" asp-for="NcrReInspectAcceptable" value="false" />
+                                    <input type="radio" class="form-check-input" name="NcrReInspectAcceptable" asp-for="NcrReInspectAcceptable" value="false" />
                                     <label class="form-check-label">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
                     @* <div class="col-6">
-                        <div class="form-group">
-                            <label asp-for="NcrReInspectUserId" class="control-label"><b>Inspector's Name </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Name of the Inspector">(e.g. J. Doe)</small></label>
-                            <span class="fw-bold text-danger">*</span>
-                            <select asp-for="NcrReInspectUserId" class="form-control">
-                                <option value="">Please select an Inspector</option>
-                                <option value="1">J. Doe</option>
-                                <option value="2">E. Xample</option>
-                                <option value="3">S. Ample</option>
-                                <option value="4">T. Est</option>
-                            </select>
-                            <span asp-validation-for="NcrReInspectUserId" class="text-danger"></span>
-                        </div>
+                    <div class="form-group">
+                    <label asp-for="NcrReInspectUserId" class="control-label"><b>Inspector's Name </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Name of the Inspector">(e.g. J. Doe)</small></label>
+                    <span class="fw-bold text-danger">*</span>
+                    <select asp-for="NcrReInspectUserId" class="form-control">
+                    <option value="">Please select an Inspector</option>
+                    <option value="1">J. Doe</option>
+                    <option value="2">E. Xample</option>
+                    <option value="3">S. Ample</option>
+                    <option value="4">T. Est</option>
+                    </select>
+                    <span asp-validation-for="NcrReInspectUserId" class="text-danger"></span>
+                    </div>
                     </div> *@
                     @* <div class="col-6">
-                        <div class="form-group">
-                            <label asp-for="Ncr.NcrQa.NcrQacreationDate" class="control-label"></label>
-                            <input asp-for="Ncr.NcrQa.NcrQacreationDate" class="form-control" readonly />
-                            <span asp-validation-for="Ncr.NcrQa.NcrQacreationDate" class="text-danger"></span>
-                        </div>
+                    <div class="form-group">
+                    <label asp-for="Ncr.NcrQa.NcrQacreationDate" class="control-label"></label>
+                    <input asp-for="Ncr.NcrQa.NcrQacreationDate" class="form-control" readonly />
+                    <span asp-validation-for="Ncr.NcrQa.NcrQacreationDate" class="text-danger"></span>
+                    </div>
                     </div> *@
 
                 </div>
-@*                 <div class="row">
-                 
-                                    
+                @*                 <div class="row">
+
+
                 </div> *@
                 <div class="form-group">
                     <label class="control-label custom-file-label"><b>Upload Photos</b></label>
                     <input type="file" class="form-control" name="Photos" multiple="multiple" />
-                </div>      
+                </div>
                 <div class="form-group">
                     <div class="form-group">
                         <label asp-for="NcrReInspectDefectVideo" class="control-label"><b>Video Links </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Add multiple video links separated by a comma">(e.g. https://haverniagara.com, https://www.google.ca)</small></label>
@@ -213,14 +215,16 @@
 </div> *@
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
     <script>
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl);
         });
     </script>
-@*     <script>
+    @*     <script>
         function NewNcr(){
             event.preventDefault();
 
@@ -236,6 +240,9 @@
  *@
 
     <script>
+
+        let isAcceptable = true;
+
         function showAcceptableReinspectionModal() {
             $('#acceptableReinspectionModal').modal('show');
         }
@@ -246,18 +253,18 @@
 
         $('input[name="NcrReInspectAcceptable"]').change(function () {
             console.log("Change event triggered for NcrReInspectAcceptable radio buttons.");
-            var ncrReInspectAcceptable = $(this).val();
-            if (ncrReInspectAcceptable === "false") {
+            isAcceptable = $(this).val();
+
+            if (isAcceptable == 'false') {
                 console.log("Showing the modal...");
                 showAcceptableReinspectionModal();
+
             } else {
                 console.log("Hiding the modal...");
                 hideAcceptableReinspectionModal();
             }
         });
-    </script>
 
-    <script>
         document.getElementById('btnSaveAndClose').addEventListener('click', function (event) {
             event.preventDefault();
 
@@ -272,14 +279,19 @@
             $('#closeReinspectionModal').modal('show');
 
             document.getElementById('btnYes').addEventListener('click', function () {
-                document.getElementById('btnSaveAndClose').click();
+                hideCloseReinspectionModal();
+                document.getElementById('reInspectFormId').submit();
+            });
+
+            document.getElementById('btnNo').addEventListener('click', function () {
                 hideCloseReinspectionModal();
             });
+
         }
 
         function hideCloseReinspectionModal() {
             $('#closeReinspectionModal').modal('hide');
         }
-    </script>
 
+    </script>
 }

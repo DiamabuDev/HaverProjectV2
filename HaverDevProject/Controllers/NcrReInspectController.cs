@@ -322,7 +322,7 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create( NcrReInspect ncrReInspect, List<IFormFile> Photos)
+        public async Task<IActionResult> Create(NcrReInspect ncrReInspect, List<IFormFile> Photos, IFormCollection form)
         {
             try
             {
@@ -331,6 +331,9 @@ namespace HaverDevProject.Controllers
                     //await AddReInspectPictures(ncrReInspect, Photos);
 
                     //ncrReInspect.NcrReInspectNewNcrNumber = GetNcrNumber();
+
+                    string isAcceptable = form["NcrReInspectAcceptable"];
+
                     _context.Add(ncrReInspect);
                     await _context.SaveChangesAsync();
 
@@ -346,9 +349,17 @@ namespace HaverDevProject.Controllers
                     _context.Ncrs.Update(ncrToUpdate);
                     await _context.SaveChangesAsync();
 
-                    TempData["SuccessMessage"] = "NCR closed successfully!";
                     int ncrReInspectId = ncrReInspect.NcrReInspectId;
-                    return RedirectToAction("Details", new { id = ncrReInspectId });
+
+                    if (isAcceptable == "false")
+                    {
+                        return RedirectToAction("Create", "NcrQa", new { parentNcrId = ncrReInspect.NcrId });
+                    }
+                    else
+                    {
+                        TempData["SuccessMessage"] = "NCR closed successfully!";
+                        return RedirectToAction("Details", new { id = ncrReInspect.NcrReInspectId });
+                    }
                 }
                 else
                 {
@@ -380,10 +391,8 @@ namespace HaverDevProject.Controllers
                 ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
             }
 
-            //ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrReInspect.NcrId);
-
             return View(ncrReInspect);
-        } //,RowVersion
+        }
 
         // GET: NcrReInspect/Edit/5
         public async Task<IActionResult> Edit(int? id)
