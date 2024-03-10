@@ -13,6 +13,7 @@ using HaverDevProject.ViewModels;
 using Microsoft.EntityFrameworkCore.Storage;
 using Defect = HaverDevProject.Models.Defect;
 using OfficeOpenXml;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 
 namespace HaverDevProject.Controllers
@@ -116,7 +117,7 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DefectId,DefectName,DefectDesription")] Defect defect/*, string[] selectedOptions*/)
+        public async Task<IActionResult> Create([Bind("DefectId,DefectName,DefectDesription")] Defect defect)
         {
             try
             {
@@ -137,6 +138,23 @@ namespace HaverDevProject.Controllers
             {
                 ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
             }
+
+            ////Send the Validation Errors directly to the client
+            if (!ModelState.IsValid && Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                //Was an AJAX request so build a message with all validation errors
+                string errorMessage = "";
+                foreach (var modelState in ViewData.ModelState.Values)
+                {
+                    foreach (ModelError error in modelState.Errors)
+                    {
+                        errorMessage += error.ErrorMessage + "|";
+                    }
+                }
+                //Note: returning a BadRequest results in HTTP Status code 400
+                return BadRequest(errorMessage);
+            }
+
             return View(defect);
         }
 

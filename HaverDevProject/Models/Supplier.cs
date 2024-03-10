@@ -16,7 +16,7 @@ public partial class Supplier
 
     [NotMapped]
     [Display(Name = "Supplier (incl Code)")]
-    public string Summary => $"{SupplierCode} {SupplierName}";
+    public string Summary => $"{SupplierCode} - {SupplierName}";
 
     [Display(Name = "Code")]
     [Required(ErrorMessage = "You must provide the Supplier Code.")]

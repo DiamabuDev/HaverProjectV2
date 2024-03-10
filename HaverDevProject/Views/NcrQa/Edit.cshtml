@@ -5,6 +5,10 @@
 }
 
 <div class="col-md-8 col-10 mx-auto">
+  <partial name="_addItemModal" />
+  <partial name="_addSupplierModal" />
+  <partial name="_addDefectModal" />
+  
     <h1><i class="bi bi-caret-right-fill"></i>Quality Inspector</h1>
     <button class="btn custom-details-btn icon-drop text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#details" aria-expanded="false" aria-controls="details">
         Details <i class="bi bi-chevron-down"></i>
@@ -24,8 +28,8 @@
         {
             @await Html.PartialAsync("~/Views/NCRDetailViews/_NCROpDetailsPartial.cshtml", (NcrOperation)ViewBag.ncrDetails.NcrOperation)
         }
-    </div>
-    <partial name="_addSupplierModal" />
+    </div>    
+
     <form asp-action="Edit" method="post" enctype="multipart/form-data">
         <input type="hidden" asp-for="NcrQaId" />
         <input type="hidden" asp-for="NcrId" />
@@ -123,51 +127,52 @@
                     <div class="form-group">
                         <label class="control-label">
                             <strong>Supplier </strong>
-                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Lawrence Sintered Metals.)</small> 
-                            <span class="fw-bold text-danger">*</span></label>
-                        <div class="input-group mb-3">
+                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Lawrence Sintered Metals.)</small>
+                            <span class="fw-bold text-danger">*</span>
+                        </label>
+                        <div class="input-group mb-1">
                             <div class="input-group-prepend">
-                                <button class="btn btn-outline-secondary custom-btn-color" id="nowAddSupplier" data-bs-toggle="modal" data-bs-target="#addSupplierModal" type="button" data-tooltip="true"><i class='bi-plus-square-dotted'></i></button>
+                                <button class="btn btn-outline-secondary custom-btn-color" id="nowAddSupplier" data-bs-toggle="modal" data-bs-target="#addSupplierModal" type="button" data-tooltip-supplier="true"><i class='bi-plus-square-dotted'></i></button>
                             </div>
-                            <select class="form-control" id="SupplierId" name="SupplierId" asp-items="ViewBag.SupplierId" asp-for="SupplierId" required>
+                            <select class="form-control" id="SupplierId" name="SupplierId" asp-items="ViewBag.SupplierId" asp-for="SupplierId" id="Supplier" required>
                                 <option value="">Select Supplier</option>
                             </select>
-                            <span asp-validation-for="SupplierId" class="text-danger"></span>
                         </div>
+                        <span asp-validation-for="SupplierId" class="text-danger"></span>
                     </div>
-
-                    @* <div class="form-group">
-                        <label class="control-label">Supplier</label>
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <button class="btn btn-outline-secondary" id="nowAddMedicalTrial" data-bs-toggle="modal" data-bs-target="#addMedicalTrialModal" type="button">&#x2795;</button>
-                            </div>
-                            <select asp-for="SupplierId" class="form-control" asp-items="ViewBag.SupplierId">
-                                <option value="">None</option>
-                            </select>
-                        </div>
-                    </div> *@
-
-
                     <div class="form-group">
                         <label asp-for="ItemId" class="control-label">
                             <strong>Item </strong>
-                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Panel.)</small> <span class="fw-bold text-danger">*</span></label>
-                        <select asp-for="ItemId" id="ItemId" class="form-control" asp-items="ViewBag.ItemId" required>
-                            <option value="0">Select a Supplier First</option>
-                        </select>
+                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Panel.)</small>
+                            <span class="fw-bold text-danger">*</span>
+                        </label>
+                        <div class="input-group mb-1">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary custom-btn-color" id="nowAddItem" data-bs-toggle="modal" data-bs-target="#addItemModal" type="button" data-tooltip-item="true"><i class='bi-plus-square-dotted'></i></button>
+                            </div>
+                            <select asp-for="ItemId" id="ItemId" class="form-control" name="ItemId" asp-items="ViewBag.ItemId" id="Item">
+                                <option value="">Select Item</option>
+                            </select>
+                        </div>
                         <span asp-validation-for="ItemId" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="DefectId" class="control-label">
                             <strong>Defect </strong>
-                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Surface to house internal components.)</small> 
-                            <span class="fw-bold text-danger">*</span></label>
-                        <select asp-for="DefectId" class="form-control" id="DefectId" name="DefectId" asp-items="ViewBag.DefectId">
-                            <option value="0">Select an Item First</option>
-                        </select>
+                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Surface to house internal components.)</small>
+                            <span class="fw-bold text-danger">*</span>
+                        </label>
+                        <div class="input-group mb-1">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary custom-btn-color" id="nowAddDefect" data-bs-toggle="modal" data-bs-target="#addDefectModal" type="button" data-tooltip-defect="true"><i class='bi-plus-square-dotted'></i></button>
+                            </div>
+                            <select asp-for="DefectId" class="form-control" id="DefectId" name="DefectId" asp-items="ViewBag.DefectId" id="Defect">
+                                <option value="">Select Item</option>
+                            </select>
+                        </div>
                         <span asp-validation-for="DefectId" class="text-danger"></span>
                     </div>
+
                     <div class="form-group">
                         <label asp-for="NcrQaDescriptionOfDefect" class="control-label">
                             <strong>Description of Defect </strong>
@@ -295,37 +300,27 @@
             return new bootstrap.Tooltip(tooltipTriggerEl);
         });
     </script>
-    <script type="text/javascript">
-        $('#SupplierId').change(function () {
-            var selectedSupplier = $("#SupplierId").val();
-            var URL = "/NcrQa/GetItems/?SupplierId=" + selectedSupplier;
-            refreshDDL('ItemId', URL, true, 'No items related with the supplier selected', true, "Select an item", true);
 
-            // Set the value of DefectId dropdown to an empty string
-            $('#DefectId').val('');
-        });
-    </script>
-    <script type="text/javascript">
-        $('#ItemId').change(function () {
-            var selectedItemId = $("#ItemId").val();
-            var URL = "/NcrQa/GetDefects/?ItemId=" + selectedItemId;
-            refreshDDL('DefectId', URL, true, 'No defects related with the item selected', false, null, true);
-        });
-    </script>
-    <!--Script for tooltip in Add New Supplier button-->
+    <!--Script for tooltips-->
     <script>
         $(document).ready(function () {
-            $('[data-tooltip="true"]').tooltip({
-                title: 'Add New Supplier'
-            });
+            initializeTooltip('Add New Supplier', '[data-tooltip-supplier="true"]');
+            initializeTooltip('Add New Item', '[data-tooltip-item="true"]');
+            initializeTooltip('Add New Defect', '[data-tooltip-defect="true"]');
         });
+        function initializeTooltip(title, selector) {
+            $(selector).tooltip({
+                title: title
+            });
+        }
     </script>
 
-    <!--Script for Add New Supplier button-->
+
+    <!--Script Add New Supplier button-->
     <script type="text/javascript">
         $('#submitSupplierCreate').click(function (event) {
             event.preventDefault();
-            ClearErrors();
+            ClearErrorsSupplier();
             var form = $('#createSupplierForm');
             if (form.valid()) {
                 $.ajax({
@@ -355,7 +350,7 @@
                             errorMessages.push("Error: Unable to complete operation");
                         }
                         //Put the messages in the ErrorList ul contained in the 'ValidaitonSummary' div.
-                        var ul = document.getElementById("ErrorList");
+                        var ul = document.getElementById("ErrorListSupplier");
                         for (var i = 0; i < errorMessages.length; i++) {
                             var errorMessage = errorMessages[i];
                             var li = document.createElement("li");
@@ -369,16 +364,142 @@
         });
         $('#addSupplierModal').on('hide.bs.modal', function () {
             document.getElementById("createSupplierForm").reset();//to clear the data in the popup form
-            ClearErrors();
+            ClearErrorsSupplier();
             var selectedOption = $('#SupplierId').val();//Return to the current selected value
-            refreshDDL('SupplierId', '/NcrQa/GetSuppliers/' + selectedOption, false, null, true, 'Select a Supplier First', true);
+            refreshDDL('SupplierId', '/NcrQa/GetSuppliers/' + selectedOption, false, null, true, 'Select Supplier', true);
+        });
+        function ClearErrorsSupplier() {
+            //Empty out the list of validation errors if there are any
+            var ul = document.getElementById("ErrorListSupplier");
+            while (ul.firstChild) {
+                ul.removeChild(ul.firstChild);
+            }
+        }
+    </script>
+
+    <!--Script for Add New Item button-->
+    <script type="text/javascript">
+
+        $('#submitItemCreate').click(function (event) {
+            event.preventDefault();
+            ClearErrors();
+            var form = $('#createItemForm');
+            if (form.valid()) {
+                $.ajax({
+                    type: "POST",
+                    url: form.attr('action'),
+                    data: form.serialize(),
+                    success: function () {
+                        $('#addItemModal').modal('hide');
+                    },
+                    error: function (xhr) { //Note: xhr is the XMLHttpRequest
+                        var errorMessages = [];
+                        switch (xhr.status) {
+                            case 401:
+                                errorMessages.push("You must be logged in first.");
+                                break;
+                            case 403:
+                                errorMessages.push("You are not authorized for this action.");
+                                break;
+                            default:
+                                //Messages coming from the Model State Errors
+                                //We split on the | delimeter and the .slice removes the last one
+                                errorMessages = xhr.responseText.split("|").slice(0, -1);
+                        }
+                        //This checks if there are any elements with some content
+                        //and if not then it provides a default feedback message.
+                        if (!errorMessages.some((str) => str !== "")) {
+                            errorMessages.push("Error: Unable to complete operation");
+                        }
+                        //Put the messages in the ErrorList ul contained in the 'ValidaitonSummary' div.
+                        var ul = document.getElementById("ErrorListItem");
+                        for (var i = 0; i < errorMessages.length; i++) {
+                            var errorMessage = errorMessages[i];
+                            var li = document.createElement("li");
+                            li.innerHTML = errorMessage;
+                            ul.appendChild(li);
+                        }
+                    }
+                });
+            }
+            return false;
+        });
+        $('#addItemModal').on('hide.bs.modal', function () {
+            document.getElementById("createItemForm").reset();//to clear the data in the popup form
+            ClearErrors();
+
+            var selectedOption = $('#ItemId').val();//Return to the current selected value
+            var URLItem = "/NcrQa/GetItems/";
+            refreshDDL('ItemId', URLItem, true, 'No items related with the supplier selected', true, 'Select Item', true);
         });
         function ClearErrors() {
             //Empty out the list of validation errors if there are any
-            var ul = document.getElementById("ErrorList");
+            var ul = document.getElementById("ErrorListItem");
             while (ul.firstChild) {
                 ul.removeChild(ul.firstChild);
-            }=======
+            }
+        }
+    </script>
+
+    <!--Script Add New Defect button-->
+    <script type="text/javascript">
+        $('#submitDefectCreate').click(function (event) {
+            event.preventDefault();
+            ClearErrorsDefect();
+            var form = $('#createDefectForm');
+            if (form.valid()) {
+                $.ajax({
+                    type: "POST",
+                    url: form.attr('action'),
+                    data: form.serialize(),
+                    success: function () {
+                        $('#addDefectModal').modal('hide');
+                    },
+                    error: function (xhr) { //Note: xhr is the XMLHttpRequest
+                        var errorMessages = [];
+                        switch (xhr.status) {
+                            case 401:
+                                errorMessages.push("You must be logged in first.");
+                                break;
+                            case 403:
+                                errorMessages.push("You are not authorized for this action.");
+                                break;
+                            default:
+                                //Messages coming from the Model State Errors
+                                //We split on the | delimeter and the .slice removes the last one
+                                errorMessages = xhr.responseText.split("|").slice(0, -1);
+                        }
+                        //This checks if there are any elements with some content
+                        //and if not then it provides a default feedback message.
+                        if (!errorMessages.some((str) => str !== "")) {
+                            errorMessages.push("Error: Unable to complete operation");
+                        }
+                        //Put the messages in the ErrorList ul contained in the 'ValidaitonSummary' div.
+                        var ul = document.getElementById("ErrorListDefect");
+                        for (var i = 0; i < errorMessages.length; i++) {
+                            var errorMessage = errorMessages[i];
+                            var li = document.createElement("li");
+                            li.innerHTML = errorMessage;
+                            ul.appendChild(li);
+                        }
+                    }
+                });
+            }
+            return false;
+        });
+        $('#addDefectModal').on('hide.bs.modal', function () {
+            document.getElementById("createDefectForm").reset();//to clear the data in the popup form
+            ClearErrorsDefect();
+            //var selectedOption = $('#DefectId').val();//Return to the current selected value
+            //refreshDDL('DefectId', '/NcrQa/GetDefects/' + selectedOption, false, null, true, 'Select the Defect', true);
+            refreshDDL('DefectId', '/NcrQa/GetDefects/', false, null, true, 'Select Defect', true);
+        });
+        function ClearErrorsDefect() {
+            //Empty out the list of validation errors if there are any
+            var ul = document.getElementById("ErrorListDefect");
+            while (ul.firstChild) {
+                ul.removeChild(ul.firstChild);
+            }
         }
     </script>
 }
