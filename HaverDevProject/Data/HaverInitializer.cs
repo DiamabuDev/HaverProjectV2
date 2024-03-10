@@ -904,14 +904,15 @@ namespace HaverDevProject.Data
                             OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Rework 'In-House'").OpDispositionTypeId,
                             NcrPurchasingDescription = "Replacement required",
                             Car = true,
-                            CarNumber = "3456",
+                            CarNumber = "2024-01",
                             FollowUp = true,
+                            NcrOpCompleteDate = DateTime.Parse("2024-03-05"),
                             ExpectedDate = DateTime.Parse("2024-05-18"),
                             NcrOpCreationDate = DateTime.Parse("2024-02-18"),
                             FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Update").FollowUpTypeId,
                             UpdateOp = DateTime.Parse("2024-01-18"),
                             NcrPurchasingUserId = 1
-                            
+
                         },
                         new NcrOperation
                         {
@@ -919,14 +920,15 @@ namespace HaverDevProject.Data
                             OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Scrap in House").OpDispositionTypeId,
                             NcrPurchasingDescription = "Replacement required",
                             Car = true,
-                            CarNumber = "3456",
+                            CarNumber = "2024-02",
                             FollowUp = true,
+                            NcrOpCompleteDate = DateTime.Parse("2024-03-05"),
                             ExpectedDate = DateTime.Parse("2024-05-18"),
                             NcrOpCreationDate = DateTime.Parse("2024-02-18"),
                             FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Resolution").FollowUpTypeId,
                             UpdateOp = DateTime.Parse("2024-01-19"),
                             NcrPurchasingUserId = 1
-                            
+
                         },
                         new NcrOperation
                         {
@@ -936,12 +938,13 @@ namespace HaverDevProject.Data
                             Car = true,
                             CarNumber = "3456",
                             FollowUp = true,
+                            NcrOpCompleteDate = DateTime.Parse("2024-03-05"),
                             ExpectedDate = DateTime.Parse("2024-05-18"),
                             NcrOpCreationDate = DateTime.Parse("2024-02-18"),
                             FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Clarification").FollowUpTypeId,
                             UpdateOp = DateTime.Parse("2024-01-20"),
                             NcrPurchasingUserId = 1
-                            
+
                         },
                         new NcrOperation
                         {
@@ -949,8 +952,9 @@ namespace HaverDevProject.Data
                             OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Rework 'In-House'").OpDispositionTypeId,
                             NcrPurchasingDescription = "Rework per engineering disposition",
                             Car = true,
-                            CarNumber = "3456",
+                            CarNumber = "2024-03",
                             FollowUp = true,
+                            NcrOpCompleteDate = DateTime.Parse("2024-03-05"),
                             ExpectedDate = DateTime.Parse("2024-05-18"),
                             NcrOpCreationDate = DateTime.Parse("2024-02-18"),
                             FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Feedback").FollowUpTypeId,
@@ -963,56 +967,65 @@ namespace HaverDevProject.Data
                             OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Defer for HBC Engineering Review").OpDispositionTypeId,
                             NcrPurchasingDescription = "Replacement required",
                             Car = true,
-                            CarNumber = "3456",
+                            CarNumber = "2024-04",
                             FollowUp = true,
+                            NcrOpCompleteDate = DateTime.Parse("2024-03-05"),
                             ExpectedDate = DateTime.Parse("2024-05-18"),
                             NcrOpCreationDate = DateTime.Parse("2024-02-18"),
                             FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Clarification").FollowUpTypeId,
                             UpdateOp = DateTime.Parse("2024-01-20"),
                             NcrPurchasingUserId = 1
 
-                        }
-                        //new NcrOperation
-                        //{
-                        //    NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-007").NcrId,
-                        //    OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Defer for HBC Engineering Review").OpDispositionTypeId,
-                        //    NcrPurchasingDescription = "Replacement required",
-                        //    Car = true,
-                        //    CarNumber = "3456",
-                        //    FollowUp = true,
-                        //    ExpectedDate = DateTime.Parse("2024-05-18"),
-                        //    FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Clarification").FollowUpTypeId,
-                        //    UpdateOp = DateTime.Parse("2024-01-20"),
-                        //    NcrPurchasingUserId = 1
+                        },
+                        //////////////////////
+                        new NcrOperation
+                        {
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-141").NcrId,
+                            OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Rework 'In-House'").OpDispositionTypeId,
+                            NcrPurchasingDescription = "Replacement required",
+                            Car = true,
+                            CarNumber = "2024-05",
+                            FollowUp = true,
+                            NcrOpCompleteDate = DateTime.Parse("2024-01-18"),
+                            ExpectedDate = DateTime.Parse("2024-05-18"),
+                            NcrOpCreationDate = DateTime.Parse("2024-02-18"),
+                            FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Clarification").FollowUpTypeId,
+                            UpdateOp = DateTime.Parse("2024-01-20"),
+                            NcrPurchasingUserId = 1
 
-                        //},
-                        //new NcrOperation
-                        //{
-                        //    NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-004").NcrId,
-                        //    OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Rework 'In-House'").OpDispositionTypeId,
-                        //    NcrPurchasingDescription = "Rework per engineering disposition",
-                        //    Car = true,
-                        //    CarNumber = "3456",
-                        //    FollowUp = true,
-                        //    ExpectedDate = DateTime.Parse("2024-05-18"),
-                        //    FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Feedback").FollowUpTypeId,
-                        //    UpdateOp = DateTime.Parse("2024-01-21"),
-                        //    NcrPurchasingUserId = 1
-                        //},
-                        //new NcrOperation
-                        //{
-                        //    NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-005").NcrId,
-                        //    OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Rework 'In-House'").OpDispositionTypeId,
-                        //    NcrPurchasingDescription = "Rework per engineering disposition",
-                        //    Car = true,
-                        //    CarNumber = "3456",
-                        //    FollowUp = true,
-                        //    ExpectedDate = DateTime.Parse("2024-05-18"),
-                        //    FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Feedback").FollowUpTypeId,
-                        //    UpdateOp = DateTime.Parse("2024-01-21"),
-                        //    NcrPurchasingUserId = 1
-                        //}
-                        );
+                        },
+                        new NcrOperation
+                        {
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-002").NcrId,
+                            OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Defer for HBC Engineering Review").OpDispositionTypeId,
+                            NcrPurchasingDescription = "Replacement required",
+                            Car = true,
+                            CarNumber = "2024-15",
+                            FollowUp = true,
+                            ExpectedDate = DateTime.Parse("2024-05-18"),
+                            NcrOpCompleteDate = DateTime.Parse("2024-01-18"),
+                            NcrOpCreationDate = DateTime.Parse("2024-02-18"),
+                            FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Update").FollowUpTypeId,
+                            UpdateOp = DateTime.Parse("2024-01-20"),
+                            NcrPurchasingUserId = 1
+
+                        },
+                        new NcrOperation
+                        {
+                            NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-001").NcrId,
+                            OpDispositionTypeId = context.OpDispositionTypes.FirstOrDefault(f => f.OpDispositionTypeName == "Scrap in House").OpDispositionTypeId,
+                            NcrPurchasingDescription = "Replacement required",
+                            Car = true,
+                            CarNumber = "2024-07",
+                            FollowUp = true,
+                            NcrOpCompleteDate = DateTime.Parse("2024-01-23"),
+                            ExpectedDate = DateTime.Parse("2024-05-18"),
+                            NcrOpCreationDate = DateTime.Parse("2024-02-18"),
+                            FollowUpTypeId = context.FollowUpTypes.FirstOrDefault(f => f.FollowUpTypeName == "Feedback").FollowUpTypeId,
+                            UpdateOp = DateTime.Parse("2024-01-20"),
+                            NcrPurchasingUserId = 1
+                        }
+                        ); ;
                     context.SaveChanges();
                 }
 

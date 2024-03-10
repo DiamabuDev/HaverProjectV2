@@ -12,7 +12,7 @@
                             <thead>
                                 <tr>
                                     <th class="two-cols-1">Acceptable</th>
-                                    <th class="two-cols">@(Model.NcrReInspectAcceptable ? "" : "NCR #")</th>
+                                    <th class="two-cols">@(Model.NcrReInspectNewNcrNumber == null ? "" : "New NCR#")
                                 </tr>
                             </thead>                
                             <tbody>
@@ -35,7 +35,7 @@
                             <thead class="custom-light-bg">
                                 <tr>
                                     <th class="three-cols">ReInspection Representative</th>
-                                    <th class="three-cols">Section Creation Date</th>
+                                    <th class="three-cols">Creation Date</th>
                                     <th class="three-cols">Last Updated</th>
                                 </tr>
                             </thead>

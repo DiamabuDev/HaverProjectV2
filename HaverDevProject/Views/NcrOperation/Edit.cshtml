@@ -14,19 +14,25 @@
         {
             @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", (NcrQa)ViewBag.ncrDetails.NcrQa)
         }
-        else
-        {
-            <p>NCR Qa is null</p>
-        }
 
         @if (ViewBag.ncrDetails.NcrEng != null)
         {
             @await Html.PartialAsync("~/Views/NCRDetailViews/_NCREngDetailsPartial.cshtml", (NcrEng)ViewBag.ncrDetails.NcrEng)
         }
 
-        else
+        @if (ViewBag.ncrDetails.NcrOperation != null)
         {
-            <p>NCR Qa is null</p>
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCROpDetailsPartial.cshtml", (NcrOperation)ViewBag.ncrDetails.NcrOperation)
+        }
+
+        @if (ViewBag.ncrDetails.NcrOperation != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRProcDetailsPartial.cshtml", (NcrProcurement)ViewBag.ncrDetails.NcrProcurement)
+        }
+
+        @if (ViewBag.ncrDetails.NcrOperation != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRReInspDetailsPartial.cshtml", (NcrReInspect)ViewBag.ncrDetails.NcrReInspect)
         }
     </div>
     <form asp-action="Edit" method="post" enctype="multipart/form-data">
@@ -211,6 +217,7 @@
         });
     </script>
 
+    @* Validation CAR *@
     <script>
         $(document).ready(function () {
             // Function to show/hide elements and manage validation based on Car value
@@ -239,7 +246,7 @@
             });
         });
     </script>
-
+    @* Validation FollowUp *@
     <script>
         $(document).ready(function () {
             // Function to show/hide elements and manage validation based on FollowUp value
@@ -253,10 +260,14 @@
                     // Set required attribute
                     followUpTypeField.prop('required', true);
                     expectedDateField.prop('required', true);
+                    followUpTypeField.prop('disabled', false);
+                    expectedDateField.prop('disabled', false);
                 } else {
                     // Remove required attribute
                     followUpTypeField.prop('required', false);
                     expectedDateField.prop('required', false);
+                    followUpTypeField.prop('disabled', true);
+                    expectedDateField.prop('disabled', true);
                 }
             }
 
@@ -269,79 +280,76 @@
             });
         });
     </script>
+    
 
+
+    @* Show and hide CAR *@
     <script>
-        $(document).ready(function () {
-            $('input[name="Car"]').change(function () {
-                var carRaised = $(this).val();
-                var carNumberField = $('input[name="CarNumber"]');
+        // Function to toggle visibility when radio buttons change
+        function toggleCarNumberInput() {
+            const carNumberInput = document.getElementById("car-number-input");
+            const carRaisedRadios = document.querySelectorAll('input[name="Car"]');
 
-                if (carRaised === "true") {
-                    carNumberField.prop('disabled', false);
-                    carNumberField.val('');
-                } else {
-                    carNumberField.prop('disabled', true);
-                    carNumberField.val('');
-                }
+            carRaisedRadios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    if (radio.value === "true") {
+                        carNumberInput.style.display = "block";
+                    } else {
+                        carNumberInput.style.display = "none";
+                    }
+                });
             });
+        }
+
+        // Hide car-number-input on page load
+        document.getElementById("car-number-input").style.display = "none";
+
+        // Call the function when the document is ready
+        document.addEventListener('DOMContentLoaded', function () {
+            toggleCarNumberInput();
+
+            // Trigger change event for the selected radio button on page load (if any)
+            const checkedRadio = document.querySelector('input[name="Car"]:checked');
+            if (checkedRadio) {
+                checkedRadio.dispatchEvent(new Event('change'));
+            }
         });
     </script>
 
+    @* Show and hide FollowUp *@
     <script>
-        $(document).ready(function () {
-            $('input[name="FollowUp"]').change(function () {
-                var followUpRequired = $(this).val();
-                var followUpTypeIdField = $('select[name="FollowUpTypeId"]');
-                var expectedDateField = $('input[name="ExpectedDate"]');
+        // Function to toggle visibility when radio buttons change
+        function toggleFollowUpInput() {
+            const followInput = document.getElementById("Follow-input");
+            const followRadios = document.querySelectorAll('input[name="FollowUp"]');
 
-                if (followUpRequired === "true") {
-                    followUpTypeIdField.prop('disabled', false);
-                    expectedDateField.prop('disabled', false);
-                    followUpTypeIdField.val('');
-                    expectedDateField.val('');
-                } else {
-                    followUpTypeIdField.prop('disabled', true);
-                    expectedDateField.prop('disabled', true);
-                    followUpTypeIdField.val('');
-                    expectedDateField.val('');
-                }
+            followRadios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    if (radio.value === "true") {
+                        followInput.style.display = "block";
+                    } else {
+                        followInput.style.display = "none";
+                    }
+                });
             });
-        });
-    </script>
+        }
 
-    <script>
-        document.getElementById("car-number-input").style.display = "block";
-
-        // Toggle visibility when radio buttons change
-        const carRaisedRadios = document.querySelectorAll('input[name="Car"]');
-        carRaisedRadios.forEach(radio => {
-            radio.addEventListener('change', () => {
-                const carNumberInput = document.getElementById("car-number-input");
-                if (radio.value === "true") {
-                    carNumberInput.style.display = "block";
-                } else {
-                    carNumberInput.style.display = "none";
-                }
-            });
-        });
-    </script>
-
-    <script>
+        // Show Follow-input on page load
         document.getElementById("Follow-input").style.display = "block";
 
-        // Toggle visibility when radio buttons change
-        const followRadios = document.querySelectorAll('input[name="FollowUp"]');
-        followRadios.forEach(radio => {
-            radio.addEventListener('change', () => {
-                const followInput = document.getElementById("Follow-input");
-                if (radio.value === "true") {
-                    followInput.style.display = "block";
-                } else {
-                    followInput.style.display = "none";
-                }
-            });
+        // Call the function when the document is ready
+        document.addEventListener('DOMContentLoaded', function () {
+            toggleFollowUpInput();
+
+            // Trigger change event for the selected radio button on page load (if any)
+            const checkedRadio = document.querySelector('input[name="FollowUp"]:checked');
+            if (checkedRadio) {
+                checkedRadio.dispatchEvent(new Event('change'));
+            }
         });
     </script>
+
+    @* Photo delete *@
     <script>
         function deletePhoto(photoId) {
             if (!confirm("Are you sure you want to delete this photo?")) return;
@@ -373,4 +381,6 @@
             });
         }
     </script>
+
+
 }

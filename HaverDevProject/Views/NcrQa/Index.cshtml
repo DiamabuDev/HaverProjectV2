@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1><i class="bi bi-caret-right-fill"></i> Quality Inspector Non-Conformance Reports</h1>
+<h1><i class="bi bi-caret-right-fill"></i> Quality Non-Conformance Reports</h1>
 
 <form id="ncrForm" asp-action="Index" method="get">
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
@@ -76,7 +76,7 @@
                         @Html.Raw(ViewData["filterApplied:Supplier"])
                     </button>
                 </th>
-                <th class="d-none d-md-table-cell col-3">
+                <th class="three-cols">
                     <button type="submit" name="actionButton" value="Defect" class="btn text-light custom-btn-text-start">
                         Defect
                         @Html.Raw(ViewData["filterApplied:Defect"])
@@ -92,6 +92,12 @@
                     <button type="submit" name="actionButton" value="Phase" class="btn text-light custom-btn-text-start">
                         Phase
                         @Html.Raw(ViewData["filterApplied:Phase"])
+                    </button>
+                </th>
+                <th class="d-none d-xxl-table-cell">
+                    <button type="submit" name="actionButton" value="Last Updated" class="btn text-light custom-btn-text-start">
+                        Last Updated
+                        @Html.Raw(ViewData["filterApplied:Last Updated"])
                     </button>
                 </th>
                 <th></th>
@@ -113,7 +119,7 @@
                     <td class="col-3">
                         @Html.DisplayFor(modelItem => item.Supplier.SupplierName)
                     </td>
-                    <td class="d-none d-md-table-cell col-3">
+                    <td class="three-cols">
                         @Html.DisplayFor(modelItem => item.Defect.DefectName)
                     </td>
                     <td class="d-none d-md-table-cell">
@@ -125,6 +131,9 @@
                     <td class="d-none d-xxl-table-cell">
                     @Html.DisplayFor(modelItem => item.Ncr.NcrPhase)
                     </td>
+                    <td class="d-none d-xxl-table-cell">
+                        @Html.DisplayFor(modelItem => item.Ncr.NcrLastUpdated)
+                    </td>
 
                     <td>
                         @if (item.Ncr.NcrPhase != NcrPhase.Closed)
@@ -133,7 +142,7 @@
                         }
                         <a asp-action="Details" asp-route-id="@item.NcrQaId" class="btn text-primary" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
 
-                        @if(item.Ncr.NcrPhase == NcrPhase.Closed)
+                        @* @if(item.Ncr.NcrPhase == NcrPhase.Closed)
                         {
                             <a asp-action="ArchiveNcr" asp-route-id="@item.Ncr.NcrId" class="btn btn-danger" data-bs-toggle="tooltip" title="Archive NCR"><i class="bi bi-archive-fill"></i></a>
                         }
@@ -141,9 +150,7 @@
                         @if (item.Ncr.NcrPhase == NcrPhase.Archive)
                         {
                             <a asp-action="RestoreNcr" asp-route-id="@item.Ncr.NcrId" class="btn btn-success" data-bs-toggle="tooltip" title="Restore NCR"><i class="bi bi-archive-fill"></i></a>
-                        }
-
-                        
+                        } *@                      
 
                 
                         @* <a asp-action="Delete" asp-route-id="@item.NcrQaId">Delete</a> *@                        
@@ -164,10 +171,7 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-            $('.btn-filter').on('click', function () {
-
-                
-
+            $('.btn-filter').on('click', function () {              
 
                 $('#filter').val($(this).data('filter'));
                 $('#ncrForm').submit();

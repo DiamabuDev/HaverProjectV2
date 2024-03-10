@@ -176,7 +176,7 @@
                         <div class="col-6">
                             <div class="form-group">
                                 <label asp-for="NcrProcRejectedValue" class="control-label"><strong>Total Cost </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Total Cost of Rejected Product">(e.g. 11,675)</small></label>
-                                <input asp-for="NcrProcRejectedValue" class="form-control" />
+                                <input asp-for="NcrProcRejectedValue" class="form-control" id="Cost"/>
                                 <span asp-validation-for="NcrProcRejectedValue" class="text-danger"></span>
                             </div>
                         </div>
@@ -302,6 +302,7 @@
             document.getElementById("RMA").value = 437893;
             document.getElementById("Carrier").value = 66372239;
             document.getElementById("Account").value = 2755432;
+            document.getElementById("Cost").value = 224.59;
             document.getElementById("Video").value = "https://www.bing.ca";
         }
     </script>
