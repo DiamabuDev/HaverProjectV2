@@ -1048,7 +1048,7 @@ namespace HaverDevProject.Data
                         new NcrReInspect
                         {
                             NcrReInspectAcceptable = true,
-                            NcrReInspectUserId = 3, //need to make nullable
+                            NcrReInspectUserId = 2, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-139").NcrId,
                             NcrReInspectCreationDate = DateTime.Parse("2023-12-11")
                         },
@@ -1098,7 +1098,7 @@ namespace HaverDevProject.Data
                         new NcrReInspect
                         {
                             NcrReInspectAcceptable = true,
-                            NcrReInspectUserId = 3, //need to make nullable
+                            NcrReInspectUserId = 1, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-006").NcrId,
                             NcrReInspectCreationDate = DateTime.Parse("2024-01-14")
                         }//,

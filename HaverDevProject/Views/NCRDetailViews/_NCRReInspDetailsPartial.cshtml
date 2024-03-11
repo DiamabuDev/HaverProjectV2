@@ -41,7 +41,19 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td class="three-cols">J. Doe
+                            <td class="three-cols">
+                                @if (Model.NcrReInspectUserId == 1)
+                                {
+                                    <text>Jamie</text>
+                                }
+                                else if (Model.NcrReInspectUserId == 2)
+                                {
+                                    <text>R. May</text>
+                                }
+                                else
+                                {
+                                    <text>J. Doe</text>
+                                }
                                     </td>
                                     <td class="three-cols">@Model.NcrReInspectCreationDate.ToString("yyyy-MM-dd")</td>
                                     <td class="three-cols">

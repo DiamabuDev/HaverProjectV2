@@ -357,7 +357,7 @@ namespace HaverDevProject.Controllers
                     }
                     else
                     {
-                        TempData["SuccessMessage"] = "NCR closed successfully!";
+                        TempData["SuccessMessage"] = "NCR " + ncrReInspect.NcrNumber + " closed successfully!";
                         return RedirectToAction("Details", new { id = ncrReInspect.NcrReInspectId });
                     }
                 }
@@ -449,7 +449,7 @@ namespace HaverDevProject.Controllers
                         await _context.SaveChangesAsync();
                     }
 
-                    TempData["SuccessMessage"] = "NCR edited successfully!";
+                    TempData["SuccessMessage"] = "NCR " + ncrReInspectToUpdate.NcrNumber + " edited successfully!";
                     int updateNcrReInspect = ncrReInspectToUpdate.NcrReInspectId;
                     return RedirectToAction("Details", new { id = updateNcrReInspect });
                 }
