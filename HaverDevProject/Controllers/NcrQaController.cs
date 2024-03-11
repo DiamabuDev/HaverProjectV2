@@ -32,6 +32,10 @@ namespace HaverDevProject.Controllers
         public async Task<IActionResult> Index(string SearchCode, int? SupplierID, DateTime StartDate, DateTime EndDate,
             int? page, int? pageSizeID, string actionButton, string sortDirection = "desc", string sortField = "Created", string filter = "Active")
         {
+
+            ViewData["Filtering"] = "btn-block invisible";
+            int numberFilters = 0;
+
             //Set the date range filer based on the values in the database
             if (EndDate == DateTime.MinValue)
             {
@@ -93,21 +97,32 @@ namespace HaverDevProject.Controllers
             if (!String.IsNullOrEmpty(SearchCode))
             {
                 ncrQa = ncrQa.Where(s => s.Defect.DefectName.ToUpper().Contains(SearchCode.ToUpper() ) //(s => s.Item.ItemDefects.FirstOrDefault().Defect.DefectName.ToUpper().Contains(SearchCode.ToUpper()) 
-                || s.Ncr.NcrNumber.ToUpper().Contains(SearchCode.ToUpper())); 
+                || s.Ncr.NcrNumber.ToUpper().Contains(SearchCode.ToUpper()));
+                numberFilters++;
             }
             if (SupplierID.HasValue)
             {
-                ncrQa = ncrQa.Where(n => n.Supplier.SupplierId == SupplierID); 
+                ncrQa = ncrQa.Where(n => n.Supplier.SupplierId == SupplierID);
+                numberFilters++;
             }
             if (StartDate == EndDate)
             {
-                ncrQa = ncrQa.Where(n => n.NcrQacreationDate == StartDate); 
+                ncrQa = ncrQa.Where(n => n.NcrQacreationDate == StartDate);
+                numberFilters++;
             }
             else
             {
                 ncrQa = ncrQa.Where(n => n.NcrQacreationDate >= StartDate && 
                          n.NcrQacreationDate <= EndDate);   
-            }            
+            }
+
+            //keep track of the number of filters 
+            if (numberFilters != 0)
+            {
+                ViewData["Filtering"] = " btn-danger";
+                ViewData["numberFilters"] = "(" + numberFilters.ToString()
+                    + " Filter" + (numberFilters > 1 ? "s" : "") + " Applied)";
+            }
 
             //Sorting columns
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
@@ -425,6 +440,12 @@ namespace HaverDevProject.Controllers
             //ViewData["DefectId"] = new SelectList(_context.Defects, "DefectId", "DefectName", ncrQaDTO.DefectId);
 
             var readOnlyDetails = await _context.Ncrs
+                .Include(n=>n.NcrProcurement)
+                .Include(n => n.NcrProcurement)
+                     .ThenInclude(n => n.ProcDefectPhotos)
+                .Include(n => n.NcrReInspect)
+                .Include(n=>n.NcrReInspect)
+                    .ThenInclude(n=>n.NcrReInspectPhotos)
                 .Include(n => n.NcrQa)
                     .ThenInclude(item => item.Supplier)
                 .Include(n => n.NcrQa)

@@ -24,9 +24,13 @@
             </div>
         </div>
         <div class="col-4 text-end">
+            <button class="btn @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+                @ViewData["numberFilters"]
+            </button>
             <a asp-action="Create" class="btn btn-primary ms-4"> <i class="bi bi-plus-square-dotted"></i> Create New NCR</a>
         </div>
     </div>
+
     <div class="form-horizontal">
         <div class="card card-body bg-custom-color mb-2">
             <div class="row d-flex justify-content-center align-items-center">

@@ -31,6 +31,10 @@ namespace HaverDevProject.Controllers
         public async Task<IActionResult> Index(string SearchCode, int? EngDispositionTypeId, DateTime StartDate, DateTime EndDate,
             int? page, int? pageSizeID, string actionButton, string sortDirection = "desc", string sortField = "Created", string filter = "Active")
         {
+
+            ViewData["Filtering"] = "btn-block invisible";
+            int numberFilters = 0;
+
             //Set the date range filer based on the values in the database
             if (EndDate == DateTime.MinValue)
             {
@@ -90,6 +94,7 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:ButtonActive"] = "btn-success";
                     ViewData["filterApplied:ButtonAll"] = "btn-primary custom-opacity";
                     ViewData["filterApplied:ButtonClosed"] = "btn-danger custom-opacity";
+                    
                 }
                 else //(filter == "Closed")
                 {
@@ -97,25 +102,38 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:ButtonClosed"] = "btn-danger";
                     ViewData["filterApplied:ButtonAll"] = "btn-primary custom-opacity";
                     ViewData["filterApplied:ButtonActive"] = "btn-success custom-opacity";
+                    
                 }
             }
 
             if (!String.IsNullOrEmpty(SearchCode))
             {
                 ncrEng = ncrEng.Where(s => s.Ncr.NcrNumber.ToUpper().Contains(SearchCode.ToUpper()));
+                numberFilters++;
             }
             if (EngDispositionTypeId.HasValue)
             {
                 ncrEng = ncrEng.Where(n => n.EngDispositionType.EngDispositionTypeId == EngDispositionTypeId);
+                numberFilters++;
             }
             if (StartDate == EndDate)
             {
                 ncrEng = ncrEng.Where(n => n.Ncr.NcrQa.NcrQacreationDate == StartDate);
+                numberFilters++;
             }
-            else
+            else 
             {
                 ncrEng = ncrEng.Where(n => n.Ncr.NcrQa.NcrQacreationDate >= StartDate &&
                          n.Ncr.NcrQa.NcrQacreationDate <= EndDate);
+                    
+            }
+
+            //keep track of the number of filters 
+            if (numberFilters != 0)
+            {
+                ViewData["Filtering"] = " btn-danger";
+                ViewData["numberFilters"] = "(" + numberFilters.ToString()
+                    + " Filter" + (numberFilters > 1 ? "s" : "") + " Applied)";
             }
 
 
@@ -393,7 +411,7 @@ namespace HaverDevProject.Controllers
                     _context.Ncrs.Update(ncr);
                     await _context.SaveChangesAsync();
 
-                    TempData["SuccessMessage"] = "NCR saved successfully!";
+                    TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " saved successfully!";
                     int ncrEngId = ncrEng.NcrEngId;
                     return RedirectToAction("Details", new { id = ncrEngId });
                 }
@@ -536,7 +554,8 @@ namespace HaverDevProject.Controllers
                     _context.Update(ncr);
                     await _context.SaveChangesAsync();
 
-                    TempData["SuccessMessage"] = "NCR edited successfully!";
+                    TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " saved successfully!";
+
                     int ncrEngId = ncrEng.NcrEngId;
                     return RedirectToAction("Details", new { id = ncrEngId });
                 }

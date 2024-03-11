@@ -27,6 +27,10 @@ namespace HaverDevProject.Controllers
         public async Task<IActionResult> Index(string SearchCode, int? SupplierID, DateTime StartDate, DateTime EndDate,
             int? page, int? pageSizeID, string actionButton, string sortDirection = "desc", string sortField = "Created", string filter = "Active")
         {
+
+            ViewData["Filtering"] = "btn-block invisible";
+            int numberFilters = 0;
+
             //Set the date range filer based on the values in the database
             if (EndDate == DateTime.MinValue)
             {
@@ -97,19 +101,30 @@ namespace HaverDevProject.Controllers
             if (!String.IsNullOrEmpty(SearchCode))
             {
                 ncrProc = ncrProc.Where(s => s.Ncr.NcrNumber.ToUpper().Contains(SearchCode.ToUpper()));
+                numberFilters++;
             }
             if (SupplierID.HasValue)
             {
                 ncrProc = ncrProc.Where(n => n.Ncr.NcrQa.Supplier.SupplierId == SupplierID);
+                numberFilters++;
             }
             if (StartDate == EndDate)
             {
                 ncrProc = ncrProc.Where(n => n.Ncr.NcrQa.NcrQacreationDate == StartDate);
+                numberFilters++;
             }
             else
             {
                 ncrProc = ncrProc.Where(n => n.Ncr.NcrQa.NcrQacreationDate >= StartDate &&
                          n.Ncr.NcrQa.NcrQacreationDate <= EndDate);
+            }
+
+            //keep track of the number of filters 
+            if (numberFilters != 0)
+            {
+                ViewData["Filtering"] = " btn-danger";
+                ViewData["numberFilters"] = "(" + numberFilters.ToString()
+                    + " Filter" + (numberFilters > 1 ? "s" : "") + " Applied)";
             }
 
             //Sorting columns
