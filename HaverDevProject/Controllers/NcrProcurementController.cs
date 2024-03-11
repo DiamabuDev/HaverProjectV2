@@ -581,7 +581,7 @@ namespace HaverDevProject.Controllers
                     _context.Update(ncr);
                     await _context.SaveChangesAsync();
 
-                    TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " saved successfully!";
+                    TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " edited successfully!";
                     int ncrProcId = ncrProc.NcrProcurementId;
                     return RedirectToAction("Details", new { id = ncrProcId });
                 }
