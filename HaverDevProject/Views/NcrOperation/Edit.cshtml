@@ -14,25 +14,19 @@
         {
             @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", (NcrQa)ViewBag.ncrDetails.NcrQa)
         }
+        else
+        {
+            <p>NCR Qa is null</p>
+        }
 
         @if (ViewBag.ncrDetails.NcrEng != null)
         {
             @await Html.PartialAsync("~/Views/NCRDetailViews/_NCREngDetailsPartial.cshtml", (NcrEng)ViewBag.ncrDetails.NcrEng)
         }
 
-        @if (ViewBag.ncrDetails.NcrOperation != null)
+        else
         {
-            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCROpDetailsPartial.cshtml", (NcrOperation)ViewBag.ncrDetails.NcrOperation)
-        }
-
-        @if (ViewBag.ncrDetails.NcrOperation != null)
-        {
-            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRProcDetailsPartial.cshtml", (NcrProcurement)ViewBag.ncrDetails.NcrProcurement)
-        }
-
-        @if (ViewBag.ncrDetails.NcrOperation != null)
-        {
-            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRReInspDetailsPartial.cshtml", (NcrReInspect)ViewBag.ncrDetails.NcrReInspect)
+            <p>NCR Qa is null</p>
         }
     </div>
     <form asp-action="Edit" method="post" enctype="multipart/form-data">
