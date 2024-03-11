@@ -30,7 +30,7 @@ namespace HaverDevProject.Controllers
 
         
         // GET: NcrQa
-        public async Task<IActionResult> Index(string SearchCode, int? SupplierID, DateTime StartDate, DateTime EndDate,
+        public async Task<IActionResult> Index(string SearchCode, string SearchSupplier, DateTime StartDate, DateTime EndDate,
             int? page, int? pageSizeID, string actionButton, string sortDirection = "desc", string sortField = "Created", string filter = "Active")
         {
 
@@ -61,7 +61,7 @@ namespace HaverDevProject.Controllers
             string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "Defect", "PO Number", "Phase", "Last Updated" };
 
             //PopulateDropDownLists();
-            ViewData["SupplierId"] = SupplierSelectList(null);
+            //ViewData["SupplierId"] = SupplierSelectList(null);
 
             var ncrQa = _context.NcrQas
                 //.Include(n => n.Item).ThenInclude(n => n.ItemDefects).ThenInclude(n => n.Defect)
@@ -101,9 +101,9 @@ namespace HaverDevProject.Controllers
                 || s.Ncr.NcrNumber.ToUpper().Contains(SearchCode.ToUpper()));
                 numberFilters++;
             }
-            if (SupplierID.HasValue)
+            if (!String.IsNullOrEmpty(SearchSupplier))
             {
-                ncrQa = ncrQa.Where(n => n.Supplier.SupplierId == SupplierID);
+                ncrQa = ncrQa.Where(n => n.Supplier.SupplierName == SearchSupplier);
                 numberFilters++;
             }
             if (StartDate == EndDate)
