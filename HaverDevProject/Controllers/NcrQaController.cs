@@ -14,6 +14,7 @@ using System.Numerics;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.AspNetCore.Hosting;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System.Reflection.Emit;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HaverDevProject.Controllers
@@ -371,6 +372,8 @@ namespace HaverDevProject.Controllers
                 _context.NcrQas.Add(ncrQa);
                 await _context.SaveChangesAsync();
 
+
+
                 if (ncrQaDTO.ParentId.HasValue)
                 {
                     var ncrReInspect = await _context.NcrReInspects.FirstOrDefaultAsync(n => n.NcrId == ncrQaDTO.ParentId);
@@ -382,7 +385,8 @@ namespace HaverDevProject.Controllers
                     }
                 }
 
-                TempData["SuccessMessage"] = "NCR created successfully!";
+
+                TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " saved successfully!";
                 int ncrQaId = ncrQa.NcrQaId;
 
                 return RedirectToAction("Details", new { id = ncrQaId });
@@ -547,7 +551,8 @@ namespace HaverDevProject.Controllers
                         _context.NcrQas.Update(ncrQaToUpdate);
                         await _context.SaveChangesAsync();
 
-                        TempData["SuccessMessage"] = "NCR edited successfully!";
+                        //TempData["SuccessMessage"] = "NCR edited successfully!";
+                        TempData["SuccessMessage"] = "NCR " + ncrQaDTO.NcrNumber + " edited successfully!";
                         int updateNcrQa = ncrQaToUpdate.NcrQaId;
                         return RedirectToAction("Details", new { id = updateNcrQa });
                     }
@@ -681,7 +686,17 @@ namespace HaverDevProject.Controllers
         {
             return Json(DefectSelectList());
         }
-         
+
+        public JsonResult GetSuppliersAuto(string term)
+        {
+            var result = from s in _context.Suppliers
+                         where s.SupplierName.ToUpper().Contains(term.ToUpper())
+                               //|| d.FirstName.ToUpper().Contains(term.ToUpper())
+                         orderby s.SupplierName
+                         select new { value = s.SupplierName};
+            return Json(result);
+        }
+
         private async Task AddPictures(NcrQaDTO ncrQaDTO, List<IFormFile> pictures)
         {
             if (pictures != null && pictures.Any())

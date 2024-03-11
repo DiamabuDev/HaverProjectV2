@@ -73,8 +73,8 @@ namespace HaverDevProject.Controllers
             if (!String.IsNullOrEmpty(SearchCode))
             {
                 suppliers = suppliers.Where(s =>
-                    s.SupplierCode.ToUpper().Contains(SearchCode.ToUpper())
-                    || s.SupplierName.ToUpper().Contains(SearchCode.ToUpper())
+                     //s.SupplierCode.ToUpper().Contains(SearchCode.ToUpper()) ||
+                     s.SupplierName.ToUpper().Contains(SearchCode.ToUpper())
                 );
             }
 

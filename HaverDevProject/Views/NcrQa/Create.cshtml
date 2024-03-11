@@ -108,7 +108,7 @@
                 </div>
                 <div class="row">     
 
-                    <div class="form-group">
+                    @* <div class="form-group">
                         <label class="control-label">
                             <strong>Supplier </strong>
                             <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Lawrence Sintered Metals.)</small>
@@ -123,9 +123,43 @@
                             </select>                            
                         </div>
                         <span asp-validation-for="SupplierId" class="text-danger"></span>
-                    </div>
-                    
+                    </div> *@
+
                     <div class="form-group">
+                        <label class="control-label">
+                            <strong>Supplier </strong>
+                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Lawrence Sintered Metals.)</small>
+                            <span class="fw-bold text-danger">*</span>
+                        </label>
+                        <div class="input-group mb-1" id="dropautocomplete">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary custom-btn-color" id="nowAddSupplier" data-bs-toggle="modal" data-bs-target="#addSupplierModal" type="button" data-tooltip-supplier="true"><i class='bi-plus-square-dotted'></i></button>
+                            </div>
+                            <select class="form-control Supplierddlist" id="SupplierId" name="SupplierId" asp-items="ViewBag.SupplierId" asp-for="SupplierId" required>
+                                <option value="">Select Supplier</option>
+                            </select>
+                        </div>
+                        <span asp-validation-for="SupplierId" class="text-danger"></span>
+                    </div>                    
+
+                    <div class="form-group">
+                        <label asp-for="ItemId" class="control-label">
+                            <strong>Item </strong>
+                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Panel.)</small>
+                            <span class="fw-bold text-danger">*</span>
+                        </label>
+                        <div class="input-group mb-1" id="dropautocompleteforItem">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary custom-btn-color" id="nowAddItem" data-bs-toggle="modal" data-bs-target="#addItemModal" type="button" data-tooltip-item="true"><i class='bi-plus-square-dotted'></i></button>
+                            </div>
+                            <select asp-for="ItemId" id="ItemId" class="form-control Itemddlist" name="ItemId" asp-items="ViewBag.ItemId" id="Item">
+                                <option value="">Select Item</option>
+                            </select>
+                        </div>
+                        <span asp-validation-for="ItemId" class="text-danger"></span>
+                    </div>
+                                        
+                    @* <div class="form-group">
                         <label asp-for="ItemId" class="control-label">
                             <strong>Item </strong>
                             <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Panel.)</small> 
@@ -139,7 +173,7 @@
                             </select>
                         </div>
                             <span asp-validation-for="ItemId" class="text-danger"></span>                        
-                    </div>
+                    </div> *@
 
 
                     <div class="form-group">
@@ -147,6 +181,23 @@
                             <strong>Defect </strong>
                             <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Surface to house internal components.)</small> 
                             <span class="fw-bold text-danger">*</span></label>
+                        <div class="input-group mb-1" id="dropautocompleteforDefect">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary custom-btn-color" id="nowAddDefect" data-bs-toggle="modal" data-bs-target="#addDefectModal" type="button" data-tooltip-defect="true"><i class='bi-plus-square-dotted'></i></button>
+                            </div>
+                            <select asp-for="DefectId" class="form-control Defectddlist" id="DefectId" name="DefectId" asp-items="ViewBag.DefectId" id="Defect">
+                                <option value="">Select Defect</option>
+                            </select>
+                        </div>
+                        <span asp-validation-for="DefectId" class="text-danger"></span>
+                    </div>
+
+                    @* <div class="form-group">
+                        <label asp-for="DefectId" class="control-label">
+                            <strong>Defect </strong>
+                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Surface to house internal components.)</small>
+                            <span class="fw-bold text-danger">*</span>
+                        </label>
                         <div class="input-group mb-1">
                             <div class="input-group-prepend">
                                 <button class="btn btn-outline-secondary custom-btn-color" id="nowAddDefect" data-bs-toggle="modal" data-bs-target="#addDefectModal" type="button" data-tooltip-defect="true"><i class='bi-plus-square-dotted'></i></button>
@@ -156,7 +207,7 @@
                             </select>
                         </div>
                         <span asp-validation-for="DefectId" class="text-danger"></span>
-                    </div>
+                    </div> *@
 
 
                     <div class="form-group">
@@ -269,6 +320,10 @@
     </div>
 </div>
 
+@section Styles {
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+}
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script src="~/js/refreshDDL.js"></script>
@@ -279,25 +334,20 @@
         });
     </script>
 
-    @* <script type="text/javascript">
-        $('#SupplierId').change(function () {            
-            var selectedSupplier = $("#SupplierId").val();
-            var URL = "/NcrQa/GetItems/?SupplierId=" + selectedSupplier;
-            refreshDDL('ItemId', URL, true, 'No items related with the supplier selected', true, "Select an item", true);
-            
-            // // Set the value of DefectId dropdown to an empty string
-            // $('#DefectId').val('');
-            // refreshDDL('ItemSupplierId', '/NcrQa/GetSuppliers/' + selectedSupplier, true, 'No items related with the supplier selected', true, "Select an item", true);
-                   
+    
+
+    <!-- Supplier Autocomplete Field-->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var $select2 = $('.Supplierddlist').select2();
+            var $select2 = $('.Itemddlist').select2();
+            var $select2 = $('.Defectddlist').select2();
+            Defectddlist
+
         });
-    </script> *@
-    @* <script type="text/javascript">
-        $('#ItemId').change(function () {
-            var selectedItemId = $("#ItemId").val();
-            var URL = "/NcrQa/GetDefects/?ItemId=" + selectedItemId;
-            refreshDDL('DefectId', URL, true, 'No defects related with the item selected', false, null, true);
-        });
-    </script> *@
+    </script>  
+        
     <script>
     function showEngineerDispositionModal() {
         $('#engineerDispositionModal').modal('show');
@@ -505,8 +555,6 @@
         $('#addDefectModal').on('hide.bs.modal', function () {
             document.getElementById("createDefectForm").reset();//to clear the data in the popup form
             ClearErrorsDefect();
-            //var selectedOption = $('#DefectId').val();//Return to the current selected value
-            //refreshDDL('DefectId', '/NcrQa/GetDefects/' + selectedOption, false, null, true, 'Select the Defect', true);
             refreshDDL('DefectId', '/NcrQa/GetDefects/', false, null, true, 'Select Defect', true);
         });
         function ClearErrorsDefect() {
