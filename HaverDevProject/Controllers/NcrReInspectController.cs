@@ -28,6 +28,9 @@ namespace HaverDevProject.Controllers
         public async Task<IActionResult> Index(string SearchCode, int? page, int? pageSizeID, string actionButton,
             DateTime StartDate, DateTime EndDate, string sortDirection = "desc", string sortField = "Created", string filter = "Active")
         {
+            ViewData["Filtering"] = "btn-block invisible";
+            int numberFilters = 0;
+
             //Set the date range filer based on the values in the database
             if (EndDate == DateTime.MinValue)
             {
@@ -78,15 +81,25 @@ namespace HaverDevProject.Controllers
             if (!System.String.IsNullOrEmpty(SearchCode))
             {
                 ncrReInspect = ncrReInspect.Where(s => s.Ncr.NcrNumber.ToUpper().Contains(SearchCode.ToUpper()));
+                numberFilters++;
             }
             if (StartDate == EndDate)
             {
                 ncrReInspect = ncrReInspect.Where(n => n.Ncr.NcrQa.NcrQacreationDate == StartDate);
+                numberFilters++;
             }
             else
             {
                 ncrReInspect = ncrReInspect.Where(n => n.Ncr.NcrQa.NcrQacreationDate >= StartDate &&
                          n.Ncr.NcrQa.NcrQacreationDate <= EndDate);
+            }
+
+            //keep track of the number of filters 
+            if (numberFilters != 0)
+            {
+                ViewData["Filtering"] = " btn-danger";
+                ViewData["numberFilters"] = "(" + numberFilters.ToString()
+                    + " Filter" + (numberFilters > 1 ? "s" : "") + " Applied)";
             }
 
             //Sorting columns
@@ -322,7 +335,7 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create( NcrReInspect ncrReInspect, List<IFormFile> Photos)
+        public async Task<IActionResult> Create(NcrReInspect ncrReInspect, List<IFormFile> Photos, IFormCollection form)
         {
             try
             {
@@ -331,6 +344,9 @@ namespace HaverDevProject.Controllers
                     //await AddReInspectPictures(ncrReInspect, Photos);
 
                     //ncrReInspect.NcrReInspectNewNcrNumber = GetNcrNumber();
+
+                    string isAcceptable = form["NcrReInspectAcceptable"];
+
                     _context.Add(ncrReInspect);
                     await _context.SaveChangesAsync();
 
@@ -346,9 +362,17 @@ namespace HaverDevProject.Controllers
                     _context.Ncrs.Update(ncrToUpdate);
                     await _context.SaveChangesAsync();
 
-                    TempData["SuccessMessage"] = "NCR closed successfully!";
                     int ncrReInspectId = ncrReInspect.NcrReInspectId;
-                    return RedirectToAction("Details", new { id = ncrReInspectId });
+
+                    if (isAcceptable == "false")
+                    {
+                        return RedirectToAction("Create", "NcrQa", new { parentNcrId = ncrReInspect.NcrId });
+                    }
+                    else
+                    {
+                        TempData["SuccessMessage"] = "NCR " + ncrReInspect.NcrNumber + " closed successfully!";
+                        return RedirectToAction("Details", new { id = ncrReInspect.NcrReInspectId });
+                    }
                 }
                 else
                 {
@@ -380,10 +404,8 @@ namespace HaverDevProject.Controllers
                 ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
             }
 
-            //ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrReInspect.NcrId);
-
             return View(ncrReInspect);
-        } //,RowVersion
+        }
 
         // GET: NcrReInspect/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -440,7 +462,7 @@ namespace HaverDevProject.Controllers
                         await _context.SaveChangesAsync();
                     }
 
-                    TempData["SuccessMessage"] = "NCR edited successfully!";
+                    TempData["SuccessMessage"] = "NCR " + ncrReInspectToUpdate.NcrNumber + " edited successfully!";
                     int updateNcrReInspect = ncrReInspectToUpdate.NcrReInspectId;
                     return RedirectToAction("Details", new { id = updateNcrReInspect });
                 }

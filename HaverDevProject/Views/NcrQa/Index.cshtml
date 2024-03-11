@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1><i class="bi bi-caret-right-fill"></i> Quality Inspector Non-Conformance Reports</h1>
+<h1><i class="bi bi-caret-right-fill"></i> Quality Non-Conformance Reports</h1>
 
 <form id="ncrForm" asp-action="Index" method="get">
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
@@ -24,9 +24,13 @@
             </div>
         </div>
         <div class="col-4 text-end">
+            <button class="btn @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+                @ViewData["numberFilters"]
+            </button>
             <a asp-action="Create" class="btn btn-primary ms-4"> <i class="bi bi-plus-square-dotted"></i> Create New NCR</a>
         </div>
     </div>
+
     <div class="form-horizontal">
         <div class="card card-body bg-custom-color mb-2">
             <div class="row d-flex justify-content-center align-items-center">
@@ -76,7 +80,7 @@
                         @Html.Raw(ViewData["filterApplied:Supplier"])
                     </button>
                 </th>
-                <th class="d-none d-md-table-cell col-3">
+                <th class="three-cols">
                     <button type="submit" name="actionButton" value="Defect" class="btn text-light custom-btn-text-start">
                         Defect
                         @Html.Raw(ViewData["filterApplied:Defect"])
@@ -119,7 +123,7 @@
                     <td class="col-3">
                         @Html.DisplayFor(modelItem => item.Supplier.SupplierName)
                     </td>
-                    <td class="d-none d-md-table-cell col-3">
+                    <td class="three-cols">
                         @Html.DisplayFor(modelItem => item.Defect.DefectName)
                     </td>
                     <td class="d-none d-md-table-cell">

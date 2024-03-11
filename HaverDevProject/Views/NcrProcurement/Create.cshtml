@@ -60,7 +60,7 @@
                         <div class="form-group">
                             <strong>Date</strong>
                             @* <label asp-for="NcrNumber" class="control-label"></label> *@
-                            <input asp-for="NcrProcCreated" class="form-control" readonly />
+                            <input asp-for="NcrProcCompleteDate" class="form-control" readonly />
                         </div>
                     </div>
                 </div>
@@ -100,14 +100,14 @@
                     <div class="col-6">
                         <div class="form-group">
                             <label asp-for="SupplierReturnMANum" class="control-label"><strong>Supplier RMA # </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Return Material Authorization Number">(e.g. RT20062090)</small></label>
-                            <input asp-for="SupplierReturnMANum" class="form-control" id="RMA"/>
+                            <input asp-for="SupplierReturnMANum" class="form-control" />
                             <span asp-validation-for="SupplierReturnMANum" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="form-group">
                             <label asp-for="SupplierReturnName" class="control-label"><strong>Carrier Name </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Name of Delivery Service">(e.g. Purolator)</small></label>
-                            <input asp-for="SupplierReturnName" class="form-control" id="Carrier"/>
+                            <input asp-for="SupplierReturnName" class="form-control" />
                             <span asp-validation-for="SupplierReturnName" class="text-danger"></span>
                         </div>
                     </div>
@@ -123,7 +123,7 @@
                     <div class="col-6">
                         <div class="form-group">
                             <label asp-for="SupplierReturnAccount" class="control-label"><strong>Account # </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Account Number for the Return Request">(e.g. 946735)</small></label>
-                            <input asp-for="SupplierReturnAccount" class="form-control" id="Account"/>
+                            <input asp-for="SupplierReturnAccount" class="form-control" />
                             <span asp-validation-for="SupplierReturnAccount" class="text-danger"></span>
                         </div>
                     </div>
@@ -190,7 +190,7 @@
                 </div>
                 <div class="form-group">
                     <label asp-for="NcrProcDefectVideo" class="control-label"><strong>Video Links </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Add multiple video links separated by a comma">(e.g. https://haverniagara.com, https://www.google.ca)</small></label>
-                    <input asp-for="NcrProcDefectVideo" class="form-control" id="Video"/>
+                    <input asp-for="NcrProcDefectVideo" class="form-control" />
                     <span asp-validation-for="NcrProcDefectVideo" class="text-danger"></span>
                 </div>
             </div>
@@ -296,14 +296,27 @@
 
     @* Test button for live demo *@
     <script>
-        const button = document.getElementById('test');
-        button.addEventListener('click', test);
-        function test() {
-            document.getElementById("RMA").value = 437893;
-            document.getElementById("Carrier").value = 66372239;
-            document.getElementById("Account").value = 2755432;
-            document.getElementById("Video").value = "https://www.bing.ca";
+        // Your existing scripts...
+
+        // Function to autofill SupplierReturnMANum, SupplierReturnName, SupplierReturnAccount, and NcrProcRejectedValue
+        function autoFillTestValues() {
+            // Replace these values with the desired autofill values
+            var supplierRMAValue = "RT20062090";
+            var carrierNameValue = "Purolator";
+            var accountValue = "12345";
+            var rejectedValue = "10000";
+
+            // Autofill the fields
+            $('#SupplierReturnMANum').val(supplierRMAValue);
+            $('#SupplierReturnName').val(carrierNameValue);
+            $('#SupplierReturnAccount').val(accountValue);
+            $('#NcrProcRejectedValue').val(rejectedValue);
         }
+
+        // Bind the autofill function to the click event of the Test button
+        $('#test').click(function () {
+            autoFillTestValues();
+        });
     </script>
 
 }

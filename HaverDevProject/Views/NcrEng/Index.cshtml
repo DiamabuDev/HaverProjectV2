@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1><i class="bi bi-caret-right-fill"></i> Engineer Non-Conformance Reports</h1>
+<h1><i class="bi bi-caret-right-fill"></i> Engineering Non-Conformance Reports</h1>
 
 
 <!-- Modal -->
@@ -12,7 +12,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">Pending NCRs</h1>
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Engineer Pending NCRs</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -54,14 +54,13 @@
                 <input type="radio" class="btn-check btn-filter" name="filter" id="Closed" autocomplete="off" value="Closed" data-filter="Closed">
                 <label class="btn @ViewData["filterApplied:ButtonClosed"] me-2" for="Closed">Closed NCRs </label>
 
-
-     @*            <input type="radio" class="btn-check btn-filter" name="filter" id="Active" autocomplete="off" checked value="Active" data-filter="Active">
-                <label class="btn btn-success me-2" for="Active">Active NCRs</label>
-
-                <input type="radio" class="btn-check btn-filter" name="filter" id="Closed" autocomplete="off" value="Closed" data-filter="Closed">
-                <label class="btn btn-danger me-2" for="Closed">Closed NCRs </label> *@
                 <button type="button" id="pendingCountIndicator" class="btn btn-warning btn-block" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></button>
             </div>
+        </div>
+        <div class="col-4 d-flex justify-content-end">
+            <button class="btn @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+                @ViewData["numberFilters"]
+            </button>
         </div>
     </div>
     <div class="form-horizontal">

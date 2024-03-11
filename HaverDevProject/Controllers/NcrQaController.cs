@@ -33,6 +33,10 @@ namespace HaverDevProject.Controllers
         public async Task<IActionResult> Index(string SearchCode, int? SupplierID, DateTime StartDate, DateTime EndDate,
             int? page, int? pageSizeID, string actionButton, string sortDirection = "desc", string sortField = "Created", string filter = "Active")
         {
+
+            ViewData["Filtering"] = "btn-block invisible";
+            int numberFilters = 0;
+
             //Set the date range filer based on the values in the database
             if (EndDate == DateTime.MinValue)
             {
@@ -94,21 +98,32 @@ namespace HaverDevProject.Controllers
             if (!String.IsNullOrEmpty(SearchCode))
             {
                 ncrQa = ncrQa.Where(s => s.Defect.DefectName.ToUpper().Contains(SearchCode.ToUpper() ) //(s => s.Item.ItemDefects.FirstOrDefault().Defect.DefectName.ToUpper().Contains(SearchCode.ToUpper()) 
-                || s.Ncr.NcrNumber.ToUpper().Contains(SearchCode.ToUpper())); 
+                || s.Ncr.NcrNumber.ToUpper().Contains(SearchCode.ToUpper()));
+                numberFilters++;
             }
             if (SupplierID.HasValue)
             {
-                ncrQa = ncrQa.Where(n => n.Supplier.SupplierId == SupplierID); 
+                ncrQa = ncrQa.Where(n => n.Supplier.SupplierId == SupplierID);
+                numberFilters++;
             }
             if (StartDate == EndDate)
             {
-                ncrQa = ncrQa.Where(n => n.NcrQacreationDate == StartDate); 
+                ncrQa = ncrQa.Where(n => n.NcrQacreationDate == StartDate);
+                numberFilters++;
             }
             else
             {
                 ncrQa = ncrQa.Where(n => n.NcrQacreationDate >= StartDate && 
                          n.NcrQacreationDate <= EndDate);   
-            }            
+            }
+
+            //keep track of the number of filters 
+            if (numberFilters != 0)
+            {
+                ViewData["Filtering"] = " btn-danger";
+                ViewData["numberFilters"] = "(" + numberFilters.ToString()
+                    + " Filter" + (numberFilters > 1 ? "s" : "") + " Applied)";
+            }
 
             //Sorting columns
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
@@ -291,18 +306,17 @@ namespace HaverDevProject.Controllers
         // GET: NcrQa/Create
         public IActionResult Create()
         {
-            NcrQaDTO ncr = new NcrQaDTO();
-            ncr.NcrNumber = GetNcrNumber();
-            ncr.NcrQacreationDate = DateTime.Today;
-            ncr.NcrStatus = true; //Active
-            ncr.NcrQaProcessApplicable = true; //Supplier or Rec-Insp
-            ncr.NcrQaItemMarNonConforming = true; //Yes
-            ncr.NcrQaEngDispositionRequired = true; //Yes
-            
-            PopulateDropDownLists();
-            //ViewData["SupplierId"] = SupplierSelectCreateList(null);
+            var ncrQaDTO = new NcrQaDTO();
+            ncrQaDTO.NcrNumber = GetNcrNumber();
+            ncrQaDTO.NcrQacreationDate = DateTime.Today;
+            ncrQaDTO.NcrStatus = true; //Active
+            ncrQaDTO.NcrQaProcessApplicable = true; //Supplier or Rec-Insp
+            ncrQaDTO.NcrQaItemMarNonConforming = true; //Yes
+            ncrQaDTO.NcrQaEngDispositionRequired = true; //Yes
 
-            return View(ncr);
+            PopulateDropDownLists();         
+
+            return View(ncrQaDTO);
         }
 
         // POST: NcrQa/Create
@@ -314,14 +328,15 @@ namespace HaverDevProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                bool engReq = ncrQaDTO.NcrQaEngDispositionRequired == true ? true : false;                
+                bool engReq = ncrQaDTO.NcrQaEngDispositionRequired == true ? true : false;
 
                 Ncr ncr = new Ncr
                 {
                     NcrNumber = ncrQaDTO.NcrNumber,
                     NcrLastUpdated = DateTime.Now,
                     NcrStatus = ncrQaDTO.NcrStatus,
-                    NcrPhase = ncrQaDTO.NcrQaEngDispositionRequired == true ? NcrPhase.Engineer : NcrPhase.Operations
+                    NcrPhase = ncrQaDTO.NcrQaEngDispositionRequired == true ? NcrPhase.Engineer : NcrPhase.Operations,
+                    ParentId = ncrQaDTO.ParentId,
                 };
 
                 _context.Add(ncr);
@@ -333,7 +348,7 @@ namespace HaverDevProject.Controllers
                     .Select(n => n.NcrId)
                     .FirstOrDefault();
 
-                await AddPictures(ncrQaDTO, Photos);   
+                await AddPictures(ncrQaDTO, Photos);
                 NcrQa ncrQa = new NcrQa
                 {
                     NcrQaItemMarNonConforming = ncrQaDTO.NcrQaItemMarNonConforming,
@@ -352,20 +367,32 @@ namespace HaverDevProject.Controllers
                     ItemId = ncrQaDTO.ItemId,
                     DefectId = ncrQaDTO.DefectId,
                     NcrQaEngDispositionRequired = ncrQaDTO.NcrQaEngDispositionRequired
-                };              
-                
+                };
+
                 _context.NcrQas.Add(ncrQa);
                 await _context.SaveChangesAsync();
 
+
+
+                if (ncrQaDTO.ParentId.HasValue)
+                {
+                    var ncrReInspect = await _context.NcrReInspects.FirstOrDefaultAsync(n => n.NcrId == ncrQaDTO.ParentId);
+                    if (ncrReInspect != null)
+                    {
+                        ncrReInspect.NcrReInspectNewNcrNumber = ncr.NcrNumber;
+                        _context.Update(ncrReInspect);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+
+
                 TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " saved successfully!";
                 int ncrQaId = ncrQa.NcrQaId;
-                return RedirectToAction("Details", new { id = ncrQaId });                                
+
+                return RedirectToAction("Details", new { id = ncrQaId });
             }
 
             PopulateDropDownLists();
-            //ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierName", ncrQaDTO.SupplierId);
-            //ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName", ncrQaDTO.ItemId);
-            //ViewData["DefectId"] = new SelectList(_context.Defects, "DefectId", "DefectName", ncrQaDTO.DefectId);
             return View(ncrQaDTO);
         }
 
@@ -417,6 +444,12 @@ namespace HaverDevProject.Controllers
             //ViewData["DefectId"] = new SelectList(_context.Defects, "DefectId", "DefectName", ncrQaDTO.DefectId);
 
             var readOnlyDetails = await _context.Ncrs
+                .Include(n=>n.NcrProcurement)
+                .Include(n => n.NcrProcurement)
+                     .ThenInclude(n => n.ProcDefectPhotos)
+                .Include(n => n.NcrReInspect)
+                .Include(n=>n.NcrReInspect)
+                    .ThenInclude(n=>n.NcrReInspectPhotos)
                 .Include(n => n.NcrQa)
                     .ThenInclude(item => item.Supplier)
                 .Include(n => n.NcrQa)

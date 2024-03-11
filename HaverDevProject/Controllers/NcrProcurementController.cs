@@ -27,6 +27,10 @@ namespace HaverDevProject.Controllers
         public async Task<IActionResult> Index(string SearchCode, int? SupplierID, DateTime StartDate, DateTime EndDate,
             int? page, int? pageSizeID, string actionButton, string sortDirection = "desc", string sortField = "Created", string filter = "Active")
         {
+
+            ViewData["Filtering"] = "btn-block invisible";
+            int numberFilters = 0;
+
             //Set the date range filer based on the values in the database
             if (EndDate == DateTime.MinValue)
             {
@@ -97,19 +101,30 @@ namespace HaverDevProject.Controllers
             if (!String.IsNullOrEmpty(SearchCode))
             {
                 ncrProc = ncrProc.Where(s => s.Ncr.NcrNumber.ToUpper().Contains(SearchCode.ToUpper()));
+                numberFilters++;
             }
             if (SupplierID.HasValue)
             {
                 ncrProc = ncrProc.Where(n => n.Ncr.NcrQa.Supplier.SupplierId == SupplierID);
+                numberFilters++;
             }
             if (StartDate == EndDate)
             {
                 ncrProc = ncrProc.Where(n => n.Ncr.NcrQa.NcrQacreationDate == StartDate);
+                numberFilters++;
             }
             else
             {
                 ncrProc = ncrProc.Where(n => n.Ncr.NcrQa.NcrQacreationDate >= StartDate &&
                          n.Ncr.NcrQa.NcrQacreationDate <= EndDate);
+            }
+
+            //keep track of the number of filters 
+            if (numberFilters != 0)
+            {
+                ViewData["Filtering"] = " btn-danger";
+                ViewData["numberFilters"] = "(" + numberFilters.ToString()
+                    + " Filter" + (numberFilters > 1 ? "s" : "") + " Applied)";
             }
 
             //Sorting columns
@@ -318,7 +333,7 @@ namespace HaverDevProject.Controllers
 
             NcrProcurementDTO ncr = new NcrProcurementDTO();
             ncr.NcrNumber = ncrNumber;
-            ncr.NcrProcCreated = DateTime.Now;
+            ncr.NcrProcCompleteDate = DateTime.Now;
             ncr.NcrProcExpectedDate = DateTime.Now;
             ncr.NcrProcSupplierReturnReq = true;
             ncr.NcrStatus = true; //Active
@@ -389,7 +404,8 @@ namespace HaverDevProject.Controllers
                         NcrProcRejectedValue = ncrProcDTO.NcrProcRejectedValue,
                         NcrProcFlagStatus = ncrProcDTO.NcrProcFlagStatus,
                         NcrProcUserId = ncrProcDTO.NcrProcUserId,
-                        NcrProcCreated = DateTime.Now,
+                        NcrProcCompleteDate = DateTime.Now,
+                        NcrProcCreated = ncrProcDTO.NcrProcCreated,
                         SupplierReturnMANum = ncrProcDTO.SupplierReturnMANum,
                         SupplierReturnName = ncrProcDTO.SupplierReturnName,
                         SupplierReturnAccount = ncrProcDTO.SupplierReturnAccount,
@@ -409,7 +425,7 @@ namespace HaverDevProject.Controllers
                     _context.Ncrs.Update(ncr);
                     await _context.SaveChangesAsync();
 
-                    TempData["SuccessMessage"] = "NCR saved successfully!";
+                    TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " saved successfully!";
                     int ncrProcId = ncrProc.NcrProcurementId;
                     return RedirectToAction("Details", new { id = ncrProcId });
                 }
@@ -463,6 +479,7 @@ namespace HaverDevProject.Controllers
                 NcrProcFlagStatus = ncrProc.NcrProcFlagStatus,
                 NcrProcUserId = ncrProc.NcrProcUserId,
                 NcrProcCreated = ncrProc.NcrProcCreated,
+                NcrProcCompleteDate = ncrProc.NcrProcCompleteDate,
                 NcrId = ncrProc.NcrId,
                 SupplierReturnMANum = ncrProc.SupplierReturnMANum,
                 SupplierReturnName = ncrProc.SupplierReturnName,
@@ -472,6 +489,8 @@ namespace HaverDevProject.Controllers
             };
 
             var readOnlyDetails = await _context.Ncrs
+                .Include(n => n.NcrProcurement)
+                    .ThenInclude(n => n.ProcDefectPhotos)
                 .Include(n => n.NcrQa)
                     .ThenInclude(item => item.Supplier)
                 .Include(n => n.NcrQa)
@@ -492,17 +511,19 @@ namespace HaverDevProject.Controllers
                     .ThenInclude(op => op.FollowUpType)
                 .Include(n => n.NcrOperation)
                     .ThenInclude(op => op.OpDefectPhotos)
+                .Include(n => n.NcrReInspect)
+                    .ThenInclude(n => n.NcrReInspectPhotos)
                 .FirstOrDefaultAsync(n => n.NcrId == id);
 
             ViewBag.IsNCRQaView = false;
             ViewBag.IsNCREngView = false;
             ViewBag.IsNCROpView = false;
-            ViewBag.IsNCRProcView = false;
+            ViewBag.IsNCRProcView = true;
             ViewBag.IsNCRReInspView = false;
 
             ViewBag.ncrDetails = readOnlyDetails;
 
-            ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrProc.NcrId);
+            //ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrProc.NcrId);
             return View(ncrProcDTO);
         }
 
@@ -539,7 +560,8 @@ namespace HaverDevProject.Controllers
                     ncrProc.NcrProcRejectedValue = ncrProcDTO.NcrProcRejectedValue;
                     ncrProc.NcrProcFlagStatus = ncrProcDTO.NcrProcFlagStatus;
                     ncrProc.NcrProcUserId = ncrProcDTO.NcrProcUserId;
-                    ncrProc.NcrProcCreated = DateTime.Now;
+                    ncrProc.NcrProcCreated = ncrProcDTO.NcrProcCreated;
+                    ncrProc.NcrProcCompleteDate = ncrProcDTO.NcrProcCompleteDate;
                     ncrProc.NcrId = ncrProcDTO.NcrId;
                     ncrProc.SupplierReturnMANum = ncrProcDTO.SupplierReturnMANum;
                     ncrProc.SupplierReturnName = ncrProcDTO.SupplierReturnName;
@@ -559,7 +581,7 @@ namespace HaverDevProject.Controllers
                     _context.Update(ncr);
                     await _context.SaveChangesAsync();
 
-                    TempData["SuccessMessage"] = "NCR edited successfully!";
+                    TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " saved successfully!";
                     int ncrProcId = ncrProc.NcrProcurementId;
                     return RedirectToAction("Details", new { id = ncrProcId });
                 }

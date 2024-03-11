@@ -24,6 +24,16 @@
         {
             @await Html.PartialAsync("~/Views/NCRDetailViews/_NCROpDetailsPartial.cshtml", (NcrOperation)ViewBag.ncrDetails.NcrOperation)
         }
+
+        @* @if (ViewBag.ncrDetails.NcrProcurement != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRProcDetailsPartial.cshtml", (NcrProcurement)ViewBag.ncrDetails.NcrProcurement)
+        } *@
+
+        @if (ViewBag.ncrDetails.NcrReInspect != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRReInspDetailsPartial.cshtml", (NcrReInspect)ViewBag.ncrDetails.NcrReInspect)
+        }
     </div>
     <form asp-action="Edit" method="post" enctype="multipart/form-data">
         <div class="card border-2 mt-2">
@@ -50,7 +60,7 @@
                         <div class="form-group">
                             <strong>Date</strong>
                             @* <label asp-for="NcrNumber" class="control-label"></label> *@
-                            <input asp-for="NcrProcCreated" class="form-control" readonly />
+                            <input asp-for="NcrProcCompleteDate" class="form-control" readonly />
                         </div>
                     </div>
                 </div>
@@ -60,7 +70,7 @@
                             <label class="pb-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Check Yes or No if Supplier Requested a Return"><strong>Supplier Return Request </strong><span class="fw-bold text-danger">*</span></label>
                             <div>
                                 <div class="form-check form-check-inline">
-                                    <input type="radio" class="form-check-input" asp-for="NcrProcSupplierReturnReq" value="true" checked />
+                                    <input type="radio" class="form-check-input" asp-for="NcrProcSupplierReturnReq" value="true" />
                                     <label class="form-check-label">Yes</label>
                                 </div>
                                 <div class="form-check form-check-inline">

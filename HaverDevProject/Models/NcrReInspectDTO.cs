@@ -10,6 +10,20 @@ namespace HaverDevProject.Models;
 [ModelMetadataType(typeof(NcrReInspectMetaData))]
 public class NcrReInspectDTO
 {
+    public int DaysSinceCreated
+
+    {
+
+        get
+
+        {
+
+            return (DateTime.Now - NcrReInspectCreationDate).Days;
+
+        }
+
+    }
+
     public int NcrReInspectId { get; set; }
 
     public bool NcrReInspectAcceptable { get; set; } = false;
@@ -17,6 +31,8 @@ public class NcrReInspectDTO
     public string NcrReInspectNewNcrNumber { get; set; }
 
     public int NcrReInspectUserId { get; set; }
+
+    public DateTime NcrReInspectCreationDate { get; set; }
 
     public bool NcrQaStatusFlag { get; set; }
 

@@ -8,6 +8,20 @@ namespace HaverDevProject.Models
 {
     public class NcrProcurementMetaData : Auditable
     {
+        public int DaysSinceCreated
+
+        {
+
+            get
+
+            {
+
+                return (DateTime.Now - NcrProcCreated).Days;
+
+            }
+
+        }
+
         [Key]
         [Column("ncrProcurementId")]
         public int NcrProcurementId { get; set; }
@@ -53,6 +67,11 @@ namespace HaverDevProject.Models
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
         public DateTime NcrProcCreated { get; set; }
+
+        [Display(Name = "Date")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [DataType(DataType.Date)]
+        public DateTime NcrProcCompleteDate { get; set; }
 
         [Display(Name = "NCR")]
         [Column("ncrId")]
