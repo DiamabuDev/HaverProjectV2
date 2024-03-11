@@ -660,7 +660,7 @@ namespace HaverDevProject.Controllers
                          where s.SupplierName.ToUpper().Contains(term.ToUpper())
                                //|| d.FirstName.ToUpper().Contains(term.ToUpper())
                          orderby s.SupplierName
-                         select new { value = s.SupplierId, label= s.Summary};
+                         select new { value = s.SupplierName};
             return Json(result);
         }
 
