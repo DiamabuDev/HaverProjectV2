@@ -14,10 +14,7 @@
         Details <i class="bi bi-chevron-down"></i>
     </button>
     <div class="collapse" id="details">
-        @if (ViewBag.ncrDetails.NcrQa != null)
-        {
-            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", (NcrQa)ViewBag.ncrDetails.NcrQa)
-        }
+
 
         @if (ViewBag.ncrDetails.NcrEng != null)
         {
@@ -29,12 +26,12 @@
             @await Html.PartialAsync("~/Views/NCRDetailViews/_NCROpDetailsPartial.cshtml", (NcrOperation)ViewBag.ncrDetails.NcrOperation)
         }
 
-        @if (ViewBag.ncrDetails.NcrOperation != null)
+        @if (ViewBag.ncrDetails.NcrProcurement != null)
         {
             @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRProcDetailsPartial.cshtml", (NcrProcurement)ViewBag.ncrDetails.NcrProcurement)
         }
 
-        @if (ViewBag.ncrDetails.NcrOperation != null)
+        @if (ViewBag.ncrDetails.NcrReInspect != null)
         {
             @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRReInspDetailsPartial.cshtml", (NcrReInspect)ViewBag.ncrDetails.NcrReInspect)
         }
