@@ -406,7 +406,7 @@ namespace HaverDevProject.Data
                         {
                             NcrQaItemMarNonConforming = true,
                             NcrQaSalesOrder = "10401227",
-                            NcrQacreationDate = DateTime.Parse("2023-12-07"), 
+                            NcrQacreationDate = DateTime.Parse("2018-12-07"), 
                             NcrQauserId = 1, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-137").NcrId,
                             NcrQaProcessApplicable = false,
@@ -1125,6 +1125,7 @@ namespace HaverDevProject.Data
                             NcrProcSupplierBilled = true,
                             NcrProcUserId = 1, //need to make nullable
                             NcrProcCreated = DateTime.Parse("2023-12-18"),
+                            NcrProcCompleteDate = DateTime.Parse("2023-12-18"),
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
                             SupplierReturnAccount = "12345",
@@ -1140,6 +1141,7 @@ namespace HaverDevProject.Data
                             NcrProcSupplierBilled = true,
                             NcrProcUserId = 2, //need to make nullable
                             NcrProcCreated = DateTime.Parse("2023-12-19"),
+                            NcrProcCompleteDate = DateTime.Parse("2023-12-19"),
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
                             SupplierReturnAccount = "12345",
@@ -1155,6 +1157,7 @@ namespace HaverDevProject.Data
                             NcrProcSupplierBilled = true,
                             NcrProcUserId = 3, //need to make nullable
                             NcrProcCreated = DateTime.Parse("2023-12-23"),
+                            NcrProcCompleteDate = DateTime.Parse("2023-12-23"),
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
                             SupplierReturnAccount = "12345",
@@ -1170,6 +1173,7 @@ namespace HaverDevProject.Data
                             NcrProcSupplierBilled = true,
                             NcrProcUserId = 4, //need to make nullable
                             NcrProcCreated = DateTime.Parse("2024-01-18"),
+                            NcrProcCompleteDate = DateTime.Parse("2024-01-18"),
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
                             SupplierReturnAccount = "12345",
@@ -1185,6 +1189,7 @@ namespace HaverDevProject.Data
                             NcrProcSupplierBilled = true,
                             NcrProcUserId = 1, //need to make nullable
                             NcrProcCreated = DateTime.Parse("2024-01-14"),
+                            NcrProcCompleteDate = DateTime.Parse("2024-01-14"),
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
                             SupplierReturnAccount = "12345",
@@ -1275,6 +1280,7 @@ namespace HaverDevProject.Data
                             NcrProcSupplierBilled = true,
                             NcrProcUserId = 3, //need to make nullable
                             NcrProcCreated = DateTime.Parse("2024-01-23"),
+                            NcrProcCompleteDate = DateTime.Parse("2023-01-23"),
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
                             SupplierReturnAccount = "12345",

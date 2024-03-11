@@ -105,7 +105,7 @@
                                 @Html.Raw(ViewData["filterApplied:Supplier"])
                             </button>
                         </th>
-                        <th class="d-none d-md-table-cell col-3">
+                        <th class="three-cols">
                             <button type="submit" name="actionButton" value="Defect" class="btn text-light custom-btn-text-start">
                                 Defect
                                 @Html.Raw(ViewData["filterApplied:Defect"])
@@ -121,6 +121,12 @@
                             <button type="submit" name="actionButton" value="Phase" class="btn text-light custom-btn-text-start">
                                 Phase
                                 @Html.Raw(ViewData["filterApplied:Phase"])
+                            </button>
+                        </th>
+                        <th class="d-none d-xxl-table-cell">
+                            <button type="submit" name="actionButton" value="Last Updated" class="btn text-light custom-btn-text-start">
+                                Last Updated
+                                @Html.Raw(ViewData["filterApplied:Last Updated"])
                             </button>
                         </th>
                         <th></th>
@@ -142,7 +148,7 @@
                             <td class="col-3">
                                 @Html.DisplayFor(modelItem => item.NcrQa.Supplier.SupplierName)
                             </td>
-                            <td class="d-none d-md-table-cell col-3">
+                            <td class="three-cols">
                                 @Html.DisplayFor(modelItem => item.NcrQa.Defect.DefectName)
                             </td>
                             <td class="d-none d-md-table-cell">
@@ -154,20 +160,27 @@
                             <td class="d-none d-xxl-table-cell">
                                 @Html.DisplayFor(modelItem => item.NcrPhase)
                             </td>
-                            <td>
+                            <td class="d-none d-xxl-table-cell">
+                                @Html.DisplayFor(modelItem => item.NcrLastUpdated)
+                            </td>
 
-
-                                <a asp-action="Details" asp-route-id="@item.NcrId" class="btn text-primary" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
+                            <td class="d-flex">
+                                <a asp-action="Details" asp-route-id="@item.NcrId" class="btn text-primary me-2" data-bs-toggle="tooltip" title="Details">
+                                    <i class="bi bi-eye-fill"></i>
+                                </a>
 
                                 @if (item.NcrPhase == NcrPhase.Closed)
                                 {
-                                    <a asp-action="ArchiveNcr" asp-route-id="@item.NcrId" class="btn btn-danger" data-bs-toggle="tooltip" title="Archive NCR"><i class="bi bi-archive-fill"></i></a>
-
-                                    <a href="#" class="btn btn-danger delete-button" data-bs-toggle="tooltip" title="Delete NCR" data-id="@item.NcrId">
-                                        <i class="bi bi-trash"></i>
+                                    <a asp-action="ArchiveNcr" asp-route-id="@item.NcrId" class="btn btn-danger me-2" data-bs-toggle="tooltip" title="Archive NCR">
+                                        <i class="bi bi-archive-fill"></i>
                                     </a>
                                 }
+
+                                <a href="#" class="btn btn-danger delete-button" data-bs-toggle="tooltip" title="Delete NCR" data-id="@item.NcrId">
+                                    <i class="bi bi-trash"></i>
+                                </a>
                             </td>
+
                         </tr>
                     }
                 </tbody>
@@ -244,7 +257,7 @@
                                 @Html.Raw(ViewData["filterApplied:Supplier"])
                             </button>
                         </th>
-                        <th class="d-none d-md-table-cell col-3">
+                        <th class="three-cols">
                             <button type="submit" name="actionButton" value="Defect" class="btn text-light custom-btn-text-start">
                                 Defect
                                 @Html.Raw(ViewData["filterApplied:Defect"])
@@ -260,6 +273,12 @@
                             <button type="submit" name="actionButton" value="Phase" class="btn text-light custom-btn-text-start">
                                 Phase
                                 @Html.Raw(ViewData["filterApplied:Phase"])
+                            </button>
+                        </th>
+                        <th class="d-none d-xxl-table-cell">
+                            <button type="submit" name="actionButton" value="Last Updated" class="btn text-light custom-btn-text-start">
+                                Last Updated
+                                @Html.Raw(ViewData["filterApplied:Last Updated"])
                             </button>
                         </th>
                         <th></th>
@@ -293,21 +312,26 @@
                             <td class="d-none d-xxl-table-cell">
                                 @Html.DisplayFor(modelItem => item.NcrPhase)
                             </td>
-                            <td>
+                            <td class="d-none d-xxl-table-cell">
+                                @Html.DisplayFor(modelItem => item.NcrLastUpdated)
+                            </td>
+                            <td class="d-flex">
+                                <a asp-action="Details" asp-route-id="@item.NcrId" class="btn text-primary me-2" data-bs-toggle="tooltip" title="Details">
+                                    <i class="bi bi-eye-fill"></i>
+                                </a>
 
-
-                                <a asp-action="Details" asp-route-id="@item.NcrId" class="btn text-primary" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
+                                @if (item.NcrPhase == NcrPhase.Archive && item.NcrQa.NcrQacreationDate.AddYears(5) > DateTime.UtcNow)
+                                {
+                                    <a asp-action="RestoreNcr" asp-route-id="@item.NcrId" class="btn btn-success me-2" data-bs-toggle="tooltip" title="Restore NCR">
+                                        <i class="bi bi-archive-fill"></i>
+                                    </a>
+                                }
 
                                 <a href="#" class="btn btn-danger delete-button" data-bs-toggle="tooltip" title="Delete NCR" data-id="@item.NcrId">
                                     <i class="bi bi-trash"></i>
                                 </a>
-
-                                @if (item.NcrPhase == NcrPhase.Archive)
-                                {
-                                    <a asp-action="RestoreNcr" asp-route-id="@item.NcrId" class="btn btn-success" data-bs-toggle="tooltip" title="Restore NCR"><i class="bi bi-archive-fill"></i></a>
-                                }
-
                             </td>
+
                         </tr>
                     }
                 </tbody>
