@@ -203,6 +203,21 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
+            else if (sortField == "Last Updated")
+            {
+                if (sortDirection == "desc") //desc by default
+                {
+                    ncr = ncr
+                        .OrderBy(p => p.NcrLastUpdated);
+                    ViewData["filterApplied:Last Updated"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncr = ncr
+                        .OrderByDescending(p => p.NcrLastUpdated);
+                    ViewData["filterApplied:Last Updated"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
             else //(sortField == "PO Number")
             {
                 if (sortDirection == "asc")
