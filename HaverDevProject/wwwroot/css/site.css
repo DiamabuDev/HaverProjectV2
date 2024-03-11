@@ -379,3 +379,14 @@ body {
 .hidden {
     display: none;
 }
+
+#dropautocomplete, #dropautocompleteforItem, #dropautocompleteforDefect {
+    flex-wrap: nowrap !important;
+}
+
+.select2-container .select2-selection--single {
+    padding-top: 3px;
+    height: 38px !important;
+    border: 1px solid #ced4da !important;
+    color: #212529 !important;
+}
