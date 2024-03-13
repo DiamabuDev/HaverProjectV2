@@ -32,6 +32,10 @@ namespace HaverDevProject.Controllers
         public async Task<IActionResult> Index(string SearchCode, /*int? SupplierID, int? DefectID,*/ int? page, int? pageSizeID,
             string actionButton, string sortDirection = "asc", string sortField = "Code")
         {
+
+            ViewData["Filtering"] = "btn-block invisible";
+            int numberFilters = 0;
+
             //List of sort options.
             string[] sortOptions = new[] { "Code", "Item", "Description", "Supplier", "Defect" };
 
@@ -46,7 +50,17 @@ namespace HaverDevProject.Controllers
             if (!String.IsNullOrEmpty(SearchCode))
             {
                 items = items.Where(s => s.ItemName.ToUpper().Contains(SearchCode.ToUpper()));
+                numberFilters++;
             }
+
+            //keep track of the number of filters 
+            if (numberFilters != 0)
+            {
+                ViewData["Filtering"] = " btn-danger";
+                ViewData["numberFilters"] = "(" + numberFilters.ToString()
+                    + " Filter" + (numberFilters > 1 ? "s" : "") + " Applied)";
+            }
+
             //Sorting columns
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
             {

@@ -39,6 +39,10 @@ namespace HaverDevProject.Controllers
             string filter = "Active"
         )
         {
+
+            ViewData["Filtering"] = "btn-block invisible";
+            int numberFilters = 0;
+
             //List of sort options.
             string[] sortOptions = new[] { "Code", "Name", "Email", "Contact" };
 
@@ -76,6 +80,7 @@ namespace HaverDevProject.Controllers
                      //s.SupplierCode.ToUpper().Contains(SearchCode.ToUpper()) ||
                      s.SupplierName.ToUpper().Contains(SearchCode.ToUpper())
                 );
+                numberFilters++;
             }
 
             if (!String.IsNullOrEmpty(SearchContact))
@@ -83,6 +88,15 @@ namespace HaverDevProject.Controllers
                 suppliers = suppliers.Where(s =>
                     s.SupplierContactName.ToUpper().Contains(SearchContact.ToUpper())
                 );
+                numberFilters++;
+            }
+
+            //keep track of the number of filters 
+            if (numberFilters != 0)
+            {
+                ViewData["Filtering"] = " btn-danger";
+                ViewData["numberFilters"] = "(" + numberFilters.ToString()
+                    + " Filter" + (numberFilters > 1 ? "s" : "") + " Applied)";
             }
 
             //Sorting columns
