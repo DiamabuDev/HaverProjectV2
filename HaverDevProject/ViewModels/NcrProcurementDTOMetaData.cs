@@ -98,20 +98,20 @@ namespace HaverDevProject.Models
         //public virtual SupplierReturn SupplierReturn { get; set; }
 
         [Display(Name = "RMA Number")]
-        
+        [Required(ErrorMessage = "Supplier RMA# is required.")]
         [Column("supplierReturnMANum")]
         public string SupplierReturnMANum { get; set; }
 
         [Display(Name = "Carrier Name")]
         [StringLength(45, ErrorMessage = "Only 45 characters for Carrier Name")]
-        
+        [Required(ErrorMessage = "Carrier Name is required.")]
         [Column("supplierReturnName")]
         public string SupplierReturnName { get; set; }
 
         [Display(Name = "Account Number")]
         [StringLength(45, ErrorMessage = "Only 45 characters for the Account Number")]
         [RegularExpression("^[0-9]*$", ErrorMessage = "Only numbers are allowed.")]
-        
+        [Required(ErrorMessage = "Account # is required.")]
         [Column("supplierReturnAccount")]
         public string SupplierReturnAccount { get; set; }
 
