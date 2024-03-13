@@ -24,7 +24,7 @@ public class NcrMetaData
     [Display(Name = "Last Updated")]
     [Required(ErrorMessage = "You must provide the last date the NCR was updated.")]
     [Column("ncrLastUpdated", TypeName = "datetime")]
-    //[DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
     [DataType(DataType.Date)]
     public DateTime NcrLastUpdated { get; set; }
 
