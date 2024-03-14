@@ -11,9 +11,11 @@ using HaverDevProject.ViewModels;
 using HaverDevProject.CustomControllers;
 using HaverDevProject.Utilities;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HaverDevProject.Controllers
 {
+    [Authorize]
     public class NcrProcurementController : ElephantController
     {
         private readonly HaverNiagaraContext _context;

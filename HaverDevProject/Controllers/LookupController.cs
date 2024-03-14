@@ -2,9 +2,11 @@
 using HaverDevProject.CustomControllers;
 using HaverDevProject.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HaverDevProject.Controllers
 {
+    [Authorize]
     public class LookupController : CognizantController
     {
         private readonly HaverNiagaraContext _context;

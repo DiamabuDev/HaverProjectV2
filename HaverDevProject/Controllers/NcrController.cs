@@ -9,9 +9,11 @@ using HaverDevProject.Data;
 using HaverDevProject.Models;
 using HaverDevProject.Utilities;
 using HaverDevProject.CustomControllers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HaverDevProject.Controllers
 {
+    [Authorize]
     public class NcrController : ElephantController
     {
         private readonly HaverNiagaraContext _context;

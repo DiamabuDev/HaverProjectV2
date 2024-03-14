@@ -14,10 +14,12 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Defect = HaverDevProject.Models.Defect;
 using OfficeOpenXml;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace HaverDevProject.Controllers
 {
+    [Authorize]
     public class DefectsController : ElephantController
     {
         private readonly HaverNiagaraContext _context;
