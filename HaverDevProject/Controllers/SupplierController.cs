@@ -29,7 +29,7 @@ namespace HaverDevProject.Controllers
 
         // GET: Supplier
         public async Task<IActionResult> Index(
-            string SearchCode,
+            string SearchSupplier,
             string SearchContact,
             int? page,
             int? pageSizeID,
@@ -74,11 +74,11 @@ namespace HaverDevProject.Controllers
                 }
             }
 
-            if (!String.IsNullOrEmpty(SearchCode))
+            if (!String.IsNullOrEmpty(SearchSupplier))
             {
                 suppliers = suppliers.Where(s =>
                      //s.SupplierCode.ToUpper().Contains(SearchCode.ToUpper()) ||
-                     s.SupplierName.ToUpper().Contains(SearchCode.ToUpper())
+                     s.SupplierName.ToUpper().Contains(SearchSupplier.ToUpper())
                 );
                 numberFilters++;
             }
