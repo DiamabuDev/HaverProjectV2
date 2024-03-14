@@ -19,7 +19,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HaverDevProject.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class DefectsController : ElephantController
     {
         private readonly HaverNiagaraContext _context;
@@ -28,6 +28,8 @@ namespace HaverDevProject.Controllers
         {
             _context = context;
         }
+
+        [Authorize(Roles = "Admin")]
 
         // GET: Defects
         public async Task<IActionResult> Index(string SearchName, /*int? ItemID,*/ int? page, int? pageSizeID,
