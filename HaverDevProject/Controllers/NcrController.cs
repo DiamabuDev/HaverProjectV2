@@ -22,7 +22,7 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: Ncr
-        public async Task<IActionResult> Index(string SearchCode, int? SupplierID, DateTime StartDate, DateTime EndDate,
+        public async Task<IActionResult> Index(string SearchCode, string SearchSupplier, DateTime StartDate, DateTime EndDate,
             int? page, int? pageSizeID, string actionButton, string sortDirection = "desc", string sortField = "Created", string filter = "Active")
         {
             ViewData["Filtering"] = "btn-block invisible";
@@ -99,9 +99,9 @@ namespace HaverDevProject.Controllers
                 || s.NcrNumber.ToUpper().Contains(SearchCode.ToUpper()));
                 numberFilters++;
             }
-            if (SupplierID.HasValue)
+            if (!String.IsNullOrEmpty(SearchSupplier))
             {
-                ncr = ncr.Where(n => n.NcrQa.Supplier.SupplierId == SupplierID);
+                ncr = ncr.Where(n => n.NcrQa.Supplier.SupplierName == SearchSupplier);
                 numberFilters++;
             }
             if (StartDate == EndDate)

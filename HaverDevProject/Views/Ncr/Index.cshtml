@@ -67,7 +67,7 @@
                     <div class="row d-flex justify-content-center align-items-center">
                         <div class="form-group col-lg-3 col-md-5 col-sm-10 col-10">
                             <label class="control-label">Filter by Suppliers:</label>
-                            @Html.DropDownList("SupplierID", null, "All Suppliers", htmlAttributes: new { @class = "form-control" })
+                            @Html.TextBox("SearchSupplier", null, new { @class = "form-control", placeholder = "Enter Supplier Name" })                            
                         </div>
                         <div class="form-group col-lg-2">
                             <label class="control-label">Start Date:</label>
@@ -80,7 +80,7 @@
                         </div>
                         <div class="form-group col-lg-3 col-md-5 col-sm-10 col-10">
                             <label class="control-label mb-1">Find by NCR # or Defect :</label>
-                            @Html.TextBox("SearchCode", null, new { @class = "form-control" })
+                            @Html.TextBox("SearchCode", null, new { @class = "form-control", placeholder = "Enter NCR # or Defect Name" })
                         </div>
                         <div class="form-group col-lg-2 col-md-7 col-sm-10 col-10 align-self-end">
                             <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary ms-2" />
@@ -347,7 +347,9 @@
     </div>
 </form>
 
-
+@section Styles {
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+}
 @section Scripts {
     <script type="text/javascript">
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
@@ -359,10 +361,6 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $('.btn-filter').on('click', function () {
-
-
-
-
                 $('#filter').val($(this).data('filter'));
                 $('#ncrForm').submit();
             });
@@ -413,6 +411,18 @@
             $('#deleteConfirmationModal').on('hidden.bs.modal', function () {
                 currentNcrId = null;
             });
+        });
+    </script>
+
+    <!--For Autocomplete fields-->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+
+    <script type="text/javascript">
+        $('#SearchSupplier').autocomplete({
+            minLength: 1,
+            source: '@Url.Action("GetSuppliersAuto", "NcrQa")'
         });
     </script>
 }

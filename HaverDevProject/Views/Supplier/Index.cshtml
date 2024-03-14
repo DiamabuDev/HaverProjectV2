@@ -37,11 +37,11 @@
             <div class="row d-flex justify-content-center align-items-center">
                 <div class="form-group col-lg-4 col-md-5 col-sm-10 col-10">
                     <label class="control-label mb-1">Find by Supplier:</label>
-                    @Html.TextBox("SearchCode", null, new { @class = "form-control" })
+                    @Html.TextBox("SearchSupplier", null, new { @class = "form-control", placeholder = "Enter Supplier Name" })
                 </div>  
                 <div class="form-group col-lg-4 col-md-5 col-sm-10 col-10">
                     <label class="control-label mb-1">Find by Supplier Contact Name:</label>
-                    @Html.TextBox("SearchContact", null, new { @class = "form-control" })
+                    @Html.TextBox("SearchContact", null, new { @class = "form-control", placeholder = "Enter Contact Name" })
                 </div>
 
                 <div class="form-group col-lg-4 col-md-7 col-sm-10 col-10 align-self-end">
@@ -137,7 +137,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
 
     <script type="text/javascript">
-        $('#SearchCode').autocomplete({
+        $('#SearchSupplier').autocomplete({
             minLength: 1,
             source: '@Url.Action("GetSuppliersAuto", "NcrQa")'
         });

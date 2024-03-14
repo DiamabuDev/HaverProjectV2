@@ -24,7 +24,7 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: NcrProcurement
-        public async Task<IActionResult> Index(string SearchCode, int? SupplierID, DateTime StartDate, DateTime EndDate,
+        public async Task<IActionResult> Index(string SearchCode, string SearchSupplier, DateTime StartDate, DateTime EndDate,
             int? page, int? pageSizeID, string actionButton, string sortDirection = "desc", string sortField = "Created", string filter = "Active")
         {
 
@@ -102,10 +102,10 @@ namespace HaverDevProject.Controllers
             {
                 ncrProc = ncrProc.Where(s => s.Ncr.NcrNumber.ToUpper().Contains(SearchCode.ToUpper()));
                 numberFilters++;
-            }
-            if (SupplierID.HasValue)
+            }            
+            if (!String.IsNullOrEmpty(SearchSupplier))
             {
-                ncrProc = ncrProc.Where(n => n.Ncr.NcrQa.Supplier.SupplierId == SupplierID);
+                ncrProc = ncrProc.Where(n => n.Ncr.NcrQa.Supplier.SupplierName == SearchSupplier);
                 numberFilters++;
             }
             if (StartDate == EndDate)
