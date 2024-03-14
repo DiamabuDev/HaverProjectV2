@@ -177,7 +177,7 @@ namespace HaverDevProject.Data.QLMigrations
                     NcrProcFlagStatus = table.Column<bool>(type: "INTEGER", nullable: false),
                     NcrProcUserId = table.Column<int>(type: "INTEGER", nullable: false),
                     NcrProcCreated = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    SupplierReturnId = table.Column<int>(type: "INTEGER", nullable: false),
+                    NcrProcCompleteDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     SupplierReturnMANum = table.Column<string>(type: "TEXT", nullable: true),
                     SupplierReturnName = table.Column<string>(type: "TEXT", nullable: true),
                     SupplierReturnAccount = table.Column<string>(type: "TEXT", nullable: true),
@@ -360,7 +360,7 @@ namespace HaverDevProject.Data.QLMigrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_ncrOperation_NcrOpId", x => x.NcrOpId);
+                    table.PrimaryKey("pk_ncrOperation_ncrOpId", x => x.NcrOpId);
                     table.ForeignKey(
                         name: "FK_NcrOperations_followUpType_FollowUpTypeId",
                         column: x => x.FollowUpTypeId,
@@ -381,8 +381,7 @@ namespace HaverDevProject.Data.QLMigrations
                         name: "fk_ncrOperation_opDispositionType",
                         column: x => x.OpDispositionTypeId,
                         principalTable: "opDispositionType",
-                        principalColumn: "OpDispositionTypeId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "OpDispositionTypeId");
                 });
 
             migrationBuilder.CreateTable(
@@ -403,27 +402,6 @@ namespace HaverDevProject.Data.QLMigrations
                     table.ForeignKey(
                         name: "fk_procDefectPhoto_itemDefect",
                         column: x => x.ncrProcurementId,
-                        principalTable: "NcrProcurements",
-                        principalColumn: "NcrProcurementId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "supplierReturn",
-                columns: table => new
-                {
-                    supplierReturnId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    supplierReturnMANum = table.Column<string>(type: "TEXT", nullable: true),
-                    supplierReturnName = table.Column<string>(type: "TEXT", maxLength: 45, nullable: true),
-                    supplierReturnAccount = table.Column<string>(type: "TEXT", maxLength: 45, nullable: true),
-                    NcrProcurementId = table.Column<int>(type: "INTEGER", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_supplierReturn", x => x.supplierReturnId);
-                    table.ForeignKey(
-                        name: "FK_supplierReturn_NcrProcurements_NcrProcurementId",
-                        column: x => x.NcrProcurementId,
                         principalTable: "NcrProcurements",
                         principalColumn: "NcrProcurementId");
                 });
@@ -504,9 +482,9 @@ namespace HaverDevProject.Data.QLMigrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_opDefectPhoto_opDefectPhotoId", x => x.opDefectPhotoId);
+                    table.PrimaryKey("PK_opDefectPhoto", x => x.opDefectPhotoId);
                     table.ForeignKey(
-                        name: "fk_opDefectPhoto_itemDefect",
+                        name: "FK_opDefectPhoto_NcrOperations_ncrOpId",
                         column: x => x.ncrOpId,
                         principalTable: "NcrOperations",
                         principalColumn: "NcrOpId",
@@ -697,12 +675,6 @@ namespace HaverDevProject.Data.QLMigrations
                 table: "supplier",
                 column: "supplierCode",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_supplierReturn_NcrProcurementId",
-                table: "supplierReturn",
-                column: "NcrProcurementId",
-                unique: true);
         }
 
         /// <inheritdoc />
@@ -725,9 +697,6 @@ namespace HaverDevProject.Data.QLMigrations
 
             migrationBuilder.DropTable(
                 name: "ReInspectFileContent");
-
-            migrationBuilder.DropTable(
-                name: "supplierReturn");
 
             migrationBuilder.DropTable(
                 name: "engDefectPhoto");

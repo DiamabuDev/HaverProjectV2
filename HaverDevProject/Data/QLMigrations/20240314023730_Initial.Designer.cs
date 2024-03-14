@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HaverDevProject.Data.QLMigrations
 {
     [DbContext(typeof(HaverNiagaraContext))]
-    [Migration("20240309231240_Initial")]
+    [Migration("20240314023730_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -432,7 +432,7 @@ namespace HaverDevProject.Data.QLMigrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("NcrOpId")
-                        .HasName("pk_ncrOperation_NcrOpId");
+                        .HasName("pk_ncrOperation_ncrOpId");
 
                     b.HasIndex("FollowUpTypeId");
 
@@ -461,6 +461,9 @@ namespace HaverDevProject.Data.QLMigrations
 
                     b.Property<int>("NcrId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("NcrProcCompleteDate")
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("NcrProcCreated")
                         .HasColumnType("TEXT");
@@ -502,9 +505,6 @@ namespace HaverDevProject.Data.QLMigrations
 
                     b.Property<string>("SupplierReturnAccount")
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("SupplierReturnId")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("SupplierReturnMANum")
                         .HasColumnType("TEXT");
@@ -751,8 +751,7 @@ namespace HaverDevProject.Data.QLMigrations
                         .HasColumnType("TEXT")
                         .HasColumnName("opDefectPhotoMimeType");
 
-                    b.HasKey("OpDefectPhotoId")
-                        .HasName("pk_opDefectPhoto_opDefectPhotoId");
+                    b.HasKey("OpDefectPhotoId");
 
                     b.HasIndex("NcrOpId");
 
@@ -902,38 +901,6 @@ namespace HaverDevProject.Data.QLMigrations
                     b.ToTable("supplier");
                 });
 
-            modelBuilder.Entity("HaverDevProject.Models.SupplierReturn", b =>
-                {
-                    b.Property<int>("SupplierReturnId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("supplierReturnId");
-
-                    b.Property<int?>("NcrProcurementId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("SupplierReturnAccount")
-                        .HasMaxLength(45)
-                        .HasColumnType("TEXT")
-                        .HasColumnName("supplierReturnAccount");
-
-                    b.Property<string>("SupplierReturnMANum")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("supplierReturnMANum");
-
-                    b.Property<string>("SupplierReturnName")
-                        .HasMaxLength(45)
-                        .HasColumnType("TEXT")
-                        .HasColumnName("supplierReturnName");
-
-                    b.HasKey("SupplierReturnId");
-
-                    b.HasIndex("NcrProcurementId")
-                        .IsUnique();
-
-                    b.ToTable("supplierReturn");
-                });
-
             modelBuilder.Entity("HaverDevProject.Models.Drawing", b =>
                 {
                     b.HasOne("HaverDevProject.Models.NcrEng", "NcrEng")
@@ -1038,7 +1005,6 @@ namespace HaverDevProject.Data.QLMigrations
                     b.HasOne("HaverDevProject.Models.OpDispositionType", "OpDispositionType")
                         .WithMany("NcrOperations")
                         .HasForeignKey("OpDispositionTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_ncrOperation_opDispositionType");
 
@@ -1125,8 +1091,7 @@ namespace HaverDevProject.Data.QLMigrations
                         .WithMany("OpDefectPhotos")
                         .HasForeignKey("NcrOpId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_opDefectPhoto_itemDefect");
+                        .IsRequired();
 
                     b.Navigation("NcrOperation");
                 });
@@ -1173,15 +1138,6 @@ namespace HaverDevProject.Data.QLMigrations
                         .IsRequired();
 
                     b.Navigation("NcrReInspectPhoto");
-                });
-
-            modelBuilder.Entity("HaverDevProject.Models.SupplierReturn", b =>
-                {
-                    b.HasOne("HaverDevProject.Models.NcrProcurement", "NcrProcurement")
-                        .WithOne("SupplierReturn")
-                        .HasForeignKey("HaverDevProject.Models.SupplierReturn", "NcrProcurementId");
-
-                    b.Navigation("NcrProcurement");
                 });
 
             modelBuilder.Entity("HaverDevProject.Models.Defect", b =>
@@ -1244,8 +1200,6 @@ namespace HaverDevProject.Data.QLMigrations
             modelBuilder.Entity("HaverDevProject.Models.NcrProcurement", b =>
                 {
                     b.Navigation("ProcDefectPhotos");
-
-                    b.Navigation("SupplierReturn");
                 });
 
             modelBuilder.Entity("HaverDevProject.Models.NcrQa", b =>

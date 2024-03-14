@@ -15,9 +15,11 @@ using System.Numerics;
 using Microsoft.EntityFrameworkCore.Storage;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using System.Runtime.ConstrainedExecution;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HaverDevProject.Controllers
 {
+    [Authorize]
     public class NcrOperationController : ElephantController
     {
         private readonly HaverNiagaraContext _context;

@@ -15,10 +15,12 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.AspNetCore.Hosting;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using System.Reflection.Emit;
+using Microsoft.AspNetCore.Authorization;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HaverDevProject.Controllers
 {
+    [Authorize]
     public class NcrQaController : ElephantController
     {
         private readonly HaverNiagaraContext _context;

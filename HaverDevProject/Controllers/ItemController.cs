@@ -16,9 +16,11 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using OfficeOpenXml;
 using SQLitePCL;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HaverDevProject.Controllers
 {
+    [Authorize]
     public class ItemController : ElephantController
     {
         private readonly HaverNiagaraContext _context;

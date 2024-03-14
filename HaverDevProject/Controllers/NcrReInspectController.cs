@@ -12,9 +12,11 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using HaverDevProject.CustomControllers;
 using HaverDevProject.Utilities;
 using HaverDevProject.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HaverDevProject.Controllers
 {
+    [Authorize]
     public class NcrReInspectController : ElephantController
     {
         private readonly HaverNiagaraContext _context;

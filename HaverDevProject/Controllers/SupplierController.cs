@@ -7,6 +7,7 @@ using HaverDevProject.Data;
 using HaverDevProject.Models;
 using HaverDevProject.Utilities;
 using HaverDevProject.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -18,6 +19,7 @@ using OfficeOpenXml;
 
 namespace HaverDevProject.Controllers
 {
+    [Authorize]
     public class SupplierController : ElephantController
     {
         private readonly HaverNiagaraContext _context;
