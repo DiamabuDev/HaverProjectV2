@@ -18,7 +18,7 @@ namespace HaverDevProject.Data
                 //Create Roles
                 var RoleManager = applicationBuilder.ApplicationServices.CreateScope()
                     .ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-                string[] roleNames = { "Admin", "Qa", "Eng", "Op", "Proc" };
+                string[] roleNames = { "Admin", "Quality", "Engineer", "Operations", "Procurement" };
                 IdentityResult roleResult;
                 foreach (var roleName in roleNames)
                 {
@@ -60,7 +60,7 @@ namespace HaverDevProject.Data
 
                     if (result.Succeeded)
                     {
-                        userManager.AddToRoleAsync(user, "Qa").Wait();
+                        userManager.AddToRoleAsync(user, "Quality").Wait();
                     }
                 }
                 if (userManager.FindByEmailAsync("engineer@outlook.com").Result == null)
@@ -76,7 +76,7 @@ namespace HaverDevProject.Data
 
                     if (result.Succeeded)
                     {
-                        userManager.AddToRoleAsync(user, "Eng").Wait();
+                        userManager.AddToRoleAsync(user, "Engineer").Wait();
                     }
                 }
                 if (userManager.FindByEmailAsync("procurement@outlook.com").Result == null)
@@ -92,7 +92,7 @@ namespace HaverDevProject.Data
 
                     if (result.Succeeded)
                     {
-                        userManager.AddToRoleAsync(user, "Proc").Wait();
+                        userManager.AddToRoleAsync(user, "Procurement").Wait();
                     }
                 }
                 if (userManager.FindByEmailAsync("vlopezchavez1@ncstudents.niagaracollege.ca").Result == null)
