@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace HaverDevProject.Data.QLMigrations
+namespace HaverDevProject.Data.HPMigrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration

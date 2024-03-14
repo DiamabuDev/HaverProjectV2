@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HaverDevProject.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class LookupController : CognizantController
     {
         private readonly HaverNiagaraContext _context;

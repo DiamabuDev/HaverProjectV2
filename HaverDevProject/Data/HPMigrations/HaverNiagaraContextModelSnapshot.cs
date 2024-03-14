@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace HaverDevProject.Data.QLMigrations
+namespace HaverDevProject.Data.HPMigrations
 {
     [DbContext(typeof(HaverNiagaraContext))]
     partial class HaverNiagaraContextModelSnapshot : ModelSnapshot

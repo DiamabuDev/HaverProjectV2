@@ -8,10 +8,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace HaverDevProject.Data.QLMigrations
+namespace HaverDevProject.Data.HPMigrations
 {
     [DbContext(typeof(HaverNiagaraContext))]
-    [Migration("20240314023730_Initial")]
+    [Migration("20240314035436_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
