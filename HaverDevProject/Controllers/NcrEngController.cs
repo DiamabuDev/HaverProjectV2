@@ -380,6 +380,22 @@ namespace HaverDevProject.Controllers
                         .Select(n => n.NcrId)
                         .FirstOrDefault();
 
+                    //Checking if NcrOperations exist...
+                    var ncrOperations = await _context.NcrOperations
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(n => n.NcrId == ncrIdObt);
+                    bool ncrOperationExist = ncrOperations != null;
+
+                    //Checking if NcrProcurement exist...
+                    var ncrProcurement = await _context.NcrOperations
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(n => n.NcrId == ncrIdObt);
+                    bool ncrProcurementExist = ncrProcurement != null;
+
+
+
+
+
                     //PopulateDropDownLists();
                     await AddPictures(ncrEngDTO, Photos);
 
@@ -408,7 +424,21 @@ namespace HaverDevProject.Controllers
 
                     //update ncr 
                     var ncr = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrIdObt);
-                    ncr.NcrPhase = NcrPhase.Operations;
+
+                    if (ncrOperationExist == false)
+                    {
+                        ncr.NcrPhase = NcrPhase.Operations;
+                    }
+                    else if (ncrOperationExist == true && ncrProcurementExist == false)
+                    {
+                        ncr.NcrPhase = NcrPhase.Procurement;
+                    }
+                    else
+                    {
+                        ncr.NcrPhase = NcrPhase.ReInspection;
+                    }
+
+                    //ncr.NcrPhase = NcrPhase.Operations;
                     ncr.NcrLastUpdated = DateTime.Now;
                     _context.Ncrs.Update(ncr);
                     await _context.SaveChangesAsync();

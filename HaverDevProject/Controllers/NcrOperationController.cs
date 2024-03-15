@@ -344,7 +344,7 @@ namespace HaverDevProject.Controllers
                     .ThenInclude(eng => eng.EngDefectPhotos)
                 .FirstOrDefaultAsync(n => n.NcrId == ncrId);
 
-            ncr.NcrOpCreationDate = readOnlyDetails.NcrEng.NcrEngCreationDate;
+            //ncr.NcrOpCreationDate = readOnlyDetails.NcrEng.NcrEngCreationDate;
 
             ViewBag.IsNCRQaView = false;
             ViewBag.IsNCREngView = false;
