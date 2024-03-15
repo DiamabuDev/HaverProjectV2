@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<HaverDevProject.Models.Ncr>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Archived";
 }
 
 <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
@@ -22,42 +22,28 @@
     </div>
 </div>
 
-<h1><i class="bi bi-caret-right-fill"></i> Non-Conformance Reports</h1>
+<h1><i class="bi bi-caret-right-fill"></i> Archived Reports</h1>
 
 <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item" role="presentation">
-        <a class="nav-link active" id="ncrLog-tab" data-bs-toggle="tab" href="#ncrLog" role="tab" aria-controls="ncrLog" aria-selected="true">NCR Log</a>
+        <a class="nav-link" id="ncrLog-tab" href="/Ncr/Index">NCR Log</a>
     </li>
     <li class="nav-item" role="presentation">
-        <a class="nav-link" id="archive-tab" href="/Ncr/Archived">Archive</a>
+        <a class="nav-link active" id="archive-tab" data-bs-toggle="tab" href="/Ncr/Archived" role="tab" aria-controls="archive" aria-selected="true">Archive</a>
     </li>
 </ul>
 
-
-<form id="ncrForm" asp-action="Index" method="get">
+<form id="ncrForm" asp-action="Archived" method="get">
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
     <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
     <input type="hidden" id="filter" name="filter" value="@ViewData["filter"]" />
     <div class="row mt-3 mb-2">
-        <div class="col-8">
-            <div class="d-flex justify-content-start">
-                <input type="radio" class="btn-check btn-filter" name="filter" id="All" autocomplete="off" value="All" data-filter="All">
-                <label class="btn @ViewData["filterApplied:ButtonAll"] me-2" for="All">All NCRs</label>
-
-                <input type="radio" class="btn-check btn-filter" name="filter" id="Active" autocomplete="off" checked value="Active" data-filter="Active">
-                <label class="btn @ViewData["filterApplied:ButtonActive"] me-2" for="Active">Active NCRs</label>
-
-                <input type="radio" class="btn-check btn-filter" name="filter" id="Closed" autocomplete="off" value="Closed" data-filter="Closed">
-                <label class="btn @ViewData["filterApplied:ButtonClosed"] me-2" for="Closed">Closed NCRs </label>
-            </div>
-        </div>
-        <div class="col-4 text-end">
+        <div class="col-12 text-end">
             <button class="btn @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
                 @ViewData["numberFilters"]
             </button>
         </div>
     </div>
-
     <div class="form-horizontal">
         <div class="card card-body bg-custom-color mb-2">
             <div class="row d-flex justify-content-center align-items-center">
@@ -80,7 +66,7 @@
                 </div>
                 <div class="form-group col-lg-2 col-md-7 col-sm-10 col-10 align-self-end">
                     <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary ms-2" />
-                    <a asp-action="Index" class="btn btn-outline-dark ms-4">Clear</a>
+                    <a asp-action="Archived" class="btn btn-outline-dark ms-4">Clear</a>
                 </div>
             </div>
         </div>
@@ -135,7 +121,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model.Where(ncr => ncr.NcrPhase != NcrPhase.Archive))
+            @foreach (var item in Model)
             {
                 <tr>
                     <td class="ps-1 @((item.NcrStatus == true) ? "stillactive" : "closed" )">
@@ -167,14 +153,14 @@
                     </td>
 
                     <td class="align-middle">
-                        @if (item.NcrPhase == NcrPhase.Closed)
+                        @if (item.NcrPhase == NcrPhase.Archive && item.NcrQa.NcrQacreationDate.AddYears(5) > DateTime.Now)
                         {
                             <div class="btn-group" role="group" aria-label="NCR Actions">
                                 <a asp-action="Details" asp-route-id="@item.NcrId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Details">
                                     <i class="bi bi-eye-fill"></i>
                                 </a>
 
-                                <a asp-action="ArchiveNcr" asp-route-id="@item.NcrId" class="btn btn-sm btn-danger me-1" data-bs-toggle="tooltip" title="Archive NCR">
+                                <a asp-action="RestoreNcr" asp-route-id="@item.NcrId" class="btn btn-sm btn-success me-1" data-bs-toggle="tooltip" title="Restore NCR">
                                     <i class="bi bi-archive-fill"></i>
                                 </a>
 
@@ -196,10 +182,6 @@
                             </div>
                         }
                     </td>
-
-
-
-
 
                 </tr>
             }
@@ -255,11 +237,13 @@
             const confirmDeleteButton = document.getElementById('confirmDeleteButton');
 
             let currentNcrId;
+            let archiveUrl;
 
             deleteButtons.forEach(button => {
                 button.addEventListener('click', function (e) {
                     e.preventDefault();
                     currentNcrId = this.getAttribute('data-id');
+                    archiveUrl = this.getAttribute('data-archive-url');
                     $('#deleteConfirmationModal').modal('show');
                 });
             });
@@ -272,6 +256,11 @@
             // Ensure the modal is closed on cancel
             $('#deleteConfirmationModal').on('hidden.bs.modal', function () {
                 currentNcrId = null;
+            });
+
+            // After deletion, redirect to the archived tab
+            $('#deleteConfirmationModal').on('hidden.bs.modal', function () {
+                window.location.href = archiveUrl;
             });
         });
     </script>
@@ -290,23 +279,13 @@
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const filters = document.querySelectorAll('.btn-filter');
-            const activeFilter = localStorage.getItem('activeFilter');
-
-            if (activeFilter) {
-                filters.forEach(filter => {
-                    if (filter.value === activeFilter) {
-                        filter.checked = true;
-                    }
-                });
-            }
-
-            filters.forEach(filter => {
-                filter.addEventListener('change', function () {
-                    localStorage.setItem('activeFilter', this.value);
-                });
+            const archiveTab = document.getElementById('archive-tab');
+            archiveTab.addEventListener('click', function (event) {
+                event.preventDefault(); // Prevent the default tab switch behavior
+                window.location.href = '/Ncr/Archived'; // Navigate to the desired URL
             });
         });
     </script>
+
 }
 
