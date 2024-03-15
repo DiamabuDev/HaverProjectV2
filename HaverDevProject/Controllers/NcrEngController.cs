@@ -15,6 +15,7 @@ using HaverDevProject.Utilities;
 using HaverDevProject.ViewModels;
 using NuGet.Protocol;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 
 namespace HaverDevProject.Controllers
 {
@@ -326,15 +327,41 @@ namespace HaverDevProject.Controllers
         // GET: NcrEng/Create
         public async Task<IActionResult> Create(string ncrNumber)
         {
+            NcrEngDTO ncrEngDTO;
+
             int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
+
+            // Verificar si hay datos de borrador guardados en las cookies
+            if (Request.Cookies.TryGetValue("DraftNCREng"+ncrNumber, out string draftJson))
+            {
+                // Deserializar los datos de borrador desde JSON al modelo de vista
+                ncrEngDTO = JsonConvert.DeserializeObject<NcrEngDTO>(draftJson);
+                TempData["SuccessMessage"] = "Draft successfully retrieved";
+            }
+            else
+            {
+                
+                ncrEngDTO = new NcrEngDTO
+                {
+                    NcrNumber = ncrNumber, // Set the NcrNumber from the parameter
+                    DrawingRevDate = DateTime.Now,
+                    NcrEngCompleteDate = DateTime.Now,
+                    DrawingOriginalRevNumber = 1,
+                    DrawingRequireUpdating = false,
+                    NcrEngCustomerNotification = false
+                };
+            }
+
+
+            //    int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
             
-            NcrEngDTO ncr = new NcrEngDTO();
-            ncr.NcrNumber = ncrNumber; // Set the NcrNumber from the parameter
-            ncr.DrawingRevDate = DateTime.Now;
-            ncr.NcrEngCompleteDate = DateTime.Now;
-            ncr.DrawingOriginalRevNumber = 1;
-            ncr.DrawingRequireUpdating = false;
-            ncr.NcrEngCustomerNotification = false;
+            //NcrEngDTO ncr = new NcrEngDTO();
+            //ncr.NcrNumber = ncrNumber; // Set the NcrNumber from the parameter
+            //ncr.DrawingRevDate = DateTime.Now;
+            //ncr.NcrEngCompleteDate = DateTime.Now;
+            //ncr.DrawingOriginalRevNumber = 1;
+            //ncr.DrawingRequireUpdating = false;
+            //ncr.NcrEngCustomerNotification = false;
 
             //ncr.NcrStatus = true; // Active
 
@@ -349,7 +376,7 @@ namespace HaverDevProject.Controllers
                     .ThenInclude(qa => qa.ItemDefectPhotos)
                 .FirstOrDefaultAsync(n => n.NcrId == ncrId);
 
-            ncr.NcrEngCreationDate = readOnlyDetails.NcrQa.NcrQacreationDate;
+            //ncr.NcrEngCreationDate = readOnlyDetails.NcrQa.NcrQacreationDate;
 
             ViewBag.IsNCRQaView = false;
             ViewBag.IsNCREngView = false;
@@ -360,7 +387,7 @@ namespace HaverDevProject.Controllers
             ViewBag.ncrDetails = readOnlyDetails;
 
             PopulateDropDownLists();
-            return View(ncr);
+            return View(ncrEngDTO);
         }
 
         // POST: NcrEng/Create
@@ -368,10 +395,26 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(NcrEngDTO ncrEngDTO, List<IFormFile> Photos)
+        public async Task<IActionResult> Create(NcrEngDTO ncrEngDTO, List<IFormFile> Photos, bool isDraft = false)
         {
             try
             {
+                if (isDraft)
+                {
+                    // convert the object to json format
+                    var json = JsonConvert.SerializeObject(ncrEngDTO);
+
+                    // Save the object in a cookie with name "DraftData"
+                    Response.Cookies.Append("DraftNCREng"+ncrEngDTO.NcrNumber, json, new CookieOptions
+                    {
+                        // Define time for cookies
+                        Expires = DateTime.Now.AddMinutes(2880) // Cookied will expire in 48 hrs
+                    });
+
+                    return Ok(new { success = true, message = "Draft saved successfully.\nNote: This draft will be available for the next 48 hours." });
+                }
+
+
                 if (ModelState.IsValid)
                 {
                     // Find the Ncr entity based on the NcrNumber in the DTO
@@ -440,6 +483,8 @@ namespace HaverDevProject.Controllers
                     await _context.SaveChangesAsync();
 
                     TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " saved successfully!";
+                    //Delete cookies
+                    Response.Cookies.Delete("DraftNCREng"+ncr.NcrNumber);
                     int ncrEngId = ncrEng.NcrEngId;
                     return RedirectToAction("Details", new { id = ncrEngId });
                 }
