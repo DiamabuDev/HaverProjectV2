@@ -51,9 +51,4 @@ public partial class Supplier
     
     [InverseProperty("Supplier")]
     public ICollection<NcrQa> NcrQas { get; set; } = new HashSet<NcrQa>();
-
-    //[Display(Name = "Items")]
-    //[InverseProperty("Supplier")]
-    //public virtual ICollection<Item> Items { get; set; } = new List<Item>();
-
 }

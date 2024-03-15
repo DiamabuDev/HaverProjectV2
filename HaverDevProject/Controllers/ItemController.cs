@@ -31,7 +31,7 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: Item
-        public async Task<IActionResult> Index(string SearchCode, /*int? SupplierID, int? DefectID,*/ int? page, int? pageSizeID,
+        public async Task<IActionResult> Index(string SearchItem, string SearchCode,  int? page, int? pageSizeID,
             string actionButton, string sortDirection = "asc", string sortField = "Code")
         {
 
@@ -49,9 +49,15 @@ namespace HaverDevProject.Controllers
                 .AsNoTracking();
 
             //Filterig values                       
+            if (!String.IsNullOrEmpty(SearchItem))
+            {
+                items = items.Where(i => i.ItemName.ToUpper().Contains(SearchItem.ToUpper()));
+                numberFilters++;
+            }
+
             if (!String.IsNullOrEmpty(SearchCode))
             {
-                items = items.Where(s => s.ItemName.ToUpper().Contains(SearchCode.ToUpper()));
+                items = items.Where(i => i.ItemNumber.ToString().ToUpper().Contains(SearchCode.ToUpper()));
                 numberFilters++;
             }
 
