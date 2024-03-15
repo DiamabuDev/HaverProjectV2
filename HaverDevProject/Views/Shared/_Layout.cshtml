@@ -78,28 +78,28 @@
                                 <a class="nav-link text-light" asp-area="" asp-controller="NcrQa" asp-action="Create">New NCR</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="" asp-controller="NcrQa" asp-action="Index">Quality</a>
+                                <a class="nav-link text-light" asp-area="" asp-controller="NcrQa" asp-action="Index">NCR Quality Log</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="" asp-controller="NcrReInspect" asp-action="Index">Reinspection</a>
+                                <a class="nav-link text-light" asp-area="" asp-controller="NcrReInspect" asp-action="Index">NCR Reinspection Log</a>
                             </li>
                         }
                         @if (User.IsInRole("Engineer"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="" asp-controller="NcrEng" asp-action="Index">Engineering</a>
+                                <a class="nav-link text-light" asp-area="" asp-controller="NcrEng" asp-action="Index">NCR Log</a>
                             </li>
                         }
                         @if (User.IsInRole("Operations"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="" asp-controller="NcrOperation" asp-action="Index">Operations</a>
+                                <a class="nav-link text-light" asp-area="" asp-controller="NcrOperation" asp-action="Index">NCR Log</a>
                             </li>
                         }
                         @if (User.IsInRole("Procurement"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="" asp-controller="NcrProcurement" asp-action="Index">Procurement</a>
+                                <a class="nav-link text-light" asp-area="" asp-controller="NcrProcurement" asp-action="Index">NCR Log</a>
                             </li>
                         }
                     </ul>
