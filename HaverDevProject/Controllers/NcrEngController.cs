@@ -414,7 +414,6 @@ namespace HaverDevProject.Controllers
                     return Ok(new { success = true, message = "Draft saved successfully.\nNote: This draft will be available for the next 48 hours." });
                 }
 
-
                 if (ModelState.IsValid)
                 {
                     // Find the Ncr entity based on the NcrNumber in the DTO
