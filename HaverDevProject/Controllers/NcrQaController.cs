@@ -374,8 +374,6 @@ namespace HaverDevProject.Controllers
                 _context.NcrQas.Add(ncrQa);
                 await _context.SaveChangesAsync();
 
-
-
                 if (ncrQaDTO.ParentId.HasValue)
                 {
                     var ncrReInspect = await _context.NcrReInspects.FirstOrDefaultAsync(n => n.NcrId == ncrQaDTO.ParentId);
@@ -386,7 +384,6 @@ namespace HaverDevProject.Controllers
                         await _context.SaveChangesAsync();
                     }
                 }
-
 
                 TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " saved successfully!";
                 int ncrQaId = ncrQa.NcrQaId;
@@ -499,13 +496,31 @@ namespace HaverDevProject.Controllers
                     .AsNoTracking()
                     .FirstOrDefaultAsync(n =>n.NcrId == NcrId);
 
+                var ncrOperations = await _context.NcrOperations
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(n => n.NcrId == NcrId);
+                bool ncrOperationExist = ncrOperations != null;
+
+                var ncrEng = await _context.NcrEngs
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(n => n.NcrId == NcrId);                
+                bool ncrEngExist = ncrEng != null;                
+
                 if (ncrToUpdate == null)
                 {
                     return NotFound();
                 }
                 else
-                {                    
-                    ncrToUpdate.NcrPhase = ncrQaDTO.NcrQaEngDispositionRequired ? NcrPhase.Engineer : NcrPhase.Operations;
+                {                
+                    if (ncrQaDTO.NcrQaEngDispositionRequired == true  && ncrEngExist == false)
+                    {
+                        ncrToUpdate.NcrPhase = NcrPhase.Engineer;
+                    }
+                    if(ncrQaDTO.NcrQaEngDispositionRequired == false && ncrOperationExist == false)
+                    {
+                        ncrToUpdate.NcrPhase = NcrPhase.Operations;
+                    }
+
                     ncrToUpdate.NcrLastUpdated = DateTime.Now;
 
                     _context.Ncrs.Update(ncrToUpdate);
