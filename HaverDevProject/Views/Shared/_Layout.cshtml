@@ -29,49 +29,79 @@
                 </button>
                 <div class="navbar-collapse collapse d-lg-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="NcrQa" asp-action="Create">New NCR</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Ncr" asp-action="Index">NCR Log</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="NcrQa" asp-action="Index">Quality</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="NcrEng" asp-action="Index">Engineering</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="NcrOperation" asp-action="Index">Operations</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="NcrProcurement" asp-action="Index">Procurement</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="NcrReInspect" asp-action="Index">Reinspection</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Supplier" asp-action="Index">Suppliers</a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Users
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="" asp-action="">Employees</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="UserRole" asp-action="">Roles</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Administrator
-                            </a>
-                            <ul class="dropdown-menu custom-dropdown-color" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Item" asp-action="Index">Items</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Defects" asp-action="Index">Defect Types</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Lookup" asp-action="Index">Lookup values</a></li>
-                            </ul>
-                        </li>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="Ncr" asp-action="Index">NCR Log</a>
+                            </li>
+                                                     
+                           
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Sections
+                                </a>
+                                <ul class="dropdown-menu custom-dropdown-color" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="NcrQa" asp-action="Index">Quality</a></li>                                    
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="NcrEng" asp-action="Index">Engineering</a></li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="" asp-controller="NcrOperation" asp-action="Index">Operations</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="" asp-controller="NcrProcurement" asp-action="Index">Procurement</a>
+                                    </li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="NcrReInspect" asp-action="Index">Reinspection</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link text-light" asp-area="" asp-controller="UserRole" asp-action="">Roles</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="Supplier" asp-action="Index">Suppliers</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Others
+                                </a>
+                                <ul class="dropdown-menu custom-dropdown-color" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Item" asp-action="Index">Items</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Defects" asp-action="Index">Defect Types</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Lookup" asp-action="Index">Lookup values</a></li>
+                                </ul>
+                            </li>
+                            
+                        }                      
+
+
+                        @if (User.IsInRole("Quality"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="NcrQa" asp-action="Create">New NCR</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="NcrQa" asp-action="Index">NCR Quality Log</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="NcrReInspect" asp-action="Index">NCR Reinspection Log</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Engineer"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="NcrEng" asp-action="Index">NCR Log</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Operations"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="NcrOperation" asp-action="Index">NCR Log</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Procurement"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="NcrProcurement" asp-action="Index">NCR Log</a>
+                            </li>
+                        }
                     </ul>
                   <partial name="_LoginPartial" />
                 </div>
