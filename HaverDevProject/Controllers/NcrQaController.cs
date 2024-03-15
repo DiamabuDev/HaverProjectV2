@@ -20,7 +20,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HaverDevProject.Controllers
 {
-    [Authorize(Roles = "Qa")]
+    [Authorize(Roles = "Quality, Admin")]
     public class NcrQaController : ElephantController
     {
         private readonly HaverNiagaraContext _context;

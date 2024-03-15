@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HaverDevProject.Controllers
 {
-    [Authorize(Roles = "Proc")]
+    [Authorize(Roles = "Procurement, Admin")]
     public class NcrProcurementController : ElephantController
     {
         private readonly HaverNiagaraContext _context;
