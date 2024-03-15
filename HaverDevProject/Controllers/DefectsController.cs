@@ -102,7 +102,6 @@ namespace HaverDevProject.Controllers
             var pagedData = await PaginatedList<Defect>.CreateAsync(defects.AsNoTracking(), page ?? 1, pageSize);
 
             return View(pagedData);
-
         }
 
         // GET: Defects/Details/5
