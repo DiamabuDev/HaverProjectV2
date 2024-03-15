@@ -22,7 +22,7 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: Ncr
-        public async Task<IActionResult> Index(string SearchCode, int? SupplierID, DateTime StartDate, DateTime EndDate,
+        public async Task<IActionResult> Index(string SearchCode, string SearchSupplier, DateTime StartDate, DateTime EndDate,
             int? page, int? pageSizeID, string actionButton, string sortDirection = "desc", string sortField = "Created", string filter = "Active")
         {
             ViewData["Filtering"] = "btn-block invisible";
@@ -50,9 +50,6 @@ namespace HaverDevProject.Controllers
 
             //List of sort options.
             string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "Defect", "PO Number", "Phase" };
-
-            //PopulateDropDownLists();
-            ViewData["SupplierId"] = SupplierSelectList();
 
             var ncr = _context.Ncrs
                 //.Include(n => n.Item).ThenInclude(n => n.ItemDefects).ThenInclude(n => n.Defect)
@@ -99,9 +96,9 @@ namespace HaverDevProject.Controllers
                 || s.NcrNumber.ToUpper().Contains(SearchCode.ToUpper()));
                 numberFilters++;
             }
-            if (SupplierID.HasValue)
+            if (!String.IsNullOrEmpty(SearchSupplier))
             {
-                ncr = ncr.Where(n => n.NcrQa.Supplier.SupplierId == SupplierID);
+                ncr = ncr.Where(n => n.NcrQa.Supplier.SupplierName == SearchSupplier);
                 numberFilters++;
             }
             if (StartDate == EndDate)
@@ -256,7 +253,230 @@ namespace HaverDevProject.Controllers
 
             return View(pagedData);
         }
+        // GET: Archived Ncrs
+        public async Task<IActionResult> Archived(string SearchCode, string SearchSupplier, DateTime StartDate, DateTime EndDate,
+            int? page, int? pageSizeID, string actionButton, string sortDirection = "desc", string sortField = "Created", string filter = "Active")
+        {
+            ViewData["Filtering"] = "btn-block invisible";
+            int numberFilters = 0;
 
+            //Set the date range filer based on the values in the database
+            if (EndDate == DateTime.MinValue)
+            {
+                StartDate = _context.NcrQas
+                .Min(f => f.NcrQacreationDate.Date);
+
+                EndDate = _context.NcrQas
+                .Max(f => f.NcrQacreationDate.Date);
+
+                ViewData["StartDate"] = StartDate.ToString("yyyy-MM-dd");
+                ViewData["EndDate"] = EndDate.ToString("yyyy-MM-dd");
+            }
+            //Check the order of the dates and swap them if required
+            if (EndDate < StartDate)
+            {
+                DateTime temp = EndDate;
+                EndDate = StartDate;
+                StartDate = temp;
+            }
+
+            //List of sort options.
+            string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "Defect", "PO Number", "Phase" };
+
+            var ncr = _context.Ncrs
+                //.Include(n => n.Item).ThenInclude(n => n.ItemDefects).ThenInclude(n => n.Defect)
+                .Include(n => n.NcrQa.Supplier)
+                .Include(n => n.NcrQa.Defect)
+                .Where(ncr => ncr.NcrPhase == NcrPhase.Archive)
+                .AsNoTracking();
+
+            //Filterig values            
+            if (!String.IsNullOrEmpty(filter))
+            {
+                if (filter == "Archived")
+                {
+                    // Filter only archived records
+                    ncr = ncr.Where(ncr => ncr.NcrPhase == NcrPhase.Archive);
+                }
+            }
+            //    else if (filter == "Active")
+            //    {
+            //        ncr = ncr.Where(n => n.NcrStatus == true);
+            //        ViewData["filterApplied:ButtonActive"] = "btn-success";
+            //        ViewData["filterApplied:ButtonAll"] = "btn-primary custom-opacity";
+            //        ViewData["filterApplied:ButtonClosed"] = "btn-danger custom-opacity";
+            //    }
+            //    else //(filter == "Closed")
+            //    {
+            //        ncr = ncr.Where(n => n.NcrStatus == false);
+            //        ViewData["filterApplied:ButtonClosed"] = "btn-danger";
+            //        ViewData["filterApplied:ButtonAll"] = "btn-primary custom-opacity";
+            //        ViewData["filterApplied:ButtonActive"] = "btn-success custom-opacity";
+            //    }
+            //}
+            if (!String.IsNullOrEmpty(SearchCode))
+            {
+                ncr = ncr.Where(s => s.NcrQa.Defect.DefectName.ToUpper().Contains(SearchCode.ToUpper()) //(s => s.Item.ItemDefects.FirstOrDefault().Defect.DefectName.ToUpper().Contains(SearchCode.ToUpper()) 
+                || s.NcrNumber.ToUpper().Contains(SearchCode.ToUpper()));
+                numberFilters++;
+            }
+            if (!String.IsNullOrEmpty(SearchSupplier))
+            {
+                ncr = ncr.Where(n => n.NcrQa.Supplier.SupplierName == SearchSupplier);
+                numberFilters++;
+            }
+            if (StartDate == EndDate)
+            {
+                ncr = ncr.Where(n => n.NcrQa.NcrQacreationDate == StartDate);
+                numberFilters++;
+            }
+            else
+            {
+                ncr = ncr.Where(n => n.NcrQa.NcrQacreationDate >= StartDate &&
+                         n.NcrQa.NcrQacreationDate <= EndDate);
+            }
+
+            //keep track of the number of filters 
+            if (numberFilters != 0)
+            {
+                ViewData["Filtering"] = " btn-danger";
+                ViewData["numberFilters"] = "(" + numberFilters.ToString()
+                    + " Filter" + (numberFilters > 1 ? "s" : "") + " Applied)";
+            }
+
+            //Sorting columns
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                page = 1;//Reset page to start
+
+                if (sortOptions.Contains(actionButton))//Change of sort is requested
+                {
+                    if (actionButton == sortField) //Reverse order on same field
+                    {
+                        sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                    }
+                    sortField = actionButton;//Sort by the button clicked
+                }
+            }
+
+            if (sortField == "NCR #")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncr = ncr
+                        .OrderBy(p => p.NcrNumber);
+                    ViewData["filterApplied:NcrNumber"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncr = ncr
+                        .OrderByDescending(p => p.NcrNumber);
+                    ViewData["filterApplied:NcrNumber"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Defect")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncr = ncr
+                        .OrderBy(p => p.NcrQa.Defect.DefectName);
+                    ViewData["filterApplied:Defect"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncr = ncr
+                        .OrderByDescending(p => p.NcrQa.Defect.DefectName);
+                    ViewData["filterApplied:Defect"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Supplier")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncr = ncr
+                        .OrderBy(p => p.NcrQa.Supplier.SupplierName);
+                    ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncr = ncr
+                        .OrderByDescending(p => p.NcrQa.Supplier.SupplierName);
+                    ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Created")
+            {
+                if (sortDirection == "desc") //desc by default
+                {
+                    ncr = ncr
+                        .OrderBy(p => p.NcrQa.NcrQacreationDate);
+
+                    ViewData["filterApplied:Created"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncr = ncr
+                        .OrderByDescending(p => p.NcrQa.NcrQacreationDate);
+
+                    ViewData["filterApplied:Created"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Phase")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncr = ncr
+                        .OrderBy(p => p.NcrPhase); //.OrderBy(p => p.Ncr.NcrStatus);
+                    ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncr = ncr
+                        .OrderByDescending(p => p.NcrPhase); //.OrderByDescending(p => p.Ncr.NcrStatus);
+                    ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Last Updated")
+            {
+                if (sortDirection == "desc") //desc by default
+                {
+                    ncr = ncr
+                        .OrderBy(p => p.NcrLastUpdated);
+                    ViewData["filterApplied:Last Updated"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncr = ncr
+                        .OrderByDescending(p => p.NcrLastUpdated);
+                    ViewData["filterApplied:Last Updated"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else //(sortField == "PO Number")
+            {
+                if (sortDirection == "asc")
+                {
+                    ncr = ncr
+                        .OrderBy(p => p.NcrQa.NcrQaOrderNumber);
+                    ViewData["filterApplied:PONumber"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    ncr = ncr
+                        .OrderByDescending(p => p.NcrQa.NcrQaOrderNumber);
+                    ViewData["filterApplied:PONumber"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+
+            ViewData["sortField"] = sortField;
+            ViewData["sortDirection"] = sortDirection;
+            ViewData["filter"] = filter;
+
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, ControllerName());
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+            var pagedData = await PaginatedList<Ncr>.CreateAsync(ncr.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData);
+        }
         // GET: Ncr/Details/5
         public async Task<IActionResult> Details(int? id, NcrPhase section)
         {
@@ -393,13 +613,31 @@ namespace HaverDevProject.Controllers
                 _context.Ncrs.Remove(ncr);
                 await _context.SaveChangesAsync();
 
-                TempData["SuccessMessage"] = "NCR deleted successfully!";
-                return RedirectToAction("Index");
+                if(ncr.NcrPhase == NcrPhase.Archive)
+                {
+                    TempData["SuccessMessage"] = "NCR deleted successfully!";
+                    return RedirectToAction("Archived");
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = "NCR deleted successfully!";
+                    return RedirectToAction("Index");
+                }
+                
             }
             else
             {
-                TempData["ErrorMessage"] = "NCR could not be deleted.";
-                return RedirectToAction("Index");
+                if (ncr.NcrPhase == NcrPhase.Archive)
+                {
+                    TempData["ErrorMessage"] = "NCR could not be deleted.";
+                    return RedirectToAction("Archived");
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "NCR could not be deleted.";
+                    return RedirectToAction("Index");
+                }
+                
             }
         }
 
@@ -423,44 +661,49 @@ namespace HaverDevProject.Controllers
             return RedirectToAction("Index");
         }
 
-        private SelectList SupplierSelectList()
-        {
-            return new SelectList(_context.Suppliers
-                .Where(s => s.SupplierName != "NO SUPPLIER PROVIDED")
-                .OrderBy(s => s.SupplierName), "SupplierId", "SupplierName");
-        }
-        private SelectList SupplierSelectCreateList(int? selectedId)
+        private SelectList SupplierSelectList(int? selectedId)
         {
             return new SelectList(_context.Suppliers
                 .Where(s => s.SupplierStatus == true && s.SupplierName != "NO SUPPLIER PROVIDED")
-                .OrderBy(s => s.SupplierName), "SupplierId", "SupplierName", selectedId);
+                .OrderBy(s => s.SupplierName), "SupplierId", "Summary", selectedId);
         }
 
-        //private SelectList ItemSelectList(int? SupplierID, int? selectedId)
-        //{
-        //    var query = from c in _context.Suppliers
-        //                where c.SupplierId == SupplierID
-        //                select c;
-        //    return new SelectList(query.OrderBy(i => i.ItemName), "ItemId", "ItemName", selectedId);
-        //}
-
-        private void PopulateDropDownLists(Ncr ncr = null)
+        private SelectList ItemSelectList()
         {
-            if ((ncr?.NcrQa.ItemId).HasValue)
-            {
-                if (ncr.NcrQa.Item == null)
-                {
-                    ncr.NcrQa.Item = _context.Items.Find(ncr.NcrQa.ItemId);
-                }
-                ViewData["SupplierId"] = SupplierSelectCreateList(ncr?.NcrQa.Supplier.SupplierId);
-                //ViewData["ItemId"] = ItemSelectList(ncr.NcrQa.SupplierId, ncr.NcrQa.ItemId);
-            }
-            else
-            {
-                ViewData["SupplierId"] = SupplierSelectCreateList(null);
-                //ViewData["ItemId"] = ItemSelectList(null, null);
-            }
+            return new SelectList(_context.Items
+                .OrderBy(s => s.ItemName), "ItemId", "Summary");
         }
+
+        private SelectList DefectSelectList()
+        {
+            return new SelectList(_context.Defects
+                .OrderBy(s => s.DefectName), "DefectId", "DefectName");
+        }
+
+        private void PopulateDropDownLists()
+        {
+            ViewData["SupplierId"] = SupplierSelectList(null);
+            ViewData["ItemId"] = ItemSelectList();
+            ViewData["DefectId"] = DefectSelectList();
+        }
+
+
+        [HttpGet]
+        public JsonResult GetSuppliers(int? id)
+        {
+            return Json(SupplierSelectList(id));
+        }
+
+        public JsonResult GetSuppliersAuto(string term)
+        {
+            var result = from s in _context.Suppliers
+                         where s.SupplierName.ToUpper().Contains(term.ToUpper())
+                         //|| d.FirstName.ToUpper().Contains(term.ToUpper())
+                         orderby s.SupplierName
+                         select new { value = s.SupplierName };
+            return Json(result);
+        }
+
         public async Task<IActionResult> ArchiveNcr(int id)
         {
             var ncrToUpdate = await _context.Ncrs
@@ -476,7 +719,7 @@ namespace HaverDevProject.Controllers
                 _context.Ncrs.Update(ncrToUpdate);
                 await _context.SaveChangesAsync();
 
-                TempData["SuccessMessage"] = "NCR Archive successfully!";
+                TempData["SuccessMessage"] = "NCR Archived successfully!";
                 return RedirectToAction("Index");
             }
             else
@@ -525,11 +768,36 @@ namespace HaverDevProject.Controllers
                 await _context.SaveChangesAsync();
 
                 TempData["SuccessMessage"] = "NCR Restore successfully!";
-                return RedirectToAction("Index");
+                return RedirectToAction("Archived");
             }
             else
             {
                 TempData["ErrorMessage"] = "NCR not found for archiving.";
+                return RedirectToAction("Archived");
+            }
+
+        }
+        public async Task<IActionResult> VoidNcr(int id)
+        {
+            var ncrToUpdate = await _context.Ncrs
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(n => n.NcrId == id);
+
+            if (ncrToUpdate != null)
+            {
+                //Update the phase
+                ncrToUpdate.NcrPhase = NcrPhase.Void;
+
+                //saving the values
+                _context.Ncrs.Update(ncrToUpdate);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "NCR Voided successfully!";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "NCR not found for Voiding.";
                 return RedirectToAction("Index");
             }
 
