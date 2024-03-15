@@ -387,14 +387,10 @@ namespace HaverDevProject.Controllers
                     bool ncrOperationExist = ncrOperations != null;
 
                     //Checking if NcrProcurement exist...
-                    var ncrProcurement = await _context.NcrOperations
+                    var ncrProcurement = await _context.NcrProcurements
                     .AsNoTracking()
                     .FirstOrDefaultAsync(n => n.NcrId == ncrIdObt);
                     bool ncrProcurementExist = ncrProcurement != null;
-
-
-
-
 
                     //PopulateDropDownLists();
                     await AddPictures(ncrEngDTO, Photos);

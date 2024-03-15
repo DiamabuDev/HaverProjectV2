@@ -499,22 +499,12 @@ namespace HaverDevProject.Controllers
                 var ncrOperations = await _context.NcrOperations
                     .AsNoTracking()
                     .FirstOrDefaultAsync(n => n.NcrId == NcrId);
+                bool ncrOperationExist = ncrOperations != null;
 
                 var ncrEng = await _context.NcrEngs
                     .AsNoTracking()
-                    .FirstOrDefaultAsync(n => n.NcrId == NcrId);
-
-                bool ncrOperationExist = false;
-                bool ncrEngExist = false;
-
-                if (ncrOperations != null) //Checking if Operations exist for the specific NCR
-                {
-                    ncrOperationExist = true;
-                }
-                if (ncrEng != null) //Checking if Engineering exist for the specific NCR
-                {
-                    ncrEngExist = true;
-                }
+                    .FirstOrDefaultAsync(n => n.NcrId == NcrId);                
+                bool ncrEngExist = ncrEng != null;                
 
                 if (ncrToUpdate == null)
                 {
@@ -531,7 +521,6 @@ namespace HaverDevProject.Controllers
                         ncrToUpdate.NcrPhase = NcrPhase.Operations;
                     }
 
-                    //ncrToUpdate.NcrPhase = ncrQaDTO.NcrQaEngDispositionRequired ? NcrPhase.Engineer : NcrPhase.Operations;
                     ncrToUpdate.NcrLastUpdated = DateTime.Now;
 
                     _context.Ncrs.Update(ncrToUpdate);
