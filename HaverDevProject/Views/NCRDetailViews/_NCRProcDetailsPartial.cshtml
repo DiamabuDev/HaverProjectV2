@@ -58,21 +58,25 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th class="three-cols">Supplier Billed?</th>
-                                    <th class="three-cols">Supplier Credit Expected?</th>
-                                    <th class="three-cols">SAP Return Completed?</th>
+                                    <th class="four-cols">Supplier Billed?</th>
+                                    <th class="four-cols">Supplier Credit Expected?</th>
+                                    <th class="four-cols">Total Value</th>
+                                    <th class="four-cols">SAP Return Completed?</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
 
-                                    <td class="three-cols">
+                                    <td class="four-cols">
                                         @(Model.Ncr.NcrProcurement.NcrProcSupplierBilled ? "Yes" : "No")
                                     </td>
-                                    <td class="three-cols">
+                                    <td class="four-cols">
                                         @(Model.Ncr.NcrProcurement.NcrProcCreditExpected ? "Yes" : "No")
                                     </td>
-                                    <td class="three-cols">
+                                    <td class="four-cols">
+                                        @Model.Ncr.NcrProcurement.NcrProcRejectedValue.ToString("C")
+                                    </td>
+                                    <td class="four-cols">
                                         @(Model.Ncr.NcrProcurement.NcrProcSAPReturnCompleted ? "Yes" : "No")
                                     </td>
                                 </tr>
