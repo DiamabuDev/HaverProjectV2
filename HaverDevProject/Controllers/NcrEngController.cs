@@ -18,7 +18,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HaverDevProject.Controllers
 {
-    [Authorize(Roles = "Eng")]
+    [Authorize(Roles = "Engineer, Admin")]
     public class NcrEngController : ElephantController
     {
         private readonly HaverNiagaraContext _context;
