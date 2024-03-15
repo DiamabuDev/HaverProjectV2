@@ -673,7 +673,14 @@ namespace HaverDevProject.Controllers
         public JsonResult GetSuppliers(int? id)
         {
             return Json(SupplierSelectList(id));
-        }       
+        }
+
+        //[HttpGet]
+        //[Route("api/ncr")]
+        //public JsonResult GetSuppliersTest(int? id)
+        //{
+        //    return Json(SupplierSelectList(id));
+        //}
 
         [HttpGet]
         public JsonResult GetItems()
