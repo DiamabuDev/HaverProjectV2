@@ -548,52 +548,52 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: NcrReInspect/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.NcrReInspects == null)
-            {
-                return NotFound();
-            }
+        //public async Task<IActionResult> Delete(int? id)
+        //{
+        //    if (id == null || _context.NcrReInspects == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var ncrReInspect = await _context.NcrReInspects
-                .Include(n => n.Ncr)
-                .FirstOrDefaultAsync(m => m.NcrReInspectId == id);
-            if (ncrReInspect == null)
-            {
-                return NotFound();
-            }
+        //    var ncrReInspect = await _context.NcrReInspects
+        //        .Include(n => n.Ncr)
+        //        .FirstOrDefaultAsync(m => m.NcrReInspectId == id);
+        //    if (ncrReInspect == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(ncrReInspect);
-        }
+        //    return View(ncrReInspect);
+        //}
 
-        // POST: NcrReInspect/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.NcrReInspects == null)
-            {
-                return Problem("There are no Re-Inspections to delete.");
-            }
-            var ncrReInspect = await _context.NcrReInspects.FindAsync(id);
+        //// POST: NcrReInspect/Delete/5
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> DeleteConfirmed(int id)
+        //{
+        //    if (_context.NcrReInspects == null)
+        //    {
+        //        return Problem("There are no Re-Inspections to delete.");
+        //    }
+        //    var ncrReInspect = await _context.NcrReInspects.FindAsync(id);
 
-            try
-            {
-                if (ncrReInspect != null)
-                {
-                    _context.NcrReInspects.Remove(ncrReInspect);
-                }
+        //    try
+        //    {
+        //        if (ncrReInspect != null)
+        //        {
+        //            _context.NcrReInspects.Remove(ncrReInspect);
+        //        }
 
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            catch (DbUpdateException)
-            {
-                ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
-            }
+        //        await _context.SaveChangesAsync();
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    catch (DbUpdateException)
+        //    {
+        //        ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+        //    }
 
-            return View(ncrReInspect);
-        }
+        //    return View(ncrReInspect);
+        //}
 
         private async Task AddReInspectPictures(NcrReInspect ncrReInspect, List<IFormFile> pictures)
         {
