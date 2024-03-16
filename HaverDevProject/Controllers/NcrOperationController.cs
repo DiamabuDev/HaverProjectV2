@@ -628,44 +628,44 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: NcrOperation/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.NcrOperations == null)
-            {
-                return NotFound();
-            }
+        //public async Task<IActionResult> Delete(int? id)
+        //{
+        //    if (id == null || _context.NcrOperations == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var ncrOperation = await _context.NcrOperations
-                .Include(n => n.FollowUpType)
-                .Include(n => n.Ncr)
-                .Include(n => n.OpDispositionType)
-                .FirstOrDefaultAsync(m => m.NcrOpId == id);
-            if (ncrOperation == null)
-            {
-                return NotFound();
-            }
+        //    var ncrOperation = await _context.NcrOperations
+        //        .Include(n => n.FollowUpType)
+        //        .Include(n => n.Ncr)
+        //        .Include(n => n.OpDispositionType)
+        //        .FirstOrDefaultAsync(m => m.NcrOpId == id);
+        //    if (ncrOperation == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(ncrOperation);
-        }
+        //    return View(ncrOperation);
+        //}
 
-        // POST: NcrOperation/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.NcrOperations == null)
-            {
-                return Problem("Entity set 'HaverNiagaraContext.NcrOperations'  is null.");
-            }
-            var ncrOperation = await _context.NcrOperations.FindAsync(id);
-            if (ncrOperation != null)
-            {
-                _context.NcrOperations.Remove(ncrOperation);
-            }
+        //// POST: NcrOperation/Delete/5
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> DeleteConfirmed(int id)
+        //{
+        //    if (_context.NcrOperations == null)
+        //    {
+        //        return Problem("Entity set 'HaverNiagaraContext.NcrOperations'  is null.");
+        //    }
+        //    var ncrOperation = await _context.NcrOperations.FindAsync(id);
+        //    if (ncrOperation != null)
+        //    {
+        //        _context.NcrOperations.Remove(ncrOperation);
+        //    }
             
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+        //    await _context.SaveChangesAsync();
+        //    return RedirectToAction(nameof(Index));
+        //}
 
         private bool NcrOperationExists(int id)
         {

@@ -633,43 +633,43 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: NcrQa/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.NcrQas == null)
-            {
-                return NotFound();
-            }
+        //public async Task<IActionResult> Delete(int? id)
+        //{
+        //    if (id == null || _context.NcrQas == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var ncrQa = await _context.NcrQas
-                .Include(n => n.Item)
-                .Include(n => n.Ncr)
-                .FirstOrDefaultAsync(m => m.NcrQaId == id);
-            if (ncrQa == null)
-            {
-                return NotFound();
-            }
+        //    var ncrQa = await _context.NcrQas
+        //        .Include(n => n.Item)
+        //        .Include(n => n.Ncr)
+        //        .FirstOrDefaultAsync(m => m.NcrQaId == id);
+        //    if (ncrQa == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(ncrQa);
-        }
+        //    return View(ncrQa);
+        //}
 
-        // POST: NcrQa/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.NcrQas == null)
-            {
-                return Problem("Entity set 'HaverNiagaraContext.NcrQas'  is null.");
-            }
-            var ncrQa = await _context.NcrQas.FindAsync(id);
-            if (ncrQa != null)
-            {
-                _context.NcrQas.Remove(ncrQa);
-            }
+        //// POST: NcrQa/Delete/5
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> DeleteConfirmed(int id)
+        //{
+        //    if (_context.NcrQas == null)
+        //    {
+        //        return Problem("Entity set 'HaverNiagaraContext.NcrQas'  is null.");
+        //    }
+        //    var ncrQa = await _context.NcrQas.FindAsync(id);
+        //    if (ncrQa != null)
+        //    {
+        //        _context.NcrQas.Remove(ncrQa);
+        //    }
             
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+        //    await _context.SaveChangesAsync();
+        //    return RedirectToAction(nameof(Index));
+        //}
 
         public string GetNcrNumber()
         {
