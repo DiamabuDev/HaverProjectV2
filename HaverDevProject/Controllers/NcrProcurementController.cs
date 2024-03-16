@@ -336,16 +336,15 @@ namespace HaverDevProject.Controllers
 
             int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
 
-            // Verificar si hay datos de borrador guardados en las cookies
+            // Check if there are info in cookies
             if (Request.Cookies.TryGetValue("DraftNCRProcurement" + ncrNumber, out string draftJson))
             {
-                // Deserializar los datos de borrador desde JSON al modelo de vista
+                // Convert the data from json file
                 ncr = JsonConvert.DeserializeObject<NcrProcurementDTO>(draftJson);
                 TempData["SuccessMessage"] = "Draft successfully retrieved";
             }
             else
             {
-
                 ncr = new NcrProcurementDTO
                 {
                     NcrNumber = ncrNumber,

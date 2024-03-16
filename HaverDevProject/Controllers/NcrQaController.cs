@@ -308,20 +308,18 @@ namespace HaverDevProject.Controllers
 
         // GET: NcrQa/Create
         public IActionResult Create()
-        {
-            // Crear una instancia de NcrQaDTO para almacenar los datos del formulario
+        {            
             NcrQaDTO ncrQaDTO;
 
-            // Verificar si hay datos de borrador guardados en las cookies
+            // Check if there are info in cookies
             if (Request.Cookies.TryGetValue("DraftNCRQa", out string draftJson))
             {
-                // Deserializar los datos de borrador desde JSON al modelo de vista
+                // Convert the data from json file
                 ncrQaDTO = JsonConvert.DeserializeObject<NcrQaDTO>(draftJson);
                 TempData["SuccessMessage"] = "Draft successfully retrieved";
             }
             else
-            {
-                // Si no hay datos de borrador, crear una instancia nueva del modelo de vista
+            {                
                 ncrQaDTO = new NcrQaDTO
                 {
                     //var ncrQaDTO = new NcrQaDTO();
