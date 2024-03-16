@@ -12,6 +12,7 @@ using HaverDevProject.CustomControllers;
 using HaverDevProject.Utilities;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 
 namespace HaverDevProject.Controllers
 {
@@ -331,14 +332,36 @@ namespace HaverDevProject.Controllers
         // GET: NcrProcurement/Create
         public async Task<IActionResult> Create(string ncrNumber)
         {
+            NcrProcurementDTO ncr;
+
             int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
 
-            NcrProcurementDTO ncr = new NcrProcurementDTO();
-            ncr.NcrNumber = ncrNumber;
-            ncr.NcrProcCompleteDate = DateTime.Now;
-            ncr.NcrProcExpectedDate = DateTime.Now;
-            ncr.NcrProcSupplierReturnReq = true;
-            ncr.NcrStatus = true; //Active
+            // Check if there are info in cookies
+            if (Request.Cookies.TryGetValue("DraftNCRProcurement" + ncrNumber, out string draftJson))
+            {
+                // Convert the data from json file
+                ncr = JsonConvert.DeserializeObject<NcrProcurementDTO>(draftJson);
+                TempData["SuccessMessage"] = "Draft successfully retrieved";
+            }
+            else
+            {
+                ncr = new NcrProcurementDTO
+                {
+                    NcrNumber = ncrNumber,
+                    NcrProcCompleteDate = DateTime.Now,
+                    NcrProcExpectedDate = DateTime.Now,
+                    NcrProcSupplierReturnReq = true,
+                    NcrStatus = true, //Active
+                };
+            }
+
+            //int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
+            //NcrProcurementDTO ncr = new NcrProcurementDTO();
+            //ncr.NcrNumber = ncrNumber;
+            //ncr.NcrProcCompleteDate = DateTime.Now;
+            //ncr.NcrProcExpectedDate = DateTime.Now;
+            //ncr.NcrProcSupplierReturnReq = true;
+            //ncr.NcrStatus = true; //Active
 
             var readOnlyDetails = await _context.Ncrs
                 .Include(n => n.NcrQa)
@@ -379,10 +402,25 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(NcrProcurementDTO ncrProcDTO, List<IFormFile> photos)
+        public async Task<IActionResult> Create(NcrProcurementDTO ncrProcDTO, List<IFormFile> photos, bool isDraft = false)
         {
             try
             {
+                if (isDraft)
+                {
+                    // convert the object to json format
+                    var json = JsonConvert.SerializeObject(ncrProcDTO);
+
+                    // Save the object in a cookie with name "DraftData"
+                    Response.Cookies.Append("DraftNCRProcurement" + ncrProcDTO.NcrNumber, json, new CookieOptions
+                    {
+                        // Define time for cookies
+                        Expires = DateTime.Now.AddMinutes(2880) // Cookied will expire in 48 hrs
+                    });
+
+                    return Ok(new { success = true, message = "Draft saved successfully.\nNote: This draft will be available for the next 48 hours." });
+                }
+
                 if (ModelState.IsValid)
                 {
 
@@ -428,6 +466,8 @@ namespace HaverDevProject.Controllers
                     await _context.SaveChangesAsync();
 
                     TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " saved successfully!";
+                    //Delete cookies
+                    Response.Cookies.Delete("DraftNCRProcurement" + ncr.NcrNumber);
                     int ncrProcId = ncrProc.NcrProcurementId;
                     return RedirectToAction("Details", new { id = ncrProcId });
                 }

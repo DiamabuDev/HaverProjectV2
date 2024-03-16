@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = "Create";
 }
-
 <div class="col-md-8 col-10 mx-auto">
     <h1><i class="bi bi-caret-right-fill"></i>Quality Representative</h1>
 </div>
@@ -14,8 +13,9 @@
     <partial name="_addSupplierModal" />
     <partial name="_addDefectModal" />   
     
-    <form asp-action="Create" method="post" enctype="multipart/form-data">
+    <form asp-action="Create" method="post" enctype="multipart/form-data" id="formQa">
         <input type="hidden" asp-for="ParentId" value="@Context.Request.Query["parentNcrId"]" />
+        <input type="hidden" name="isDraft" value="false" id="isDraftInput"/>
 
         <div class="card border-2">
             <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
@@ -28,8 +28,8 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             </div>
             <div class="card-body col-lg-10 col-11 mx-auto">
-                <div class="row">
-                    <div class="col-6">                    
+                <div class="row">                    
+                    <div class="col-6">                        
                         <div class="form-group">
                             <label asp-for="NcrNumber" class="control-label fw-bold"></label>
                             <input asp-for="NcrNumber" class="form-control" readonly/>
@@ -106,25 +106,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">     
-
-                    @* <div class="form-group">
-                        <label class="control-label">
-                            <strong>Supplier </strong>
-                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Lawrence Sintered Metals.)</small>
-                            <span class="fw-bold text-danger">*</span>
-                        </label>
-                        <div class="input-group mb-1">
-                            <div class="input-group-prepend">
-                                <button class="btn btn-outline-secondary custom-btn-color" id="nowAddSupplier" data-bs-toggle="modal" data-bs-target="#addSupplierModal" type="button" data-tooltip-supplier="true"><i class='bi-plus-square-dotted'></i></button>
-                            </div>
-                            <select class="form-control" id="SupplierId" name="SupplierId" asp-items="ViewBag.SupplierId" asp-for="SupplierId" id="Supplier" required>
-                                <option value="">Select Supplier</option>
-                            </select>                            
-                        </div>
-                        <span asp-validation-for="SupplierId" class="text-danger"></span>
-                    </div> *@
-
+                <div class="row">   
                     <div class="form-group">
                         <label class="control-label">
                             <strong>Supplier </strong>
@@ -158,24 +140,6 @@
                         </div>
                         <span asp-validation-for="ItemId" class="text-danger"></span>
                     </div>
-                                        
-                    @* <div class="form-group">
-                        <label asp-for="ItemId" class="control-label">
-                            <strong>Item </strong>
-                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Panel.)</small> 
-                            <span class="fw-bold text-danger">*</span></label>
-                        <div class="input-group mb-1">
-                            <div class="input-group-prepend">
-                                <button class="btn btn-outline-secondary custom-btn-color" id="nowAddItem" data-bs-toggle="modal" data-bs-target="#addItemModal" type="button" data-tooltip-item="true"><i class='bi-plus-square-dotted'></i></button>
-                            </div>
-                            <select asp-for="ItemId" id="ItemId" class="form-control" name="ItemId" asp-items="ViewBag.ItemId" id="Item">
-                                <option value="">Select Item</option>
-                            </select>
-                        </div>
-                            <span asp-validation-for="ItemId" class="text-danger"></span>                        
-                    </div> *@
-
-
                     <div class="form-group">
                         <label asp-for="DefectId" class="control-label">
                             <strong>Defect </strong>
@@ -191,25 +155,6 @@
                         </div>
                         <span asp-validation-for="DefectId" class="text-danger"></span>
                     </div>
-
-                    @* <div class="form-group">
-                        <label asp-for="DefectId" class="control-label">
-                            <strong>Defect </strong>
-                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Select the most suitable option">(e.g. Surface to house internal components.)</small>
-                            <span class="fw-bold text-danger">*</span>
-                        </label>
-                        <div class="input-group mb-1">
-                            <div class="input-group-prepend">
-                                <button class="btn btn-outline-secondary custom-btn-color" id="nowAddDefect" data-bs-toggle="modal" data-bs-target="#addDefectModal" type="button" data-tooltip-defect="true"><i class='bi-plus-square-dotted'></i></button>
-                            </div>
-                            <select asp-for="DefectId" class="form-control" id="DefectId" name="DefectId" asp-items="ViewBag.DefectId" id="Defect">
-                                <option value="">Select Item</option>
-                            </select>
-                        </div>
-                        <span asp-validation-for="DefectId" class="text-danger"></span>
-                    </div> *@
-
-
                     <div class="form-group">
                         <label asp-for="NcrQaDescriptionOfDefect" class="control-label">
                             <strong>Description of Defect </strong>
@@ -286,6 +231,13 @@
                             <i class="bi bi-arrow-90deg-left"></i> Back to NCR Log
                         </button>
                     </div>
+
+                    <div>
+                        <button type="button" id="saveDraftButton" class="btn btn-success ms-4 ">
+                            <i class="bi bi-pencil"></i> Save as Draft
+                        </button>
+                    </div>
+
                     <div>
                         <button type="submit" class="btn btn-primary ms-4">
                             <i class='bi-plus-square-dotted'></i> Create
@@ -323,7 +275,6 @@
 @section Styles {
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
 }
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script src="~/js/refreshDDL.js"></script>
@@ -333,8 +284,39 @@
             return new bootstrap.Tooltip(tooltipTriggerEl);
         });
     </script>
+    <!-- Draft functionality using cookies-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            function saveDraft() {
+                document.getElementById("isDraftInput").value = "true";
+                var formData = new FormData(document.querySelector('#formQa'));
+                // for (var pair of formData.entries()) {
+                //     console.log(pair[0] + ', ' + pair[1]);
+                // }
+                $.ajax({
+                    url: '/NcrQa/Create',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
 
-    
+                            window.location.href = '/NcrQa/Index';
+                        } else {
+                            alert('Error saving the draft');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Error saving the draft: ' + error);
+                    }
+                });
+            }            
+            $('#saveDraftButton').click(saveDraft);
+        });
+    </script>
 
     <!-- Supplier Autocomplete Field-->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -342,9 +324,7 @@
         $(document).ready(function () {
             var $select2 = $('.Supplierddlist').select2();
             var $select2 = $('.Itemddlist').select2();
-            var $select2 = $('.Defectddlist').select2();
-            Defectddlist
-
+            var $select2 = $('.Defectddlist').select2();     
         });
     </script>  
         

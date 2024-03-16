@@ -13,6 +13,7 @@ using HaverDevProject.CustomControllers;
 using HaverDevProject.Utilities;
 using HaverDevProject.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 
 namespace HaverDevProject.Controllers
 {
@@ -288,7 +289,26 @@ namespace HaverDevProject.Controllers
         // GET: NcrReInspect/Create
         public async Task<IActionResult> Create(string ncrNumber)
         {
-            int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
+            NcrReInspect ncrReInspect;
+            int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();                       
+
+            // Check if there are info in cookies
+            if (Request.Cookies.TryGetValue("DraftNCRReInspect" + ncrNumber, out string draftJson))
+            {
+                // Convert the data from json file
+                ncrReInspect = JsonConvert.DeserializeObject<NcrReInspect>(draftJson);
+                TempData["SuccessMessage"] = "Draft successfully retrieved";
+            }
+            else
+            {
+                ncrReInspect = new NcrReInspect
+                {
+                    //Ncr = ncr,
+                    NcrId = ncrId,
+                    NcrReInspectCreationDate = DateTime.Now,
+                    NcrNumber = ncrNumber
+                };
+            }
 
             var ncr = await _context.Ncrs
                 .Include(n => n.NcrQa)
@@ -315,13 +335,15 @@ namespace HaverDevProject.Controllers
                         .ThenInclude(proc => proc.ProcDefectPhotos)
                 .FirstOrDefaultAsync(n => n.NcrId == ncrId);
 
-            NcrReInspect ncrReInspect = new NcrReInspect
-            {
-                Ncr = ncr,
-                NcrId = ncrId,
-                NcrReInspectCreationDate = DateTime.Now,
-                NcrNumber = ncrNumber
-            };
+
+            ncrReInspect.Ncr = ncr;
+            //NcrReInspect ncrReInspect = new NcrReInspect
+            //{
+            //    Ncr = ncr,
+            //    NcrId = ncrId,
+            //    NcrReInspectCreationDate = DateTime.Now,
+            //    NcrNumber = ncrNumber
+            //};
 
             ViewBag.IsNCRQaView = false;
             ViewBag.IsNCREngView = false;
@@ -337,10 +359,25 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(NcrReInspect ncrReInspect, List<IFormFile> Photos, IFormCollection form)
+        public async Task<IActionResult> Create(NcrReInspect ncrReInspect, List<IFormFile> Photos, IFormCollection form, bool isDraft = false)
         {
             try
             {
+                if (isDraft)
+                {
+                    // convert the object to json format
+                    var json = JsonConvert.SerializeObject(ncrReInspect);
+
+                    // Save the object in a cookie with name "DraftData"
+                    Response.Cookies.Append("DraftNCRReInspect" + ncrReInspect.NcrNumber, json, new CookieOptions
+                    {
+                        // Define time for cookies
+                        Expires = DateTime.Now.AddMinutes(2880) // Cookied will expire in 48 hrs
+                    });
+
+                    return Ok(new { success = true, message = "Draft saved successfully.\nNote: This draft will be available for the next 48 hours." });
+                }
+
                 if (ModelState.IsValid)
                 {
                     //await AddReInspectPictures(ncrReInspect, Photos);
@@ -373,6 +410,8 @@ namespace HaverDevProject.Controllers
                     else
                     {
                         TempData["SuccessMessage"] = "NCR " + ncrReInspect.NcrNumber + " closed successfully!";
+                        //Delete cookies
+                        Response.Cookies.Delete("DraftNCRReInspect" + ncrReInspect.NcrNumber);
                         return RedirectToAction("Details", new { id = ncrReInspect.NcrReInspectId });
                     }
                 }

@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using System.Runtime.ConstrainedExecution;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 
 namespace HaverDevProject.Controllers
 {
@@ -316,16 +317,43 @@ namespace HaverDevProject.Controllers
         // GET: NcrOperation/Create
         public async Task<IActionResult> Create(string ncrNumber)
         {
+
+            NcrOperationDTO ncr;
+
             int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
 
-            NcrOperationDTO ncr = new NcrOperationDTO();
-            ncr.NcrNumber = ncrNumber; // Set the NcrNumber from the parameter
-            ncr.NcrOpCompleteDate = DateTime.Now;
-            ncr.UpdateOp = DateTime.Now;
-            ncr.ExpectedDate = DateTime.Now;
-            ncr.NcrStatus = true; // Active
-            ncr.FollowUp = true;
-            ncr.Car = true;
+            // Check if there are info in cookies
+            if (Request.Cookies.TryGetValue("DraftNCROperation" + ncrNumber, out string draftJson))
+            {
+                // Convert the data from json file
+                ncr = JsonConvert.DeserializeObject<NcrOperationDTO>(draftJson);
+                TempData["SuccessMessage"] = "Draft successfully retrieved";
+            }
+            else
+            {
+
+                ncr = new NcrOperationDTO
+                {
+                    NcrNumber = ncrNumber, // Set the NcrNumber from the parameter
+                    NcrOpCreationDate = DateTime.Now,
+                    NcrOpCompleteDate = DateTime.Now,
+                    UpdateOp = DateTime.Now,
+                    ExpectedDate = DateTime.Now,
+                    NcrStatus = true, // Active
+                    FollowUp = true,
+                    Car = true
+                };
+            }
+
+            //int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
+            //NcrOperationDTO ncr = new NcrOperationDTO();
+            //ncr.NcrNumber = ncrNumber; // Set the NcrNumber from the parameter
+            //ncr.NcrOpCompleteDate = DateTime.Now;
+            //ncr.UpdateOp = DateTime.Now;
+            //ncr.ExpectedDate = DateTime.Now;
+            //ncr.NcrStatus = true; // Active
+            //ncr.FollowUp = true;
+            //ncr.Car = true;
 
             var readOnlyDetails = await _context.Ncrs
                 .Include(n => n.NcrQa)
@@ -365,10 +393,25 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(NcrOperationDTO ncrOperationDTO, List<IFormFile> Photos)
+        public async Task<IActionResult> Create(NcrOperationDTO ncrOperationDTO, List<IFormFile> Photos, bool isDraft = false)
         {
             try
             {
+                if (isDraft)
+                {
+                    // convert the object to json format
+                    var json = JsonConvert.SerializeObject(ncrOperationDTO);
+
+                    // Save the object in a cookie with name "DraftData"
+                    Response.Cookies.Append("DraftNCROperation" + ncrOperationDTO.NcrNumber, json, new CookieOptions
+                    {
+                        // Define time for cookies
+                        Expires = DateTime.Now.AddMinutes(2880) // Cookied will expire in 48 hrs
+                    });
+
+                    return Ok(new { success = true, message = "Draft saved successfully.\nNote: This draft will be available for the next 48 hours." });
+                }
+
                 if (ModelState.IsValid)
                 {
                     int ncrIdObt = _context.Ncrs
@@ -406,6 +449,8 @@ namespace HaverDevProject.Controllers
                     await _context.SaveChangesAsync();
 
                     TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " saved successfully!";
+                    //Delete cookies
+                    Response.Cookies.Delete("DraftNCROperation" + ncr.NcrNumber);
                     int ncrOpId = ncrOperation.NcrOpId;
                     return RedirectToAction("Details", new { id = ncrOpId });
                 }

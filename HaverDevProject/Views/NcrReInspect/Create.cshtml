@@ -38,6 +38,7 @@
     </div>
 
     <form asp-action="Create" method="post" enctype="multipart/form-data" id="reInspectFormId">
+        <input type="hidden" name="isDraft" value="false" id="isDraftInput" />
         <div class="card border-2 mt-2">
             <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
                 <div>
@@ -134,6 +135,11 @@
                         </button>
                     </div>
                     <div>
+                        <button type="button" id="saveDraftButton" class="btn btn-success ms-4 ">
+                            <i class="bi bi-pencil"></i> Save as Draft
+                        </button>
+                    </div>
+                    <div>
                         <button type="submit" class="btn btn-primary ms-4" onclick="showCloseReinspectionModal()" id="btnSaveAndClose">
                             <i class='bi bi-floppy'></i> Save and Close
                         </button>
@@ -218,6 +224,41 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <!-- Draft functionality using cookies-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            function saveDraft() {
+                document.getElementById("isDraftInput").value = "true";
+                var formData = new FormData(document.querySelector('#reInspectFormId'));
+                // for (var pair of formData.entries()) {
+                //     console.log(pair[0] + ', ' + pair[1]);
+                // }
+                $.ajax({
+                    url: '/NcrReInspect/Create',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
+
+                            window.location.href = '/NcrReinspect/Index';
+                        } else {
+                            alert('Error saving the draft');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Error saving the draft: ' + error);
+                    }
+                });
+            }
+            $('#saveDraftButton').click(saveDraft);
+        });
+    </script>
+
     <script>
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
