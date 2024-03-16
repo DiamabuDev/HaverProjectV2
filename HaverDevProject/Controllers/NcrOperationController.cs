@@ -16,17 +16,24 @@ using Microsoft.EntityFrameworkCore.Storage;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using System.Runtime.ConstrainedExecution;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace HaverDevProject.Controllers
 {
     [Authorize(Roles = "Operations, Admin")]
     public class NcrOperationController : ElephantController
     {
+        //for sending email
+        private readonly IMyEmailSender _emailSender;
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly HaverNiagaraContext _context;
 
-        public NcrOperationController(HaverNiagaraContext context)
+
+        public NcrOperationController(HaverNiagaraContext context, IMyEmailSender emailSender, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _emailSender = emailSender;
+            _userManager = userManager;
         }
 
         // GET: NcrOperation
@@ -322,6 +329,7 @@ namespace HaverDevProject.Controllers
             ncr.NcrNumber = ncrNumber; // Set the NcrNumber from the parameter
             ncr.NcrOpCompleteDate = DateTime.Now;
             ncr.UpdateOp = DateTime.Now;
+            ncr.NcrOpCreationDate = DateTime.Now;
             ncr.ExpectedDate = DateTime.Now;
             ncr.NcrStatus = true; // Active
             ncr.FollowUp = true;
@@ -344,7 +352,6 @@ namespace HaverDevProject.Controllers
                     .ThenInclude(eng => eng.EngDefectPhotos)
                 .FirstOrDefaultAsync(n => n.NcrId == ncrId);
 
-            //ncr.NcrOpCreationDate = readOnlyDetails.NcrEng.NcrEngCreationDate;
 
             ViewBag.IsNCRQaView = false;
             ViewBag.IsNCREngView = false;
@@ -387,8 +394,8 @@ namespace HaverDevProject.Controllers
                         CarNumber = ncrOperationDTO.CarNumber,
                         FollowUp = ncrOperationDTO.FollowUp,
                         ExpectedDate = ncrOperationDTO.ExpectedDate,
+                        NcrOpCreationDate = DateTime.Now,
                         NcrOpCompleteDate = DateTime.Now,
-                        NcrOpCreationDate = ncrOperationDTO.NcrOpCreationDate,
                         FollowUpTypeId = ncrOperationDTO.FollowUpTypeId,
                         UpdateOp = DateTime.Now,
                         NcrPurchasingUserId = 1,
@@ -404,6 +411,33 @@ namespace HaverDevProject.Controllers
                     ncr.NcrPhase = NcrPhase.Procurement;
                     _context.Ncrs.Update(ncr);
                     await _context.SaveChangesAsync();
+
+                    //////////////////////////////////////////////////////
+                    ///
+                    // Send email to Procurement
+                    //var procurementUsers = await _userManager.GetUsersInRoleAsync("Procurement");
+                    //var emailAddresses = procurementUsers.Select(u => new EmailAddress
+                    //{
+                    //    Name = u.UserName,
+                    //    Address = u.Email
+                    //}).ToList();
+
+                    //if (emailAddresses.Any())
+                    //{
+                    //    var msg = new EmailMessage()
+                    //    {
+                    //        ToAddresses = emailAddresses,
+                    //        Subject = "New Object Created in Operations",
+                    //        Content = "A new object has been created in Operations. Please review."
+                    //    };
+                    //    await _emailSender.SendToManyAsync(msg);
+                    //    TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " saved successfully and email notification sent to Procurement.";
+                    //}
+                    //else
+                    //{
+                    //    TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " saved successfully but no Procurement users found to notify.";
+                    //}
+                    //////////////////////////////////////////////////////
 
                     TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " saved successfully!";
                     int ncrOpId = ncrOperation.NcrOpId;
@@ -770,5 +804,59 @@ namespace HaverDevProject.Controllers
             }
             return Json(new { success = false, message = "Photo not found." });
         }
+
+        // CREATE/POST: Operation/Notification/5
+        public async Task<IActionResult> Notification(int? id, string Subject, string emailContent)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            NcrOperation o = await _context.NcrOperations.FindAsync(id);
+
+            ViewData["id"] = id;
+            ViewData["NcrNumber"] = o.Ncr.NcrNumber;
+
+            if (string.IsNullOrEmpty(Subject) || string.IsNullOrEmpty(emailContent))
+            {
+                ViewData["Message"] = "You must enter both a Subject and some message Content before sending the message.";
+            }
+            else
+            {
+                try
+                {
+                    var procurementUsers = await _userManager.GetUsersInRoleAsync("Procurement");
+                    var emailAddresses = procurementUsers.Select(u => new EmailAddress
+                    {
+                        Name = u.UserName,
+                        Address = u.Email
+                    }).ToList();
+
+                    if (emailAddresses.Any())
+                    {
+                        var msg = new EmailMessage()
+                        {
+                            ToAddresses = emailAddresses,
+                            Subject = Subject,
+                            Content = "<p>" + emailContent + "</p><p>Please access the <strong>Niagara College</strong> web site to review.</p>"
+                        };
+                        await _emailSender.SendToManyAsync(msg);
+                        ViewData["Message"] = $"Message sent to {emailAddresses.Count} Procurement user{(emailAddresses.Count == 1 ? "" : "s")}.";
+                    }
+                    else
+                    {
+                        ViewData["Message"] = "Message NOT sent! No Procurement users found.";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    string errMsg = ex.GetBaseException().Message;
+                    ViewData["Message"] = $"Error: Could not send email message to Procurement users. Error: {errMsg}";
+                }
+            }
+            return View();
+        }
+
     }
 }
