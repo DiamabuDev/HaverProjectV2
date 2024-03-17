@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Identity.Client;
+using MimeKit;
 
 namespace HaverDevProject.Controllers
 {
@@ -404,16 +406,21 @@ namespace HaverDevProject.Controllers
                     _context.Ncrs.Update(ncr);
                     await _context.SaveChangesAsync();
 
-                    // Call function to send notification email after updating phase
-                    //await SendNotificationEmail(ncrOperation.NcrId, "New NCR Requires Procurement Attention", $"A new NCR ({ncr.NcrNumber}) has entered the Procurement phase. Please review details in the system.");
 
                     TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " saved successfully!";
                     int ncrOpId = ncrOperation.NcrOpId;
 
+                    //include supplier name in the email
+                    var ncrOp = await _context.NcrOperations
+                        .Include(n => n.Ncr)
+                        .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
+                        .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
+                        .FirstOrDefaultAsync(n => n.NcrOpId == ncrOpId);
+
                     // Send notification email to Procurement
-                    var subject = "New NCR Created";
-                    var emailContent = "A new NCR has been created. Please review it.";
-                    await Notification(ncrOpId, subject, emailContent);
+                    var subject = "New NCR Created " + ncr.NcrNumber;
+                    var emailContent = "A new NCR has been created:<br><br>Ncr #: " + ncr.NcrNumber + "<br>Supplier: " + ncr.NcrQa.Supplier.SupplierName;
+                    await NotificationCreate(ncrOpId, subject, emailContent);
 
                     return RedirectToAction("Details", new { id = ncrOpId });
                 }
@@ -564,6 +571,19 @@ namespace HaverDevProject.Controllers
 
                     TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " edited successfully!";
                     int ncrOpId = ncrOperation.NcrOpId;
+
+                    //include supplier name in the email
+                    var ncrOp = await _context.NcrOperations
+                        .Include(n => n.Ncr)
+                        .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
+                        .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
+                        .FirstOrDefaultAsync(n => n.NcrOpId == ncrOpId);
+
+                    // Send notification email to Procurement
+                    var subject = "New NCR Created " + ncr.NcrNumber;
+                    var emailContent = "A NCR has been edited :<br><br>Ncr #: " + ncr.NcrNumber + "<br>Supplier: " + ncr.NcrQa.Supplier.SupplierName;
+                    await NotificationEdit(ncrOpId, subject, emailContent);
+
                     return RedirectToAction("Details", new { id = ncrOpId });
                 }
                 catch (DbUpdateConcurrencyException)
@@ -781,8 +801,9 @@ namespace HaverDevProject.Controllers
         }
 
         //// CREATE/POST: Operation/Notification/5
-        public async Task<IActionResult> Notification(int? id, string Subject, string emailContent)
+        public async Task<IActionResult> NotificationCreate(int? id, string Subject, string emailContent)
         {
+            
             if (id == null)
             {
                 return NotFound();
@@ -803,14 +824,63 @@ namespace HaverDevProject.Controllers
 
                 if (emailAddresses.Any())
                 {
+                    string logo = "https://haverniagara.com/wp-content/themes/haver/images/logo-haver.png";
                     var msg = new EmailMessage()
                     {
                         ToAddresses = emailAddresses,
                         Subject = Subject,
-                        Content = "<p>" + emailContent + "</p><p>Please access the <strong>Niagara College</strong> web site to review.</p>"
+                        Content = "<p>" + emailContent + "<br><br></p><p>Please access to <strong>Haver NCR APP</strong> to review.</p>" + "<br><img src=\"" +logo+ "\">" + "<p>This is an automated email. Please do not reply.</p>",
                     };
                     await _emailSender.SendToManyAsync(msg);
-                    ViewData["Message"] = $"Message sent to {emailAddresses.Count} Procurement user{(emailAddresses.Count == 1 ? "" : "s")}.";
+                }
+                else
+                {
+                    ViewData["Message"] = "Message NOT sent! No Procurement users found.";
+                }
+            }
+            catch (Exception ex)
+            {
+                string errMsg = ex.GetBaseException().Message;
+                ViewData["Message"] = $"Error: Could not send email message to Procurement users. Error: {errMsg}";
+            }
+
+            return View();
+        }
+
+        //// EDIT/POST: Operation/Notification/5
+        public async Task<IActionResult> NotificationEdit(int? id, string Subject, string emailContent)
+        {
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            NcrOperation o = await _context.NcrOperations.FindAsync(id);
+
+            ViewData["id"] = id;
+
+            try
+            {
+                var procurementUsers = await _userManager.GetUsersInRoleAsync("Procurement");
+                var qualityUsers = await _userManager.GetUsersInRoleAsync("Quality");
+                var allUsers = procurementUsers.Concat(qualityUsers).Distinct();
+                var emailAddresses = allUsers.Select(u => new EmailAddress
+                {
+                    Name = u.UserName,
+                    Address = u.Email
+                }).ToList();
+
+                if (emailAddresses.Any())
+                {
+                    string logo = "https://haverniagara.com/wp-content/themes/haver/images/logo-haver.png";
+                    var msg = new EmailMessage()
+                    {
+                        ToAddresses = emailAddresses,
+                        Subject = Subject,
+                        Content = "<p>" + emailContent + "<br><br></p><p>Please access to <strong>Haver NCR APP</strong> to review.</p>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
+                    };
+                    await _emailSender.SendToManyAsync(msg);
                 }
                 else
                 {

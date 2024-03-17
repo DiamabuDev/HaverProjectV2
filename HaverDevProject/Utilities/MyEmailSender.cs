@@ -76,7 +76,7 @@ namespace HaverDevProject.Utilities
             //Be careful that the SmtpClient class is the one from Mailkit not the framework!
             using var smtp = new SmtpClient();
             smtp.Connect("smtp-mail.outlook.com", 587, SecureSocketOptions.StartTls);
-            smtp.Authenticate("tebuloppi@outlook.com", "Team3_haver*");
+            smtp.Authenticate(_emailConfiguration.SmtpUsername, _emailConfiguration.SmtpPassword);
             await smtp.SendAsync(message);
             smtp.Disconnect(true);
 
