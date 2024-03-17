@@ -1,22 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Threading.Tasks;
+﻿using HaverDevProject.CustomControllers;
+using HaverDevProject.Data;
+using HaverDevProject.Models;
+using HaverDevProject.Utilities;
+using HaverDevProject.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using HaverDevProject.Data;
-using HaverDevProject.Models;
-using HaverDevProject.ViewModels;
-using HaverDevProject.Utilities;
-using HaverDevProject.CustomControllers;
-using System.Numerics;
 using Microsoft.EntityFrameworkCore.Storage;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using System.Runtime.ConstrainedExecution;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 
 namespace HaverDevProject.Controllers
 {
@@ -273,11 +265,11 @@ namespace HaverDevProject.Controllers
             var pagedData = await PaginatedList<NcrOperation>.CreateAsync(ncrOperation.AsNoTracking(), page ?? 1, pageSize);
 
             return View(pagedData);
-        }   
+        }
 
 
-    // GET: NcrOperation/Details/5
-    public async Task<IActionResult> Details(int? id)
+        // GET: NcrOperation/Details/5
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.NcrOperations == null)
             {
@@ -412,35 +404,17 @@ namespace HaverDevProject.Controllers
                     _context.Ncrs.Update(ncr);
                     await _context.SaveChangesAsync();
 
-                    //////////////////////////////////////////////////////
-                    ///
-                    // Send email to Procurement
-                    //var procurementUsers = await _userManager.GetUsersInRoleAsync("Procurement");
-                    //var emailAddresses = procurementUsers.Select(u => new EmailAddress
-                    //{
-                    //    Name = u.UserName,
-                    //    Address = u.Email
-                    //}).ToList();
-
-                    //if (emailAddresses.Any())
-                    //{
-                    //    var msg = new EmailMessage()
-                    //    {
-                    //        ToAddresses = emailAddresses,
-                    //        Subject = "New Object Created in Operations",
-                    //        Content = "A new object has been created in Operations. Please review."
-                    //    };
-                    //    await _emailSender.SendToManyAsync(msg);
-                    //    TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " saved successfully and email notification sent to Procurement.";
-                    //}
-                    //else
-                    //{
-                    //    TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " saved successfully but no Procurement users found to notify.";
-                    //}
-                    //////////////////////////////////////////////////////
+                    // Call function to send notification email after updating phase
+                    //await SendNotificationEmail(ncrOperation.NcrId, "New NCR Requires Procurement Attention", $"A new NCR ({ncr.NcrNumber}) has entered the Procurement phase. Please review details in the system.");
 
                     TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " saved successfully!";
                     int ncrOpId = ncrOperation.NcrOpId;
+
+                    // Send notification email to Procurement
+                    var subject = "New NCR Created";
+                    var emailContent = "A new NCR has been created. Please review it.";
+                    await Notification(ncrOpId, subject, emailContent);
+
                     return RedirectToAction("Details", new { id = ncrOpId });
                 }
             }
@@ -651,14 +625,14 @@ namespace HaverDevProject.Controllers
             {
                 _context.NcrOperations.Remove(ncrOperation);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool NcrOperationExists(int id)
         {
-          return _context.NcrOperations.Any(e => e.NcrOpId == id);
+            return _context.NcrOperations.Any(e => e.NcrOpId == id);
         }
 
 
@@ -744,6 +718,7 @@ namespace HaverDevProject.Controllers
                                 FileName = picture.FileName
                             });
                         }
+
                     }
                 }
             }
@@ -805,7 +780,7 @@ namespace HaverDevProject.Controllers
             return Json(new { success = false, message = "Photo not found." });
         }
 
-        // CREATE/POST: Operation/Notification/5
+        //// CREATE/POST: Operation/Notification/5
         public async Task<IActionResult> Notification(int? id, string Subject, string emailContent)
         {
             if (id == null)
@@ -816,45 +791,38 @@ namespace HaverDevProject.Controllers
             NcrOperation o = await _context.NcrOperations.FindAsync(id);
 
             ViewData["id"] = id;
-            ViewData["NcrNumber"] = o.Ncr.NcrNumber;
 
-            if (string.IsNullOrEmpty(Subject) || string.IsNullOrEmpty(emailContent))
+            try
             {
-                ViewData["Message"] = "You must enter both a Subject and some message Content before sending the message.";
-            }
-            else
-            {
-                try
+                var procurementUsers = await _userManager.GetUsersInRoleAsync("Procurement");
+                var emailAddresses = procurementUsers.Select(u => new EmailAddress
                 {
-                    var procurementUsers = await _userManager.GetUsersInRoleAsync("Procurement");
-                    var emailAddresses = procurementUsers.Select(u => new EmailAddress
-                    {
-                        Name = u.UserName,
-                        Address = u.Email
-                    }).ToList();
+                    Name = u.UserName,
+                    Address = u.Email
+                }).ToList();
 
-                    if (emailAddresses.Any())
+                if (emailAddresses.Any())
+                {
+                    var msg = new EmailMessage()
                     {
-                        var msg = new EmailMessage()
-                        {
-                            ToAddresses = emailAddresses,
-                            Subject = Subject,
-                            Content = "<p>" + emailContent + "</p><p>Please access the <strong>Niagara College</strong> web site to review.</p>"
-                        };
-                        await _emailSender.SendToManyAsync(msg);
-                        ViewData["Message"] = $"Message sent to {emailAddresses.Count} Procurement user{(emailAddresses.Count == 1 ? "" : "s")}.";
-                    }
-                    else
-                    {
-                        ViewData["Message"] = "Message NOT sent! No Procurement users found.";
-                    }
+                        ToAddresses = emailAddresses,
+                        Subject = Subject,
+                        Content = "<p>" + emailContent + "</p><p>Please access the <strong>Niagara College</strong> web site to review.</p>"
+                    };
+                    await _emailSender.SendToManyAsync(msg);
+                    ViewData["Message"] = $"Message sent to {emailAddresses.Count} Procurement user{(emailAddresses.Count == 1 ? "" : "s")}.";
                 }
-                catch (Exception ex)
+                else
                 {
-                    string errMsg = ex.GetBaseException().Message;
-                    ViewData["Message"] = $"Error: Could not send email message to Procurement users. Error: {errMsg}";
+                    ViewData["Message"] = "Message NOT sent! No Procurement users found.";
                 }
             }
+            catch (Exception ex)
+            {
+                string errMsg = ex.GetBaseException().Message;
+                ViewData["Message"] = $"Error: Could not send email message to Procurement users. Error: {errMsg}";
+            }
+
             return View();
         }
 
