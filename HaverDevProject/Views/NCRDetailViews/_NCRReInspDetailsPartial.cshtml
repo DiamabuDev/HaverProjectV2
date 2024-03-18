@@ -73,11 +73,12 @@
                         </table>
                     </div>
                 </div>
-                @{
+        @{
                     bool hasImages = Model.NcrReInspectPhotos != null && Model.NcrReInspectPhotos.Any(p => p.NcrReInspectPhotoContent != null);
                     bool hasVideos = Model.Ncr.NcrReInspect.NcrReInspectDefectVideo != null;
-                }
-                @if (hasImages || hasVideos)
+                    bool hasNotes = Model.NcrReInspectNotes != null;
+        }
+                @if (hasImages || hasVideos || hasNotes)
                 {
                     <button class="btn custom-secondary-bg icon-drop text-start" type="button" data-bs-toggle="collapse" data-bs-target="#additionalInfoReInsp" aria-expanded="false" aria-controls="additionalInfo2">
                         Additional Information <i class="bi bi-chevron-down"></i>
@@ -124,6 +125,18 @@
                                         <a href="@videoUrl" target="_blank">Video Link</a>
                                         <br />
                                     }
+                                }
+                            </div>
+                        }
+                        @if (hasNotes)
+                        {
+                            <div class="card-header">
+                                Notes
+                            </div>
+                            <div class="card-body">
+                                @if (Model.NcrReInspectNotes != null)
+                                {
+                                    @Html.Raw(Model.NcrReInspectNotes)
                                 }
                             </div>
                         }

@@ -405,7 +405,11 @@ namespace HaverDevProject.Controllers
 
                     if (isAcceptable == "false")
                     {
-                        return RedirectToAction("Create", "NcrQa", new { parentNcrId = ncrReInspect.NcrId });
+                        //var supplierName = ncrReInspect.Ncr.NcrQa.Supplier.SupplierName;
+                        //var itemName = ncrReInspect.Ncr.NcrQa.Item.ItemName;
+                        //var defectName = ncrReInspect.Ncr.NcrQa.Defect.DefectName;
+
+                        return RedirectToAction("Create", "NcrQa", new { parentNcrId = ncrReInspect.NcrId/*, supplier = supplierName, item = itemName, defect = defectName*/ });
                     }
                     else
                     {

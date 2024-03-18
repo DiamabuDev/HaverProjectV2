@@ -419,6 +419,7 @@ namespace HaverDevProject.Controllers
                     var ncrReInspect = await _context.NcrReInspects.FirstOrDefaultAsync(n => n.NcrId == ncrQaDTO.ParentId);
                     if (ncrReInspect != null)
                     {
+                        //PopulateDropDownLists();
                         ncrReInspect.NcrReInspectNewNcrNumber = ncr.NcrNumber;
                         _context.Update(ncrReInspect);
                         await _context.SaveChangesAsync();

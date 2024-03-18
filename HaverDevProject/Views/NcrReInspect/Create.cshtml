@@ -87,6 +87,15 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="form-group" id="ReinspectNotes">
+                        <label asp-for="NcrReInspectNotes" class="control-label">
+                            <strong>Notes </strong>
+                            <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Enter notes for why the reinspection is not acceptable">(e.g. The NCR is not up to code.)</small>
+                        </label>
+                        <textarea asp-for="NcrReInspectNotes" class="form-control" id="Notes"></textarea>
+                        <span asp-validation-for="NcrReInspectNotes" class="text-danger"></span>
+                    </div>
                     @* <div class="col-6">
                     <div class="form-group">
                     <label asp-for="NcrReInspectUserId" class="control-label"><b>Inspector's Name </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Name of the Inspector">(e.g. J. Doe)</small></label>
@@ -124,7 +133,7 @@
                         <input asp-for="NcrReInspectDefectVideo" class="form-control" />
                         <span asp-validation-for="NcrReInspectDefectVideo" class="text-danger"></span>
                     </div>
-                </div>
+                </div>                
 
             </div>
             <div class="card-footer">
@@ -292,6 +301,8 @@
             $('#acceptableReinspectionModal').modal('hide');
         }
 
+        $('#ReinspectNotes').hide();
+
         $('input[name="NcrReInspectAcceptable"]').change(function () {
             console.log("Change event triggered for NcrReInspectAcceptable radio buttons.");
             isAcceptable = $(this).val();
@@ -299,21 +310,24 @@
             if (isAcceptable == 'false') {
                 console.log("Showing the modal...");
                 showAcceptableReinspectionModal();
-
+                $('#ReinspectNotes').slideDown();
             } else {
                 console.log("Hiding the modal...");
                 hideAcceptableReinspectionModal();
+                $('#ReinspectNotes').slideUp();
             }
         });
 
         document.getElementById('btnSaveAndClose').addEventListener('click', function (event) {
             event.preventDefault();
 
-            showCloseReinspectionModal();
+            showCloseReinspectionModal();                       
+        });
 
-            $('#closeReinspectionModal').on('hidden.bs.modal', function () {
+        $('#closeReinspectionModal').on('hidden.bs.modal', function () {
+            if (modalConfirmed) {
                 document.getElementById('reInspectFormId').submit();
-            });
+            }
         });
 
         function showCloseReinspectionModal() {
@@ -322,12 +336,14 @@
             document.getElementById('btnYes').addEventListener('click', function () {
                 hideCloseReinspectionModal();
                 document.getElementById('reInspectFormId').submit();
+                modalConfirmed = true;
             });
 
             document.getElementById('btnNo').addEventListener('click', function () {
                 hideCloseReinspectionModal();
+                event.preventDefault();
+                modalConfirmed = false;
             });
-
         }
 
         function hideCloseReinspectionModal() {
