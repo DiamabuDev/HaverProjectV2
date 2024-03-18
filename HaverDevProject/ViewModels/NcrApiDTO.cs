@@ -21,7 +21,7 @@ namespace HaverDevProject.ViewModels
         public int NcrId { get; set; }
         public Ncr Ncr { get; set; }
         public int ItemId { get; set; }
-        public Item Item { get; set; }
+        public ItemApiDTO Item { get; set; }
         public int DefectId { get; set; }
         
     }

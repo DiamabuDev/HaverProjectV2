@@ -115,7 +115,7 @@ namespace HaverDevProject.Controllers
 
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, ControllerName());
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
-            var pagedData = await PaginatedList<Item>.CreateAsync(items.AsNoTracking(), page ?? 1, pageSize);
+            var pagedData = await PaginatedList<ItemApiDTO>.CreateAsync(items.AsNoTracking(), page ?? 1, pageSize);
 
             return View(pagedData);
 
@@ -151,7 +151,7 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ItemId,ItemNumber,ItemName")] Item item)
+        public async Task<IActionResult> Create([Bind("ItemId,ItemNumber,ItemName")] ItemApiDTO item)
         {
             try
             {
@@ -229,7 +229,7 @@ namespace HaverDevProject.Controllers
             {
                 return NotFound();
             }
-            if (await TryUpdateModelAsync<Item>(itemToUpdate, "",
+            if (await TryUpdateModelAsync<ItemApiDTO>(itemToUpdate, "",
                     i => i.ItemNumber, i => i.ItemName))
             {
                 try
@@ -381,7 +381,7 @@ namespace HaverDevProject.Controllers
                     }
                     else
                     {
-                        var newItem = new Item
+                        var newItem = new ItemApiDTO
                         {
                             ItemNumber = itemNumber,
                             ItemName = itemName

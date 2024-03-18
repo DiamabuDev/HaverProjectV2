@@ -72,12 +72,12 @@ namespace HaverDevProject.Controllers.API
                     NcrQaQuanReceived = n.NcrQaQuanReceived,
                     NcrQaQuanDefective = n.NcrQaQuanDefective,
                     SupplierId = n.SupplierId,
-                    Supplier = new Supplier
-                    {
-                        SupplierId = n.Supplier.SupplierId,
-                        SupplierName = n.Supplier.SupplierName,
-                        SupplierStatus = n.Supplier.SupplierStatus
-                    }
+                    //Supplier = new Supplier
+                    //{
+                    //    SupplierId = n.Supplier.SupplierId,
+                    //    SupplierName = n.Supplier.SupplierName,
+                    //    SupplierStatus = n.Supplier.SupplierStatus
+                    //}
                 })
                 .ToListAsync();
 
