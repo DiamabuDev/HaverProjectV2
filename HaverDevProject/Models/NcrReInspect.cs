@@ -16,6 +16,7 @@ public class NcrReInspect : Auditable
     public DateTime NcrReInspectCreationDate { get; set; }    
     public DateTime NcrReInspectCompleteDate { get; set; }
     public string NcrReInspectNewNcrNumber { get; set; }
+    public string NcrReInspectNotes { get; set; }
     public int NcrReInspectUserId { get; set; }
     public bool NcrQaStatusFlag { get; set; }
     public string NcrReInspectDefectVideo { get; set; }
