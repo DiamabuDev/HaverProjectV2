@@ -406,7 +406,7 @@ namespace HaverDevProject.Data
                         {
                             NcrQaItemMarNonConforming = true,
                             NcrQaSalesOrder = "10401227",
-                            NcrQacreationDate = DateTime.Parse("2018-12-07"), 
+                            NcrQacreationDate = DateTime.Parse("2023-10-07"), 
                             NcrQauserId = 1, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-137").NcrId,
                             NcrQaProcessApplicable = false,
@@ -423,7 +423,7 @@ namespace HaverDevProject.Data
                         {
                             NcrQaItemMarNonConforming = true,
                             NcrQaSalesOrder = "10401228",
-                            NcrQacreationDate = DateTime.Parse("2023-12-09"),
+                            NcrQacreationDate = DateTime.Parse("2023-11-09"),
                             NcrQauserId = 2, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-138").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Bearing Housing").ItemId,
@@ -439,7 +439,7 @@ namespace HaverDevProject.Data
                         {
                             NcrQaItemMarNonConforming = true,
                             NcrQaSalesOrder = "10401229",
-                            NcrQacreationDate = DateTime.Parse("2023-12-11"),
+                            NcrQacreationDate = DateTime.Parse("2023-11-11"),
                             NcrQauserId = 3, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-139").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Bearing Housing").ItemId,
@@ -521,7 +521,7 @@ namespace HaverDevProject.Data
                         {
                             NcrQaItemMarNonConforming = true,
                             NcrQaSalesOrder = "10401234",
-                            NcrQacreationDate = DateTime.Parse("2024-01-06"),
+                            NcrQacreationDate = DateTime.Parse("2024-02-06"),
                             NcrQauserId = 4, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-003").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Side Arm").ItemId,
@@ -537,7 +537,7 @@ namespace HaverDevProject.Data
                         {
                             NcrQaItemMarNonConforming = true,
                             NcrQaSalesOrder = "10401235",
-                            NcrQacreationDate = DateTime.Parse("2024-01-07"),
+                            NcrQacreationDate = DateTime.Parse("2024-02-07"),
                             NcrQauserId = 1, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-004").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Side Arm").ItemId,
@@ -553,7 +553,7 @@ namespace HaverDevProject.Data
                         {
                             NcrQaItemMarNonConforming = true,
                             NcrQaSalesOrder = "10401236",
-                            NcrQacreationDate = DateTime.Parse("2024-01-11"),
+                            NcrQacreationDate = DateTime.Parse("2024-03-11"),
                             NcrQauserId = 2, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-005").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Bearing Housing").ItemId,
@@ -570,7 +570,7 @@ namespace HaverDevProject.Data
                         {
                             NcrQaItemMarNonConforming = true,
                             NcrQaSalesOrder = "10401681",
-                            NcrQacreationDate = DateTime.Parse("2024-01-14"),
+                            NcrQacreationDate = DateTime.Parse("2024-03-14"),
                             NcrQauserId = 3, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-006").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Side Arm").ItemId,
@@ -586,7 +586,7 @@ namespace HaverDevProject.Data
                         {
                             NcrQaItemMarNonConforming = true,
                             NcrQaSalesOrder = "10401682",
-                            NcrQacreationDate = DateTime.Parse("2024-01-14"),
+                            NcrQacreationDate = DateTime.Parse("2024-03-16"),
                             NcrQauserId = 4, //need to make nullable
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-007").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Backing Shield").ItemId,

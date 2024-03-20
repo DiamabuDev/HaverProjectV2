@@ -14,23 +14,7 @@ namespace HaverDevProject.Controllers.APIs
         public ApiController(HaverNiagaraContext context)
         {
             _context = context;
-        }
-
-        //Testing----Eliminar despues de evaluar
-        private SelectList SupplierSelectList(int? selectedId)
-        {
-            return new SelectList(_context.Suppliers
-                .Where(s => s.SupplierStatus == true && s.SupplierName != "NO SUPPLIER PROVIDED")
-                .OrderBy(s => s.SupplierName), "SupplierId", "Summary", selectedId);
-        }
-
-        //Testing - Eliminar despues de evaluar
-        [HttpGet]
-        [Route("api/ncr")]
-        public JsonResult GetSuppliersTest(int? id)
-        {
-            return Json(SupplierSelectList(id));
-        }
+        }        
 
         // GET: api/Ncrs
         [HttpGet]
@@ -47,6 +31,8 @@ namespace HaverDevProject.Controllers.APIs
                     NcrNumber = n.Ncr.NcrNumber,
                     NcrStatus = n.Ncr.NcrStatus,
                     NcrPhase = n.Ncr.NcrPhase,
+                    NcrQaProcessApplicable = n.NcrQaProcessApplicable,
+                    NcrQaItemMarNonConforming = n.NcrQaItemMarNonConforming,
                     NcrQacreationDate = n.NcrQacreationDate,
                     NcrQaOrderNumber = n.NcrQaOrderNumber,
                     NcrQaSalesOrder = n.NcrQaSalesOrder,
@@ -72,8 +58,7 @@ namespace HaverDevProject.Controllers.APIs
                     {
                         DefectId = n.Defect.DefectId,
                         DefectName = n.Defect.DefectName
-                    }                 
-                    
+                    }    
                 })
                 .ToListAsync();
 
@@ -86,8 +71,6 @@ namespace HaverDevProject.Controllers.APIs
                 return NotFound(new { message = "Error: No Ncrs records in the system." });
             }
         }
-    }
-
-    
+    }    
 }
 
