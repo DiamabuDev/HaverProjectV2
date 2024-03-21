@@ -9,6 +9,7 @@ using HaverDevProject.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq.Expressions;
 using HaverDevProject.Utilities;
+using Elfie.Serialization;
 
 namespace HaverDevProject.Controllers
 {
@@ -76,87 +77,101 @@ namespace HaverDevProject.Controllers
             }
 
             //Sorting columns
-            //if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
-            //{
-            //    page = 1; //Reset page to start
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                page = 1; //Reset page to start
 
-            //    if (sortOptions.Contains(actionButton)) //Change of sort is requested
-            //    {
-            //        if (actionButton == sortField) //Reverse order on same field
-            //        {
-            //            sortDirection = sortDirection == "asc" ? "desc" : "asc";
-            //        }
-            //        sortField = actionButton; //Sort by the button clicked
-            //    }
-            //}
+                if (sortOptions.Contains(actionButton)) //Change of sort is requested
+                {
+                    if (actionButton == sortField) //Reverse order on same field
+                    {
+                        sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                    }
+                    sortField = actionButton; //Sort by the button clicked
+                }
+            }
 
-            ////Now we know which field and direction to sort by
-            //if (sortField == "FirstName")
-            //{
-            //    if (sortDirection == "asc")
-            //    {
-            //        users = users.OrderBy(p => p.FirstName).ToList();
-            //        ViewData["filterApplied:UserFirstName"] = "<i class='bi bi-sort-up'></i>";
-            //    }
-            //    else
-            //    {
-            //        users = users.OrderByDescending(p => p.FirstName).ToList();
-            //        ViewData["filterApplied:UserFirstName"] = "<i class='bi bi-sort-down'></i>";
-            //    }
-            //}
-            //else if (sortField == "LastName")
-            //{
-            //    if (sortDirection == "asc")
-            //    {
-            //        users = users.OrderBy(p => p.LastName).ToList();
-            //        ViewData["filterApplied:UserLastName"] = "<i class='bi bi-sort-up'></i>";
-            //    }
-            //    else
-            //    {
-            //        users = users.OrderByDescending(p => p.LastName).ToList();
-            //        ViewData["filterApplied:UserLastName"] = "<i class='bi bi-sort-down'></i>";
-            //    }
-            //}
-            //else if (sortField == "Email") //Sorting by Email
-            //{
-            //    if (sortDirection == "asc")
-            //    {
-            //        users = users.OrderBy(p => p.Email).ToList();
-            //        ViewData["filterApplied:UserEmail"] = "<i class='bi bi-sort-up'></i>";
-            //    }
-            //    else
-            //    {
-            //        users = users.OrderByDescending(p => p.Email).ToList();
-            //        ViewData["filterApplied:UserEmail"] = "<i class='bi bi-sort-down'></i>";
-            //    }
-            //}
-            //else //Sorting by Role
-            //{
-            //    if (sortDirection == "asc")
-            //    {
-            //        users = users.OrderBy(s => s.SelectedRole).ToList();
-            //        ViewData["filterApplied:UserRole"] = "<i class='bi bi-sort-up'></i>";
-            //    }
-            //    else
-            //    {
-            //        users = users.OrderByDescending(s => s.SelectedRole).ToList();
-            //        ViewData["filterApplied:UserRole"] = "<i class='bi bi-sort-down'></i>";
-            //    }
-            //}
+            //Now we know which field and direction to sort by
+            if (sortField == "FirstName")
+            {
+                if (sortDirection == "asc")
+                {
+                    users = users.OrderBy(p => p.FirstName).ToList();
+                    ViewData["filterApplied:UserFirstName"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    users = users.OrderByDescending(p => p.FirstName).ToList();
+                    ViewData["filterApplied:UserFirstName"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "LastName")
+            {
+                if (sortDirection == "asc")
+                {
+                    users = users.OrderBy(p => p.LastName).ToList();
+                    ViewData["filterApplied:UserLastName"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    users = users.OrderByDescending(p => p.LastName).ToList();
+                    ViewData["filterApplied:UserLastName"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Email") //Sorting by Email
+            {
+                if (sortDirection == "asc")
+                {
+                    users = users.OrderBy(p => p.Email).ToList();
+                    ViewData["filterApplied:UserEmail"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    users = users.OrderByDescending(p => p.Email).ToList();
+                    ViewData["filterApplied:UserEmail"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else //Sorting by Role
+            {
+                if (sortDirection == "asc")
+                {
+                    users = users.OrderBy(s => s.SelectedRole).ToList();
+                    ViewData["filterApplied:UserRole"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    users = users.OrderByDescending(s => s.SelectedRole).ToList();
+                    ViewData["filterApplied:UserRole"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
 
-            ////Set sort for next time
-            //ViewData["sortField"] = sortField;
-            //ViewData["sortDirection"] = sortDirection;
+            //Set sort for next time
+            ViewData["sortField"] = sortField;
+            ViewData["sortDirection"] = sortDirection;
 
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, ControllerName());
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
-            var pagedData = await PaginatedList<CreateUserVM>.CreateAsync(
-                users.AsQueryable(),
-                page ?? 1,
-                pageSize
-            );
 
-            return View(pagedData);
+            var pageIndex = page ?? 1; 
+
+            var count = users.Count();
+            var items = users.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            if (items.Count() == 0 && count > 0 && pageIndex > 1)
+            {
+                //If there are no items to show on a page, but there is data and you are not already 
+                //on the first page, then move back a page and get the data again.
+                pageIndex--;
+                items = users.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            }
+            var pageData = new PaginatedList<CreateUserVM>(items, count, pageIndex, pageSize);
+
+            //var pagedData = await PaginatedList<CreateUserVM>.CreateAsync(
+            //    users.AsQueryable(),
+            //    page ?? 1,
+            //    pageSize
+            //);
+
+            return View(pageData);
         }
 
         //GET: Users/Create
