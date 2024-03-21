@@ -6,13 +6,22 @@
 
 <h2>User Role Assignments</h2>
 
+<div class="row mt-3 mb-2">
+    <div class="d-flex justify-content-end">
+        <button class="btn @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter" style="margin-right: 8px;">
+            @ViewData["numberFilters"]
+        </button>
+        <a asp-action="Create" class="btn btn-primary me-2"> <i class="bi bi-plus-square-dotted"></i> Create Users</a>
+    </div>
+</div>
+
 <table class="table">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.UserName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.UserRoles)
+            @Html.DisplayNameFor(model => model.SelectedRole)
         </th>
         <th></th>
     </tr>
@@ -24,12 +33,7 @@
                 @Html.DisplayFor(modelItem => item.UserName)
             </td>
             <td>
-                @{
-                    foreach (var r in item.UserRoles)
-                    {
-                        @:  @r <br />
-                    }
-                }
+                @Html.DisplayFor(modelItem => item.SelectedRole)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-outline-primary"

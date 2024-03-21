@@ -1,11 +1,12 @@
-﻿namespace HaverDevProject.ViewModels
-{
+﻿
     using System.ComponentModel.DataAnnotations;
 
     namespace HaverDevProject.ViewModels
     {
         public class CreateUserVM
         {
+            public string ID { get; set; }
+
             [Required]
             [Display(Name = "First Name")]
             public string FirstName { get; set; }
@@ -19,9 +20,8 @@
             [Display(Name = "Email")]
             public string Email { get; set; }
 
-            [Display(Name = "Roles")]
-            public List<string> SelectedRoles { get; set; }
+            [Display(Name = "Role")]
+            public string SelectedRole { get; set; }
         }
     }
 
-}

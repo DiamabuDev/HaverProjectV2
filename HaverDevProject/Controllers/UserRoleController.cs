@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HaverDevProject.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Linq.Expressions;
 
 namespace HaverDevProject.Controllers
 {
@@ -24,19 +25,15 @@ namespace HaverDevProject.Controllers
         // GET: User
         public async Task<IActionResult> Index()
         {
-            var users = await (from u in _context.Users
+            var users = await _context.Users
                                .OrderBy(u => u.UserName)
-                               select new UserVM
+                               .Select(user => new UserVM
                                {
-                                   ID = u.Id,
-                                   UserName = u.UserName
-                               }).ToListAsync();
-            foreach (var u in users)
-            {
-                var _user = await _userManager.FindByIdAsync(u.ID);
-                u.UserRoles = (List<string>)await _userManager.GetRolesAsync(_user);
-                //Note: we needed the explicit cast above because GetRolesAsync() returns an IList<string>
-            };
+                                   ID = user.Id,
+                                   UserName = user.UserName,
+                                   SelectedRole = _userManager.GetRolesAsync(user).Result.FirstOrDefault()
+                               })
+                              .ToListAsync();
             return View(users);
         }
 
@@ -44,48 +41,55 @@ namespace HaverDevProject.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            var viewModel = new CreateUserVM
-            {
-                SelectedRoles = new List<string>()
-            };
-            ViewBag.Roles = new SelectList(_context.Roles, "Name", "Name");
-            return View(viewModel);
+            PopulateRoles();
+            return View();
         }
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateUserVM model, string[] selectedRoles)
+        public async Task<IActionResult> Create(CreateUserVM model)
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName };
-                var result = await _userManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
+                var user = new ApplicationUser
                 {
-                    if (selectedRoles.Length > 0)
+                    UserName = model.Email,
+                    Email = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    EmailConfirmed = true
+                };
+
+                string defaultPassword = "Pa55w@rd";
+
+                var createResult = await _userManager.CreateAsync(user, defaultPassword);
+
+                if (createResult.Succeeded && !string.IsNullOrWhiteSpace(model.SelectedRole))
+                {
+                    var roleResult = await _userManager.AddToRoleAsync(user, model.SelectedRole);
+                    if (!roleResult.Succeeded)
                     {
-                        await _userManager.AddToRolesAsync(user, selectedRoles);
+                        // Handle error in role assignment
+                        ModelState.AddModelError("", "Failed to assign role.");
+                        PopulateRoles();
+                        return View(model);
                     }
-                    return RedirectToAction(nameof(Index));
+
+                    return RedirectToAction("Index");
                 }
-                foreach (var error in result.Errors)
+                else
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    // Handle user creation failure
+                    foreach (var error in createResult.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
                 }
             }
-
-            // If we got this far, something failed; redisplay form
-            ViewBag.Roles = _context.Roles.Select(r => new SelectListItem
-            {
-                Value = r.Name,
-                Text = r.Name
-            }).ToList();
-
+            PopulateRoles();
             return View(model);
         }
-
-
 
         // GET: Users/Edit/5
         public async Task<IActionResult> Edit(string id)
@@ -94,107 +98,144 @@ namespace HaverDevProject.Controllers
             {
                 return new BadRequestResult();
             }
-            var _user = await _userManager.FindByIdAsync(id);//IdentityRole
-            if (_user == null)
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
             {
                 return NotFound();
             }
-            UserVM user = new UserVM
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var model = new CreateUserVM
             {
-                ID = _user.Id,
-                UserName = _user.UserName,
-                UserRoles = (List<string>)await _userManager.GetRolesAsync(_user)
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                SelectedRole = userRoles.FirstOrDefault() 
             };
-            PopulateAssignedRoleData(user);
-            return View(user);
+
+            PopulateRoles();
+            return View(model);
         }
 
         // POST: Users/Edit/5
+        // POST: Users/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string Id, string[] selectedRoles)
+        public async Task<IActionResult> Edit(string id, CreateUserVM model)
         {
-            var _user = await _userManager.FindByIdAsync(Id);//IdentityRole
-            UserVM user = new UserVM
+            if (id == null)
             {
-                ID = _user.Id,
-                UserName = _user.UserName,
-                UserRoles = (List<string>)await _userManager.GetRolesAsync(_user)
-            };
-            try
-            {
-                await UpdateUserRoles(selectedRoles, user);
-                return RedirectToAction("Index");
+                return BadRequest();
             }
-            catch (Exception)
-            {
-                ModelState.AddModelError(string.Empty,
-                                "Unable to save changes.");
-            }
-            PopulateAssignedRoleData(user);
-            return View(user);
-        }
 
-        private void PopulateAssignedRoleData(UserVM user)
-        {//Prepare checkboxes for all Roles
-            var allRoles = _context.Roles;
-            var currentRoles = user.UserRoles;
-            var viewModel = new List<RoleVM>();
-            foreach (var r in allRoles)
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
             {
-                viewModel.Add(new RoleVM
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                user.Email = model.Email;
+                user.UserName = model.Email; 
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+
+                var updateResult = await _userManager.UpdateAsync(user);
+                if (!updateResult.Succeeded)
                 {
-                    RoleID = r.Id,
-                    RoleName = r.Name,
-                    Assigned = currentRoles.Contains(r.Name)
-                });
-            }
-            ViewBag.Roles = viewModel;
-        }
-
-        private async Task UpdateUserRoles(string[] selectedRoles, UserVM userToUpdate)
-        {
-            var UserRoles = userToUpdate.UserRoles;//Current roles use is in
-            var _user = await _userManager.FindByIdAsync(userToUpdate.ID);//ApplicationUser
-
-            if (selectedRoles == null)
-            {
-                //No roles selected so just remove any currently assigned
-                foreach (var r in UserRoles)
-                {
-                    await _userManager.RemoveFromRoleAsync(_user, r);
-                }
-            }
-            else
-            {
-                //At least one role checked so loop through all the roles
-                //and add or remove as required
-
-                //We need to do this next line because foreach loops don't always work well
-                //for data returned by EF when working async.  Pulling it into an IList<>
-                //first means we can safely loop over the colleciton making async calls and avoid
-                //the error 'New transaction is not allowed because there are other threads running in the session'
-                IList<IdentityRole> allRoles = _context.Roles.ToList<IdentityRole>();
-
-                foreach (var r in allRoles)
-                {
-                    if (selectedRoles.Contains(r.Name))
+                    foreach (var error in updateResult.Errors)
                     {
-                        if (!UserRoles.Contains(r.Name))
-                        {
-                            await _userManager.AddToRoleAsync(_user, r.Name);
-                        }
+                        ModelState.AddModelError(string.Empty, error.Description);
                     }
-                    else
+                    PopulateRoles();
+                    return View(model);
+                }
+
+                var currentRoles = await _userManager.GetRolesAsync(user);
+                var removeRoleResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+                if (!removeRoleResult.Succeeded)
+                {
+                    foreach (var error in removeRoleResult.Errors)
                     {
-                        if (UserRoles.Contains(r.Name))
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    PopulateRoles();
+                    return View(model);
+                }
+
+                if (!string.IsNullOrEmpty(model.SelectedRole))
+                {
+                    var addRoleResult = await _userManager.AddToRoleAsync(user, model.SelectedRole);
+                    if (!addRoleResult.Succeeded)
+                    {
+                        foreach (var error in addRoleResult.Errors)
                         {
-                            await _userManager.RemoveFromRoleAsync(_user, r.Name);
+                            ModelState.AddModelError(string.Empty, error.Description);
                         }
+                        PopulateRoles();
+                        return View(model);
                     }
                 }
+
+                return RedirectToAction(nameof(Index));
             }
+
+            PopulateRoles(); 
+            return View(model);
         }
+
+
+        private void PopulateRoles()
+        {
+            var roles = _context.Roles.ToList();
+            ViewBag.Roles = new SelectList(roles, "Name", "Name");
+        }
+
+        //private async Task UpdateUserRoles(string[] selectedRoles, UserVM userToUpdate)
+        //{
+        //    var UserRoles = userToUpdate.UserRoles;//Current roles use is in
+        //    var _user = await _userManager.FindByIdAsync(userToUpdate.ID);//ApplicationUser
+
+        //    if (selectedRoles == null)
+        //    {
+        //        //No roles selected so just remove any currently assigned
+        //        foreach (var r in UserRoles)
+        //        {
+        //            await _userManager.RemoveFromRoleAsync(_user, r);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        //At least one role checked so loop through all the roles
+        //        //and add or remove as required
+
+        //        //We need to do this next line because foreach loops don't always work well
+        //        //for data returned by EF when working async.  Pulling it into an IList<>
+        //        //first means we can safely loop over the colleciton making async calls and avoid
+        //        //the error 'New transaction is not allowed because there are other threads running in the session'
+        //        IList<IdentityRole> allRoles = _context.Roles.ToList<IdentityRole>();
+
+        //        foreach (var r in allRoles)
+        //        {
+        //            if (selectedRoles.Contains(r.Name))
+        //            {
+        //                if (!UserRoles.Contains(r.Name))
+        //                {
+        //                    await _userManager.AddToRoleAsync(_user, r.Name);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                if (UserRoles.Contains(r.Name))
+        //                {
+        //                    await _userManager.RemoveFromRoleAsync(_user, r.Name);
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
         protected override void Dispose(bool disposing)
         {
