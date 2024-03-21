@@ -5,6 +5,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using HaverDevProject.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Linq.Expressions;
+using HaverDevProject.Utilities;
 
 namespace HaverDevProject.Controllers
 {
@@ -12,33 +16,202 @@ namespace HaverDevProject.Controllers
     public class UserRoleController : CognizantController
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserRoleController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public UserRoleController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;
         }
         // GET: User
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string SearchUser, string SearchRole, int? page, int? pageSizeID,
+            string actionButton, string sortDirection = "asc", string sortField = "FirstName")
         {
+            ViewData["Filtering"] = "btn-block invisible";
+            int numberFilters = 0;
+            
+            string[] sortOptions = new[] { "FirstName", "LastName", "Email", "Role" };
+
             var users = await (from u in _context.Users
                                .OrderBy(u => u.UserName)
-                               select new UserVM
+                               select new CreateUserVM
                                {
                                    ID = u.Id,
-                                   UserName = u.UserName
+                                   FirstName = u.FirstName,
+                                   LastName = u.LastName,
+                                   Email = u.Email
                                }).ToListAsync();
             foreach (var u in users)
             {
                 var _user = await _userManager.FindByIdAsync(u.ID);
-                u.UserRoles = (List<string>)await _userManager.GetRolesAsync(_user);
+                var roles = (List<string>)await _userManager.GetRolesAsync(_user);
+                u.SelectedRole = roles[0]; 
                 //Note: we needed the explicit cast above because GetRolesAsync() returns an IList<string>
-            };
-            return View(users);
+            };                      
+
+            //Filterig values                       
+            if (!String.IsNullOrEmpty(SearchUser))
+            {
+                users = users.Where(u =>
+                    u.FirstName.ToUpper().Contains(SearchUser.ToUpper()) ||
+                    u.LastName.ToUpper().Contains(SearchUser.ToUpper()))
+                    .ToList();
+                numberFilters++;
+            }
+
+            if (!String.IsNullOrEmpty(SearchRole))
+            {
+                users = users.Where(u =>
+                    u.SelectedRole.ToUpper().Contains(SearchRole.ToUpper()))
+                    .ToList();
+                numberFilters++;
+            }
+
+            //keep track of the number of filters 
+            if (numberFilters != 0)
+            {
+                ViewData["Filtering"] = " btn-danger";
+                ViewData["numberFilters"] = "(" + numberFilters.ToString()
+                    + " Filter" + (numberFilters > 1 ? "s" : "") + " Applied)";
+            }
+
+            //Sorting columns
+            //if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            //{
+            //    page = 1; //Reset page to start
+
+            //    if (sortOptions.Contains(actionButton)) //Change of sort is requested
+            //    {
+            //        if (actionButton == sortField) //Reverse order on same field
+            //        {
+            //            sortDirection = sortDirection == "asc" ? "desc" : "asc";
+            //        }
+            //        sortField = actionButton; //Sort by the button clicked
+            //    }
+            //}
+
+            ////Now we know which field and direction to sort by
+            //if (sortField == "FirstName")
+            //{
+            //    if (sortDirection == "asc")
+            //    {
+            //        users = users.OrderBy(p => p.FirstName).ToList();
+            //        ViewData["filterApplied:UserFirstName"] = "<i class='bi bi-sort-up'></i>";
+            //    }
+            //    else
+            //    {
+            //        users = users.OrderByDescending(p => p.FirstName).ToList();
+            //        ViewData["filterApplied:UserFirstName"] = "<i class='bi bi-sort-down'></i>";
+            //    }
+            //}
+            //else if (sortField == "LastName")
+            //{
+            //    if (sortDirection == "asc")
+            //    {
+            //        users = users.OrderBy(p => p.LastName).ToList();
+            //        ViewData["filterApplied:UserLastName"] = "<i class='bi bi-sort-up'></i>";
+            //    }
+            //    else
+            //    {
+            //        users = users.OrderByDescending(p => p.LastName).ToList();
+            //        ViewData["filterApplied:UserLastName"] = "<i class='bi bi-sort-down'></i>";
+            //    }
+            //}
+            //else if (sortField == "Email") //Sorting by Email
+            //{
+            //    if (sortDirection == "asc")
+            //    {
+            //        users = users.OrderBy(p => p.Email).ToList();
+            //        ViewData["filterApplied:UserEmail"] = "<i class='bi bi-sort-up'></i>";
+            //    }
+            //    else
+            //    {
+            //        users = users.OrderByDescending(p => p.Email).ToList();
+            //        ViewData["filterApplied:UserEmail"] = "<i class='bi bi-sort-down'></i>";
+            //    }
+            //}
+            //else //Sorting by Role
+            //{
+            //    if (sortDirection == "asc")
+            //    {
+            //        users = users.OrderBy(s => s.SelectedRole).ToList();
+            //        ViewData["filterApplied:UserRole"] = "<i class='bi bi-sort-up'></i>";
+            //    }
+            //    else
+            //    {
+            //        users = users.OrderByDescending(s => s.SelectedRole).ToList();
+            //        ViewData["filterApplied:UserRole"] = "<i class='bi bi-sort-down'></i>";
+            //    }
+            //}
+
+            ////Set sort for next time
+            //ViewData["sortField"] = sortField;
+            //ViewData["sortDirection"] = sortDirection;
+
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, ControllerName());
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+            var pagedData = await PaginatedList<CreateUserVM>.CreateAsync(
+                users.AsQueryable(),
+                page ?? 1,
+                pageSize
+            );
+
+            return View(pagedData);
         }
 
-        //Missing the Create. Add it later.
+        //GET: Users/Create
+        [HttpGet]
+        public IActionResult Create()
+        {
+            PopulateRoles();
+            return View();
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CreateUserVM model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    EmailConfirmed = true
+                };
+
+                string defaultPassword = "Pa55w@rd";
+
+                var createResult = await _userManager.CreateAsync(user, defaultPassword);
+
+                if (createResult.Succeeded && !string.IsNullOrWhiteSpace(model.SelectedRole))
+                {
+                    var roleResult = await _userManager.AddToRoleAsync(user, model.SelectedRole);
+                    if (!roleResult.Succeeded)
+                    {
+                        // Handle error in role assignment
+                        ModelState.AddModelError("", "Failed to assign role.");
+                        PopulateRoles();
+                        return View(model);
+                    }
+
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    // Handle user creation failure
+                    foreach (var error in createResult.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                }
+            }
+            PopulateRoles();
+            return View(model);
+        }
 
         // GET: Users/Edit/5
         public async Task<IActionResult> Edit(string id)
@@ -47,108 +220,100 @@ namespace HaverDevProject.Controllers
             {
                 return new BadRequestResult();
             }
-            var _user = await _userManager.FindByIdAsync(id);//IdentityRole
-            if (_user == null)
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
             {
                 return NotFound();
             }
-            UserVM user = new UserVM
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var model = new CreateUserVM
             {
-                ID = _user.Id,
-                UserName = _user.UserName,
-                UserRoles = (List<string>)await _userManager.GetRolesAsync(_user)
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                SelectedRole = userRoles.FirstOrDefault() 
             };
-            PopulateAssignedRoleData(user);
-            return View(user);
+
+            PopulateRoles();
+            return View(model);
         }
 
         // POST: Users/Edit/5
+        // POST: Users/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string Id, string[] selectedRoles)
+        public async Task<IActionResult> Edit(string id, CreateUserVM model)
         {
-            var _user = await _userManager.FindByIdAsync(Id);//IdentityRole
-            UserVM user = new UserVM
+            if (id == null)
             {
-                ID = _user.Id,
-                UserName = _user.UserName,
-                UserRoles = (List<string>)await _userManager.GetRolesAsync(_user)
-            };
-            try
-            {
-                await UpdateUserRoles(selectedRoles, user);
-                return RedirectToAction("Index");
+                return BadRequest();
             }
-            catch (Exception)
-            {
-                ModelState.AddModelError(string.Empty,
-                                "Unable to save changes.");
-            }
-            PopulateAssignedRoleData(user);
-            return View(user);
-        }
 
-        private void PopulateAssignedRoleData(UserVM user)
-        {//Prepare checkboxes for all Roles
-            var allRoles = _context.Roles;
-            var currentRoles = user.UserRoles;
-            var viewModel = new List<RoleVM>();
-            foreach (var r in allRoles)
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
             {
-                viewModel.Add(new RoleVM
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                user.Email = model.Email;
+                user.UserName = model.Email; 
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+
+                var updateResult = await _userManager.UpdateAsync(user);
+                if (!updateResult.Succeeded)
                 {
-                    RoleID = r.Id,
-                    RoleName = r.Name,
-                    Assigned = currentRoles.Contains(r.Name)
-                });
-            }
-            ViewBag.Roles = viewModel;
-        }
-
-        private async Task UpdateUserRoles(string[] selectedRoles, UserVM userToUpdate)
-        {
-            var UserRoles = userToUpdate.UserRoles;//Current roles use is in
-            var _user = await _userManager.FindByIdAsync(userToUpdate.ID);//IdentityUser
-
-            if (selectedRoles == null)
-            {
-                //No roles selected so just remove any currently assigned
-                foreach (var r in UserRoles)
-                {
-                    await _userManager.RemoveFromRoleAsync(_user, r);
-                }
-            }
-            else
-            {
-                //At least one role checked so loop through all the roles
-                //and add or remove as required
-
-                //We need to do this next line because foreach loops don't always work well
-                //for data returned by EF when working async.  Pulling it into an IList<>
-                //first means we can safely loop over the colleciton making async calls and avoid
-                //the error 'New transaction is not allowed because there are other threads running in the session'
-                IList<IdentityRole> allRoles = _context.Roles.ToList<IdentityRole>();
-
-                foreach (var r in allRoles)
-                {
-                    if (selectedRoles.Contains(r.Name))
+                    foreach (var error in updateResult.Errors)
                     {
-                        if (!UserRoles.Contains(r.Name))
-                        {
-                            await _userManager.AddToRoleAsync(_user, r.Name);
-                        }
+                        ModelState.AddModelError(string.Empty, error.Description);
                     }
-                    else
+                    PopulateRoles();
+                    return View(model);
+                }
+
+                var currentRoles = await _userManager.GetRolesAsync(user);
+                var removeRoleResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+                if (!removeRoleResult.Succeeded)
+                {
+                    foreach (var error in removeRoleResult.Errors)
                     {
-                        if (UserRoles.Contains(r.Name))
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    PopulateRoles();
+                    return View(model);
+                }
+
+                if (!string.IsNullOrEmpty(model.SelectedRole))
+                {
+                    var addRoleResult = await _userManager.AddToRoleAsync(user, model.SelectedRole);
+                    if (!addRoleResult.Succeeded)
+                    {
+                        foreach (var error in addRoleResult.Errors)
                         {
-                            await _userManager.RemoveFromRoleAsync(_user, r.Name);
+                            ModelState.AddModelError(string.Empty, error.Description);
                         }
+                        PopulateRoles();
+                        return View(model);
                     }
                 }
+
+                return RedirectToAction(nameof(Index));
             }
+
+            PopulateRoles(); 
+            return View(model);
         }
 
+        private void PopulateRoles()
+        {
+            var roles = _context.Roles.ToList();
+            ViewBag.Roles = new SelectList(roles, "Name", "Name");
+        }
+        
         protected override void Dispose(bool disposing)
         {
             if (disposing)

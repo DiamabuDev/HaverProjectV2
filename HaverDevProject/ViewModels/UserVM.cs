@@ -15,7 +15,7 @@ namespace HaverDevProject.ViewModels
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
 
-        [Display(Name = "Roles")]
-        public List<string> UserRoles { get; set; }
+        [Display(Name = "Role")]
+        public string SelectedRole { get; set; }
     }
 }
