@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using HaverDevProject.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq.Expressions;
+using HaverDevProject.Utilities;
 
 namespace HaverDevProject.Controllers
 {
@@ -23,17 +24,138 @@ namespace HaverDevProject.Controllers
             _userManager = userManager;
         }
         // GET: User
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string SearchUser, string SearchRole, int? page, int? pageSizeID,
+            string actionButton, string sortDirection = "asc", string sortField = "FirstName")
         {
-            var users = await _context.Users
+            ViewData["Filtering"] = "btn-block invisible";
+            int numberFilters = 0;
+            
+            string[] sortOptions = new[] { "FirstName", "LastName", "Email", "Role" };
+
+            var users = await (from u in _context.Users
                                .OrderBy(u => u.UserName)
-                               .Select(user => new UserVM
+                               select new CreateUserVM
                                {
-                                   ID = user.Id,
-                                   UserName = user.UserName,
-                                   SelectedRole = _userManager.GetRolesAsync(user).Result.FirstOrDefault()
-                               })
-                              .ToListAsync();
+                                   ID = u.Id,
+                                   FirstName = u.FirstName,
+                                   LastName = u.LastName,
+                                   Email = u.Email
+                               }).ToListAsync();
+            foreach (var u in users)
+            {
+                var _user = await _userManager.FindByIdAsync(u.ID);
+                var roles = (List<string>)await _userManager.GetRolesAsync(_user);
+                u.SelectedRole = roles[0]; 
+                //Note: we needed the explicit cast above because GetRolesAsync() returns an IList<string>
+            };                      
+
+            //Filterig values                       
+            if (!String.IsNullOrEmpty(SearchUser))
+            {
+                users = users.Where(u =>
+                    u.FirstName.ToUpper().Contains(SearchUser.ToUpper()) ||
+                    u.LastName.ToUpper().Contains(SearchUser.ToUpper()))
+                    .ToList();
+                numberFilters++;
+            }
+
+            if (!String.IsNullOrEmpty(SearchRole))
+            {
+                users = users.Where(u =>
+                    u.SelectedRole.ToUpper().Contains(SearchUser.ToUpper()))
+                    .ToList();
+                numberFilters++;
+            }
+
+            //keep track of the number of filters 
+            if (numberFilters != 0)
+            {
+                ViewData["Filtering"] = " btn-danger";
+                ViewData["numberFilters"] = "(" + numberFilters.ToString()
+                    + " Filter" + (numberFilters > 1 ? "s" : "") + " Applied)";
+            }
+
+            //Sorting columns
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                page = 1; //Reset page to start
+
+                if (sortOptions.Contains(actionButton)) //Change of sort is requested
+                {
+                    if (actionButton == sortField) //Reverse order on same field
+                    {
+                        sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                    }
+                    sortField = actionButton; //Sort by the button clicked
+                }
+            }
+
+            //Now we know which field and direction to sort by
+            if (sortField == "FirstName")
+            {
+                if (sortDirection == "asc")
+                {
+                    users = users.OrderBy(p => p.FirstName).ToList();
+                    ViewData["filterApplied:UserFirstName"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    users = users.OrderByDescending(p => p.FirstName).ToList();
+                    ViewData["filterApplied:UserFirstName"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "LastName")
+            {
+                if (sortDirection == "asc")
+                {
+                    users = users.OrderBy(p => p.LastName).ToList();
+                    ViewData["filterApplied:UserLastName"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    users = users.OrderByDescending(p => p.LastName).ToList();
+                    ViewData["filterApplied:UserLastName"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else if (sortField == "Email") //Sorting by Email
+            {
+                if (sortDirection == "asc")
+                {
+                    users = users.OrderBy(p => p.Email).ToList();
+                    ViewData["filterApplied:UserEmail"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    users = users.OrderByDescending(p => p.Email).ToList();
+                    ViewData["filterApplied:UserEmail"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+            else //Sorting by Role
+            {
+                if (sortDirection == "asc")
+                {
+                    users = users.OrderBy(s => s.SelectedRole).ToList();
+                    ViewData["filterApplied:UserRole"] = "<i class='bi bi-sort-up'></i>";
+                }
+                else
+                {
+                    users = users.OrderByDescending(s => s.SelectedRole).ToList();
+                    ViewData["filterApplied:UserRole"] = "<i class='bi bi-sort-down'></i>";
+                }
+            }
+
+            //Set sort for next time
+            ViewData["sortField"] = sortField;
+            ViewData["sortDirection"] = sortDirection;
+
+            //int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, ControllerName());
+            //ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+            //var pagedData = await PaginatedList<CreateUserVM>.CreateAsync(
+            //    (IQueryable)users,
+            //    page ?? 1,
+            //    pageSize
+            //);
+
             return View(users);
         }
 
@@ -186,57 +308,12 @@ namespace HaverDevProject.Controllers
             return View(model);
         }
 
-
         private void PopulateRoles()
         {
             var roles = _context.Roles.ToList();
             ViewBag.Roles = new SelectList(roles, "Name", "Name");
         }
-
-        //private async Task UpdateUserRoles(string[] selectedRoles, UserVM userToUpdate)
-        //{
-        //    var UserRoles = userToUpdate.UserRoles;//Current roles use is in
-        //    var _user = await _userManager.FindByIdAsync(userToUpdate.ID);//ApplicationUser
-
-        //    if (selectedRoles == null)
-        //    {
-        //        //No roles selected so just remove any currently assigned
-        //        foreach (var r in UserRoles)
-        //        {
-        //            await _userManager.RemoveFromRoleAsync(_user, r);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        //At least one role checked so loop through all the roles
-        //        //and add or remove as required
-
-        //        //We need to do this next line because foreach loops don't always work well
-        //        //for data returned by EF when working async.  Pulling it into an IList<>
-        //        //first means we can safely loop over the colleciton making async calls and avoid
-        //        //the error 'New transaction is not allowed because there are other threads running in the session'
-        //        IList<IdentityRole> allRoles = _context.Roles.ToList<IdentityRole>();
-
-        //        foreach (var r in allRoles)
-        //        {
-        //            if (selectedRoles.Contains(r.Name))
-        //            {
-        //                if (!UserRoles.Contains(r.Name))
-        //                {
-        //                    await _userManager.AddToRoleAsync(_user, r.Name);
-        //                }
-        //            }
-        //            else
-        //            {
-        //                if (UserRoles.Contains(r.Name))
-        //                {
-        //                    await _userManager.RemoveFromRoleAsync(_user, r.Name);
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-
+        
         protected override void Dispose(bool disposing)
         {
             if (disposing)

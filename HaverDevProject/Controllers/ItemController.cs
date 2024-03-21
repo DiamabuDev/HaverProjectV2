@@ -41,11 +41,7 @@ namespace HaverDevProject.Controllers
             //List of sort options.
             string[] sortOptions = new[] { "Code", "Item", "Description", "Supplier", "Defect" };
 
-            //PopulateDropDownList();
-
-            var items = _context.Items
-                //.Include(i => i.Supplier)
-                //.Include(d => d.ItemDefects).ThenInclude(id => id.Defect)
+           var items = _context.Items
                 .AsNoTracking();
 
             //Filterig values                       
