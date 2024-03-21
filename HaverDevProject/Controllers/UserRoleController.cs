@@ -62,7 +62,7 @@ namespace HaverDevProject.Controllers
             if (!String.IsNullOrEmpty(SearchRole))
             {
                 users = users.Where(u =>
-                    u.SelectedRole.ToUpper().Contains(SearchUser.ToUpper()))
+                    u.SelectedRole.ToUpper().Contains(SearchRole.ToUpper()))
                     .ToList();
                 numberFilters++;
             }
@@ -76,87 +76,87 @@ namespace HaverDevProject.Controllers
             }
 
             //Sorting columns
-            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
-            {
-                page = 1; //Reset page to start
+            //if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            //{
+            //    page = 1; //Reset page to start
 
-                if (sortOptions.Contains(actionButton)) //Change of sort is requested
-                {
-                    if (actionButton == sortField) //Reverse order on same field
-                    {
-                        sortDirection = sortDirection == "asc" ? "desc" : "asc";
-                    }
-                    sortField = actionButton; //Sort by the button clicked
-                }
-            }
+            //    if (sortOptions.Contains(actionButton)) //Change of sort is requested
+            //    {
+            //        if (actionButton == sortField) //Reverse order on same field
+            //        {
+            //            sortDirection = sortDirection == "asc" ? "desc" : "asc";
+            //        }
+            //        sortField = actionButton; //Sort by the button clicked
+            //    }
+            //}
 
-            //Now we know which field and direction to sort by
-            if (sortField == "FirstName")
-            {
-                if (sortDirection == "asc")
-                {
-                    users = users.OrderBy(p => p.FirstName).ToList();
-                    ViewData["filterApplied:UserFirstName"] = "<i class='bi bi-sort-up'></i>";
-                }
-                else
-                {
-                    users = users.OrderByDescending(p => p.FirstName).ToList();
-                    ViewData["filterApplied:UserFirstName"] = "<i class='bi bi-sort-down'></i>";
-                }
-            }
-            else if (sortField == "LastName")
-            {
-                if (sortDirection == "asc")
-                {
-                    users = users.OrderBy(p => p.LastName).ToList();
-                    ViewData["filterApplied:UserLastName"] = "<i class='bi bi-sort-up'></i>";
-                }
-                else
-                {
-                    users = users.OrderByDescending(p => p.LastName).ToList();
-                    ViewData["filterApplied:UserLastName"] = "<i class='bi bi-sort-down'></i>";
-                }
-            }
-            else if (sortField == "Email") //Sorting by Email
-            {
-                if (sortDirection == "asc")
-                {
-                    users = users.OrderBy(p => p.Email).ToList();
-                    ViewData["filterApplied:UserEmail"] = "<i class='bi bi-sort-up'></i>";
-                }
-                else
-                {
-                    users = users.OrderByDescending(p => p.Email).ToList();
-                    ViewData["filterApplied:UserEmail"] = "<i class='bi bi-sort-down'></i>";
-                }
-            }
-            else //Sorting by Role
-            {
-                if (sortDirection == "asc")
-                {
-                    users = users.OrderBy(s => s.SelectedRole).ToList();
-                    ViewData["filterApplied:UserRole"] = "<i class='bi bi-sort-up'></i>";
-                }
-                else
-                {
-                    users = users.OrderByDescending(s => s.SelectedRole).ToList();
-                    ViewData["filterApplied:UserRole"] = "<i class='bi bi-sort-down'></i>";
-                }
-            }
+            ////Now we know which field and direction to sort by
+            //if (sortField == "FirstName")
+            //{
+            //    if (sortDirection == "asc")
+            //    {
+            //        users = users.OrderBy(p => p.FirstName).ToList();
+            //        ViewData["filterApplied:UserFirstName"] = "<i class='bi bi-sort-up'></i>";
+            //    }
+            //    else
+            //    {
+            //        users = users.OrderByDescending(p => p.FirstName).ToList();
+            //        ViewData["filterApplied:UserFirstName"] = "<i class='bi bi-sort-down'></i>";
+            //    }
+            //}
+            //else if (sortField == "LastName")
+            //{
+            //    if (sortDirection == "asc")
+            //    {
+            //        users = users.OrderBy(p => p.LastName).ToList();
+            //        ViewData["filterApplied:UserLastName"] = "<i class='bi bi-sort-up'></i>";
+            //    }
+            //    else
+            //    {
+            //        users = users.OrderByDescending(p => p.LastName).ToList();
+            //        ViewData["filterApplied:UserLastName"] = "<i class='bi bi-sort-down'></i>";
+            //    }
+            //}
+            //else if (sortField == "Email") //Sorting by Email
+            //{
+            //    if (sortDirection == "asc")
+            //    {
+            //        users = users.OrderBy(p => p.Email).ToList();
+            //        ViewData["filterApplied:UserEmail"] = "<i class='bi bi-sort-up'></i>";
+            //    }
+            //    else
+            //    {
+            //        users = users.OrderByDescending(p => p.Email).ToList();
+            //        ViewData["filterApplied:UserEmail"] = "<i class='bi bi-sort-down'></i>";
+            //    }
+            //}
+            //else //Sorting by Role
+            //{
+            //    if (sortDirection == "asc")
+            //    {
+            //        users = users.OrderBy(s => s.SelectedRole).ToList();
+            //        ViewData["filterApplied:UserRole"] = "<i class='bi bi-sort-up'></i>";
+            //    }
+            //    else
+            //    {
+            //        users = users.OrderByDescending(s => s.SelectedRole).ToList();
+            //        ViewData["filterApplied:UserRole"] = "<i class='bi bi-sort-down'></i>";
+            //    }
+            //}
 
-            //Set sort for next time
-            ViewData["sortField"] = sortField;
-            ViewData["sortDirection"] = sortDirection;
+            ////Set sort for next time
+            //ViewData["sortField"] = sortField;
+            //ViewData["sortDirection"] = sortDirection;
 
-            //int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, ControllerName());
-            //ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
-            //var pagedData = await PaginatedList<CreateUserVM>.CreateAsync(
-            //    (IQueryable)users,
-            //    page ?? 1,
-            //    pageSize
-            //);
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, ControllerName());
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+            var pagedData = await PaginatedList<CreateUserVM>.CreateAsync(
+                users.AsQueryable(),
+                page ?? 1,
+                pageSize
+            );
 
-            return View(users);
+            return View(pagedData);
         }
 
         //GET: Users/Create
