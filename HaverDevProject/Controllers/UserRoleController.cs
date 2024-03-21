@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HaverDevProject.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace HaverDevProject.Controllers
 {
@@ -39,7 +40,52 @@ namespace HaverDevProject.Controllers
             return View(users);
         }
 
-        //Missing the Create. Add it later.
+        //GET: Users/Create
+        [HttpGet]
+        public IActionResult Create()
+        {
+            var viewModel = new CreateUserVM
+            {
+                SelectedRoles = new List<string>()
+            };
+            ViewBag.Roles = new SelectList(_context.Roles, "Name", "Name");
+            return View(viewModel);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CreateUserVM model, string[] selectedRoles)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName };
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    if (selectedRoles.Length > 0)
+                    {
+                        await _userManager.AddToRolesAsync(user, selectedRoles);
+                    }
+                    return RedirectToAction(nameof(Index));
+                }
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+
+            // If we got this far, something failed; redisplay form
+            ViewBag.Roles = _context.Roles.Select(r => new SelectListItem
+            {
+                Value = r.Name,
+                Text = r.Name
+            }).ToList();
+
+            return View(model);
+        }
+
+
 
         // GET: Users/Edit/5
         public async Task<IActionResult> Edit(string id)
