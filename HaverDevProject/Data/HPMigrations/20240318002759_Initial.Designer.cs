@@ -11,14 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HaverDevProject.Data.HPMigrations
 {
     [DbContext(typeof(HaverNiagaraContext))]
-    [Migration("20240314035436_Initial")]
+    [Migration("20240318002759_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "7.0.16");
+            modelBuilder.HasAnnotation("ProductVersion", "7.0.17");
 
             modelBuilder.Entity("HaverDevProject.Models.Defect", b =>
                 {
