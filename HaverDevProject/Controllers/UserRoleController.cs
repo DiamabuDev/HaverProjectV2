@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using HaverDevProject.Models;
 
 namespace HaverDevProject.Controllers
 {
@@ -12,9 +13,9 @@ namespace HaverDevProject.Controllers
     public class UserRoleController : CognizantController
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserRoleController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public UserRoleController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -108,7 +109,7 @@ namespace HaverDevProject.Controllers
         private async Task UpdateUserRoles(string[] selectedRoles, UserVM userToUpdate)
         {
             var UserRoles = userToUpdate.UserRoles;//Current roles use is in
-            var _user = await _userManager.FindByIdAsync(userToUpdate.ID);//IdentityUser
+            var _user = await _userManager.FindByIdAsync(userToUpdate.ID);//ApplicationUser
 
             if (selectedRoles == null)
             {

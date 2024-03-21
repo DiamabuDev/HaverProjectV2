@@ -81,6 +81,19 @@ else
     app.UseHsts();
 }
 
+app.Use(async (context, next) =>
+{
+    if (!context.User.Identity.IsAuthenticated && !context.Request.Path.StartsWithSegments("/Identity"))
+    {
+        // Redirect to login page
+        context.Response.Redirect("/Identity/Account/Login");
+    }
+    else
+    {
+        await next();
+    }
+});
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
