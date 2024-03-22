@@ -62,24 +62,31 @@ namespace HaverDevProject.Utilities
         /// <returns></returns>
         public async Task SendToManyAsync(EmailMessage emailMessage)
         {
-            var message = new MimeMessage();
-            message.To.AddRange(emailMessage.ToAddresses.Select(x => new MailboxAddress(x.Name, x.Address)));
-            message.From.Add(new MailboxAddress(_emailConfiguration.SmtpFromName, _emailConfiguration.SmtpUsername));
-
-            message.Subject = emailMessage.Subject;
-            //We will say we are sending HTML. But there are options for plaintext etc. 
-            message.Body = new TextPart(TextFormat.Html)
+            try
             {
-                Text = emailMessage.Content
-            };
+                var message = new MimeMessage();
+                message.To.AddRange(emailMessage.ToAddresses.Select(x => new MailboxAddress(x.Name, x.Address)));
+                message.From.Add(new MailboxAddress(_emailConfiguration.SmtpFromName, _emailConfiguration.SmtpUsername));
 
-            //Be careful that the SmtpClient class is the one from Mailkit not the framework!
-            using var smtp = new SmtpClient();
-            smtp.Connect("smtp-mail.outlook.com", 587, SecureSocketOptions.StartTls);
-            smtp.Authenticate(_emailConfiguration.SmtpUsername, _emailConfiguration.SmtpPassword);
-            await smtp.SendAsync(message);
-            smtp.Disconnect(true);
+                message.Subject = emailMessage.Subject;
+                // We will say we are sending HTML. But there are options for plaintext etc. 
+                message.Body = new TextPart(TextFormat.Html)
+                {
+                    Text = emailMessage.Content
+                };
 
+                using var smtp = new SmtpClient();
+                smtp.Connect("smtp-mail.outlook.com", 587, SecureSocketOptions.StartTls);
+                smtp.Authenticate(_emailConfiguration.SmtpUsername, _emailConfiguration.SmtpPassword);
+                await smtp.SendAsync(message);
+                smtp.Disconnect(true);
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception (log, retry, etc.)
+                Console.WriteLine($"Error sending email: {ex.Message}");
+                throw; // Rethrow the exception or handle it as needed
+            }
         }
     }
 

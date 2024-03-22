@@ -580,7 +580,7 @@ namespace HaverDevProject.Controllers
                         .FirstOrDefaultAsync(n => n.NcrOpId == ncrOpId);
 
                     // Send notification email to Procurement
-                    var subject = "New NCR Created " + ncr.NcrNumber;
+                    var subject = "NCR Edited " + ncr.NcrNumber;
                     var emailContent = "A NCR has been edited :<br><br>Ncr #: " + ncr.NcrNumber + "<br>Supplier: " + ncr.NcrQa.Supplier.SupplierName;
                     await NotificationEdit(ncrOpId, subject, emailContent);
 
@@ -824,12 +824,13 @@ namespace HaverDevProject.Controllers
 
                 if (emailAddresses.Any())
                 {
+                    string link = "https://haverniagara.com/ncroperation/details/" + id;
                     string logo = "https://haverniagara.com/wp-content/themes/haver/images/logo-haver.png";
                     var msg = new EmailMessage()
                     {
                         ToAddresses = emailAddresses,
                         Subject = Subject,
-                        Content = "<p>" + emailContent + "<br><br></p><p>Please access to <strong>Haver NCR APP</strong> to review.</p>" + "<br><img src=\"" +logo+ "\">" + "<p>This is an automated email. Please do not reply.</p>",
+                        Content = "<p>" + emailContent + "<br><br></p><p>Please access to <strong>Haver NCR APP</strong> to review.</p><br>Link: <a href=\"" + link + "\">" + "Click Here" + "</a>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
                     };
                     await _emailSender.SendToManyAsync(msg);
                 }
@@ -873,12 +874,13 @@ namespace HaverDevProject.Controllers
 
                 if (emailAddresses.Any())
                 {
+                    string link = "https://haverv2team3.azurewebsites.net/ncroperation/details/" + id;
                     string logo = "https://haverniagara.com/wp-content/themes/haver/images/logo-haver.png";
                     var msg = new EmailMessage()
                     {
                         ToAddresses = emailAddresses,
                         Subject = Subject,
-                        Content = "<p>" + emailContent + "<br><br></p><p>Please access to <strong>Haver NCR APP</strong> to review.</p>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
+                        Content = "<p>" + emailContent + "<br><br></p><p>Please access to <strong>Haver NCR APP</strong> to review.</p><br>Link: <a href=\"" + link + "\">" + "Click Here" + "</a>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
                     };
                     await _emailSender.SendToManyAsync(msg);
                 }
