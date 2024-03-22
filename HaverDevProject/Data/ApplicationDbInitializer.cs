@@ -106,8 +106,10 @@ namespace HaverDevProject.Data
                 }
                 if (userManager.FindByEmailAsync("jorge11_44@hotmail.com").Result == null)
                 {
-                    IdentityUser user = new IdentityUser
+                    ApplicationUser user = new ApplicationUser
                     {
+                        FirstName = "Jorge",
+                        LastName = "Castano",
                         UserName = "jorge11_44@hotmail.com",
                         Email = "jorge11_44@hotmail.com",
                         EmailConfirmed = true

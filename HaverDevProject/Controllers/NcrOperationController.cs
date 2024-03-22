@@ -21,11 +21,11 @@ namespace HaverDevProject.Controllers
     {
         //for sending email
         private readonly IMyEmailSender _emailSender;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly HaverNiagaraContext _context;
 
 
-        public NcrOperationController(HaverNiagaraContext context, IMyEmailSender emailSender, UserManager<IdentityUser> userManager)
+        public NcrOperationController(HaverNiagaraContext context, IMyEmailSender emailSender, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _emailSender = emailSender;
