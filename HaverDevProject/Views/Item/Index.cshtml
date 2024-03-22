@@ -55,18 +55,6 @@
                         @Html.Raw(ViewData["filterApplied:ItemName"])
                     </button>
                 </th>
-                @* <th class="four-cols">
-                    <button type="submit" name="actionButton" value="Supplier" class="btn text-light custom-btn-text-start">
-                        Supplier
-                        @Html.Raw(ViewData["filterApplied:Supplier"])
-                    </button>
-                </th>
-                <th class="four-cols">
-                <button type="submit" name="actionButton" value="Defect" class="btn text-light custom-btn-text-start">
-                Defect Types
-                @Html.Raw(ViewData["filterApplied:Defect"])
-                </button>
-                </th> *@
                 <th></th>
             </tr>
         </thead>
@@ -81,50 +69,9 @@
                     <td class="big-col">
                         @Html.DisplayFor(modelItem => item.ItemName)
                     </td>
-                    @* <td>
-                        @Html.DisplayFor(modelItem => item.Supplier.SupplierName)
-                    </td>
-                    <td>
-                        @if (item.ItemDefects.Any())
-                        {
-                            <ul>
-                                @for (int i = 0; i < item.ItemDefects.Count && i < 5; i++)
-                                {
-                                    <li>@item.ItemDefects.OrderBy(id => id.Defect.DefectName).ElementAt(i).Defect.DefectName</li>
-                                }
-                            </ul>
-
-                            @if (item.ItemDefects.Count > 5)
-                            {
-                                <a href="#" class="text-dark view-more" onclick="toggleDefectsVisibility(this); return false;">View More</a>
-                                <ul class="additional-defects" style="display:none;">
-                                    @for (int i = 5; i < item.ItemDefects.Count; i++)
-                                    {
-                                        <li>@item.ItemDefects.OrderBy(id => id.Defect.DefectName).ElementAt(i).Defect.DefectName</li>
-                                    }
-                                </ul>
-                            }
-                        }
-
-                        <script>
-                            function toggleDefectsVisibility(element) {
-                                var additionalDefects = element.nextElementSibling;
-                                if (additionalDefects.style.display === "none") {
-                                    additionalDefects.style.display = "block";
-                                    element.innerText = "View Less";
-                                } else {
-                                    additionalDefects.style.display = "none";
-                                    element.innerText = "View More";
-                                }
-                            }
-                        </script>
-                    </td> *@
-
-
                     <td>
                         <a asp-action="Edit" asp-route-id="@item.ItemId" class="btn text-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
                         <a asp-action="Details" asp-route-id="@item.ItemId" class="btn text-primary" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
-                        @* <a asp-action="Delete" asp-route-id="@item.ItemId" class="btn text-danger" data-bs-toggle="tooltip" title="Delete"><i class="bi bi-trash3-fill"></i></a> *@
                     </td>
                 </tr>
             }

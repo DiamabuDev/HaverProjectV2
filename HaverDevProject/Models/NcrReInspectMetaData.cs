@@ -38,6 +38,10 @@ public class NcrReInspectMetaData
 
     public bool NcrQaStatusFlag { get; set; }
 
+    [Display(Name = "Notes")]
+    [StringLength(250, ErrorMessage = "Reinspection notes cannot be more than 250 characters.")]
+    public string NcrReInspectNotes { get; set; }
+
     [Display(Name = "Video Link")]
     [StringLength(100, ErrorMessage = "Video link cannot be more than 100 characters.")]
     public string NcrReInspectDefectVideo { get; set; }

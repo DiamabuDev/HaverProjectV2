@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Hosting;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using System.Reflection.Emit;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HaverDevProject.Controllers
@@ -307,18 +308,41 @@ namespace HaverDevProject.Controllers
 
         // GET: NcrQa/Create
         public IActionResult Create()
-        {
-            var ncrQaDTO = new NcrQaDTO();
-            ncrQaDTO.NcrNumber = GetNcrNumber();
-            ncrQaDTO.NcrQacreationDate = DateTime.Today;
-            ncrQaDTO.NcrStatus = true; //Active
-            ncrQaDTO.NcrQaProcessApplicable = true; //Supplier or Rec-Insp
-            ncrQaDTO.NcrQaItemMarNonConforming = true; //Yes
-            ncrQaDTO.NcrQaEngDispositionRequired = true; //Yes
+        {            
+            NcrQaDTO ncrQaDTO;
 
-            PopulateDropDownLists();         
+            // Check if there are info in cookies
+            if (Request.Cookies.TryGetValue("DraftNCRQa", out string draftJson))
+            {
+                // Convert the data from json file
+                ncrQaDTO = JsonConvert.DeserializeObject<NcrQaDTO>(draftJson);
+                TempData["SuccessMessage"] = "Draft successfully retrieved";
+            }
+            else
+            {                
+                ncrQaDTO = new NcrQaDTO
+                {
+                    //var ncrQaDTO = new NcrQaDTO();
+                    //ncrQaDTO.NcrNumber = GetNcrNumber();
+                    //ncrQaDTO.NcrQacreationDate = DateTime.Today;
+                    //ncrQaDTO.NcrStatus = true; //Active
+                    //ncrQaDTO.NcrQaProcessApplicable = true; //Supplier or Rec-Insp
+                    //ncrQaDTO.NcrQaItemMarNonConforming = true; //Yes
+                    //ncrQaDTO.NcrQaEngDispositionRequired = true; //Yes
 
+                    NcrNumber = GetNcrNumber(),
+                    NcrQacreationDate = DateTime.Today,
+                    NcrStatus = true, //Active
+                    NcrQaProcessApplicable = true, //Supplier or Rec-Insp
+                    NcrQaItemMarNonConforming = true, //Yes
+                    NcrQaEngDispositionRequired = true //Yes
+
+                };
+            }
+
+            PopulateDropDownLists();
             return View(ncrQaDTO);
+            
         }
 
         // POST: NcrQa/Create
@@ -326,15 +350,31 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(NcrQaDTO ncrQaDTO, List<IFormFile> Photos)
+        public async Task<IActionResult> Create(NcrQaDTO ncrQaDTO, List<IFormFile> Photos, bool isDraft = false) 
         {
+            // validate if there are cookies available
+            if (isDraft)
+            {
+                // convert the object to json format
+                var json = JsonConvert.SerializeObject(ncrQaDTO);
+
+                // Save the object in a cookie with name "DraftData"
+                Response.Cookies.Append("DraftNCRQa", json, new CookieOptions
+                {
+                    // Define time for cookies
+                    Expires = DateTime.Now.AddMinutes(2880) // Cookied will expire in 48 hrs
+                });
+
+                return Ok(new { success = true, message = "Draft saved successfully.\nNote: This draft will be available for the next 48 hours." });                
+            }
+
             if (ModelState.IsValid)
             {
+                string NcrNewNumberValidated = GetNcrNumber();
                 bool engReq = ncrQaDTO.NcrQaEngDispositionRequired == true ? true : false;
-
                 Ncr ncr = new Ncr
                 {
-                    NcrNumber = ncrQaDTO.NcrNumber,
+                    NcrNumber = NcrNewNumberValidated,//ncrQaDTO.NcrNumber,
                     NcrLastUpdated = DateTime.Now,
                     NcrStatus = ncrQaDTO.NcrStatus,
                     NcrPhase = ncrQaDTO.NcrQaEngDispositionRequired == true ? NcrPhase.Engineer : NcrPhase.Operations,
@@ -346,7 +386,7 @@ namespace HaverDevProject.Controllers
 
                 //getting the ncrId through the NcrNumber 
                 int ncrIdObt = _context.Ncrs
-                    .Where(n => n.NcrNumber == ncrQaDTO.NcrNumber)
+                    .Where(n => n.NcrNumber == NcrNewNumberValidated)//ncrQaDTO.NcrNumber)
                     .Select(n => n.NcrId)
                     .FirstOrDefault();
 
@@ -379,6 +419,7 @@ namespace HaverDevProject.Controllers
                     var ncrReInspect = await _context.NcrReInspects.FirstOrDefaultAsync(n => n.NcrId == ncrQaDTO.ParentId);
                     if (ncrReInspect != null)
                     {
+                        //PopulateDropDownLists();
                         ncrReInspect.NcrReInspectNewNcrNumber = ncr.NcrNumber;
                         _context.Update(ncrReInspect);
                         await _context.SaveChangesAsync();
@@ -386,6 +427,8 @@ namespace HaverDevProject.Controllers
                 }
 
                 TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " saved successfully!";
+                //Delete cookies
+                Response.Cookies.Delete("DraftNCRQa");
                 int ncrQaId = ncrQa.NcrQaId;
 
                 return RedirectToAction("Details", new { id = ncrQaId });
@@ -591,43 +634,43 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: NcrQa/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.NcrQas == null)
-            {
-                return NotFound();
-            }
+        //public async Task<IActionResult> Delete(int? id)
+        //{
+        //    if (id == null || _context.NcrQas == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var ncrQa = await _context.NcrQas
-                .Include(n => n.Item)
-                .Include(n => n.Ncr)
-                .FirstOrDefaultAsync(m => m.NcrQaId == id);
-            if (ncrQa == null)
-            {
-                return NotFound();
-            }
+        //    var ncrQa = await _context.NcrQas
+        //        .Include(n => n.Item)
+        //        .Include(n => n.Ncr)
+        //        .FirstOrDefaultAsync(m => m.NcrQaId == id);
+        //    if (ncrQa == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(ncrQa);
-        }
+        //    return View(ncrQa);
+        //}
 
-        // POST: NcrQa/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.NcrQas == null)
-            {
-                return Problem("Entity set 'HaverNiagaraContext.NcrQas'  is null.");
-            }
-            var ncrQa = await _context.NcrQas.FindAsync(id);
-            if (ncrQa != null)
-            {
-                _context.NcrQas.Remove(ncrQa);
-            }
+        //// POST: NcrQa/Delete/5
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> DeleteConfirmed(int id)
+        //{
+        //    if (_context.NcrQas == null)
+        //    {
+        //        return Problem("Entity set 'HaverNiagaraContext.NcrQas'  is null.");
+        //    }
+        //    var ncrQa = await _context.NcrQas.FindAsync(id);
+        //    if (ncrQa != null)
+        //    {
+        //        _context.NcrQas.Remove(ncrQa);
+        //    }
             
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+        //    await _context.SaveChangesAsync();
+        //    return RedirectToAction(nameof(Index));
+        //}
 
         public string GetNcrNumber()
         {
