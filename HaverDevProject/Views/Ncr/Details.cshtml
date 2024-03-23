@@ -6,6 +6,19 @@
 
             @await Html.PartialAsync("~/Views/NCRDetailViews/_HeadingDetailsNCRMain.cshtml", Model)
 
+            @if (Model.NcrPhase == NcrPhase.Void)
+            {
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Reason for Void:</h4>
+                                <p class="card-text">@Model.NcrVoidReason</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
             @if (Model.NcrQa != null)
             {
                 @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", Model.NcrQa)

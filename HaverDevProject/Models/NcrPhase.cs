@@ -18,5 +18,7 @@ namespace HaverDevProject.Models
         Closed,
         [Display(Name = "Archive")]
         Archive,
+        [Display(Name = "Void")]
+        Void,
     }
 }

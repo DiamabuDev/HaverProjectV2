@@ -12,7 +12,8 @@ namespace HaverDevProject.Models;
 public class Ncr
 {    
     public int NcrId { get; set; }      
-    public string NcrNumber { get; set; }      
+    public string NcrNumber { get; set; }   
+    public string NcrVoidReason { get; set; }
     public DateTime NcrLastUpdated { get; set; }        
     public bool NcrStatus { get; set; }
     public NcrPhase NcrPhase { get; set; }

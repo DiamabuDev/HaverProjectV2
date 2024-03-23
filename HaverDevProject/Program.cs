@@ -1,4 +1,5 @@
 using HaverDevProject.Data;
+using HaverDevProject.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -65,6 +66,12 @@ builder.Services.AddControllers()
     });
 
 builder.Services.AddControllersWithViews();
+
+// Register the NcrArchivingService
+builder.Services.AddScoped<NcrArchivingService>();
+
+// Register the NcrArchiveManager as a hosted service
+builder.Services.AddHostedService<AutomaticNcrArchivingService>();
 
 var app = builder.Build();
 
