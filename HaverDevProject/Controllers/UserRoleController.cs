@@ -158,18 +158,10 @@ namespace HaverDevProject.Controllers
             var items = users.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
             if (items.Count() == 0 && count > 0 && pageIndex > 1)
             {
-                //If there are no items to show on a page, but there is data and you are not already 
-                //on the first page, then move back a page and get the data again.
                 pageIndex--;
                 items = users.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
             }
             var pageData = new PaginatedList<CreateUserVM>(items, count, pageIndex, pageSize);
-
-            //var pagedData = await PaginatedList<CreateUserVM>.CreateAsync(
-            //    users.AsQueryable(),
-            //    page ?? 1,
-            //    pageSize
-            //);
 
             return View(pageData);
         }

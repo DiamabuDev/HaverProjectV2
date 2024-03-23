@@ -31,6 +31,5 @@ function GetNcrs() {
 
 function start(ncrNumber) {
     window.location.href = '/'+section+'/Create?ncrNumber=' + ncrNumber;
-
 }
 
