@@ -17,6 +17,9 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using System.Reflection.Emit;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Identity;
+using Org.BouncyCastle.Asn1.Ocsp;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HaverDevProject.Controllers
@@ -24,11 +27,17 @@ namespace HaverDevProject.Controllers
     [Authorize(Roles = "Quality, Admin")]
     public class NcrQaController : ElephantController
     {
+        //for sending email
+        private readonly IMyEmailSender _emailSender;
+        private readonly UserManager<ApplicationUser> _userManager;
+
         private readonly HaverNiagaraContext _context;
 
-        public NcrQaController(HaverNiagaraContext context)
+        public NcrQaController(HaverNiagaraContext context, IMyEmailSender emailSender, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _emailSender = emailSender;
+            _userManager = userManager;
         }
 
         
@@ -350,7 +359,7 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(NcrQaDTO ncrQaDTO, List<IFormFile> Photos, bool isDraft = false) 
+        public async Task<IActionResult> Create(int NcrQaId, int NcrId, NcrQaDTO ncrQaDTO, List<IFormFile> Photos, bool isDraft = false) 
         {
             // validate if there are cookies available
             if (isDraft)
@@ -430,6 +439,19 @@ namespace HaverDevProject.Controllers
                 //Delete cookies
                 Response.Cookies.Delete("DraftNCRQa");
                 int ncrQaId = ncrQa.NcrQaId;
+
+                var ncrEmail = await _context.Ncrs
+                .AsNoTracking()
+                .FirstOrDefaultAsync(n => n.NcrId == NcrId);
+
+                //include supplier name in the email
+                var Supplier = await _context.Suppliers
+                .FirstOrDefaultAsync(n => n.SupplierId == ncrQa.SupplierId);
+
+                // Send notification email to Eng or Ops
+                var subject = "New NCR Created " + ncr.NcrNumber;
+                var emailContent = "A new NCR has been created:<br><br>Ncr #: " + ncr.NcrNumber + "<br>Supplier: " + Supplier.SupplierName;
+                await NotificationCreate(NcrQaId, subject, emailContent);
 
                 return RedirectToAction("Details", new { id = ncrQaId });
             }
@@ -614,6 +636,18 @@ namespace HaverDevProject.Controllers
                         //TempData["SuccessMessage"] = "NCR edited successfully!";
                         TempData["SuccessMessage"] = "NCR " + ncrQaDTO.NcrNumber + " edited successfully!";
                         int updateNcrQa = ncrQaToUpdate.NcrQaId;
+
+                        //include supplier name in the email
+                        var ncrQa = await _context.NcrQas
+                            .Include(n => n.Ncr)
+                            .Include(n => n.Supplier)
+                            .FirstOrDefaultAsync(n => n.NcrQaId == NcrQaId);
+
+                        // Send notification email to Eng or Ops
+                        var subject = "NCR Edited " + ncrToUpdate.NcrNumber;
+                        var emailContent = "A NCR has been edited :<br><br>Ncr #: " + ncrToUpdate.NcrNumber + "<br>Supplier: " + ncrToUpdate.NcrQa.Supplier.SupplierName;
+                        await NotificationCreate(NcrQaId, subject, emailContent);
+
                         return RedirectToAction("Details", new { id = updateNcrQa });
                     }
                     catch (RetryLimitExceededException)
@@ -868,6 +902,108 @@ namespace HaverDevProject.Controllers
         private bool NcrQaExists(int id)
         {
           return _context.NcrQas.Any(e => e.NcrQaId == id);
+        }
+
+        //// Create - Email Notification
+        public async Task<IActionResult> NotificationCreate(int? id, string Subject, string emailContent)
+        {
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            NcrOperation o = await _context.NcrOperations.FindAsync(id);
+            ViewData["id"] = id;
+
+            try
+            {
+                var engUsers = await _userManager.GetUsersInRoleAsync("Engineer");
+                var emailAddresses = engUsers.Select(u => new EmailAddress
+                {
+                    Name = u.UserName,
+                    Address = u.Email
+                }).ToList();
+
+                if (emailAddresses.Any())
+                {
+                    string link = "https://haverv2team3.azurewebsites.net";
+                    string logo = "https://haverniagara.com/wp-content/themes/haver/images/logo-haver.png";
+                    var msg = new EmailMessage()
+                    {
+                        ToAddresses = emailAddresses,
+                        Subject = Subject,
+                        Content = "<p>" + emailContent + "<br><br></p><p>Please access to <strong>Haver NCR APP</strong> to review.</p><br>Link: <a href=\"" + link + "\">" + "Click Here" + "</a><br>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
+                    };
+                    await _emailSender.SendToManyAsync(msg);
+                }
+                else
+                {
+                    ViewData["Message"] = "Message NOT sent! No users found.";
+                }
+            }
+            catch (Exception ex)
+            {
+                string errMsg = ex.GetBaseException().Message;
+                ViewData["Message"] = $"Error: Could not send email message to users. Error: {errMsg}";
+            }
+
+            return View();
+        }
+
+        //// Edit - Email Notification
+        public async Task<IActionResult> NotificationEdit(int? id, string Subject, string emailContent)
+        {
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            NcrOperation o = await _context.NcrOperations.FindAsync(id);
+            ViewData["id"] = id;
+
+            try
+            {
+                var engineeringUsers = await _userManager.GetUsersInRoleAsync("Engineer");
+                var operationsUsers = await _userManager.GetUsersInRoleAsync("Operations");
+                var procurementUsers = await _userManager.GetUsersInRoleAsync("Procurement");
+
+                var allUsers = procurementUsers
+                    .Concat(engineeringUsers)
+                    .Concat(operationsUsers)
+                    .Distinct();
+
+                var emailAddresses = allUsers.Select(u => new EmailAddress
+                {
+                    Name = u.UserName,
+                    Address = u.Email
+                }).ToList();
+
+                if (emailAddresses.Any())
+                {
+                    string link = "https://haverv2team3.azurewebsites.net";
+                    string logo = "https://haverniagara.com/wp-content/themes/haver/images/logo-haver.png";
+                    var msg = new EmailMessage()
+                    {
+                        ToAddresses = emailAddresses,
+                        Subject = Subject,
+                        Content = "<p>" + emailContent + "<br><br></p><p>Please access to <strong>Haver NCR APP</strong> to review.</p><br>Link: <a href=\"" + link + "\">" + "Click Here" + "</a><br>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
+                    };
+                    await _emailSender.SendToManyAsync(msg);
+                }
+                else
+                {
+                    ViewData["Message"] = "Message NOT sent! No users found.";
+                }
+            }
+            catch (Exception ex)
+            {
+                string errMsg = ex.GetBaseException().Message;
+                ViewData["Message"] = $"Error: Could not send email message to users. Error: {errMsg}";
+            }
+
+            return View();
         }
     }
 }

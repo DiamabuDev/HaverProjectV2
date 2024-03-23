@@ -22,6 +22,7 @@ namespace HaverDevProject.Controllers
         //for sending email
         private readonly IMyEmailSender _emailSender;
         private readonly UserManager<ApplicationUser> _userManager;
+
         private readonly HaverNiagaraContext _context;
 
 
@@ -869,13 +870,13 @@ namespace HaverDevProject.Controllers
 
                 if (emailAddresses.Any())
                 {
-                    string link = "https://haverniagara.com/ncroperation/details/" + id;
+                    string link = "https://haverv2team3.azurewebsites.net/ncroperation/details/" + id;
                     string logo = "https://haverniagara.com/wp-content/themes/haver/images/logo-haver.png";
                     var msg = new EmailMessage()
                     {
                         ToAddresses = emailAddresses,
                         Subject = Subject,
-                        Content = "<p>" + emailContent + "<br><br></p><p>Please access to <strong>Haver NCR APP</strong> to review.</p><br>Link: <a href=\"" + link + "\">" + "Click Here" + "</a>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
+                        Content = "<p>" + emailContent + "<br><br></p><p>Please access to <strong>Haver NCR APP</strong> to review.</p><br>Link: <a href=\"" + link + "\">" + "Click Here" + "</a><br>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
                     };
                     await _emailSender.SendToManyAsync(msg);
                 }
@@ -925,7 +926,7 @@ namespace HaverDevProject.Controllers
                     {
                         ToAddresses = emailAddresses,
                         Subject = Subject,
-                        Content = "<p>" + emailContent + "<br><br></p><p>Please access to <strong>Haver NCR APP</strong> to review.</p><br>Link: <a href=\"" + link + "\">" + "Click Here" + "</a>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
+                        Content = "<p>" + emailContent + "<br><br></p><p>Please access to <strong>Haver NCR APP</strong> to review.</p><br>Link: <a href=\"" + link + "\">" + "Click Here" + "</a><br>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
                     };
                     await _emailSender.SendToManyAsync(msg);
                 }
@@ -941,6 +942,28 @@ namespace HaverDevProject.Controllers
             }
 
             return View();
+        }
+
+        //// 24 Hours Notification
+        public async Task CheckAndSendEmailNotifications()
+        {
+            // Get pending NCRs from Engineering that are older than 24 hours
+            var pendingNCRs = await _context.NcrEngs
+                .Where(n => n.NcrPhase == NcrPhase.Engineer && n.NcrEngCreationDate <= DateTime.Now.AddHours(-24))
+                .ToListAsync();
+
+            foreach (var ncr in pendingNCRs)
+            {
+                // Check if an NCR has not been created in Operations
+                var ncrInOps = await _context.NcrOperations.FirstOrDefaultAsync(op => op.NcrId == ncr.NcrId);
+                if (ncrInOps == null)
+                {
+                    // Send notification email to Operations or Admin role
+                    var subject = "NCR Pending in Operations";
+                    var emailContent = "An NCR from Engineering is pending in Operations and has not been created yet.";
+                    await NotificationCreate(ncr.NcrId, subject, emailContent);
+                }
+            }
         }
 
     }
