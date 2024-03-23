@@ -86,6 +86,24 @@ namespace HaverDevProject.Data
                         userManager.AddToRoleAsync(user, "Engineer").Wait();
                     }
                 }
+                if (userManager.FindByEmailAsync("operations@outlook.com").Result == null)
+                {
+                    ApplicationUser user = new ApplicationUser
+                    {
+                        FirstName = "Operations",
+                        LastName = "",
+                        UserName = "operations@outlook.com",
+                        Email = "operations@outlook.com",
+                        EmailConfirmed = true
+                    };
+
+                    IdentityResult result = userManager.CreateAsync(user, "Pa55w@rd").Result;
+
+                    if (result.Succeeded)
+                    {
+                        userManager.AddToRoleAsync(user, "Operations").Wait();
+                    }
+                }
                 if (userManager.FindByEmailAsync("procurement@outlook.com").Result == null)
                 {
                     ApplicationUser user = new ApplicationUser

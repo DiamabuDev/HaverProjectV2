@@ -4,59 +4,200 @@
 
 
 <div class="dashboard mt-3">
-    <div class="row">
-        <div class="col-md-4 mb-3">
-            <a class="dashboard-item newncr text-decoration-none" asp-area="" asp-controller="NcrQa" asp-action="Create">                
-                <i class="bi bi-file-earmark-plus"></i>
-                <p>New NCR</p>
-            </a>
-        </div>
-        <div class="col-md-4 mb-3">
-            <a class="dashboard-item text-decoration-none" asp-area="" asp-controller="NcrQa" asp-action="Index">
-                <i class="bi bi-file-earmark-spreadsheet"></i>
-                <p>NCR Log</p>
-            </a>
-        </div>
-        <div class="col-md-4 mb-3">
-            <a class=" dashboard-item text-decoration-none" asp-area="" asp-controller="Supplier" asp-action="Index">
-                <i class="bi bi-buildings"></i>
-                <p>Suppliers</p>
-            </a>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-4 mb-3">
-            <div class="dropdown ">
-                <a role="button" href="#" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false" class="dashboard-item dropdown-with text-decoration-none text-white custom-bg-dashboard-item bg-secondary">
-                    <i class="bi bi-person-bounding-box"></i>
-                    <p class="dropdown-toggle">Users</p>
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="row">            
+            <div class="col-md-4 mb-3">
+                <a class="dashboard-item text-decoration-none" asp-area="" asp-controller="Ncr" asp-action="Index">
+                    <i class="bi bi-file-earmark-spreadsheet"></i>
+                    <p>NCR Log</p>
                 </a>
-                @*  <ul class="dropdown-menu custom-dropdown-color" aria-labelledby="adminDropdown">
-                <li><a class="dropdown-item" asp-area="" asp-controller="" asp-action="">Employees</a></li>
-                <li><a class="dropdown-item" asp-area="" asp-controller="" asp-action="">Roles</a></li>
-                </ul> *@
+            </div>            
+            <div class="col-md-4 mb-3">
+                <div class="dropdown">
+                    <a role="button" href="#" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false" class="dashboard-item dropdown-with text-decoration-none text-white">
+                        <i class="bi bi-building-gear"></i>
+                        <p class="dropdown-toggle">
+                            Sections
+                        </p>
+                    </a>
+                    <ul class="dropdown-menu custom-dropdown-color" aria-labelledby="adminDropdown">
+                        <li><a class="dropdown-item" asp-area="" asp-controller="NcrQa" asp-action="Index">Quality</a></li>
+                        <li><a class="dropdown-item" asp-area="" asp-controller="NcrEng" asp-action="Index">Engineer</a></li>
+                        <li><a class="dropdown-item" asp-area="" asp-controller="NcrOperation" asp-action="Index">Operations</a></li>
+                        <li><a class="dropdown-item" asp-area="" asp-controller="NcrProcurement" asp-action="Index">Procurement</a></li>
+                        <li><a class="dropdown-item" asp-area="" asp-controller="NcrReInspect" asp-action="Index">ReInspection</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <a class=" dashboard-item text-decoration-none" asp-area="" asp-controller="Supplier" asp-action="Index">
+                    <i class="bi bi-buildings"></i>
+                    <p>Suppliers</p>
+                </a>
             </div>
         </div>
-        <div class="col-md-4 mb-3">
-            <a class="dashboard-item text-decoration-none custom-bg-dashboard-item bg-secondary" asp-area="" asp-controller="" asp-action="">
-                <i class="bi bi-graph-down"></i>
-                <p>KPI Dashboard</p>
-            </a>
-        </div>
-        <div class="col-md-4 mb-3">
-            <div class="dropdown">
-                <a role="button" href="#" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false" class="dashboard-item dropdown-with text-decoration-none text-white">
-                    <i class="bi bi-building-gear"></i>
-                    <p class="dropdown-toggle">
-                        Administrator
-                    </p>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <a class=" dashboard-item text-decoration-none" asp-area="" asp-controller="UserRole" asp-action="Index">
+                    <i class="bi bi-buildings"></i>
+                    <p>Users</p>
                 </a>
-                <ul class="dropdown-menu custom-dropdown-color" aria-labelledby="adminDropdown">
-                    <li><a class="dropdown-item" asp-area="" asp-controller="Item" asp-action="Index">Items</a></li>
-                    <li><a class="dropdown-item" asp-area="" asp-controller="Defects" asp-action="Index">Defect Types</a></li>
-                    <li><a class="dropdown-item" asp-area="" asp-controller="Lookup" asp-action="Index">Lookup Values</a></li>
-                </ul>
+            </div>
+            <div class="col-md-4 mb-3">
+                <a class="dashboard-item text-decoration-none custom-bg-dashboard-item bg-secondary" asp-area="" asp-controller="" asp-action="">
+                    <i class="bi bi-graph-down"></i>
+                    <p>KPI Dashboard</p>
+                </a>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="dropdown">
+                    <a role="button" href="#" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false" class="dashboard-item dropdown-with text-decoration-none text-white">
+                        <i class="bi bi-building-gear"></i>
+                        <p class="dropdown-toggle">
+                            Administrator
+                        </p>
+                    </a>
+                    <ul class="dropdown-menu custom-dropdown-color" aria-labelledby="adminDropdown">
+                        <li><a class="dropdown-item" asp-area="" asp-controller="Item" asp-action="Index">Items</a></li>
+                        <li><a class="dropdown-item" asp-area="" asp-controller="Defects" asp-action="Index">Defect Types</a></li>
+                        <li><a class="dropdown-item" asp-area="" asp-controller="Lookup" asp-action="Index">Lookup Values</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
+    }
+    @if (User.IsInRole("Quality"))
+    {
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <a class="dashboard-item newncr text-decoration-none" asp-area="" asp-controller="NcrQa" asp-action="Create">
+                    <i class="bi bi-file-earmark-plus"></i>
+                    <p>New NCR</p>
+                </a>
+            </div>
+            <div class="col-md-4 mb-3">
+                <a class="dashboard-item text-decoration-none" asp-area="" asp-controller="NcrQa" asp-action="Index">
+                    <i class="bi bi-file-earmark-spreadsheet"></i>
+                    <p>NCR Quality Log</p>
+                </a>
+            </div>
+            <div class="col-md-4 mb-3">
+                <a class="dashboard-item text-decoration-none" asp-area="" asp-controller="NcrReInspect" asp-action="Index">
+                    <i class="bi bi-file-earmark-spreadsheet"></i>
+                    <p>NCR ReInspection Log</p>
+                </a>
+            </div>
+            
+        </div>
+    }
+    @if (User.IsInRole("Engineer"))
+    {
+        <div>
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <h2>Hello Diana, <span class="badge bg-secondary">Engineer</span></h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="dashboard-item text-decoration-none bg-warning text-white">
+                        <i class="bi bi-bell-fill"></i>
+                        <p id="pendingCountIndicator" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Pending NCRs</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                </div>
+                <div class="col-md-3">
+                    <a class="dashboard-item text-decoration-none bg-primary text-white" asp-area="" asp-controller="NcrEng" asp-action="Index">
+                        <i class="bi bi-file-earmark-spreadsheet"></i>
+                        <p>NCR Log</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+    @if (User.IsInRole("Operations"))
+    {
+        <div class="row">
+            <div class="col-md-3">
+                <div class="dashboard-item text-decoration-none bg-warning text-white">
+                    <i class="bi bi-bell-fill"></i>
+                    <p id="pendingCountIndicator" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Pending NCRs</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <a class="dashboard-item text-decoration-none" asp-area="" asp-controller="NcrOperation" asp-action="Index">
+                    <i class="bi bi-file-earmark-spreadsheet"></i>
+                    <p>NCR Log</p>
+                </a>
+            </div>
+        </div>
+    }
+    @if (User.IsInRole("Procurement"))
+    {
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <a class="dashboard-item text-decoration-none" asp-area="" asp-controller="NcrProcurement" asp-action="Index">
+                    <i class="bi bi-file-earmark-spreadsheet"></i>
+                    <p>NCR Log</p>
+                </a>
+            </div>
+        </div>
+    }
 </div>
+
+@section Scripts {
+
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/NcrPending.js"></script>
+
+    
+        <script>
+            const section = "NcrEng"
+            // Function to update the pending count indicator
+            function updatePendingCountIndicator(section) {
+            // Use AJAX to fetch the count from the server
+            $.ajax({
+            url: '@Url.Action("GetPendingCount", "NcrEng")',
+            type: 'GET',
+            success: function (data) {
+            // Update the content of the indicator
+            $('#pendingCountIndicator').html("Pending NCRs: " + data);
+            },
+            error: function () {
+            console.error('Error fetching pending count');
+            }
+            });
+            }
+            // Call the function when the page loads
+            $(document).ready(function () {
+            updatePendingCountIndicator();
+            });
+        </script>
+
+        <script>
+            const section = "NcrOperation"
+            // Function to update the pending count indicator
+            function updatePendingCountIndicator(section) {
+            // Use AJAX to fetch the count from the server
+            $.ajax({
+            url: '@Url.Action("GetPendingCount", "NcrOperation")',
+            type: 'GET',
+            success: function (data) {
+            // Update the content of the indicator
+            $('#pendingCountIndicator').html('<i class="Pending NCRs:  ' + data);
+            },
+            error: function () {
+            console.error('Error fetching pending count');
+            }
+            });
+            }
+
+            // Call the function when the page loads
+            $(document).ready(function () {
+            updatePendingCountIndicator();
+            });
+        </script>
+}
