@@ -10,6 +10,8 @@ using HaverDevProject.Models;
 using HaverDevProject.Utilities;
 using HaverDevProject.CustomControllers;
 using Microsoft.AspNetCore.Authorization;
+using Spire.Xls;
+
 
 namespace HaverDevProject.Controllers
 {
@@ -537,6 +539,95 @@ namespace HaverDevProject.Controllers
 
         }
 
+        public async Task<IActionResult> DownloadPDF(int id)
+        {
+            var ncr = await _context.Ncrs
+                .Include(n => n.NcrQa)
+                .Include(n => n.NcrQa).ThenInclude(n => n.Item)
+                .Include(n => n.NcrQa).ThenInclude(n => n.Defect)
+                .Include(n => n.NcrQa).ThenInclude(n => n.Supplier)
+                .Include(n => n.NcrQa).ThenInclude(n => n.ItemDefectPhotos)
+                .Include(n => n.NcrEng)
+                .Include(n => n.NcrEng).ThenInclude(n => n.EngDispositionType)
+                .Include(n => n.NcrEng).ThenInclude(n => n.Drawing)
+                .Include(n => n.NcrEng).ThenInclude(n => n.EngDefectPhotos)
+                .Include(n => n.NcrOperation)
+                .Include(n => n.NcrOperation).ThenInclude(n => n.OpDispositionType)
+                .Include(n => n.NcrOperation).ThenInclude(n => n.FollowUpType)
+                .Include(n => n.NcrOperation).ThenInclude(n => n.OpDefectPhotos)
+                .Include(n => n.NcrProcurement)
+                .Include(n => n.NcrProcurement).ThenInclude(n => n.ProcDefectPhotos)
+                .Include(n => n.NcrReInspect)
+                .Include(n => n.NcrReInspect).ThenInclude(n => n.NcrReInspectPhotos)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(n => n.NcrId == id);
+            try
+            {
+                // Load NCR excel template 
+                var excelFilePath = "ncr-template.xlsx";
+                Workbook workbook = new Workbook();
+                workbook.LoadFromFile(excelFilePath);
+
+                
+                //Fill the data 
+                var worksheet = workbook.Worksheets["Page #1"];
+                //Quality Representative
+                worksheet.Range["AC5"].Value = ncr.NcrNumber;
+                worksheet.Range["AC6"].Value = ncr.NcrQa.NcrQaOrderNumber;
+                worksheet.Range["AC7"].Value = ncr.NcrQa.NcrQaSalesOrder;
+                //Engineering
+                //Operations
+                //Procurement
+                //Quality Representative Reinspection
+                var qualityimages = workbook.Worksheets["Page #2"];
+                qualityimages.Range["B6"].Value = "~/wwwroot/images/img-example1.png";
+                // Set worksheets to fit to page when converting
+                workbook.ConverterSetting.SheetFitToPage = true;
+
+
+
+
+                string filename = ncr.NcrNumber;
+                string defaultDownloadFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile); // Use UserProfile to get the user's profile folder
+                string downloadsFolder = Path.Combine(defaultDownloadFolder, "Downloads"); // Combine with "Downloads" folder
+                string pdfFilePath = Path.Combine(downloadsFolder, $"{filename}.pdf");
+
+                workbook.SaveToFile(pdfFilePath, FileFormat.PDF);
+
+                var cd = new System.Net.Mime.ContentDisposition
+                {
+                    FileName = $"{filename}.pdf",
+                    Inline = false, // Set to false to force download
+                };
+                Response.Headers.Add("Content-Disposition", cd.ToString());
+
+                // Return the file
+                return PhysicalFile(pdfFilePath, "application/pdf");
+
+                //TempData["SuccessMessage"] = $"NCR {ncr.NcrNumber} downloaded successfully!";
+                //return RedirectToAction("Index");
+
+
+                // Create a custom message or page (e.g., a "Thank you" page)
+                //string customMessage = "Thank you for downloading the PDF file!";
+
+                //// Return the custom message along with the file
+                //return Content(customMessage, "text/plain");
+
+                //return File(pdfFilePath, "application/pdf");
+
+
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions (log, return an error view, etc.)
+                return BadRequest($"Error generating PDF: {ex.Message}");
+            }
+
+            
+        }
+
+        
 
         private bool NcrExists(int id)
         {
