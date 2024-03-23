@@ -16,17 +16,24 @@ using HaverDevProject.ViewModels;
 using NuGet.Protocol;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Identity;
 
 namespace HaverDevProject.Controllers
 {
     [Authorize(Roles = "Engineer, Admin")]
     public class NcrEngController : ElephantController
     {
+        //for sending email
+        private readonly IMyEmailSender _emailSender;
+        private readonly UserManager<ApplicationUser> _userManager;
+
         private readonly HaverNiagaraContext _context;
 
-        public NcrEngController(HaverNiagaraContext context)
+        public NcrEngController(HaverNiagaraContext context, IMyEmailSender emailSender, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _emailSender = emailSender;
+            _userManager = userManager;
         }
 
 
@@ -485,6 +492,18 @@ namespace HaverDevProject.Controllers
                     //Delete cookies
                     Response.Cookies.Delete("DraftNCREng"+ncr.NcrNumber);
                     int ncrEngId = ncrEng.NcrEngId;
+
+                    //include supplier name in the email
+                    var ncrE = await _context.NcrEngs
+                        .Include(n => n.Ncr)
+                        .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
+                        .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
+                        .FirstOrDefaultAsync(n => n.NcrEngId == ncrEngId);
+
+                    // Send notification email to Procurement
+                    var subject = "New NCR Created " + ncr.NcrNumber;
+                    var emailContent = "A new NCR has been created:<br><br>Ncr #: " + ncr.NcrNumber + "<br>Supplier: " + ncr.NcrQa.Supplier.SupplierName;
+                    await NotificationCreate(ncrEngId, subject, emailContent);
                     return RedirectToAction("Details", new { id = ncrEngId });
                 }
 
@@ -629,6 +648,19 @@ namespace HaverDevProject.Controllers
                     TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " edited successfully!";
 
                     int ncrEngId = ncrEng.NcrEngId;
+
+                    //include supplier name in the email
+                    var ncrE = await _context.NcrEngs
+                        .Include(n => n.Ncr)
+                        .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
+                        .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
+                        .FirstOrDefaultAsync(n => n.NcrEngId == ncrEngId);
+
+                    // Send notification email to Procurement
+                    var subject = "NCR Edited " + ncr.NcrNumber;
+                    var emailContent = "A NCR has been edited :<br><br>Ncr #: " + ncr.NcrNumber + "<br>Supplier: " + ncr.NcrQa.Supplier.SupplierName;
+                    await NotificationEdit(ncrEngId, subject, emailContent);
+
                     return RedirectToAction("Details", new { id = ncrEngId });
                 }
                 catch (DbUpdateConcurrencyException)
@@ -769,5 +801,112 @@ namespace HaverDevProject.Controllers
             }
             return Json(new { success = false, message = "Photo not found." });
         }
+
+        //// CREATE/POST: Email Noitications
+        public async Task<IActionResult> NotificationCreate(int? id, string Subject, string emailContent)
+        {
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            NcrOperation o = await _context.NcrOperations.FindAsync(id);
+
+            ViewData["id"] = id;
+
+            try
+            {
+                var procurementUsers = await _userManager.GetUsersInRoleAsync("Operations");
+                var emailAddresses = procurementUsers.Select(u => new EmailAddress
+                {
+                    Name = u.UserName,
+                    Address = u.Email
+                }).ToList();
+
+                if (emailAddresses.Any())
+                {
+                    string link = "https://haverv2team3.azurewebsites.net";
+                    string logo = "https://haverniagara.com/wp-content/themes/haver/images/logo-haver.png";
+                    var msg = new EmailMessage()
+                    {
+                        ToAddresses = emailAddresses,
+                        Subject = Subject,
+                        Content = "<p>" + emailContent + "<br><br></p><p>Please access to <strong>Haver NCR APP</strong> to review.</p><br>Link: <a href=\"" + link + "\">" + "Click Here" + "</a><br>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
+                    };
+                    await _emailSender.SendToManyAsync(msg);
+                }
+                else
+                {
+                    ViewData["Message"] = "Message NOT sent! No Procurement users found.";
+                }
+            }
+            catch (Exception ex)
+            {
+                string errMsg = ex.GetBaseException().Message;
+                ViewData["Message"] = $"Error: Could not send email message to Operations users. Error: {errMsg}";
+            }
+
+            return View();
+        }
+
+        //// EDIT/POST: Email  Notification
+        public async Task<IActionResult> NotificationEdit(int? id, string Subject, string emailContent)
+        {
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            NcrOperation o = await _context.NcrOperations.FindAsync(id);
+
+            ViewData["id"] = id;
+
+            try
+            {
+                var qualityUsers = await _userManager.GetUsersInRoleAsync("Quality");
+                var operationsUsers = await _userManager.GetUsersInRoleAsync("Operations");
+                var procurementUsers = await _userManager.GetUsersInRoleAsync("Procurement");
+
+                var allUsers = procurementUsers
+                    .Concat(qualityUsers)
+                    .Concat(operationsUsers)
+                    .Distinct();
+
+
+                var emailAddresses = allUsers.Select(u => new EmailAddress
+                {
+                    Name = u.UserName,
+                    Address = u.Email
+                }).ToList();
+
+                if (emailAddresses.Any())
+                {
+                    string link = "https://haverv2team3.azurewebsites.net";
+                    string logo = "https://haverniagara.com/wp-content/themes/haver/images/logo-haver.png";
+                    var msg = new EmailMessage()
+                    {
+                        ToAddresses = emailAddresses,
+                        Subject = Subject,
+                        Content = "<p>" + emailContent + "<br><br></p><p>Please access to <strong>Haver NCR APP</strong> to review.</p><br>Link: <a href=\"" + link + "\">" + "Click Here" + "</a><br>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
+                    };
+                    await _emailSender.SendToManyAsync(msg);
+                }
+                else
+                {
+                    ViewData["Message"] = "Message NOT sent! No Procurement users found.";
+                }
+            }
+            catch (Exception ex)
+            {
+                string errMsg = ex.GetBaseException().Message;
+                ViewData["Message"] = $"Error: Could not send email message to users. Error: {errMsg}";
+            }
+
+            return View();
+        }
+
+
     }
 }

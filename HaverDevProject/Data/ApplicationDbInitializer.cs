@@ -122,6 +122,24 @@ namespace HaverDevProject.Data
                         userManager.AddToRoleAsync(user, "Procurement").Wait();
                     }
                 }
+                if (userManager.FindByEmailAsync("jorge11_44@hotmail.com").Result == null)
+                {
+                    ApplicationUser user = new ApplicationUser
+                    {
+                        FirstName = "Jorge",
+                        LastName = "Castano",
+                        UserName = "jorge11_44@hotmail.com",
+                        Email = "jorge11_44@hotmail.com",
+                        EmailConfirmed = true
+                    };
+
+                    IdentityResult result = userManager.CreateAsync(user, "Pa55w@rd").Result;
+
+                    if (result.Succeeded)
+                    {
+                        userManager.AddToRoleAsync(user, "Procurement").Wait();
+                    }
+                }
                 if (userManager.FindByEmailAsync("vlopezchavez1@ncstudents.niagaracollege.ca").Result == null)
                 {
                     ApplicationUser user = new ApplicationUser
