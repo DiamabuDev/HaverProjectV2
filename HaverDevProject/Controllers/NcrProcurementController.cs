@@ -29,6 +29,8 @@ namespace HaverDevProject.Controllers
         public NcrProcurementController(HaverNiagaraContext context, IMyEmailSender emailSender, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _emailSender = emailSender;
+            _userManager = userManager;
         }
 
         // GET: NcrProcurement
