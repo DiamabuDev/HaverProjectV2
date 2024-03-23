@@ -54,7 +54,7 @@ namespace HaverDevProject.Data
                 {
                     ApplicationUser user = new ApplicationUser
                     {
-                        FirstName = "R",
+                        FirstName = "Rachel",
                         LastName = "May",
                         UserName = "quality@outlook.com",
                         Email = "quality@outlook.com",
@@ -72,8 +72,8 @@ namespace HaverDevProject.Data
                 {
                     ApplicationUser user = new ApplicationUser
                     {
-                        FirstName = "Engineer",
-                        LastName = "",
+                        FirstName = "Michael",
+                        LastName = "Smith",
                         UserName = "engineer@outlook.com",
                         Email = "engineer@outlook.com",
                         EmailConfirmed = true
@@ -90,8 +90,8 @@ namespace HaverDevProject.Data
                 {
                     ApplicationUser user = new ApplicationUser
                     {
-                        FirstName = "Operations",
-                        LastName = "",
+                        FirstName = "Leslie",
+                        LastName = "Pentland",
                         UserName = "operations@outlook.com",
                         Email = "operations@outlook.com",
                         EmailConfirmed = true
@@ -108,8 +108,8 @@ namespace HaverDevProject.Data
                 {
                     ApplicationUser user = new ApplicationUser
                     {
-                        FirstName = "Leslie",
-                        LastName = "Pentland",
+                        FirstName = "Rick",
+                        LastName = "Johnson",
                         UserName = "procurement@outlook.com",
                         Email = "procurement@outlook.com",
                         EmailConfirmed = true
