@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+    string loginUrl = ViewContext.HttpContext.Request.Path;
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -16,6 +20,10 @@
 
 </head>
 <body>
+    
+    @if (!loginUrl.Contains("/Identity/Account/Login"))
+    {        
+
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark border-bottom box-shadow mb-3">
 
@@ -122,7 +130,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
             </button>
         </div>
-    }
+    }   
 
     <div class="container">
         <main role="main" class="pb-3">
@@ -135,6 +143,14 @@
             &copy; 2024 - Haver & Boecker, All Rights Reserved - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
+    }       
+    
+    <!-- Specific code for login -->
+    <div class="container-fluid" style="background-color: white;">
+        @RenderBody()
+    </div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
