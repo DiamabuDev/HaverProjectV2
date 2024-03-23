@@ -204,6 +204,28 @@
         <script>
             var section;
         </script>
+    @if (User.IsInRole("Admin"))
+    {
+        <script>
+            section = "NcrReInspect"
+            function updatePendingCountReInsp(section) {
+                $.ajax({
+                    url: '@Url.Action("GetPendingCount", "NcrReInspect")',
+                    type: 'GET',
+                    success: function (data) {
+                        $('#pendingCountReInsp').html('Pending NCRs for ReInspection:  ' + data);
+                    },
+                    error: function () {
+                        console.error('Error fetching pending count');
+                    }
+                });
+            }
+
+            $(document).ready(function () {
+                updatePendingCountReInsp();
+            });
+        </script>
+    }
     @if (User.IsInRole("Engineer"))
     {
         <script>

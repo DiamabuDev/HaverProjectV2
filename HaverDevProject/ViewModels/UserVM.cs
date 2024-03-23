@@ -1,21 +1,27 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿
+    using System.ComponentModel.DataAnnotations;
 
-namespace HaverDevProject.ViewModels
-{
-    public class UserVM
+    namespace HaverDevProject.ViewModels
     {
-        public string ID { get; set; }
+        public class UserVM
+        {
+            public string ID { get; set; }
 
-        [Display(Name = "User Name")]
-        public string UserName { get; set; }
+            [Required]
+            [Display(Name = "First Name")]
+            public string FirstName { get; set; }
 
-        [Display(Name = "First Name")]
-        public string FirstName { get; set; }
+            [Required]
+            [Display(Name = "Last Name")]
+            public string LastName { get; set; }
 
-        [Display(Name = "Last Name")]
-        public string LastName { get; set; }
+            [Required]
+            [EmailAddress]
+            [Display(Name = "Email")]
+            public string Email { get; set; }
 
-        [Display(Name = "Role")]
-        public string SelectedRole { get; set; }
+            [Display(Name = "Role")]
+            public string SelectedRole { get; set; }
+        }
     }
-}
+
