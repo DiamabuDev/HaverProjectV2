@@ -171,6 +171,10 @@
                             </td>
 
                             <td class="d-flex">
+                                <a asp-action="DownloadPDF" asp-route-id="@item.NcrId" class="btn text-primary me-2" data-bs-toggle="tooltip" title="Download">
+                                    <i class="bi bi-filetype-pdf"></i>
+                                </a>
+
                                 <a asp-action="Details" asp-route-id="@item.NcrId" class="btn text-primary me-2" data-bs-toggle="tooltip" title="Details">
                                     <i class="bi bi-eye-fill"></i>
                                 </a>

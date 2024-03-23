@@ -35,7 +35,10 @@
 </div>
 
 
+<h1>Download PDF</h1>
+<a href="@Url.Action("DownloadPDF", "Ncr")">Download NCR</a>
 
+<a asp-controller="Ncr" asp-action=" DownloadPDF" class="btn btn-primary ms-4"> <i class="bi bi-filetype-pdf"></i> PDF</a>
 
 
 @await Html.PartialAsync("~/Views/NCRDetailViews/_ActionButtonsNCRMain.cshtml", Model);
