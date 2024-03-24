@@ -15,6 +15,8 @@ using HaverDevProject.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Identity;
+using OfficeOpenXml.Style;
+using OfficeOpenXml;
 
 namespace HaverDevProject.Controllers
 {
@@ -740,6 +742,76 @@ namespace HaverDevProject.Controllers
         private bool NcrReInspectExists(int id)
         {
             return _context.NcrReInspects.Any(e => e.NcrReInspectId == id);
+        }
+
+        public IActionResult ExportToExcel()
+        {
+            var ncrOperation = _context.NcrReInspects
+                .Include(n => n.Ncr)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
+                .Where(n => n.Ncr.NcrPhase != NcrPhase.Archive)
+                .AsNoTracking()
+                .ToList(); // Load data into memory
+
+            // Create Excel package
+            using (var package = new ExcelPackage())
+            {
+                // Add a new worksheet to the Excel package
+                var worksheet = package.Workbook.Worksheets.Add("NCR Data");
+
+                // Define the columns in Excel
+                worksheet.Cells[2, 1].Value = "NCR Number";
+                worksheet.Cells[2, 2].Value = "Supplier";
+                worksheet.Cells[2, 3].Value = "Acceptable";
+                worksheet.Cells[2, 4].Value = "Inspected By";
+                worksheet.Cells[2, 5].Value = "Phase";
+                worksheet.Cells[2, 6].Value = "Created";
+                worksheet.Cells[2, 7].Value = "Last Update";
+
+                // Apply center alignment to the header cells
+                worksheet.Cells["A2:F2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+                // Add the header with col span over all columns
+                worksheet.Cells[1, 1, 1, 7].Merge = true;  // Merge 6 columns starting from A1
+                worksheet.Cells[1, 1].Value = "NCR Reinspection Log";
+
+                // Apply styling to header row (including the merged header cell)
+                using (var range = worksheet.Cells[1, 1, 1, 7])
+                {
+                    range.Style.Font.Bold = true;
+                    range.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    range.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
+                }
+
+                // Fill data into Excel
+                int row = 3;
+                foreach (var item in ncrOperation)
+                {
+                    worksheet.Cells[row, 1].Value = item.Ncr.NcrNumber;
+                    worksheet.Cells[row, 2].Value = item.Ncr.NcrQa.Supplier.SupplierName;
+                    worksheet.Cells[row, 3].Value = item.NcrReInspectAcceptable;
+                    worksheet.Cells[row, 4].Value = item.NcrReInspectId;
+                    worksheet.Cells[row, 5].Value = item.Ncr.NcrPhase.ToString();
+                    worksheet.Cells[row, 6].Value = item.Ncr.NcrQa.NcrQacreationDate.ToString();
+                    worksheet.Cells[row, 7].Value = item.Ncr.NcrLastUpdated.ToString();
+
+                    row++;
+                }
+
+                // Auto-fit columns for better appearance
+                worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+                // Set content type and filename for the Excel file
+                var content = package.GetAsByteArray();
+                var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                var fileName = "NCR_Reinspection_Data.xlsx";
+
+                // Return the Excel file as a file download
+                return File(content, contentType, fileName);
+            }
         }
     }
 }
