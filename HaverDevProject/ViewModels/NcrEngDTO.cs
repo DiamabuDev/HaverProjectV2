@@ -35,7 +35,7 @@ public class NcrEngDTO : Auditable
     public DateTime NcrEngCompleteDate { get; set; }
     public DateTime NcrEngCreationDate { get; set; }
     public NcrPhase NcrPhase { get; set; }
-    public int NcrEngUserId { get; set; }
+    public string NcrEngUserId { get; set; }
     public int EngDispositionTypeId { get; set; }
     public EngDispositionType EngDispositionType { get; set; }
     public int NcrId { get; set; }
@@ -44,7 +44,7 @@ public class NcrEngDTO : Auditable
     public int DrawingOriginalRevNumber { get; set; }
     public int DrawingUpdatedRevNumber { get; set; }
     public DateTime DrawingRevDate { get; set; }
-    public int DrawingUserId { get; set; }
+    public string DrawingUserId { get; set; }
     public string NcrEngDefectVideo { get; set; }
     public ICollection<EngDefectPhoto> EngDefectPhotos { get; set; } = new HashSet<EngDefectPhoto>();
 }

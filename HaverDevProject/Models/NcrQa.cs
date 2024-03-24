@@ -22,7 +22,7 @@ public class NcrQa : Auditable
     public int NcrQaQuanReceived { get; set; }    
     public int NcrQaQuanDefective { get; set; }    
     public string NcrQaDescriptionOfDefect { get; set; }  
-    public int NcrQauserId { get; set; }  
+    public string NcrQaUserId { get; set; }  
     public bool NcrQaEngDispositionRequired { get; set; }    
     public int NcrId { get; set; }    
     public Ncr Ncr { get; set; }    

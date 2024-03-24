@@ -41,20 +41,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                            <td class="three-cols">
-                                @if (Model.NcrReInspectUserId == 1)
-                                {
-                                    <text>Jamie</text>
-                                }
-                                else if (Model.NcrReInspectUserId == 2)
-                                {
-                                    <text>R. May</text>
-                                }
-                                else
-                                {
-                                    <text>J. Doe</text>
-                                }
-                                    </td>
+                            <td class="three-cols">@(Model.NcrReInspectUserId == "1" ? "Rachel May" : ViewBag.UserFirstName + " " + ViewBag.UserLastName)</td>
                                     <td class="three-cols">@Model.NcrReInspectCreationDate.ToString("yyyy-MM-dd")</td>
                                     <td class="three-cols">
                                         @{

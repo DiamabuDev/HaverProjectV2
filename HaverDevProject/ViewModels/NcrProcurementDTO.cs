@@ -33,7 +33,7 @@ namespace HaverDevProject.Models
 
         public bool NcrProcFlagStatus { get; set; }
 
-        public int NcrProcUserId { get; set; }
+        public string NcrProcUserId { get; set; }
 
         public DateTime NcrProcCreated { get; set; }
 

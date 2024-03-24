@@ -263,21 +263,6 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:Last Updated"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
-            //else //(sortField == "Status")
-            //{
-            //    if (sortDirection == "asc")
-            //    {
-            //        ncrProc = ncrProc
-            //            .OrderBy(p => p.Ncr.NcrStatus);
-            //        ViewData["filterApplied:Status"] = "<i class='bi bi-sort-up'></i>";
-            //    }
-            //    else
-            //    {
-            //        ncrProc = ncrProc
-            //            .OrderByDescending(p => p.Ncr.NcrStatus);
-            //        ViewData["filterApplied:Status"] = "<i class='bi bi-sort-down'></i>";
-            //    }
-            //}
 
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
@@ -288,8 +273,6 @@ namespace HaverDevProject.Controllers
             var pagedData = await PaginatedList<NcrProcurement>.CreateAsync(ncrProc.AsNoTracking(), page ?? 1, pageSize);
 
             return View(pagedData);
-
-
         }
 
         // GET: NcrProcurement/Details/5
@@ -333,6 +316,13 @@ namespace HaverDevProject.Controllers
 
             ViewBag.NCRSectionId = id;
 
+            var user = await _userManager.FindByIdAsync(ncrProcurement.NcrProcurementId.ToString());
+            if (user != null)
+            {
+                ViewBag.UserFirstName = user.FirstName;
+                ViewBag.UserLastName = user.LastName;
+            }
+
             return View(ncrProcurement);
         }
 
@@ -361,14 +351,6 @@ namespace HaverDevProject.Controllers
                     NcrStatus = true, //Active
                 };
             }
-
-            //int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
-            //NcrProcurementDTO ncr = new NcrProcurementDTO();
-            //ncr.NcrNumber = ncrNumber;
-            //ncr.NcrProcCompleteDate = DateTime.Now;
-            //ncr.NcrProcExpectedDate = DateTime.Now;
-            //ncr.NcrProcSupplierReturnReq = true;
-            //ncr.NcrStatus = true; //Active
 
             var readOnlyDetails = await _context.Ncrs
                 .Include(n => n.NcrQa)
@@ -430,6 +412,7 @@ namespace HaverDevProject.Controllers
 
                 if (ModelState.IsValid)
                 {
+                    var user = await _userManager.GetUserAsync(User);
 
                     int ncrIdObt = _context.Ncrs
                         .Where(n => n.NcrNumber == ncrProcDTO.NcrNumber)
@@ -450,7 +433,7 @@ namespace HaverDevProject.Controllers
                         NcrProcSupplierBilled = ncrProcDTO.NcrProcSupplierBilled,
                         NcrProcRejectedValue = ncrProcDTO.NcrProcRejectedValue,
                         NcrProcFlagStatus = ncrProcDTO.NcrProcFlagStatus,
-                        NcrProcUserId = ncrProcDTO.NcrProcUserId,
+                        NcrProcUserId = user.Id,
                         NcrProcCompleteDate = DateTime.Now,
                         NcrProcCreated = ncrProcDTO.NcrProcCreated,
                         SupplierReturnMANum = ncrProcDTO.SupplierReturnMANum,
@@ -458,7 +441,6 @@ namespace HaverDevProject.Controllers
                         SupplierReturnAccount = ncrProcDTO.SupplierReturnAccount,
                         NcrProcDefectVideo = ncrProcDTO.NcrProcDefectVideo,
                         ProcDefectPhotos = ncrProcDTO.ProcDefectPhotos,
-                        //NcrPhase = NcrPhase.ReInspection
                     };
 
                     _context.NcrProcurements.Add(ncrProc);
@@ -500,14 +482,14 @@ namespace HaverDevProject.Controllers
             {
                 ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
             }
-
-            //PopulateDropDownLists();
             return View(ncrProcDTO);
         }
 
         // GET: NcrProcurement/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            var user = await _userManager.GetUserAsync(User);
+
             if (id == null)
             {
                 return NotFound();
@@ -516,7 +498,6 @@ namespace HaverDevProject.Controllers
             var ncrProc = await _context.NcrProcurements
                 .Include(n => n.Ncr)
                 .Include(n => n.ProcDefectPhotos)
-                //.Include(n => n.SupplierReturn)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(n => n.NcrProcurementId == id);
 
@@ -538,7 +519,7 @@ namespace HaverDevProject.Controllers
                 NcrProcSupplierBilled = ncrProc.NcrProcSupplierBilled,
                 NcrProcRejectedValue = ncrProc.NcrProcRejectedValue,
                 NcrProcFlagStatus = ncrProc.NcrProcFlagStatus,
-                NcrProcUserId = ncrProc.NcrProcUserId,
+                NcrProcUserId = user.Id,
                 NcrProcCreated = ncrProc.NcrProcCreated,
                 NcrProcCompleteDate = ncrProc.NcrProcCompleteDate,
                 NcrId = ncrProc.NcrId,
@@ -584,7 +565,6 @@ namespace HaverDevProject.Controllers
 
             ViewBag.ncrDetails = readOnlyDetails;
 
-            //ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrProc.NcrId);
             return View(ncrProcDTO);
         }
 
@@ -601,15 +581,12 @@ namespace HaverDevProject.Controllers
                 return NotFound();
             }
 
-            //var ncrProcToUpdate = await _context.NcrProcurements.FirstOrDefaultAsync(n => n.NcrProcurementId == id);
-
             if (ModelState.IsValid)
             {
                 await AddPictures(ncrProcDTO, photos);
                 try
                 {
                     var ncrProc = await _context.NcrProcurements
-                        //.Include(n => n.SupplierReturn)
                         .FirstOrDefaultAsync(n => n.NcrProcurementId == id);
 
                     ncrProc.NcrProcSupplierReturnReq = ncrProcDTO.NcrProcSupplierReturnReq;
@@ -627,17 +604,10 @@ namespace HaverDevProject.Controllers
                     ncrProc.SupplierReturnMANum = ncrProcDTO.SupplierReturnMANum;
                     ncrProc.SupplierReturnName = ncrProcDTO.SupplierReturnName;
                     ncrProc.SupplierReturnAccount = ncrProcDTO.SupplierReturnAccount;
-                    //ncrProc.SupplierReturnId = ncrProcDTO.SupplierReturnId;
                     ncrProc.NcrProcDefectVideo = ncrProcDTO.NcrProcDefectVideo;
                     ncrProc.ProcDefectPhotos = ncrProcDTO.ProcDefectPhotos;
-                    //ncrProc.NcrPhase = NcrPhase.ReInspection;
-
-
-                    //_context.Update(ncrProc);
-                    //await _context.SaveChangesAsync();
 
                     var ncr = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrProc.NcrId);
-                    //ncrProc.Ncr.NcrPhase = NcrPhase.ReInspection;
                     ncr.NcrLastUpdated = DateTime.Now;
                     _context.Update(ncr);
                     await _context.SaveChangesAsync();
@@ -670,50 +640,9 @@ namespace HaverDevProject.Controllers
                         throw;
                     }
                 }
-                //return RedirectToAction(nameof(Index));
-
             }
             return View(ncrProcDTO);
         }
-
-
-        //// GET: NcrProcurement/Delete/5
-        //public async Task<IActionResult> Delete(int? id)
-        //{
-        //    if (id == null || _context.NcrProcurements == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var ncrProcurement = await _context.NcrProcurements
-        //        .Include(n => n.Ncr)
-        //        .FirstOrDefaultAsync(m => m.NcrProcurementId == id);
-        //    if (ncrProcurement == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(ncrProcurement);
-        //}
-
-        //// POST: NcrProcurement/Delete/5
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(int id)
-        //{
-        //    if (_context.NcrProcurements == null)
-        //    {
-        //        return Problem("Entity set 'HaverNiagaraContext.NcrProcurements'  is null.");
-        //    }
-        //    var ncrProcurement = await _context.NcrProcurements.FindAsync(id);
-        //    if (ncrProcurement != null)
-        //    {
-        //        _context.NcrProcurements.Remove(ncrProcurement);
-        //    }
-
-        //    await _context.SaveChangesAsync();
-        //    return RedirectToAction(nameof(Index));
-        //}
 
         public JsonResult GetNcrs()
         {
@@ -743,7 +672,6 @@ namespace HaverDevProject.Controllers
 
             return Json(pendingCount);
         }
-
         private async Task AddPictures(NcrProcurementDTO ncrProcDTO, List<IFormFile> pictures)
         {
             if (pictures != null && pictures.Any())
@@ -790,22 +718,11 @@ namespace HaverDevProject.Controllers
                 .Where(s => s.SupplierStatus == true && s.SupplierName != "NO SUPPLIER PROVIDED")
                 .OrderBy(s => s.SupplierName), "SupplierId", "SupplierName");
         }
-        //private SelectList SupplierSelectCreateList(int? selectedId)
-        //{
-        //    return new SelectList(_context.Suppliers
-        //        .Where(s => s.SupplierStatus == true && s.SupplierName != "NO SUPPLIER PROVIDED")
-        //        .OrderBy(s => s.SupplierName), "SupplierId", "SupplierName", selectedId);
-        //}
 
         private SelectList ItemSelectList()
         {
             return new SelectList(_context.Items
                 .OrderBy(s => s.ItemName), "ItemId", "ItemName");
-
-            //var query = from c in _context.Items
-            //            where c.SupplierId == SupplierID
-            //            select c;
-            //return new SelectList(query.OrderBy(i => i.ItemName), "ItemId", "ItemName", selectedId);            
         }
 
         private void PopulateDropDownLists(NcrQa ncrQa = null)
@@ -815,8 +732,7 @@ namespace HaverDevProject.Controllers
                     ncrQa.Item = _context.Items.Find(ncrQa.ItemId);
                 }
                 ViewData["SupplierId"] = SupplierSelectList();
-                ViewData["ItemId"] = ItemSelectList();
-            
+                ViewData["ItemId"] = ItemSelectList();           
         }
 
         [HttpPost]
@@ -931,7 +847,5 @@ namespace HaverDevProject.Controllers
 
             return View();
         }
-
-
     }
 }
