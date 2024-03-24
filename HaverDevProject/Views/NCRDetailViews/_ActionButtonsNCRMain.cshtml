@@ -3,11 +3,32 @@
         <div id="QaSection" class="col-md-10 mx-0">
             <div class="form-group d-flex justify-content-end mt-2">
                 @* <button id="downloadPdf" class="btn custom-pdf-color me-4">
-                    <i class="bi bi-file-pdf"></i> Download PDF
+                <i class="bi bi-file-pdf"></i> Download PDF
                 </button> *@
-                <button type="button" onclick="location.href='@Url.Action("Index")'" class="btn custom-btn-color">
-                    <i class="bi bi-arrow-90deg-left"></i> Back to the NCR Log
-                </button>
+                <div>
+                    @if (Model.NcrPhase == NcrPhase.Archive)
+                    {
+                        <button type="button" onclick="location.href='@Url.Action("Archived")'" class="btn custom-btn-color">
+                            <i class="bi bi-arrow-90deg-left"></i> Back to the Archived Log
+                        </button>
+                    }
+                </div>
+                <div>
+                    @if (Model.NcrPhase == NcrPhase.Void)
+                    {
+                        <button type="button" onclick="location.href='@Url.Action("Void")'" class="btn custom-btn-color">
+                            <i class="bi bi-arrow-90deg-left"></i> Back to the Void Log
+                        </button>
+                    }
+                </div>
+                <div>
+                    @if (Model.NcrPhase != NcrPhase.Void && Model.NcrPhase != NcrPhase.Archive)
+                    {
+                        <button type="button" onclick="location.href='@Url.Action("Index")'" class="btn custom-btn-color">
+                            <i class="bi bi-arrow-90deg-left"></i> Back to the NCR Log
+                        </button>
+                    }
+                </div>
                 <div>
                     @if (Model.NcrPhase == NcrPhase.Closed)
                     {
@@ -29,7 +50,7 @@
                     }
                 </div>
                 <div>
-                    @if (Model.NcrPhase == NcrPhase.Archive)
+                    @if (Model.NcrPhase == NcrPhase.Archive && Model.NcrQa.NcrQacreationDate.AddYears(5) > DateTime.Now)
                     {
                         <form asp-action="RestoreNcr" asp-route-id="@Model.NcrId" method="post">
                             <button type="submit" class="btn btn-success ms-4" data-bs-toggle="tooltip" title="Restore NCR">
@@ -50,4 +71,5 @@
         </div>
     </div>
 </div>
+
 
