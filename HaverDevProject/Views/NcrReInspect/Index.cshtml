@@ -48,7 +48,9 @@
                 <input type="radio" class="btn-check btn-filter" name="filter" id="Closed" autocomplete="off" value="Closed" data-filter="Closed">
                 <label class="btn btn-danger me-2" for="Closed">Closed NCRs </label>
 
-                <button type="button" id="pendingCountIndicator" class="btn btn-warning btn-block" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></button>
+                <button type="button" id="pendingCountIndicator" class="btn btn-warning btn-block me-2" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></button>
+
+                <a asp-action="ExportToExcel" class="btn btn-info float-end me-2"><i class="bi bi-download"></i> Download Log Report</a>
             </div>
         </div>
         <div class="col-4 d-flex justify-content-end">
