@@ -438,7 +438,8 @@ namespace HaverDevProject.Controllers
                             NcrQaDescriptionOfDefect = ncrToUpdate.NcrQa.NcrQaDescriptionOfDefect,
                             SupplierId = ncrToUpdate.NcrQa.SupplierId,
                             ItemId = ncrToUpdate.NcrQa.ItemId,
-                            DefectId = ncrToUpdate.NcrQa.DefectId//,
+                            DefectId = ncrToUpdate.NcrQa.DefectId,
+                            NcrQacreationDate = DateTime.Now//,
                             //NcrQaEngDispositionRequired = ncrToUpdate.NcrQa.NcrQaEngDispositionRequired
                         };
 
