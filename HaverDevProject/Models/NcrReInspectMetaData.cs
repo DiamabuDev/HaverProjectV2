@@ -16,7 +16,7 @@ public class NcrReInspectMetaData
     [Display(Name = "Re-Inspected Acceptable")]
     [Required(ErrorMessage = "You must provide if the NCR is acceptable")]
     [Column("ncrReInspectAcceptable")]
-    public bool NcrReInspectAcceptable { get; set; } = false;
+    public bool NcrReInspectAcceptable { get; set; }
 
     [Display(Name = "New NCR Number")]
     [Column("ncrReInspectNewNcrNumber")]

@@ -474,7 +474,7 @@ namespace HaverDevProject.Data
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-140").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Backing Shield").ItemId,
                             DefectId = context.Defects.FirstOrDefault(f => f.DefectName == "Incorrect hardware").DefectId,
-                            SupplierId = 2,
+                            SupplierId = 5,
                             NcrQaOrderNumber = "4500683983",
                             NcrQaQuanReceived = 28,
                             NcrQaQuanDefective = 14,

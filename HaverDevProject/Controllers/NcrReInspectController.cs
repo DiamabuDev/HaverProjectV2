@@ -376,6 +376,21 @@ namespace HaverDevProject.Controllers
         {
             try
             {
+                if (isDraft)
+                {
+                    // convert the object to json format
+                    var json = JsonConvert.SerializeObject(ncrReInspect);
+
+                    // Save the object in a cookie with name "DraftData"
+                    Response.Cookies.Append("DraftNCRReInspect" + ncrReInspect.NcrNumber, json, new CookieOptions
+                    {
+                        // Define time for cookies
+                        Expires = DateTime.Now.AddMinutes(2880) // Cookied will expire in 48 hrs
+                    });
+
+                    return Ok(new { success = true, message = "Draft saved successfully.\nNote: This draft will be available for the next 48 hours." });
+                }
+
                 if (ModelState.IsValid)
                 {
                     var user = await _userManager.GetUserAsync(User);
@@ -383,22 +398,7 @@ namespace HaverDevProject.Controllers
                     if (user != null)
                     {
                         ncrReInspect.NcrReInspectUserId = user.Id;
-                    }
-
-                    if (isDraft)
-                    {
-                        // convert the object to json format
-                        var json = JsonConvert.SerializeObject(ncrReInspect);
-
-                        // Save the object in a cookie with name "DraftData"
-                        Response.Cookies.Append("DraftNCRReInspect" + ncrReInspect.NcrNumber, json, new CookieOptions
-                        {
-                            // Define time for cookies
-                            Expires = DateTime.Now.AddMinutes(2880) // Cookied will expire in 48 hrs
-                        });
-
-                        return Ok(new { success = true, message = "Draft saved successfully.\nNote: This draft will be available for the next 48 hours." });
-                    }
+                    }                    
 
                     string isAcceptable = form["NcrReInspectAcceptable"];
 
@@ -409,6 +409,9 @@ namespace HaverDevProject.Controllers
 
                     var ncrToUpdate = await _context.Ncrs
                         .AsNoTracking()
+                        .Include(n => n.NcrQa.Supplier)
+                        .Include(n => n.NcrQa.Item)
+                        .Include(n => n.NcrQa.Defect)
                         .FirstOrDefaultAsync(n => n.NcrId == ncrReInspect.NcrId);
 
                     ncrToUpdate.NcrPhase = NcrPhase.Closed;
@@ -421,7 +424,47 @@ namespace HaverDevProject.Controllers
 
                     if (isAcceptable == "false")
                     {
-                        return RedirectToAction("Create", "NcrQa", new { parentNcrId = ncrReInspect.NcrId/*, supplier = supplierName, item = itemName, defect = defectName*/ });
+                        string newNcrNumber = GetNcrNumber();
+
+                        ncrReInspect.NcrReInspectNewNcrNumber = newNcrNumber;
+
+                        Ncr newNcr = new Ncr
+                        {
+                            NcrNumber = newNcrNumber,
+                            NcrStatus = true,
+                            NcrLastUpdated = DateTime.Now                            
+                        };
+
+                        _context.Ncrs.Add(newNcr);
+                        await _context.SaveChangesAsync();
+
+                        var ncrNewId = await _context.Ncrs
+                            .AsNoTracking()
+                            .FirstOrDefaultAsync(n => n.NcrNumber == newNcrNumber);
+
+                        NcrQa newNcrQa = new NcrQa
+                        {
+                            NcrId = ncrNewId.NcrId,
+                            NcrQaOrderNumber = ncrToUpdate.NcrQa.NcrQaOrderNumber,
+                            NcrQaItemMarNonConforming = ncrToUpdate.NcrQa.NcrQaItemMarNonConforming,
+                            NcrQaProcessApplicable = ncrToUpdate.NcrQa.NcrQaProcessApplicable,
+                            NcrQaSalesOrder = ncrToUpdate.NcrQa.NcrQaSalesOrder,
+                            NcrQaQuanReceived = ncrToUpdate.NcrQa.NcrQaQuanReceived,
+                            NcrQaQuanDefective = ncrToUpdate.NcrQa.NcrQaQuanDefective,
+                            NcrQaDescriptionOfDefect = "NCR was recreated as it was not acceptable" /*ncrToUpdate.NcrQa.NcrQaDescriptionOfDefect*/,
+                            SupplierId = ncrToUpdate.NcrQa.SupplierId,
+                            ItemId = ncrToUpdate.NcrQa.ItemId,
+                            DefectId = ncrToUpdate.NcrQa.DefectId,
+                            NcrQacreationDate = DateTime.Now//,
+                            //NcrQaEngDispositionRequired = ncrToUpdate.NcrQa.NcrQaEngDispositionRequired
+                        };
+
+                        _context.NcrQas.Add(newNcrQa);
+                        await _context.SaveChangesAsync();
+
+                        TempData["SuccessMessage"] = "This NCR was automatically created using the previous NCRs information";
+
+                        return RedirectToAction("Edit", "NcrQa", new { id = ncrNewId.NcrId });
                     }
                     else
                     {
@@ -489,7 +532,7 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, List<IFormFile> Photos)
+        public async Task<IActionResult> Edit(int id, List<IFormFile> Photos, IFormCollection form)
         {
             var ncrReInspectToUpdate = await _context.NcrReInspects
                 .Include(r => r.Ncr)
@@ -503,7 +546,7 @@ namespace HaverDevProject.Controllers
 
             if (await TryUpdateModelAsync<NcrReInspect>(ncrReInspectToUpdate, "",
                 r => r.NcrReInspectAcceptable, r => r.NcrReInspectNewNcrNumber, r => r.NcrReInspectUserId,
-                r => r.NcrId, r => r.NcrReInspectDefectVideo, r => r.NcrReInspectPhotos, r => r.NcrReInspectCreationDate))
+                r => r.NcrId, r => r.NcrReInspectDefectVideo, r => r.NcrReInspectPhotos, r => r.NcrReInspectCreationDate, r => r.NcrReInspectNotes))
             {
                 try
                 {
@@ -516,6 +559,9 @@ namespace HaverDevProject.Controllers
                     await AddReInspectPictures(ncrReInspectToUpdate, Photos);
 
                     var ncrToUpdate = await _context.Ncrs.FindAsync(ncrReInspectToUpdate.NcrId);
+
+                    bool isAcceptable = form["NcrReInspectAcceptable"] == "true";
+
                     if (ncrToUpdate != null)
                     {
                         ncrToUpdate.NcrStatus = false;
@@ -525,7 +571,9 @@ namespace HaverDevProject.Controllers
 
                     TempData["SuccessMessage"] = "NCR " + ncrReInspectToUpdate.NcrNumber + " edited successfully!";
                     int updateNcrReInspect = ncrReInspectToUpdate.NcrReInspectId;
+                    Response.Cookies.Delete("DraftNCRReInspect" + ncrReInspectToUpdate.NcrNumber);
                     return RedirectToAction("Details", new { id = updateNcrReInspect });
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -638,6 +686,28 @@ namespace HaverDevProject.Controllers
                 .Count();
 
             return Json(pendingCount);
+        }
+
+        //public async Task<FileContentResult> Download(int id)
+        //{
+        //    var theFile = await _context.NcrReInspectPhotos
+        //        .Include(d => d.FileContent)
+        //        .Where(f => f.NcrReInspectPhotoId == id)
+        //        .FirstOrDefaultAsync();
+        //    return File(theFile.NcrReInspectPhotoContent, theFile.NcrReInspectPhotoMimeType, theFile.FileName);
+        //}
+
+        [HttpPost]
+        public async Task<IActionResult> DeletePhoto(int photoId)
+        {
+            var photo = await _context.NcrReInspectPhotos.FindAsync(photoId);
+            if (photo != null)
+            {
+                _context.NcrReInspectPhotos.Remove(photo);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Photo deleted successfully." });
+            }
+            return Json(new { success = false, message = "Photo not found." });
         }
 
         public string GetNcrNumber()

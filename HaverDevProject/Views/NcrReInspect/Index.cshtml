@@ -148,14 +148,9 @@
                         @Html.DisplayFor(modelItem => item.Ncr.NcrQa.Supplier.SupplierName)
                     </td>
                     <td class="col-auto">
-                        @if (item.NcrReInspectAcceptable)
-                        {
-                            <text>Yes</text>
-                        }
-                        else
-                        {
-                            <text>No</text>
-                        }
+                        <span class="badge @(item.NcrReInspectAcceptable ? "bg-success" : "bg-danger")">
+                            @(item.NcrReInspectAcceptable ? "Yes" : "No")
+                        </span>                
                     </td>
                     <td class="col-auto">
                     </td>

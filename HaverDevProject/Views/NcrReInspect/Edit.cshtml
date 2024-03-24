@@ -4,8 +4,44 @@
     ViewData["Title"] = "Edit";
 }
 
+<style>
+    .red-asterisk {
+        color: #DC3545;
+    }
+</style>
+
 <div class="col-md-8 col-10 mx-auto">
     <h1><i class="bi bi-caret-right-fill"></i>Reinspection</h1>
+
+    @* <button class="btn custom-details-btn icon-drop text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#details" aria-expanded="false" aria-controls="details">
+        Details <i class="bi bi-chevron-down"></i>
+    </button>
+    <div class="collapse" id="details">
+        @if (Model.Ncr.NcrQa != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", Model.Ncr.NcrQa)
+        }
+
+        @if (Model.Ncr.NcrEng != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCREngDetailsPartial.cshtml", Model.Ncr.NcrEng)
+        }
+
+        @if (Model.Ncr.NcrOperation != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCROpDetailsPartial.cshtml", Model.Ncr.NcrOperation)
+        }
+
+        @if (Model.Ncr.NcrProcurement != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRProcDetailsPartial.cshtml", Model.Ncr.NcrProcurement)
+        }
+
+        @if (Model.Ncr.NcrReInspect != null)
+        {
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRReInspDetailsPartial.cshtml", Model.Ncr.NcrReInspect)
+        }
+    </div> *@
 
     <form asp-action="Edit" method="post" enctype="multipart/form-data">
         <input type="hidden" asp-for="NcrReInspectId" />
@@ -61,7 +97,7 @@
                         </div>
                     </div>
 
-                    <div class="col-6">
+                    @* <div class="col-6">
                         <div class="form-group">
                             <label asp-for="NcrReInspectUserId" class="control-label"><b>Inspector's Name </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Name of the Inspector">(e.g. J. Doe)</small></label>
                             <span class="fw-bold text-danger">*</span>
@@ -71,42 +107,46 @@
                             </select>
                             <span asp-validation-for="NcrReInspectUserId" class="text-danger"></span>
                         </div>
-                    </div>
+                    </div> *@
                     
+                </div>
+
+                <div class="form-group" id="ReinspectNotes">
+                    <label asp-for="NcrReInspectNotes" class="control-label">
+                        <strong>Notes </strong>
+                        <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Enter notes for why the reinspection is not acceptable">(e.g. The NCR is not up to code.)</small>
+                    </label>
+                    <span class="fw-bold red-asterisk">*</span>
+                    <textarea asp-for="NcrReInspectNotes" class="form-control" id="Notes"></textarea>
+                    <span asp-validation-for="NcrReInspectNotes" class="text-danger"></span>
                 </div>
                
                 <div class="form-group">
-                    <label class="control-label"><b>Current Photos</b></label>
+                    <label class="control-label"><strong>Current Photos:</strong></label>
                     <div class="ml-md-3">
-                        @{
-                            int fileCount = Model.NcrReInspectPhotos.Count;
-                            if (fileCount > 0)
+                        <div id="photoListContainer">
+                            @if (Model.NcrReInspectPhotos.Any())
                             {
-                                var firstFile = Model.NcrReInspectPhotos.FirstOrDefault(); ;
-                                if (fileCount > 1)
-                                {
-                                    <a class="" role="button" data-bs-toggle="collapse" href="#collapsePhotos@(Model.NcrReInspectId)" 
-                                        aria-expanded="false" aria-controls="collapsePhotos@(Model.NcrReInspectId)">
-                                        <span class="badge bg-info">@fileCount</span> Photos...
-                                    </a>
-                                    <div class="collapse" id="collapsePhotos@(Model.NcrReInspectId)">
-                                        @{
-                                            foreach (var d in Model.NcrReInspectPhotos)
-                                            {
-                                                <a asp-controller="NcrReInspect" asp-action="Download" 
-                                                    asp-route-id="@d.NcrReInspectPhotoId">@d.FileName</a> <br />
-                                            }
-                                        }
-                                    </div>
-                                }
-                                else
-                                {
-                                    <a asp-controller="NcrReInspect" asp-action="Download" 
-                                        asp-route-id="@firstFile.NcrReInspectPhotoId">@firstFile.FileName</a>
-                                }
+                                int fileCount = Model.NcrReInspectPhotos.Count;
+                                <a class="" role="button" data-bs-toggle="collapse" href="#collapsePhotos@(Model.NcrReInspectId)" aria-expanded="false" aria-controls="collapsePhotos@(Model.NcrReInspectId)">
+                                    <span class="badge bg-info" id="photoCounter">@fileCount</span> Photos...
+                                </a>
+                                <div class="collapse" id="collapsePhotos@(Model.NcrReInspectId)">
+                                    @foreach (var d in Model.NcrReInspectPhotos)
+                                    {
+                                        <div id="photo-@d.NcrReInspectPhotoId" class="d-flex align-items-center mb-2">
+                                            <a asp-controller="NcrEng" asp-action="Download" asp-route-id="@d.NcrReInspectPhotoId">@d.FileName</a>
+                                            <button type="button" class="btn btn-danger btn-sm ms-2" onclick="deletePhoto(@d.NcrReInspectPhotoId)"><i class="bi bi-trash"></i></button>
+                                        </div>
+                                    }
+                                </div>
                             }
-                        }
-                    </div>
+                            else
+                            {
+                                <p id="noPhotosMessage">No photos to display.</p>
+                            }
+                        </div>
+                    </div>                   
                 </div>
                 <div class="form-group">
                     <label class="control-label custom-file-label"><b>Upload Additional Photos</b></label>
@@ -132,7 +172,7 @@
                     </button>
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary ms-4">
+                    <button type="submit" class="btn btn-primary ms-4" onclick="showCloseReinspectionModal()" id="btnSaveAndClose">
                         <i class="bi bi-floppy"></i> Save and Close
                     </button>
                 </div>
@@ -141,48 +181,40 @@
     </form>
 </div>
 
-@* <h1>Edit</h1>
-
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit" method="post" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="NcrReInspectId" />
-            <div class="form-group">
-                <label asp-for="NcrId" class="control-label"></label>
-                <select asp-for="NcrId" class="form-control" asp-items="ViewBag.NcrId" disabled></select>
-                <span asp-validation-for="NcrId" class="text-danger"></span>
+<div class="modal" tabindex="-1" role="dialog" id="acceptableReinspectionModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Not Acceptable NCR Reinspection</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="NcrReInspectAcceptable" /> @Html.DisplayNameFor(model => model.NcrReInspectAcceptable)
-                </label>
+            <div class="modal-body">
+                <p><strong>Warning:</strong> This reinspection has been marked as <b>not acceptable</b>. You will need to create a new NCR.</p>
             </div>
-            <div class="form-group">
-                <label asp-for="NcrReInspectUserId" class="control-label"></label>
-                <input asp-for="NcrReInspectUserId" class="form-control" />
-                <span asp-validation-for="NcrReInspectUserId" class="text-danger"></span>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Ok</button>
             </div>
-            <div class="form-group">
-                <label asp-for="NcrReInspectPhotos" class="control-label"></label>
-                <input type="file" name="Photos" multiple />
-            </div>
-            <div class="form-group">
-                <label asp-for="NcrReInspectDefectVideo" class="control-label"></label>
-                <input asp-for="NcrReInspectDefectVideo" class="form-control" />
-                <span asp-validation-for="NcrReInspectDefectVideo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save and Close" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div> *@
+<div class="modal" tabindex="-1" role="dialog" id="closeReinspectionModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Save and Close NCR</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Warning:</strong> By accepting, you will be closing this NCR and will <b>no longer</b> be able to edit. Proceed?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnNo" data-bs-dismiss="modal">No</button>
+                <button type="button" class="btn btn-primary" id="btnYes">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
@@ -192,33 +224,137 @@
             return new bootstrap.Tooltip(tooltipTriggerEl);
         });
     </script>
-@*     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var radioButtons = document.getElementsByName("NcrReInspectAcceptable");
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    
 
-            // Loop through each radio button
-            radioButtons.forEach(function (radio) {
-                // Add change event listener to each radio button
-                radio.addEventListener("change", function () {
-                    if (this.value === "false") {
-                        // If "No" radio button is selected, show confirmation dialog
-                        var confirmResult = confirm("Do you want to make a new NCR?");
-                        if (!confirmResult) {
-                            // If user cancels, keep "Yes" radio button selected
-                            document.querySelector('input[value="true"]').checked = true;
-                        } else {
-                            window.location.href = "/NcrQa/Create";
-                            // const urlParams = new URLSearchParams(window.location.search);
-                            // const value = urlParams.get('NcrNumber');
+    <script>
+        let isAcceptable = true;
 
-                            // window.history.back();
+        function showAcceptableReinspectionModal() {
+            $('#acceptableReinspectionModal').modal('show');
+        }
 
-                        }
-                    } else {
-                        // If "Yes" radio button is selected, do nothing
-                    }
-                });
-            });
+        function hideAcceptableReinspectionModal() {
+            $('#acceptableReinspectionModal').modal('hide');
+        }
+
+        // Function to show/hide notes field and manage validation
+        function toggleReinspectionNotes() {
+            var reinspectionAcceptable = $('input[name="NcrReInspectAcceptable"]:checked').val();
+            var reinspectionNotes = $('#ReinspectNotes');
+
+            // Check the value of reinspectionAcceptable and toggle the visibility of notes field
+            if (reinspectionAcceptable === 'false') {
+                // Show notes field
+                reinspectionNotes.slideDown();
+                // Set required attribute
+                reinspectionNotes.find('textarea').prop('required', true);
+            } else {
+                // Hide notes field
+                reinspectionNotes.slideUp();
+                // Remove required attribute
+                reinspectionNotes.find('textarea').prop('required', false);
+            }
+        }
+
+        // Call the function on page load
+        toggleReinspectionNotes();
+
+        // Bind the function to the change event of the "acceptable" radio buttons
+        $('input[name="NcrReInspectAcceptable"]').change(function () {
+            toggleReinspectionNotes();
+
+            isAcceptable = $(this).val();
+
+            if (isAcceptable == 'false') {
+                console.log("Showing the modal...");
+                showAcceptableReinspectionModal();
+            } else {
+                console.log("Hiding the modal...");
+                hideAcceptableReinspectionModal();
+            }
         });
+
+        document.getElementById('btnSaveAndClose').addEventListener('click', function (event) {            
+
+            // Check if the notes field is required and has a value
+            if ($('input[name="NcrReInspectAcceptable"]:checked').val() === 'false' && $('#ReinspectNotes textarea').val().trim() === '') {
+                // Display validation message
+                $('#ReinspectNotes span.text-danger').text('You must provide reinspection notes if NCR is not acceptable.');
+                event.preventDefault();
+                return;
+            } else {
+                // Clear validation message
+                $('#ReinspectNotes span.text-danger').text('');
+            }
+
+            // Check if the form is valid
+            if ($('#reInspectFormId')[0].checkValidity()) {
+                // If the form is valid, show the modal
+                showCloseReinspectionModal();
+            }
+        });
+
+        $('#closeReinspectionModal').on('hidden.bs.modal', function () {
+            if (modalConfirmed) {
+                document.getElementById('reInspectFormId').submit();
+            }
+        });
+
+        function showCloseReinspectionModal() {
+            // Check if the form is valid before showing the modal
+            if ($('#reInspectFormId')[0].checkValidity()) {
+                $('#closeReinspectionModal').modal('show');
+
+                document.getElementById('btnYes').addEventListener('click', function () {
+                    hideCloseReinspectionModal();
+                    document.getElementById('reInspectFormId').submit();
+                    modalConfirmed = true;
+                });
+
+                document.getElementById('btnNo').addEventListener('click', function () {
+                    hideCloseReinspectionModal();
+                    event.preventDefault();
+                    modalConfirmed = false;
+                });
+            }
+        }
+
+        function hideCloseReinspectionModal() {
+            $('#closeReinspectionModal').modal('hide');
+        }
+
     </script>
- *@}
+
+    <script>
+        function deletePhoto(photoId) {
+            if (!confirm("Are you sure you want to delete this photo?")) return;
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("DeletePhoto", "NcrReInspect")',
+                data: { photoId: photoId },
+                success: function (response) {
+                    if (response.success) {
+                        $("#photo-" + photoId).remove();
+
+                        var currentCount = parseInt($("#photoCounter").text());
+                        var newCount = currentCount - 1;
+
+                        if (newCount > 0) {
+                            $("#photoCounter").text(newCount);
+                        } else {
+                            $("#photoListContainer").html('<p>No photos to display.</p>');
+                        }
+                        alert("Photo deleted sucessfully!");
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert("An error occurred. Please try again.");
+                }
+            });
+        }
+    </script>
+}
