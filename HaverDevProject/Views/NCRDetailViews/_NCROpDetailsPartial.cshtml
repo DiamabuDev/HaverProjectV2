@@ -63,7 +63,7 @@
                             <tbody>
 
                                 <tr>
-                                    <td class="three-cols">L. Pentland</td>
+                            <td class="three-cols">@(Model.NcrOperationUserId == "3" ? "Leslie Pentland" : ViewBag.UserFirstName + " " + ViewBag.UserLastName)</td>
                                     <td class="three-cols">@Model.NcrOpCreationDate.ToString("yyyy-MM-dd")</td>
                                     <td class="three-cols">
                                         @{

@@ -24,8 +24,6 @@ namespace HaverDevProject.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
 
         private readonly HaverNiagaraContext _context;
-
-
         public NcrOperationController(HaverNiagaraContext context, IMyEmailSender emailSender, UserManager<ApplicationUser> userManager)
         {
             _context = context;
@@ -314,6 +312,13 @@ namespace HaverDevProject.Controllers
 
             ViewBag.NCRSectionId = id;
 
+            var user = await _userManager.FindByIdAsync(ncrOperation.NcrOperationUserId.ToString());
+            if (user != null)
+            {
+                ViewBag.UserFirstName = user.FirstName;
+                ViewBag.UserLastName = user.LastName;
+            }
+
             return View(ncrOperation);
         }
 
@@ -348,16 +353,6 @@ namespace HaverDevProject.Controllers
                 };
             }
 
-            //int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
-            //NcrOperationDTO ncr = new NcrOperationDTO();
-            //ncr.NcrNumber = ncrNumber; // Set the NcrNumber from the parameter
-            //ncr.NcrOpCompleteDate = DateTime.Now;
-            //ncr.UpdateOp = DateTime.Now;
-            //ncr.ExpectedDate = DateTime.Now;
-            //ncr.NcrStatus = true; // Active
-            //ncr.FollowUp = true;
-            //ncr.Car = true;
-
             var readOnlyDetails = await _context.Ncrs
                 .Include(n => n.NcrQa)
                         .ThenInclude(item => item.Supplier)
@@ -385,8 +380,6 @@ namespace HaverDevProject.Controllers
             ViewBag.ncrDetails = readOnlyDetails;
 
             PopulateDropDownLists();
-            //ViewData["FollowUpTypeId"] = new SelectList(_context.FollowUpTypes, "FollowUpTypeId", "FollowUpTypeName");
-            //ViewData["OpDispositionTypeId"] = new SelectList(_context.OpDispositionTypes, "OpDispositionTypeId", "OpDispositionTypeName");
             return View(ncr);
         }
 
@@ -416,6 +409,7 @@ namespace HaverDevProject.Controllers
 
                 if (ModelState.IsValid)
                 {
+                    var user = await _userManager.GetUserAsync(User);
                     int ncrIdObt = _context.Ncrs
                         .Where(n => n.NcrNumber == ncrOperationDTO.NcrNumber)
                         .Select(n => n.NcrId)
@@ -436,7 +430,7 @@ namespace HaverDevProject.Controllers
                         NcrOpCompleteDate = DateTime.Now,
                         FollowUpTypeId = ncrOperationDTO.FollowUpTypeId,
                         UpdateOp = DateTime.Now,
-                        NcrPurchasingUserId = 1,
+                        NcrOperationUserId = user.Id,
                         OpDefectPhotos = ncrOperationDTO.OpDefectPhotos,
                         NcrOperationVideo = ncrOperationDTO.NcrOperationVideo
 
@@ -488,6 +482,8 @@ namespace HaverDevProject.Controllers
         // GET: NcrOperation/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            var user = await _userManager.GetUserAsync(User);
+
             if (id == null)
             {
                 return NotFound();
@@ -528,7 +524,7 @@ namespace HaverDevProject.Controllers
                 ExpectedDate = DateTime.Now,
                 FollowUpTypeId = ncrOperation.FollowUpTypeId,
                 UpdateOp = ncrOperation.UpdateOp,
-                NcrPurchasingUserId = ncrOperation.NcrPurchasingUserId,
+                NcrOperationUserId = user.Id,
                 NcrEng = ncrOperation.NcrEng,
                 NcrOperationVideo = ncrOperation.NcrOperationVideo,
                 OpDefectPhotos = ncrOperation.OpDefectPhotos,
@@ -560,7 +556,6 @@ namespace HaverDevProject.Controllers
             ViewBag.ncrDetails = readOnlyDetails;
 
             ViewData["FollowUpTypeId"] = new SelectList(_context.FollowUpTypes, "FollowUpTypeId", "FollowUpTypeName", ncrOperation.FollowUpTypeId);
-            //ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrOperation.NcrId);
             ViewData["OpDispositionTypeId"] = new SelectList(_context.OpDispositionTypes, "OpDispositionTypeId", "OpDispositionTypeName", ncrOperation.OpDispositionTypeId);
             return View(ncrOperationDTO);
         }
@@ -572,11 +567,6 @@ namespace HaverDevProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, NcrOperationDTO ncrOperationDTO, List<IFormFile> Photos)
         {
-            //ncrOperationDTO.NcrOpId = id;
-            //if (id != ncrOperationDTO.NcrOpId)
-            //{
-            //    return NotFound();
-            //}
 
             if (ModelState.IsValid)
             {
@@ -587,9 +577,7 @@ namespace HaverDevProject.Controllers
                     .Include(n => n.Ncr)
                     .Include(n => n.OpDispositionType)
                     .Include(n => n.FollowUpType)
-                    //.Include(n => n.OpDefectPhotos)
                     .FirstOrDefaultAsync(ne => ne.NcrOpId == id);
-
 
                     ncrOperation.OpDispositionTypeId = ncrOperationDTO.OpDispositionTypeId;
                     ncrOperation.NcrPurchasingDescription = ncrOperationDTO.NcrPurchasingDescription;
@@ -601,16 +589,14 @@ namespace HaverDevProject.Controllers
                     ncrOperation.ExpectedDate = ncrOperationDTO.ExpectedDate;
                     ncrOperation.FollowUpTypeId = ncrOperationDTO.FollowUpTypeId;
                     ncrOperation.UpdateOp = DateTime.Today;
-                    ncrOperation.NcrPurchasingUserId = 1;
+                    ncrOperation.NcrOperationUserId = "b58514b4-b008-43a4-bae2-4a4f4f5408ff";
                     ncrOperation.NcrOperationVideo = ncrOperationDTO.NcrOperationVideo;
                     ncrOperation.OpDefectPhotos = ncrOperationDTO.OpDefectPhotos;
 
                     _context.Update(ncrOperation);
                     await _context.SaveChangesAsync();
 
-
                     var ncr = await _context.Ncrs.FirstOrDefaultAsync(n => n.NcrId == ncrOperation.NcrId);
-                    //ncr.NcrPhase = NcrPhase.Procurement;
                     ncr.NcrLastUpdated = DateTime.Now;
                     _context.Update(ncr);
                     await _context.SaveChangesAsync();
@@ -655,52 +641,11 @@ namespace HaverDevProject.Controllers
             }
             return View(ncrOperationDTO);
         }
-
-        // GET: NcrOperation/Delete/5
-        //public async Task<IActionResult> Delete(int? id)
-        //{
-        //    if (id == null || _context.NcrOperations == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var ncrOperation = await _context.NcrOperations
-        //        .Include(n => n.FollowUpType)
-        //        .Include(n => n.Ncr)
-        //        .Include(n => n.OpDispositionType)
-        //        .FirstOrDefaultAsync(m => m.NcrOpId == id);
-        //    if (ncrOperation == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(ncrOperation);
-        //}
-
-        //// POST: NcrOperation/Delete/5
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(int id)
-        //{
-        //    if (_context.NcrOperations == null)
-        //    {
-        //        return Problem("Entity set 'HaverNiagaraContext.NcrOperations'  is null.");
-        //    }
-        //    var ncrOperation = await _context.NcrOperations.FindAsync(id);
-        //    if (ncrOperation != null)
-        //    {
-        //        _context.NcrOperations.Remove(ncrOperation);
-        //    }
-            
-        //    await _context.SaveChangesAsync();
-        //    return RedirectToAction(nameof(Index));
-        //}
-
+        
         private bool NcrOperationExists(int id)
         {
             return _context.NcrOperations.Any(e => e.NcrOpId == id);
         }
-
 
         private SelectList OpDispositionTypeSelectList(int? selectedId)
         {
@@ -716,27 +661,10 @@ namespace HaverDevProject.Controllers
 
         public JsonResult GetNcrs()
         {
-            // Get the list of NcrIds that already exist in NcrOperation
-            //List<int> ncrOpPending = _context.Ncrs
-            //    .Where(n => n.NcrPhase == NcrPhase.Operations)
-            //    .Select(n => n.NcrId)
-            //    .ToList();
-
-            //// Include related data in the query for NcrEng
-            //List<NcrEng> pendings = _context.NcrEngs
-            //    .Include(n => n.Ncr)
-            //        .ThenInclude(n => n.NcrQa)
-            //            .ThenInclude(n => n.Item)
-            //                .ThenInclude(n => n.Supplier) 
-            //    .Where(ncrEng => !existingNcrIds.Contains(ncrEng.NcrId))
-            //    .ToList();
-
             List<Ncr> pendings = _context.Ncrs
                 .Include(n => n.NcrQa).ThenInclude(n => n.Supplier)
                 .Where(n => n.NcrPhase == NcrPhase.Operations)
                 .ToList();
-
-
 
             // Extract relevant data for the client-side
             var ncrs = pendings.Select(ncr => new
@@ -792,22 +720,6 @@ namespace HaverDevProject.Controllers
 
         public JsonResult GetPendingCount()
         {
-            // Get the list of NcrIds that already exist in NcrOperation
-            //List<int> existingNcrIds = _context.NcrOperations.Select(op => op.NcrId).ToList();
-
-            //List<int> ncrOpPending = _context.Ncrs
-            //    .Where(n => n.NcrPhase == NcrPhase.Engineer)
-            //    .Select(n => n.NcrId)
-            //    .ToList();
-
-
-            //// Count only the unique NcrIds in NcrEngs
-            //int pendingCount = _context.NcrEngs
-            //    .Where(ncrEng => ncrOpPending.Contains(ncrEng.NcrId))
-            //    .Select(ncrEng => ncrEng.NcrId)
-            //    .Distinct()
-            //    .Count();
-
             int pendingCount = _context.Ncrs
                 .Where(n => n.NcrPhase == NcrPhase.Operations)
                 .Count();

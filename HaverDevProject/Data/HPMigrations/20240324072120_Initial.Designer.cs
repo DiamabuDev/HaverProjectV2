@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HaverDevProject.Data.HPMigrations
 {
     [DbContext(typeof(HaverNiagaraContext))]
-    [Migration("20240318002759_Initial")]
+    [Migration("20240324072120_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -308,8 +308,8 @@ namespace HaverDevProject.Data.HPMigrations
                     b.Property<int>("DrawingUpdatedRevNumber")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("DrawingUserId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("DrawingUserId")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("EngDispositionTypeId")
                         .HasColumnType("INTEGER");
@@ -332,8 +332,8 @@ namespace HaverDevProject.Data.HPMigrations
                     b.Property<bool>("NcrEngStatusFlag")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("NcrEngUserId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("NcrEngUserId")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("NcrId")
                         .HasColumnType("INTEGER");
@@ -404,14 +404,14 @@ namespace HaverDevProject.Data.HPMigrations
                     b.Property<DateTime>("NcrOpCreationDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("NcrOperationUserId")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("NcrOperationVideo")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("NcrPurchasingDescription")
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("NcrPurchasingUserId")
-                        .HasColumnType("INTEGER");
 
                     b.Property<int>("OpDispositionTypeId")
                         .HasColumnType("INTEGER");
@@ -495,8 +495,8 @@ namespace HaverDevProject.Data.HPMigrations
                     b.Property<bool>("NcrProcSupplierReturnReq")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("NcrProcUserId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("NcrProcUserId")
+                        .HasColumnType("TEXT");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -580,11 +580,11 @@ namespace HaverDevProject.Data.HPMigrations
                     b.Property<bool>("NcrQaStatusFlag")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("NcrQacreationDate")
+                    b.Property<string>("NcrQaUserId")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("NcrQauserId")
-                        .HasColumnType("INTEGER");
+                    b.Property<DateTime>("NcrQacreationDate")
+                        .HasColumnType("TEXT");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -653,8 +653,11 @@ namespace HaverDevProject.Data.HPMigrations
                     b.Property<string>("NcrReInspectNewNcrNumber")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("NcrReInspectUserId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("NcrReInspectNotes")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NcrReInspectUserId")
+                        .HasColumnType("TEXT");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()

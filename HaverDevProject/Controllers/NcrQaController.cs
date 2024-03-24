@@ -20,7 +20,6 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Identity;
 using Org.BouncyCastle.Asn1.Ocsp;
-//using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HaverDevProject.Controllers
 {
@@ -71,9 +70,6 @@ namespace HaverDevProject.Controllers
 
             //List of sort options.
             string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "Defect", "PO Number", "Phase", "Last Updated" };
-
-            //PopulateDropDownLists();
-            //ViewData["SupplierId"] = SupplierSelectList(null);
 
             var ncrQa = _context.NcrQas
                 //.Include(n => n.Item).ThenInclude(n => n.ItemDefects).ThenInclude(n => n.Defect)
@@ -312,6 +308,13 @@ namespace HaverDevProject.Controllers
 
             ViewBag.NCRSectionId = id;
 
+            var user = await _userManager.FindByIdAsync(ncrQa.NcrQaUserId.ToString());
+            if (user != null)
+            {
+                ViewBag.UserFirstName = user.FirstName;
+                ViewBag.UserLastName = user.LastName;
+            }
+
             return View(ncrQa);
         }
 
@@ -331,14 +334,6 @@ namespace HaverDevProject.Controllers
             {                
                 ncrQaDTO = new NcrQaDTO
                 {
-                    //var ncrQaDTO = new NcrQaDTO();
-                    //ncrQaDTO.NcrNumber = GetNcrNumber();
-                    //ncrQaDTO.NcrQacreationDate = DateTime.Today;
-                    //ncrQaDTO.NcrStatus = true; //Active
-                    //ncrQaDTO.NcrQaProcessApplicable = true; //Supplier or Rec-Insp
-                    //ncrQaDTO.NcrQaItemMarNonConforming = true; //Yes
-                    //ncrQaDTO.NcrQaEngDispositionRequired = true; //Yes
-
                     NcrNumber = GetNcrNumber(),
                     NcrQacreationDate = DateTime.Today,
                     NcrStatus = true, //Active
@@ -379,8 +374,10 @@ namespace HaverDevProject.Controllers
 
             if (ModelState.IsValid)
             {
+                var user = await _userManager.GetUserAsync(User);
                 string NcrNewNumberValidated = GetNcrNumber();
                 bool engReq = ncrQaDTO.NcrQaEngDispositionRequired == true ? true : false;
+                                
                 Ncr ncr = new Ncr
                 {
                     NcrNumber = NcrNewNumberValidated,//ncrQaDTO.NcrNumber,
@@ -412,7 +409,7 @@ namespace HaverDevProject.Controllers
                     NcrQaDescriptionOfDefect = ncrQaDTO.NcrQaDescriptionOfDefect,
                     NcrQaDefectVideo = ncrQaDTO.NcrQaDefectVideo,
                     ItemDefectPhotos = ncrQaDTO.ItemDefectPhotos,
-                    NcrQauserId = 1,  //Change when we have this information
+                    NcrQaUserId = user.Id,  
                     NcrId = ncrIdObt,
                     SupplierId = ncrQaDTO.SupplierId,
                     ItemId = ncrQaDTO.ItemId,
@@ -428,7 +425,6 @@ namespace HaverDevProject.Controllers
                     var ncrReInspect = await _context.NcrReInspects.FirstOrDefaultAsync(n => n.NcrId == ncrQaDTO.ParentId);
                     if (ncrReInspect != null)
                     {
-                        //PopulateDropDownLists();
                         ncrReInspect.NcrReInspectNewNcrNumber = ncr.NcrNumber;
                         _context.Update(ncrReInspect);
                         await _context.SaveChangesAsync();
@@ -463,6 +459,8 @@ namespace HaverDevProject.Controllers
         // GET: NcrQa/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            var user = await _userManager.GetUserAsync(User);
+
             if (id == null || _context.NcrQas == null)
             {
                 return NotFound();
@@ -492,6 +490,7 @@ namespace HaverDevProject.Controllers
                 NcrQaQuanReceived = ncrQa.NcrQaQuanReceived,
                 NcrQaQuanDefective = ncrQa.NcrQaQuanDefective,
                 NcrQaDescriptionOfDefect = ncrQa.NcrQaDescriptionOfDefect,
+                NcrQaUserId = user.Id,
                 NcrId = ncrQa.NcrId,                
                 SupplierId = ncrQa.SupplierId,
                 NcrNumber = ncrQa.Ncr.NcrNumber,
@@ -503,9 +502,6 @@ namespace HaverDevProject.Controllers
             };
 
             PopulateDropDownLists();
-            //ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierName", ncrQaDTO.SupplierId);
-            //ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName", ncrQaDTO.ItemId);
-            //ViewData["DefectId"] = new SelectList(_context.Defects, "DefectId", "DefectName", ncrQaDTO.DefectId);
 
             var readOnlyDetails = await _context.Ncrs
                 .Include(n=>n.NcrProcurement)
@@ -542,8 +538,7 @@ namespace HaverDevProject.Controllers
             ViewBag.IsNCRProcView = false;
             ViewBag.IsNCRReInspView = false;
 
-            ViewBag.ncrDetails = readOnlyDetails;            
-
+            ViewBag.ncrDetails = readOnlyDetails;   
 
             return View(ncrQaDTO);
         }
@@ -618,7 +613,6 @@ namespace HaverDevProject.Controllers
                         ncrQaToUpdate.NcrQaSalesOrder = ncrQaDTO.NcrQaSalesOrder;
                         ncrQaToUpdate.NcrQaQuanReceived = ncrQaDTO.NcrQaQuanReceived;
                         ncrQaToUpdate.NcrQaQuanDefective = ncrQaDTO.NcrQaQuanDefective;
-                        //pendiente userId
                         ncrQaToUpdate.NcrQaDescriptionOfDefect = ncrQaDTO.NcrQaDescriptionOfDefect;
                         ncrQaToUpdate.NcrQaDefectVideo = ncrQaDTO.NcrQaDefectVideo;                        
                         ncrQaToUpdate.ItemId = ncrQaDTO.ItemId;
@@ -660,52 +654,10 @@ namespace HaverDevProject.Controllers
                     }
                 }     
             }
-            PopulateDropDownLists();
-            //ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierName", ncrQaDTO.SupplierId);
-            //ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemName", ncrQaDTO.ItemId);
-            //ViewData["DefectId"] = new SelectList(_context.Defects, "DefectId", "DefectName", ncrQaDTO.DefectId);
-            return View(ncrQaDTO);            
+            PopulateDropDownLists();return View(ncrQaDTO);            
         }
 
-        // GET: NcrQa/Delete/5
-        //public async Task<IActionResult> Delete(int? id)
-        //{
-        //    if (id == null || _context.NcrQas == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var ncrQa = await _context.NcrQas
-        //        .Include(n => n.Item)
-        //        .Include(n => n.Ncr)
-        //        .FirstOrDefaultAsync(m => m.NcrQaId == id);
-        //    if (ncrQa == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(ncrQa);
-        //}
-
-        //// POST: NcrQa/Delete/5
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(int id)
-        //{
-        //    if (_context.NcrQas == null)
-        //    {
-        //        return Problem("Entity set 'HaverNiagaraContext.NcrQas'  is null.");
-        //    }
-        //    var ncrQa = await _context.NcrQas.FindAsync(id);
-        //    if (ncrQa != null)
-        //    {
-        //        _context.NcrQas.Remove(ncrQa);
-        //    }
-            
-        //    await _context.SaveChangesAsync();
-        //    return RedirectToAction(nameof(Index));
-        //}
-
+        
         public string GetNcrNumber()
         {
             string lastNcrNumber = _context.Ncrs
@@ -785,7 +737,6 @@ namespace HaverDevProject.Controllers
         {
             var result = from s in _context.Suppliers
                          where s.SupplierName.ToUpper().Contains(term.ToUpper())
-                               //|| d.FirstName.ToUpper().Contains(term.ToUpper())
                          orderby s.SupplierName
                          select new { value = s.SupplierName};
             return Json(result);
