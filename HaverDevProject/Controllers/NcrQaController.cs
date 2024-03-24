@@ -350,7 +350,7 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(NcrQaDTO ncrQaDTO, List<IFormFile> Photos, bool isDraft = false) 
+        public async Task<IActionResult> Create(NcrQaDTO ncrQaDTO, List<IFormFile> Photos, bool isDraft = false, int? supplier = null, int? item = null, int? defect = null) 
         {
             // validate if there are cookies available
             if (isDraft)
@@ -434,7 +434,7 @@ namespace HaverDevProject.Controllers
                 return RedirectToAction("Details", new { id = ncrQaId });
             }
 
-            PopulateDropDownLists();
+            PopulateDropDownLists();          
             return View(ncrQaDTO);
         }
 

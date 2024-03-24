@@ -393,6 +393,9 @@ namespace HaverDevProject.Controllers
 
                     var ncrToUpdate = await _context.Ncrs
                         .AsNoTracking()
+                        .Include(n => n.NcrQa.Supplier)
+                        .Include(n => n.NcrQa.Item)
+                        .Include(n => n.NcrQa.Defect)
                         .FirstOrDefaultAsync(n => n.NcrId == ncrReInspect.NcrId);
 
                     ncrToUpdate.NcrPhase = NcrPhase.Closed;
@@ -405,11 +408,46 @@ namespace HaverDevProject.Controllers
 
                     if (isAcceptable == "false")
                     {
-                        //var supplierName = ncrReInspect.Ncr.NcrQa.Supplier.SupplierName;
-                        //var itemName = ncrReInspect.Ncr.NcrQa.Item.ItemName;
-                        //var defectName = ncrReInspect.Ncr.NcrQa.Defect.DefectName;
+                        string newNcrNumber = GetNcrNumber();
 
-                        return RedirectToAction("Create", "NcrQa", new { parentNcrId = ncrReInspect.NcrId/*, supplier = supplierName, item = itemName, defect = defectName*/ });
+                        ncrReInspect.NcrReInspectNewNcrNumber = newNcrNumber;
+
+                        Ncr newNcr = new Ncr
+                        {
+                            NcrNumber = newNcrNumber,
+                            NcrStatus = true,
+                            NcrLastUpdated = DateTime.Now                            
+                        };
+
+                        _context.Ncrs.Add(newNcr);
+                        await _context.SaveChangesAsync();
+
+                        var ncrNewId = await _context.Ncrs
+                            .AsNoTracking()
+                            .FirstOrDefaultAsync(n => n.NcrNumber == newNcrNumber);
+
+                        NcrQa newNcrQa = new NcrQa
+                        {
+                            NcrId = ncrNewId.NcrId,
+                            NcrQaOrderNumber = ncrToUpdate.NcrQa.NcrQaOrderNumber,
+                            NcrQaItemMarNonConforming = ncrToUpdate.NcrQa.NcrQaItemMarNonConforming,
+                            NcrQaProcessApplicable = ncrToUpdate.NcrQa.NcrQaProcessApplicable,
+                            NcrQaSalesOrder = ncrToUpdate.NcrQa.NcrQaSalesOrder,
+                            NcrQaQuanReceived = ncrToUpdate.NcrQa.NcrQaQuanReceived,
+                            NcrQaQuanDefective = ncrToUpdate.NcrQa.NcrQaQuanDefective,
+                            NcrQaDescriptionOfDefect = ncrToUpdate.NcrQa.NcrQaDescriptionOfDefect,
+                            SupplierId = ncrToUpdate.NcrQa.SupplierId,
+                            ItemId = ncrToUpdate.NcrQa.ItemId,
+                            DefectId = ncrToUpdate.NcrQa.DefectId//,
+                            //NcrQaEngDispositionRequired = ncrToUpdate.NcrQa.NcrQaEngDispositionRequired
+                        };
+
+                        _context.NcrQas.Add(newNcrQa);
+                        await _context.SaveChangesAsync();
+
+                        TempData["SuccessMessage"] = "This NCR was automatically created using the previous NCR information";
+
+                        return RedirectToAction("Edit", "NcrQa", new { id = ncrNewId.NcrId });
                     }
                     else
                     {
@@ -477,7 +515,7 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, List<IFormFile> Photos)
+        public async Task<IActionResult> Edit(int id, List<IFormFile> Photos, IFormCollection form)
         {
             var ncrReInspectToUpdate = await _context.NcrReInspects
                 .Include(r => r.Ncr)
@@ -491,7 +529,7 @@ namespace HaverDevProject.Controllers
 
             if (await TryUpdateModelAsync<NcrReInspect>(ncrReInspectToUpdate, "",
                 r => r.NcrReInspectAcceptable, r => r.NcrReInspectNewNcrNumber, r => r.NcrReInspectUserId,
-                r => r.NcrId, r => r.NcrReInspectDefectVideo, r => r.NcrReInspectPhotos, r => r.NcrReInspectCreationDate))
+                r => r.NcrId, r => r.NcrReInspectDefectVideo, r => r.NcrReInspectPhotos, r => r.NcrReInspectCreationDate, r => r.NcrReInspectNotes))
             {
                 try
                 {
@@ -500,6 +538,9 @@ namespace HaverDevProject.Controllers
                     //await _context.SaveChangesAsync();
 
                     var ncrToUpdate = await _context.Ncrs.FindAsync(ncrReInspectToUpdate.NcrId);
+
+                    bool isAcceptable = form["NcrReInspectAcceptable"] == "true";
+
                     if (ncrToUpdate != null)
                     {
                         ncrToUpdate.NcrStatus = false;
@@ -509,7 +550,9 @@ namespace HaverDevProject.Controllers
 
                     TempData["SuccessMessage"] = "NCR " + ncrReInspectToUpdate.NcrNumber + " edited successfully!";
                     int updateNcrReInspect = ncrReInspectToUpdate.NcrReInspectId;
+                    Response.Cookies.Delete("DraftNCRReInspect" + ncrReInspectToUpdate.NcrNumber);
                     return RedirectToAction("Details", new { id = updateNcrReInspect });
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -711,6 +754,19 @@ namespace HaverDevProject.Controllers
         //        .FirstOrDefaultAsync();
         //    return File(theFile.NcrReInspectPhotoContent, theFile.NcrReInspectPhotoMimeType, theFile.FileName);
         //}
+
+        [HttpPost]
+        public async Task<IActionResult> DeletePhoto(int photoId)
+        {
+            var photo = await _context.NcrReInspectPhotos.FindAsync(photoId);
+            if (photo != null)
+            {
+                _context.NcrReInspectPhotos.Remove(photo);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Photo deleted successfully." });
+            }
+            return Json(new { success = false, message = "Photo not found." });
+        }
 
         public string GetNcrNumber()
         {

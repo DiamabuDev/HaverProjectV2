@@ -1,5 +1,55 @@
 ﻿@model HaverDevProject.Models.NcrProcurement
 
+<style>
+    /* Popup Image Container */
+    #popupImageContainer {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.9);
+    }
+
+    /* Popup Image */
+    #popupImage {
+        margin: auto;
+        display: block;
+        max-width: 90%;
+        max-height: 90%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    /* Close Button */
+    .close {
+        position: absolute;
+        top: 15px;
+        right: 35px;
+        color: #fff;
+        font-size: 40px;
+        font-weight: bold;
+        transition: 0.3s;
+        cursor: pointer;
+    }
+
+        .close:hover,
+        .close:focus {
+            color: #999;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+    .zoomable-image {
+        cursor: zoom-in;
+    }
+</style>
+
 <div class="mt-2">
             <button class="btn custom-header-bg icon-drop text-start mb-0" type="button" data-bs-toggle="collapse" data-bs-target="#procurementSection" aria-expanded="@ViewBag.IsNCRProcView.ToString().ToLower()" aria-controls="procurementSection">
                 Procurement <i class="bi bi-chevron-down"></i>
@@ -142,7 +192,7 @@
                                                         string imageSrc = string.Format("data:" + photo.ProcDefectPhotoMimeType + ";base64,{0}", imageBase64);
 
                                                         <div class="text-center pb-3 col-6">
-                                                            <img src="@imageSrc" alt="Photo of @Model.Ncr.NcrQa.NcrId" class="img-fluid rounded" />
+                                                            <img src="@imageSrc" alt="Photo of @Model.Ncr.NcrQa.NcrId" class="img-fluid rounded zoomable-image" onclick="openPopupImage('@imageSrc')" />
                                                         </div>
                                                     }
                                                 }
@@ -172,3 +222,56 @@
                 </div>
             </div>
 </div>
+
+<div id="popupImageContainer">
+    <span class="close" onclick="closePopupImage()">&times;</span>
+    <img id="popupImage" class="popup-img zoomable-image">
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/0.3.1/medium-zoom.min.js"></script>
+<script>
+    let zoomInstance; // Variable to hold the zoom instance
+    let clickCount = 0; // Counter to track the number of clicks
+
+    function openPopupImage(imageSrc) {
+        document.getElementById("popupImage").src = imageSrc;
+        document.getElementById("popupImageContainer").style.display = "block";
+        document.body.style.overflow = "hidden"; // Disable scrolling of the webpage
+        initializeZoom(); // Initialize zoom on image
+    }
+
+    function closePopupImage() {
+        document.getElementById("popupImageContainer").style.display = "none";
+        document.body.style.overflow = ""; // Enable scrolling of the webpage when popup is closed
+        destroyZoom(); // Destroy zoom instance when closing popup
+        clickCount = 0; // Reset click count when closing popup
+    }
+
+    function initializeZoom() {
+        const zoomableImage = document.getElementById("popupImage");
+        zoomInstance = mediumZoom(zoomableImage);
+        zoomableImage.addEventListener('click', toggleZoom);
+    }
+
+    function destroyZoom() {
+        if (zoomInstance) {
+            zoomInstance.detach(); // Detach zoom instance from the image
+            const zoomableImage = document.getElementById("popupImage");
+            zoomableImage.removeEventListener('click', toggleZoom);
+        }
+    }
+
+    function toggleZoom() {
+        clickCount++; // Increment click count
+        if (clickCount === 2) {
+            zoomInstance.zoom(3); // Zoom to 3x when clicked the second time
+            clickCount = 0; // Reset click count after zooming
+        } else {
+            if (zoomInstance && zoomInstance.isZoomedIn()) {
+                zoomInstance.hide(); // If zoomed in, hide the zoom
+            } else {
+                zoomInstance.show(); // If zoomed out or not zoomed, show the zoom
+            }
+        }
+    }
+</script>
