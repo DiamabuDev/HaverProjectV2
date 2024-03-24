@@ -449,7 +449,7 @@ namespace HaverDevProject.Controllers
                             NcrQaSalesOrder = ncrToUpdate.NcrQa.NcrQaSalesOrder,
                             NcrQaQuanReceived = ncrToUpdate.NcrQa.NcrQaQuanReceived,
                             NcrQaQuanDefective = ncrToUpdate.NcrQa.NcrQaQuanDefective,
-                            NcrQaDescriptionOfDefect = ncrToUpdate.NcrQa.NcrQaDescriptionOfDefect,
+                            NcrQaDescriptionOfDefect = "NCR was recreated as it was not acceptable" /*ncrToUpdate.NcrQa.NcrQaDescriptionOfDefect*/,
                             SupplierId = ncrToUpdate.NcrQa.SupplierId,
                             ItemId = ncrToUpdate.NcrQa.ItemId,
                             DefectId = ncrToUpdate.NcrQa.DefectId,
@@ -460,7 +460,7 @@ namespace HaverDevProject.Controllers
                         _context.NcrQas.Add(newNcrQa);
                         await _context.SaveChangesAsync();
 
-                        TempData["SuccessMessage"] = "This NCR was automatically created using the previous NCR information";
+                        TempData["SuccessMessage"] = "This NCR was automatically created using the previous NCRs information";
 
                         return RedirectToAction("Edit", "NcrQa", new { id = ncrNewId.NcrId });
                     }

@@ -276,10 +276,12 @@
         });
 
         document.getElementById('btnSaveAndClose').addEventListener('click', function (event) {            
+
             // Check if the notes field is required and has a value
             if ($('input[name="NcrReInspectAcceptable"]:checked').val() === 'false' && $('#ReinspectNotes textarea').val().trim() === '') {
                 // Display validation message
                 $('#ReinspectNotes span.text-danger').text('You must provide reinspection notes if NCR is not acceptable.');
+                event.preventDefault();
                 return;
             } else {
                 // Clear validation message

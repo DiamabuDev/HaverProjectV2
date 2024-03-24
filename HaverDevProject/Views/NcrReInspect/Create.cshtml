@@ -4,6 +4,12 @@
     ViewData["Title"] = "Create";
 }
 
+<style>
+    .red-asterisk {
+        color: #DC3545;
+    }
+</style>
+
 <div class="col-md-8 col-10 mx-auto">
     <h1><i class="bi bi-caret-right-fill"></i>Reinspection</h1>
 
@@ -88,6 +94,7 @@
                             <strong>Notes </strong>
                             <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Enter notes for why the reinspection is not acceptable">(e.g. The NCR is not up to code.)</small>
                         </label>
+                        <span class="fw-bold red-asterisk">*</span>
                         <textarea asp-for="NcrReInspectNotes" class="form-control" id="Notes"></textarea>
                         <span asp-validation-for="NcrReInspectNotes" class="text-danger"></span>
                     </div>                    
@@ -206,7 +213,106 @@
             return new bootstrap.Tooltip(tooltipTriggerEl);
         });
     </script>
-   <script>
+    <script>
+        let isAcceptable = true;
+
+        function showAcceptableReinspectionModal() {
+            $('#acceptableReinspectionModal').modal('show');
+        }
+
+        function hideAcceptableReinspectionModal() {
+            $('#acceptableReinspectionModal').modal('hide');
+        }
+
+        // Function to show/hide notes field and manage validation
+        function toggleReinspectionNotes() {
+            var reinspectionAcceptable = $('input[name="NcrReInspectAcceptable"]:checked').val();
+            var reinspectionNotes = $('#ReinspectNotes');
+
+            // Check the value of reinspectionAcceptable and toggle the visibility of notes field
+            if (reinspectionAcceptable === 'false') {
+                // Show notes field
+                reinspectionNotes.slideDown();
+                // Set required attribute
+                reinspectionNotes.find('textarea').prop('required', true);
+            } else {
+                // Hide notes field
+                reinspectionNotes.slideUp();
+                // Remove required attribute
+                reinspectionNotes.find('textarea').prop('required', false);
+            }
+        }
+
+        // Call the function on page load
+        toggleReinspectionNotes();
+
+        // Bind the function to the change event of the "acceptable" radio buttons
+        $('input[name="NcrReInspectAcceptable"]').change(function () {
+            toggleReinspectionNotes();
+
+            isAcceptable = $(this).val();
+
+            if (isAcceptable == 'false') {
+                console.log("Showing the modal...");
+                showAcceptableReinspectionModal();
+            } else {
+                console.log("Hiding the modal...");
+                hideAcceptableReinspectionModal();
+            }
+        });
+
+        document.getElementById('btnSaveAndClose').addEventListener('click', function (event) {
+            event.preventDefault();
+
+            // Check if the notes field is required and has a value
+            if ($('input[name="NcrReInspectAcceptable"]:checked').val() === 'false' && $('#ReinspectNotes textarea').val().trim() === '') {
+                // Display validation message
+                $('#ReinspectNotes span.text-danger').text('You must provide reinspection notes if NCR is not acceptable.');
+                return;
+            } else {
+                // Clear validation message
+                $('#ReinspectNotes span.text-danger').text('');
+            }
+
+            // Check if the form is valid
+            if ($('#reInspectFormId')[0].checkValidity()) {
+                // If the form is valid, show the modal
+                showCloseReinspectionModal();
+            }
+        });
+
+        $('#closeReinspectionModal').on('hidden.bs.modal', function () {
+            if (modalConfirmed) {
+                document.getElementById('reInspectFormId').submit();
+            }
+        });
+
+        function showCloseReinspectionModal() {
+            // Check if the form is valid before showing the modal
+            if ($('#reInspectFormId')[0].checkValidity()) {
+                $('#closeReinspectionModal').modal('show');
+
+                document.getElementById('btnYes').addEventListener('click', function () {
+                    hideCloseReinspectionModal();
+                    document.getElementById('reInspectFormId').submit();
+                    modalConfirmed = true;
+                });
+
+                document.getElementById('btnNo').addEventListener('click', function () {
+                    hideCloseReinspectionModal();
+                    event.preventDefault();
+                    modalConfirmed = false;
+                });
+            }
+        }
+
+        function hideCloseReinspectionModal() {
+            $('#closeReinspectionModal').modal('hide');
+        }
+
+    </script>
+
+@*    <script>
 
         let isAcceptable = true;
 
@@ -268,4 +374,4 @@
         }
 
     </script>
-}
+ *@}
