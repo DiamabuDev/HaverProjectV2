@@ -316,7 +316,7 @@ namespace HaverDevProject.Controllers
 
             ViewBag.NCRSectionId = id;
 
-            var user = await _userManager.FindByIdAsync(ncrProcurement.NcrProcurementId.ToString());
+            var user = await _userManager.FindByIdAsync(ncrProcurement.NcrProcUserId.ToString());
             if (user != null)
             {
                 ViewBag.UserFirstName = user.FirstName;
