@@ -1,7 +1,7 @@
 ﻿@model HaverDevProject.Models.NcrEng
 
-@* <style>
-    .modal {
+<style>
+    .modal1 {
         display: none; /* Hidden by default */
         position: fixed; /* Stay in place */
         z-index: 9999; /* Sit on top */
@@ -15,7 +15,7 @@
         background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
     }
 
-    .modal-content {
+    .modal1-content {
         margin: auto;
         display: block;
         width: 80%;
@@ -39,7 +39,7 @@
             cursor: pointer;
         }
 </style>
- *@
+
 <div class="mt-2">
 
             <button class="btn custom-header-bg icon-drop text-start mb-0" type="button" data-bs-toggle="collapse" data-bs-target="#engineerRepSection" aria-expanded="@ViewBag.IsNCREngView.ToString().ToLower()" aria-controls="engineerRepSection">
@@ -201,9 +201,9 @@
             </div>
 </div>
 
-<div id="imageModal" class="modal">
+<div id="imageModal" class="modal1">
     <span class="close" onclick="closeModal()">&times;</span>
-    <img id="modalImage" class="modal-content" />
+    <img id="modalImage" class="modal1-content" />
 </div>
 
 <script>

@@ -1,53 +1,43 @@
 ﻿@model HaverDevProject.Models.NcrOperation
 
 <style>
-    /* Popup Image Container */
-    #popupImageContainer {
-        display: none;
-        position: fixed;
-        z-index: 9999;
+    .modal1 {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 9999; /* Sit on top */
+        padding-top: 15px; /* Location of the box */
         left: 0;
         top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.9);
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
     }
 
-    /* Popup Image */
-    #popupImage {
+    .modal1-content {
         margin: auto;
         display: block;
-        max-width: 90%;
-        max-height: 90%;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+        width: 80%;
+        max-width: 700px; /* Adjust maximum width as needed */
     }
 
-    /* Close Button */
     .close {
+        color: #fff;
         position: absolute;
         top: 15px;
         right: 35px;
-        color: #fff;
         font-size: 40px;
         font-weight: bold;
         transition: 0.3s;
-        cursor: pointer;
     }
 
         .close:hover,
         .close:focus {
-            color: #999;
+            color: #bbb;
             text-decoration: none;
             cursor: pointer;
         }
-
-    .zoomable-image {
-        cursor: zoom-in;
-    }
 </style>
 
 <div class="mt-2">
@@ -161,7 +151,7 @@
                                                         string imageSrc = string.Format("data:" + photo.OpDefectPhotoContent + ";base64,{0}", imageBase64);
 
                                                         <div class="text-center pb-3 col-6">
-                                                            <img src="@imageSrc" alt="Photo of @Model.Ncr.NcrQa.NcrId" class="img-fluid rounded zoomable-image" onclick="openPopupImage('@imageSrc')" />
+                                                            <img src="@imageSrc" alt="Photo of @Model.Ncr.NcrQa.NcrId" class="img-fluid rounded" onclick="openModal('@imageSrc')" />
                                                         </div>
                                                     }
                                                 }
@@ -192,55 +182,48 @@
             </div>
 </div>
 
-<div id="popupImageContainer">
-    <span class="close" onclick="closePopupImage()">&times;</span>
-    <img id="popupImage" class="popup-img zoomable-image">
+<div id="imageModal" class="modal1">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <img id="modalImage" class="modal1-content" />
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/0.3.1/medium-zoom.min.js"></script>
 <script>
-    let zoomInstance; // Variable to hold the zoom instance
-    let clickCount = 0; // Counter to track the number of clicks
-
-    function openPopupImage(imageSrc) {
-        document.getElementById("popupImage").src = imageSrc;
-        document.getElementById("popupImageContainer").style.display = "block";
-        document.body.style.overflow = "hidden"; // Disable scrolling of the webpage
-        initializeZoom(); // Initialize zoom on image
+    function openModal(imageSrc) {
+        var modal = document.getElementById("imageModal");
+        var modalImg = document.getElementById("modalImage");
+        modal.style.display = "block";
+        modalImg.src = imageSrc;
     }
 
-    function closePopupImage() {
-        document.getElementById("popupImageContainer").style.display = "none";
-        document.body.style.overflow = ""; // Enable scrolling of the webpage when popup is closed
-        destroyZoom(); // Destroy zoom instance when closing popup
-        clickCount = 0; // Reset click count when closing popup
+    function closeModal() {
+        var modal = document.getElementById("imageModal");
+        modal.style.display = "none";
     }
+</script>
 
-    function initializeZoom() {
-        const zoomableImage = document.getElementById("popupImage");
-        zoomInstance = mediumZoom(zoomableImage);
-        zoomableImage.addEventListener('click', toggleZoom);
-    }
+<script>
+    // Get the modal
+    var modal = document.getElementById("imageModal");
 
-    function destroyZoom() {
-        if (zoomInstance) {
-            zoomInstance.detach(); // Detach zoom instance from the image
-            const zoomableImage = document.getElementById("popupImage");
-            zoomableImage.removeEventListener('click', toggleZoom);
+    // Get the image and close button
+    var modalImg = document.getElementById("modalImage");
+    var closeBtn = document.getElementsByClassName("close")[0]; // Assuming there's only one close button
+
+    // When the user clicks anywhere outside of the image, close the modal
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            closeModal();
         }
     }
 
-    function toggleZoom() {
-        clickCount++; // Increment click count
-        if (clickCount === 2) {
-            zoomInstance.zoom(3); // Zoom to 3x when clicked the second time
-            clickCount = 0; // Reset click count after zooming
-        } else {
-            if (zoomInstance && zoomInstance.isZoomedIn()) {
-                zoomInstance.hide(); // If zoomed in, hide the zoom
-            } else {
-                zoomInstance.show(); // If zoomed out or not zoomed, show the zoom
-            }
-        }
+    // Function to open the modal
+    function openModal(imageSrc) {
+        modal.style.display = "flex";
+        modalImg.src = imageSrc;
+    }
+
+    // Function to close the modal
+    function closeModal() {
+        modal.style.display = "none";
     }
 </script>

@@ -374,6 +374,21 @@ namespace HaverDevProject.Controllers
         {
             try
             {
+                if (isDraft)
+                {
+                    // convert the object to json format
+                    var json = JsonConvert.SerializeObject(ncrReInspect);
+
+                    // Save the object in a cookie with name "DraftData"
+                    Response.Cookies.Append("DraftNCRReInspect" + ncrReInspect.NcrNumber, json, new CookieOptions
+                    {
+                        // Define time for cookies
+                        Expires = DateTime.Now.AddMinutes(2880) // Cookied will expire in 48 hrs
+                    });
+
+                    return Ok(new { success = true, message = "Draft saved successfully.\nNote: This draft will be available for the next 48 hours." });
+                }
+
                 if (ModelState.IsValid)
                 {
                     var user = await _userManager.GetUserAsync(User);
@@ -381,22 +396,7 @@ namespace HaverDevProject.Controllers
                     if (user != null)
                     {
                         ncrReInspect.NcrReInspectUserId = user.Id;
-                    }
-
-                    if (isDraft)
-                    {
-                        // convert the object to json format
-                        var json = JsonConvert.SerializeObject(ncrReInspect);
-
-                        // Save the object in a cookie with name "DraftData"
-                        Response.Cookies.Append("DraftNCRReInspect" + ncrReInspect.NcrNumber, json, new CookieOptions
-                        {
-                            // Define time for cookies
-                            Expires = DateTime.Now.AddMinutes(2880) // Cookied will expire in 48 hrs
-                        });
-
-                        return Ok(new { success = true, message = "Draft saved successfully.\nNote: This draft will be available for the next 48 hours." });
-                    }
+                    }                    
 
                     string isAcceptable = form["NcrReInspectAcceptable"];
 
