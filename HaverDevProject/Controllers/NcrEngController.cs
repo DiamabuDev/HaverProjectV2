@@ -7,8 +7,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HaverDevProject.Data;
 using HaverDevProject.Models;
-//using NcrEng = HaverDevProject.Models.NcrEng;
-//using static System.Runtime.InteropServices.JavaScript.JSType;
 using Microsoft.EntityFrameworkCore.Storage;
 using HaverDevProject.CustomControllers;
 using HaverDevProject.Utilities;
@@ -79,14 +77,7 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
                 .Include(n => n.Drawing)
-                .Where(n => n.Ncr.NcrPhase != NcrPhase.Archive
-                //&&
-                //(n.Ncr.NcrPhase == NcrPhase.Engineer ||
-                // n.Ncr.NcrPhase == NcrPhase.Operations ||
-                // n.Ncr.NcrPhase == NcrPhase.Procurement ||
-                // n.Ncr.NcrPhase == NcrPhase.ReInspection ||
-                // n.Ncr.NcrPhase == NcrPhase.Closed)
-                 )
+                .Where(n => n.Ncr.NcrPhase != NcrPhase.Archive)
                 .AsNoTracking();
 
             //Filtering values
@@ -327,6 +318,13 @@ namespace HaverDevProject.Controllers
 
             ViewBag.NCRSectionId = id;
 
+            var user = await _userManager.FindByIdAsync(ncrEng.NcrEngUserId.ToString());
+            if (user != null)
+            {
+                ViewBag.UserFirstName = user.FirstName;
+                ViewBag.UserLastName = user.LastName;
+            }
+
             return View(ncrEng);
         }
 
@@ -358,20 +356,6 @@ namespace HaverDevProject.Controllers
                     NcrEngCustomerNotification = false
                 };
             }
-
-
-            //    int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
-            
-            //NcrEngDTO ncr = new NcrEngDTO();
-            //ncr.NcrNumber = ncrNumber; // Set the NcrNumber from the parameter
-            //ncr.DrawingRevDate = DateTime.Now;
-            //ncr.NcrEngCompleteDate = DateTime.Now;
-            //ncr.DrawingOriginalRevNumber = 1;
-            //ncr.DrawingRequireUpdating = false;
-            //ncr.NcrEngCustomerNotification = false;
-
-            //ncr.NcrStatus = true; // Active
-
             var readOnlyDetails = await _context.Ncrs
                 .Include(n => n.NcrQa)
                         .ThenInclude(item => item.Supplier)
@@ -382,8 +366,6 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.NcrQa)
                     .ThenInclude(qa => qa.ItemDefectPhotos)
                 .FirstOrDefaultAsync(n => n.NcrId == ncrId);
-
-            //ncr.NcrEngCreationDate = readOnlyDetails.NcrQa.NcrQacreationDate;
 
             ViewBag.IsNCRQaView = false;
             ViewBag.IsNCREngView = false;
@@ -423,6 +405,7 @@ namespace HaverDevProject.Controllers
 
                 if (ModelState.IsValid)
                 {
+                    var user = await _userManager.GetUserAsync(User);
                     // Find the Ncr entity based on the NcrNumber in the DTO
                     int ncrIdObt = _context.Ncrs
                         .Where(n => n.NcrNumber == ncrEngDTO.NcrNumber)
@@ -450,7 +433,7 @@ namespace HaverDevProject.Controllers
                         NcrEngCustomerNotification = ncrEngDTO.NcrEngCustomerNotification,
                         NcrEngDispositionDescription = ncrEngDTO.NcrEngDispositionDescription,
                         NcrEngStatusFlag = ncrEngDTO.NcrEngStatusFlag,
-                        NcrEngUserId = 1,
+                        NcrEngUserId = user.Id,
                         NcrEngCompleteDate = DateTime.Now,
                         NcrEngCreationDate = ncrEngDTO.NcrEngCreationDate,
                         EngDispositionTypeId = ncrEngDTO.EngDispositionTypeId,
@@ -525,6 +508,8 @@ namespace HaverDevProject.Controllers
         // GET: NcrEng/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            var user = await _userManager.GetUserAsync(User);
+
             if (id == null)
             {
                 return NotFound();
@@ -534,12 +519,9 @@ namespace HaverDevProject.Controllers
                         .Include(ne => ne.Ncr)
                           .Include(ne => ne.EngDispositionType)
                           .Include(ne => ne.Drawing)
-                          //.Include(ne => ne.Ncr).ThenInclude(ne=>ne.NcrQa)
                         .Include(n => n.EngDefectPhotos)
                         .AsNoTracking()
                         .FirstOrDefaultAsync(ne => ne.NcrEngId == id);
-
-            //var ncrEng = await _context.NcrEngs.FindAsync(id);
 
             if (ncrEng == null)
             {
@@ -551,13 +533,12 @@ namespace HaverDevProject.Controllers
             {
                 NcrEngId = ncrEng.NcrEngId,
                 NcrNumber = ncrEng.Ncr.NcrNumber,
-                //NcrStatus = ncrEng.Ncr.NcrStatus,
                 NcrEngCustomerNotification = ncrEng.NcrEngCustomerNotification,
                 NcrEngDispositionDescription = ncrEng.NcrEngDispositionDescription,
                 NcrEngCreationDate = ncrEng.NcrEngCreationDate,
                 NcrEngCompleteDate = ncrEng.NcrEngCompleteDate,
                 NcrEngStatusFlag = ncrEng.NcrEngStatusFlag,
-                NcrEngUserId = ncrEng.NcrEngUserId,
+                NcrEngUserId = user.Id,
                 EngDispositionTypeId = ncrEng.EngDispositionTypeId,
                 NcrId = ncrEng.NcrId,
                 DrawingId = ncrEng.DrawingId,
@@ -599,13 +580,6 @@ namespace HaverDevProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, NcrEngDTO ncrEngDTO, List<IFormFile> Photos)
         {
-
-            //ncrEngDTO.NcrEngId = id;
-            //if (id != ncrEngDTO.NcrEngId)
-            //{
-            //    return NotFound();
-            //}
-
             if (ModelState.IsValid)
             {
                 await AddPictures(ncrEngDTO, Photos);
@@ -615,8 +589,6 @@ namespace HaverDevProject.Controllers
                         .Include(ne => ne.Drawing)
                         .FirstOrDefaultAsync(ne => ne.NcrEngId == id);
 
-                    //ncrEng.NcrEngId = ncrEngDTO.NcrEngId;
-
                     ncrEng.NcrEngCustomerNotification = ncrEngDTO.NcrEngCustomerNotification;
                     ncrEng.NcrEngDispositionDescription = ncrEngDTO.NcrEngDispositionDescription;
                     ncrEng.NcrEngCreationDate = ncrEngDTO.NcrEngCreationDate;
@@ -624,7 +596,6 @@ namespace HaverDevProject.Controllers
                     ncrEng.NcrEngStatusFlag = ncrEngDTO.NcrEngStatusFlag;
                     ncrEng.NcrEngUserId = ncrEngDTO.NcrEngUserId;
                     ncrEng.EngDispositionTypeId = ncrEngDTO.EngDispositionTypeId;
-                   // ncrEng.NcrId = ncrEngDTO.NcrId;
                     ncrEng.DrawingId = ncrEngDTO.DrawingId;
                     ncrEng.DrawingRequireUpdating = ncrEngDTO.DrawingRequireUpdating;
                     ncrEng.DrawingOriginalRevNumber = ncrEngDTO.DrawingOriginalRevNumber;
@@ -633,14 +604,12 @@ namespace HaverDevProject.Controllers
                     ncrEng.DrawingUserId = ncrEngDTO.DrawingUserId;
                     ncrEng.EngDefectPhotos = ncrEngDTO.EngDefectPhotos;
                     ncrEng.NcrEngDefectVideo = ncrEngDTO.NcrEngDefectVideo;
-                    //ncrEng.NcrPhase = NcrPhase.Operations;
 
                     _context.Update(ncrEng);
                     await _context.SaveChangesAsync();
 
 
                     var ncr = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrEng.NcrId);
-                    //ncr.NcrPhase = NcrPhase.Operations;
                     ncr.NcrLastUpdated = DateTime.Now;
                     _context.Update(ncr);
                     await _context.SaveChangesAsync();
@@ -683,8 +652,6 @@ namespace HaverDevProject.Controllers
                     ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
                 }
 
-
-                //return RedirectToAction(nameof(Index));
             }
             return View(ncrEngDTO);
         }
@@ -697,8 +664,6 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.NcrQa).ThenInclude(n => n.Supplier)
                 .Where(n => n.NcrPhase == NcrPhase.Engineer)
                 .ToList();
-
-
 
             // Extract relevant data for the client-side
             var ncrs = pendings.Select(ncr => new
@@ -720,7 +685,6 @@ namespace HaverDevProject.Controllers
 
             return Json(pendingCount);
         }
-
 
         private async Task AddPictures(NcrEngDTO ncrEngDTO, List<IFormFile> pictures)
         {
@@ -906,7 +870,5 @@ namespace HaverDevProject.Controllers
 
             return View();
         }
-
-
     }
 }

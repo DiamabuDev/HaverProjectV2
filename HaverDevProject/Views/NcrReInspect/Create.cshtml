@@ -4,12 +4,6 @@
     ViewData["Title"] = "Create";
 }
 
-<style>
-    .red-asterisk {
-        color: #DC3545;
-    }
-</style>
-
 <div class="col-md-8 col-10 mx-auto">
     <h1><i class="bi bi-caret-right-fill"></i>Reinspection</h1>
 
@@ -17,29 +11,24 @@
         Details <i class="bi bi-chevron-down"></i>
     </button>
     <div class="collapse" id="details">
-        @if (Model.Ncr.NcrQa != null)
+        @if (ViewBag.ncrDetails != null && ViewBag.ncrDetails.NcrQa != null)
         {
-            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", Model.Ncr.NcrQa)
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", (NcrQa)ViewBag.ncrDetails.NcrQa)
         }
 
-        @if (Model.Ncr.NcrEng != null)
+        @if (ViewBag.ncrDetails != null && ViewBag.ncrDetails.NcrEng != null)
         {
-            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCREngDetailsPartial.cshtml", Model.Ncr.NcrEng)
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCREngDetailsPartial.cshtml", (NcrEng)ViewBag.ncrDetails.NcrEng)
         }
 
-        @if (Model.Ncr.NcrOperation != null)
+        @if (ViewBag.ncrDetails != null && ViewBag.ncrDetails.NcrOperation != null)
         {
-            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCROpDetailsPartial.cshtml", Model.Ncr.NcrOperation)
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCROpDetailsPartial.cshtml", (NcrOperation)ViewBag.ncrDetails.NcrOperation)
         }
 
-        @if (Model.Ncr.NcrProcurement != null)
+        @if (ViewBag.ncrDetails != null && ViewBag.ncrDetails.NcrProcurement != null)
         {
-            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRProcDetailsPartial.cshtml", Model.Ncr.NcrProcurement)
-        }
-
-        @if (Model.Ncr.NcrReInspect != null)
-        {
-            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRReInspDetailsPartial.cshtml", Model.Ncr.NcrReInspect)
+            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRProcDetailsPartial.cshtml", (NcrProcurement)ViewBag.ncrDetails.NcrProcurement)
         }
     </div>
 
@@ -68,8 +57,8 @@
                     <div class="col-6">
                         <div class="form-group">
                             <b>Date</b>
-                            @*                             <label asp-for="NcrReInspectCreationDate" class="control-label"><b>NCR No. </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Code to identify the NCR">(e.g. 2024-000)</small></label>
-                            *@                            <input asp-for="NcrReInspectCreationDate" class="form-control" readonly />
+                            @*<label asp-for="NcrReInspectCreationDate" class="control-label"><b>NCR No. </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Code to identify the NCR">(e.g. 2024-000)</small></label>
+                            *@<input asp-for="NcrReInspectCreationDate" class="form-control" readonly />
                         </div>
                     </div>
                 </div>
@@ -94,42 +83,15 @@
                         </div>
                     </div>
 
-                    <div class="form-group" id="ReinspectNotes" style="display: none;">
+                    <div class="form-group" id="ReinspectNotes">
                         <label asp-for="NcrReInspectNotes" class="control-label">
                             <strong>Notes </strong>
                             <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Enter notes for why the reinspection is not acceptable">(e.g. The NCR is not up to code.)</small>
                         </label>
-                        <span class="fw-bold red-asterisk">*</span>
                         <textarea asp-for="NcrReInspectNotes" class="form-control" id="Notes"></textarea>
-                        <span asp-validation-for="NcrReInspectNotes" class="text-danger"></span>                        
-                    </div>
-                    @* <div class="col-6">
-                    <div class="form-group">
-                    <label asp-for="NcrReInspectUserId" class="control-label"><b>Inspector's Name </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Name of the Inspector">(e.g. J. Doe)</small></label>
-                    <span class="fw-bold text-danger">*</span>
-                    <select asp-for="NcrReInspectUserId" class="form-control">
-                    <option value="">Please select an Inspector</option>
-                    <option value="1">J. Doe</option>
-                    <option value="2">E. Xample</option>
-                    <option value="3">S. Ample</option>
-                    <option value="4">T. Est</option>
-                    </select>
-                    <span asp-validation-for="NcrReInspectUserId" class="text-danger"></span>
-                    </div>
-                    </div> *@
-                    @* <div class="col-6">
-                    <div class="form-group">
-                    <label asp-for="Ncr.NcrQa.NcrQacreationDate" class="control-label"></label>
-                    <input asp-for="Ncr.NcrQa.NcrQacreationDate" class="form-control" readonly />
-                    <span asp-validation-for="Ncr.NcrQa.NcrQacreationDate" class="text-danger"></span>
-                    </div>
-                    </div> *@
-
+                        <span asp-validation-for="NcrReInspectNotes" class="text-danger"></span>
+                    </div>                    
                 </div>
-                @*                 <div class="row">
-
-
-                </div> *@
                 <div class="form-group">
                     <label class="control-label custom-file-label"><b>Upload Photos</b></label>
                     <input type="file" class="form-control" name="Photos" multiple="multiple" />
@@ -201,40 +163,6 @@
     </div>
 </div>
 
-@* <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="NcrReInspectAcceptable" /> @Html.DisplayNameFor(model => model.NcrReInspectAcceptable)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="NcrReInspectNewNcrNumber" class="control-label"></label>
-                <input asp-for="NcrReInspectNewNcrNumber" class="form-control" />
-                <span asp-validation-for="NcrReInspectNewNcrNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NcrReInspectUserId" class="control-label"></label>
-                <input asp-for="NcrReInspectUserId" class="form-control" />
-                <span asp-validation-for="NcrReInspectUserId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NcrId" class="control-label"></label>
-                <select asp-for="NcrId" class ="form-control" asp-items="ViewBag.NcrId"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Close" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div> *@
 
 @section Scripts {
     @{
@@ -248,9 +176,6 @@
             function saveDraft() {
                 document.getElementById("isDraftInput").value = "true";
                 var formData = new FormData(document.querySelector('#reInspectFormId'));
-                // for (var pair of formData.entries()) {
-                //     console.log(pair[0] + ', ' + pair[1]);
-                // }
                 $.ajax({
                     url: '/NcrReInspect/Create',
                     type: 'POST',
@@ -281,22 +206,8 @@
             return new bootstrap.Tooltip(tooltipTriggerEl);
         });
     </script>
-    @*     <script>
-        function NewNcr(){
-            event.preventDefault();
+   <script>
 
-            if (document.getElementById("false").checked) {
-                var confirmNew = confirm("Do you want to create a new NCR?");
-
-                if (confirmNew) {
-                    window.location.href = "/NcrQa/Create";
-                }
-            }
-        }
-    </script>
- *@
-
-    <script>
         let isAcceptable = true;
 
         function showAcceptableReinspectionModal() {
@@ -307,61 +218,27 @@
             $('#acceptableReinspectionModal').modal('hide');
         }
 
-        // Function to show/hide notes field and manage validation
-        function toggleReinspectionNotes() {
-            var reinspectionAcceptable = $('input[name="NcrReInspectAcceptable"]:checked').val();
-            var reinspectionNotes = $('#ReinspectNotes');
+        $('#ReinspectNotes').hide();
 
-            // Check the value of reinspectionAcceptable and toggle the visibility of notes field
-            if (reinspectionAcceptable === 'false') {
-                // Show notes field
-                reinspectionNotes.slideDown();
-                // Set required attribute
-                reinspectionNotes.find('textarea').prop('required', true);
-            } else {
-                // Hide notes field
-                reinspectionNotes.slideUp();
-                // Remove required attribute
-                reinspectionNotes.find('textarea').prop('required', false);
-            }
-        }
-
-        // Call the function on page load
-        toggleReinspectionNotes();
-
-        // Bind the function to the change event of the "acceptable" radio buttons
         $('input[name="NcrReInspectAcceptable"]').change(function () {
-            toggleReinspectionNotes();
-
+            console.log("Change event triggered for NcrReInspectAcceptable radio buttons.");
             isAcceptable = $(this).val();
 
             if (isAcceptable == 'false') {
                 console.log("Showing the modal...");
                 showAcceptableReinspectionModal();
+                $('#ReinspectNotes').slideDown();
             } else {
                 console.log("Hiding the modal...");
                 hideAcceptableReinspectionModal();
+                $('#ReinspectNotes').slideUp();
             }
         });
 
         document.getElementById('btnSaveAndClose').addEventListener('click', function (event) {
             event.preventDefault();
 
-            // Check if the notes field is required and has a value
-            if ($('input[name="NcrReInspectAcceptable"]:checked').val() === 'false' && $('#ReinspectNotes textarea').val().trim() === '') {
-                // Display validation message
-                $('#ReinspectNotes span.text-danger').text('You must provide reinspection notes if NCR is not acceptable.');
-                return;
-            } else {
-                // Clear validation message
-                $('#ReinspectNotes span.text-danger').text('');
-            }
-
-            // Check if the form is valid
-            if ($('#reInspectFormId')[0].checkValidity()) {
-                // If the form is valid, show the modal
-                showCloseReinspectionModal();
-            } 
+            showCloseReinspectionModal();                       
         });
 
         $('#closeReinspectionModal').on('hidden.bs.modal', function () {
@@ -371,22 +248,19 @@
         });
 
         function showCloseReinspectionModal() {
-            // Check if the form is valid before showing the modal
-            if ($('#reInspectFormId')[0].checkValidity()) {
-                $('#closeReinspectionModal').modal('show');
+            $('#closeReinspectionModal').modal('show');
 
-                document.getElementById('btnYes').addEventListener('click', function () {
-                    hideCloseReinspectionModal();
-                    document.getElementById('reInspectFormId').submit();
-                    modalConfirmed = true;
-                });
+            document.getElementById('btnYes').addEventListener('click', function () {
+                hideCloseReinspectionModal();
+                document.getElementById('reInspectFormId').submit();
+                modalConfirmed = true;
+            });
 
-                document.getElementById('btnNo').addEventListener('click', function () {
-                    hideCloseReinspectionModal();
-                    event.preventDefault();
-                    modalConfirmed = false;
-                });
-            } 
+            document.getElementById('btnNo').addEventListener('click', function () {
+                hideCloseReinspectionModal();
+                event.preventDefault();
+                modalConfirmed = false;
+            });
         }
 
         function hideCloseReinspectionModal() {

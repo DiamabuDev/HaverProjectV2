@@ -32,7 +32,6 @@ public class NcrReInspectMetaData
     public DateTime NcrReInspectCreationDate { get; set; }
 
     [Display(Name = "Inspector's Name")]
-    [Required(ErrorMessage = "You must provide the Inspector's Name")]
     [Column("ncrReInspectUserId")]
     public int NcrReInspectUserId { get; set; }
 

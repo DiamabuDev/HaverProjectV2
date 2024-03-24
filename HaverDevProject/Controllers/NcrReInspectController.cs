@@ -14,6 +14,7 @@ using HaverDevProject.Utilities;
 using HaverDevProject.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Identity;
 
 namespace HaverDevProject.Controllers
 {
@@ -21,10 +22,12 @@ namespace HaverDevProject.Controllers
     public class NcrReInspectController : ElephantController
     {
         private readonly HaverNiagaraContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public NcrReInspectController(HaverNiagaraContext context)
+        public NcrReInspectController(HaverNiagaraContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: NcrReInspect
@@ -61,25 +64,10 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
-                //.Where(n => n.Ncr.NcrPhase == NcrPhase.ReInspection)
                 .Where(n => n.Ncr.NcrPhase == NcrPhase.Closed)
                 .AsNoTracking();
 
             GetNcrs();
-
-            //Filterig values            
-            //if (!System.String.IsNullOrEmpty(filter))
-            //{
-            //    if (filter == "Closed")
-            //    {
-            //        ncrReInspect = ncrReInspect.Where(n => n.Ncr.NcrStatus == true);
-            //    }
-            //    else //(filter == "Closed")
-            //    {
-
-            //        ncrReInspect = ncrReInspect.Where(n => n.Ncr.NcrStatus == false);
-            //    }
-            //}
 
             if (!System.String.IsNullOrEmpty(SearchCode))
             {
@@ -282,7 +270,14 @@ namespace HaverDevProject.Controllers
             ViewBag.IsNCRReInspView = true;
 
             ViewBag.NCRSectionId = id;
-            
+
+            var user = await _userManager.FindByIdAsync(ncrReInspect.NcrReInspectUserId.ToString());
+            if (user != null)
+            {
+                ViewBag.UserFirstName = user.FirstName;
+                ViewBag.UserLastName = user.LastName;
+            }
+
             return View(ncrReInspect);
         }
 
@@ -303,7 +298,6 @@ namespace HaverDevProject.Controllers
             {
                 ncrReInspect = new NcrReInspect
                 {
-                    //Ncr = ncr,
                     NcrId = ncrId,
                     NcrReInspectCreationDate = DateTime.Now,
                     NcrNumber = ncrNumber
@@ -335,21 +329,38 @@ namespace HaverDevProject.Controllers
                         .ThenInclude(proc => proc.ProcDefectPhotos)
                 .FirstOrDefaultAsync(n => n.NcrId == ncrId);
 
-
             ncrReInspect.Ncr = ncr;
-            //NcrReInspect ncrReInspect = new NcrReInspect
-            //{
-            //    Ncr = ncr,
-            //    NcrId = ncrId,
-            //    NcrReInspectCreationDate = DateTime.Now,
-            //    NcrNumber = ncrNumber
-            //};
+
+            var readOnlyDetails = await _context.Ncrs
+                .Include(n => n.NcrQa)
+                        .ThenInclude(item => item.Supplier)
+                .Include(n => n.NcrQa)
+                            .ThenInclude(defect => defect.Defect)
+                .Include(n => n.NcrQa)
+                            .ThenInclude(i => i.Item)
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.ItemDefectPhotos)
+                .Include(n => n.NcrEng)
+                    .ThenInclude(eng => eng.EngDispositionType)
+                .Include(n => n.NcrEng)
+                    .ThenInclude(eng => eng.Drawing)
+                .Include(n => n.NcrEng)
+                    .ThenInclude(eng => eng.EngDefectPhotos)
+                .Include(n => n.NcrOperation)
+                    .ThenInclude(op => op.OpDispositionType)
+                .Include(n => n.NcrOperation)
+                    .ThenInclude(op => op.FollowUpType)
+                .Include(n => n.NcrOperation)
+                    .ThenInclude(op => op.OpDefectPhotos)
+                .FirstOrDefaultAsync(n => n.NcrId == ncrId);
 
             ViewBag.IsNCRQaView = false;
             ViewBag.IsNCREngView = false;
             ViewBag.IsNCROpView = false;
             ViewBag.IsNCRProcView = false;
             ViewBag.IsNCRReInspView = false;
+
+            ViewBag.ncrDetails = readOnlyDetails;
 
             return View(ncrReInspect);
         }
@@ -363,26 +374,29 @@ namespace HaverDevProject.Controllers
         {
             try
             {
-                if (isDraft)
-                {
-                    // convert the object to json format
-                    var json = JsonConvert.SerializeObject(ncrReInspect);
-
-                    // Save the object in a cookie with name "DraftData"
-                    Response.Cookies.Append("DraftNCRReInspect" + ncrReInspect.NcrNumber, json, new CookieOptions
-                    {
-                        // Define time for cookies
-                        Expires = DateTime.Now.AddMinutes(2880) // Cookied will expire in 48 hrs
-                    });
-
-                    return Ok(new { success = true, message = "Draft saved successfully.\nNote: This draft will be available for the next 48 hours." });
-                }
-
                 if (ModelState.IsValid)
                 {
-                    //await AddReInspectPictures(ncrReInspect, Photos);
+                    var user = await _userManager.GetUserAsync(User);
 
-                    //ncrReInspect.NcrReInspectNewNcrNumber = GetNcrNumber();
+                    if (user != null)
+                    {
+                        ncrReInspect.NcrReInspectUserId = user.Id;
+                    }
+
+                    if (isDraft)
+                    {
+                        // convert the object to json format
+                        var json = JsonConvert.SerializeObject(ncrReInspect);
+
+                        // Save the object in a cookie with name "DraftData"
+                        Response.Cookies.Append("DraftNCRReInspect" + ncrReInspect.NcrNumber, json, new CookieOptions
+                        {
+                            // Define time for cookies
+                            Expires = DateTime.Now.AddMinutes(2880) // Cookied will expire in 48 hrs
+                        });
+
+                        return Ok(new { success = true, message = "Draft saved successfully.\nNote: This draft will be available for the next 48 hours." });
+                    }
 
                     string isAcceptable = form["NcrReInspectAcceptable"];
 
@@ -534,9 +548,13 @@ namespace HaverDevProject.Controllers
             {
                 try
                 {
-                    await AddReInspectPictures(ncrReInspectToUpdate, Photos);
+                    var user = await _userManager.GetUserAsync(User);
+                    if (user != null)
+                    {
+                        ncrReInspectToUpdate.NcrReInspectUserId = user.Id;
+                    }
 
-                    //await _context.SaveChangesAsync();
+                    await AddReInspectPictures(ncrReInspectToUpdate, Photos);
 
                     var ncrToUpdate = await _context.Ncrs.FindAsync(ncrReInspectToUpdate.NcrId);
 
@@ -595,54 +613,6 @@ namespace HaverDevProject.Controllers
             return View(ncrReInspectToUpdate);
         }
 
-        // GET: NcrReInspect/Delete/5
-        //public async Task<IActionResult> Delete(int? id)
-        //{
-        //    if (id == null || _context.NcrReInspects == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var ncrReInspect = await _context.NcrReInspects
-        //        .Include(n => n.Ncr)
-        //        .FirstOrDefaultAsync(m => m.NcrReInspectId == id);
-        //    if (ncrReInspect == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(ncrReInspect);
-        //}
-
-        //// POST: NcrReInspect/Delete/5
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(int id)
-        //{
-        //    if (_context.NcrReInspects == null)
-        //    {
-        //        return Problem("There are no Re-Inspections to delete.");
-        //    }
-        //    var ncrReInspect = await _context.NcrReInspects.FindAsync(id);
-
-        //    try
-        //    {
-        //        if (ncrReInspect != null)
-        //        {
-        //            _context.NcrReInspects.Remove(ncrReInspect);
-        //        }
-
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch (DbUpdateException)
-        //    {
-        //        ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
-        //    }
-
-        //    return View(ncrReInspect);
-        //}
-
         private async Task AddReInspectPictures(NcrReInspect ncrReInspect, List<IFormFile> pictures)
         {
             if (pictures != null && pictures.Any())
@@ -689,21 +659,6 @@ namespace HaverDevProject.Controllers
 
         public JsonResult GetNcrs()
         {
-            // Get the list of NcrIds that already exist in NcrOperation
-            //List<int> ncrOpPending = _context.Ncrs
-            //    .Where(n => n.NcrPhase == NcrPhase.Operations)
-            //    .Select(n => n.NcrId)
-            //    .ToList();
-
-            //// Include related data in the query for NcrEng
-            //List<NcrEng> pendings = _context.NcrEngs
-            //    .Include(n => n.Ncr)
-            //        .ThenInclude(n => n.NcrQa)
-            //            .ThenInclude(n => n.Item)
-            //                .ThenInclude(n => n.Supplier) 
-            //    .Where(ncrEng => !existingNcrIds.Contains(ncrEng.NcrId))
-            //    .ToList();
-
             List<Ncr> pendings = _context.Ncrs
                 .Include(n => n.NcrQa).ThenInclude(n => n.Supplier)
                 .Where(n => n.NcrPhase == NcrPhase.ReInspection)
@@ -724,22 +679,6 @@ namespace HaverDevProject.Controllers
 
         public JsonResult GetPendingCount()
         {
-            // Get the list of NcrIds that already exist in NcrOperation
-            //List<int> existingNcrIds = _context.NcrOperations.Select(op => op.NcrId).ToList();
-
-            //List<int> ncrOpPending = _context.Ncrs
-            //    .Where(n => n.NcrPhase == NcrPhase.Operations)
-            //    .Select(n => n.NcrId)
-            //    .ToList();
-
-
-            //// Count only the unique NcrIds in NcrEngs
-            //int pendingCount = _context.NcrEngs
-            //    .Where(ncrEng => ncrOpPending.Contains(ncrEng.NcrId))
-            //    .Select(ncrEng => ncrEng.NcrId)
-            //    .Distinct()
-            //    .Count();
-
             int pendingCount = _context.Ncrs
                 .Where(n => n.NcrPhase == NcrPhase.ReInspection)
                 .Count();
