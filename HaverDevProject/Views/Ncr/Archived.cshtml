@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<HaverDevProject.Models.Ncr>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Archived";
 }
 
 <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
@@ -22,64 +22,57 @@
     </div>
 </div>
 
-<div class="modal fade" id="voidConfirmationModal" tabindex="-1" aria-labelledby="voidConfirmationModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="voidConfirmationModalLabel">Void NCR</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <label for="voidReasonInput" class="form-label">Please provide a reason for voiding this NCR:</label>
-                <textarea class="form-control" id="voidReasonInput" rows="3" placeholder="Enter reason..." name="NcrVoidReason"></textarea>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" id="confirmVoidButton">Void</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<h1><i class="bi bi-caret-right-fill"></i> Non-Conformance Reports</h1>
+<h1><i class="bi bi-caret-right-fill"></i> Archived Reports</h1>
 
 <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item" role="presentation">
-        <a class="nav-link active" id="ncrLog-tab" data-bs-toggle="tab" href="#ncrLog" role="tab" aria-controls="ncrLog" aria-selected="true">NCR Log</a>
+        <a class="nav-link" id="ncrLog-tab" href="/Ncr/Index">NCR Log</a>
     </li>
     <li class="nav-item" role="presentation">
-        <a class="nav-link" id="archive-tab" href="/Ncr/Archived">Archive</a>
+        <a class="nav-link active" id="archive-tab" data-bs-toggle="tab" href="/Ncr/Archived" role="tab" aria-controls="archive" aria-selected="true">Archive</a>
     </li>
     <li class="nav-item" role="presentation">
         <a class="nav-link" id="void-tab" href="/Ncr/Void">Void</a>
     </li>
 </ul>
 
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6 col-lg-4" style="padding-top: 20px;">
+            <!-- Adjust column size as needed -->
+            <button class="btn btn-primary mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#archiveCollapse" aria-expanded="false" aria-controls="archiveCollapse">
+                Archive NCRs
+            </button>
+            <div class="collapse" id="archiveCollapse">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title" data-bs-toggle="tooltip" data-bs-placement="top" title="How many years ago from today that an NCR was created">Select Number of Years to Archive NCRs</h5>
+                        <form method="post" action="@Url.Action("ArchiveManyNcrs", "Ncr")">
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="archiveYear" name="archiveYear" min="1" placeholder="Enter number of years" required>
+                                <button type="submit" class="btn btn-primary">Archive NCRs</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<form id="ncrForm" asp-action="Index" method="get">
+
+
+<form id="ncrForm" asp-action="Archived" method="get">
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
     <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
     <input type="hidden" id="filter" name="filter" value="@ViewData["filter"]" />
-    <div class="row mt-3 mb-2">
-        <div class="col-8">
-            <div class="d-flex justify-content-start">
-                <input type="radio" class="btn-check btn-filter" name="filter" id="All" autocomplete="off" value="All" data-filter="All">
-                <label class="btn @ViewData["filterApplied:ButtonAll"] me-2" for="All">All NCRs</label>
-
-                <input type="radio" class="btn-check btn-filter" name="filter" id="Active" autocomplete="off" checked value="Active" data-filter="Active">
-                <label class="btn @ViewData["filterApplied:ButtonActive"] me-2" for="Active">Active NCRs</label>
-
-                <input type="radio" class="btn-check btn-filter" name="filter" id="Closed" autocomplete="off" value="Closed" data-filter="Closed">
-                <label class="btn @ViewData["filterApplied:ButtonClosed"] me-2" for="Closed">Closed NCRs </label>
-            </div>
-        </div>
-        <div class="col-4 text-end">
+    <div class="row mb-2">
+        <div class="col-12 text-end">
             <button class="btn @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
                 @ViewData["numberFilters"]
             </button>
         </div>
     </div>
-
     <div class="form-horizontal">
         <div class="card card-body bg-custom-color mb-2">
             <div class="row d-flex justify-content-center align-items-center">
@@ -102,7 +95,7 @@
                 </div>
                 <div class="form-group col-lg-2 col-md-7 col-sm-10 col-10 align-self-end">
                     <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary ms-2" />
-                    <a asp-action="Index" class="btn btn-outline-dark ms-4">Clear</a>
+                    <a asp-action="Archived" class="btn btn-outline-dark ms-4">Clear</a>
                 </div>
             </div>
         </div>
@@ -111,44 +104,43 @@
         <thead class="custom-header-bg">
             <tr>
                 <th></th>
-                <th style="width: 10%;" class="d-none d-md-table-cell">
+                <th class="d-none d-md-table-cell">
                     <button type="submit" name="actionButton" value="Created" class="btn text-light custom-btn-text-start">
                         Created
                         @Html.Raw(ViewData["filterApplied:Created"])
                     </button>
                 </th>
-                <th style="width: 10%;">
+                <th>
                     <button type="submit" name="actionButton" value="NCR #" class="btn text-light custom-btn-text-start">
                         NCR #
                         @Html.Raw(ViewData["filterApplied:NcrNumber"])
                     </button>
                 </th>
-                <th style="width: 15%;" class="col-3">
+                <th class="col-3">
                     <button type="submit" name="actionButton" value="Supplier" class="btn text-light custom-btn-text-start">
                         Supplier
                         @Html.Raw(ViewData["filterApplied:Supplier"])
                     </button>
                 </th>
-                <th style="width: 15%;" class="three-cols">
+                <th class="three-cols">
                     <button type="submit" name="actionButton" value="Defect" class="btn text-light custom-btn-text-start">
                         Defect
                         @Html.Raw(ViewData["filterApplied:Defect"])
                     </button>
                 </th>
-                <th style="width: 10%;" class="d-none d-md-table-cell">
+                <th class="d-none d-md-table-cell">
                     <button type="submit" name="actionButton" value="PO Number" class="btn text-light custom-btn-text-start">
                         PO Number
                         @Html.Raw(ViewData["filterApplied:PONumber"])
                     </button>
                 </th>
-                <th style="width: 10%;" class="d-none d-xxl-table-cell">
+                <th class="d-none d-xxl-table-cell">
                     <button type="submit" name="actionButton" value="Phase" class="btn text-light custom-btn-text-start">
                         Phase
                         @Html.Raw(ViewData["filterApplied:Phase"])
                     </button>
                 </th>
-
-                <th style="width: 10%;" class="d-none d-xxl-table-cell">
+                <th class="d-none d-xxl-table-cell">
                     <button type="submit" name="actionButton" value="Last Updated" class="btn text-light custom-btn-text-start">
                         Last Updated
                         @Html.Raw(ViewData["filterApplied:Last Updated"])
@@ -158,7 +150,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model.Where(ncr => ncr.NcrPhase != NcrPhase.Archive && ncr.NcrPhase != NcrPhase.Void))
+            @foreach (var item in Model)
             {
                 <tr>
                     <td class="ps-1 @((item.NcrStatus == true) ? "stillactive" : "closed" )">
@@ -190,22 +182,18 @@
                     </td>
 
                     <td class="align-middle">
-                        @if (item.NcrPhase == NcrPhase.Closed)
+                        @if (item.NcrPhase == NcrPhase.Archive && item.NcrQa.NcrQacreationDate.AddYears(5) > DateTime.Now)
                         {
                             <div class="btn-group" role="group" aria-label="NCR Actions">
                                 <a asp-action="Details" asp-route-id="@item.NcrId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Details">
                                     <i class="bi bi-eye-fill"></i>
                                 </a>
 
-                                <a asp-action="ArchiveNcr" asp-route-id="@item.NcrId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Archive NCR">
+                                <a asp-action="RestoreNcr" asp-route-id="@item.NcrId" class="btn btn-sm btn-success me-1" data-bs-toggle="tooltip" title="Restore NCR">
                                     <i class="bi bi-archive-fill"></i>
                                 </a>
 
-                                <a href="#" class="btn btn-sm btn-danger me-1 void-button" data-bs-toggle="tooltip" title="Void NCR" data-id="@item.NcrId">
-                                    <i class="bi bi-slash-circle"></i>
-                                </a>
-
-                                <a href="#" class="btn btn-sm btn-danger me-1 delete-button" data-bs-toggle="tooltip" title="Delete NCR" data-id="@item.NcrId">
+                                <a href="#" class="btn btn-sm btn-danger delete-button" data-bs-toggle="tooltip" title="Delete NCR" data-id="@item.NcrId">
                                     <i class="bi bi-trash"></i>
                                 </a>
                             </div>
@@ -217,22 +205,12 @@
                                     <i class="bi bi-eye-fill"></i>
                                 </a>
 
-                                <a href="#" class="btn btn-sm btn-danger me-1 void-button" data-bs-toggle="tooltip" title="Void NCR" data-id="@item.NcrId">
-                                    <i class="bi bi-slash-circle"></i>
-                                </a>
-
-                                <a href="#" class="btn btn-sm btn-danger me-1 delete-button" data-bs-toggle="tooltip" title="Delete NCR" data-id="@item.NcrId">
+                                <a href="#" class="btn btn-sm btn-danger delete-button" data-bs-toggle="tooltip" title="Delete NCR" data-id="@item.NcrId">
                                     <i class="bi bi-trash"></i>
                                 </a>
-
-
                             </div>
                         }
                     </td>
-
-
-
-
 
                 </tr>
             }
@@ -288,11 +266,13 @@
             const confirmDeleteButton = document.getElementById('confirmDeleteButton');
 
             let currentNcrId;
+            let archiveUrl;
 
             deleteButtons.forEach(button => {
                 button.addEventListener('click', function (e) {
                     e.preventDefault();
                     currentNcrId = this.getAttribute('data-id');
+                    archiveUrl = this.getAttribute('data-archive-url');
                     $('#deleteConfirmationModal').modal('show');
                 });
             });
@@ -323,76 +303,14 @@
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const filters = document.querySelectorAll('.btn-filter');
-            const activeFilter = localStorage.getItem('activeFilter');
-
-            if (activeFilter) {
-                filters.forEach(filter => {
-                    if (filter.value === activeFilter) {
-                        filter.checked = true;
-                    }
-                });
-            }
-
-            filters.forEach(filter => {
-                filter.addEventListener('change', function () {
-                    localStorage.setItem('activeFilter', this.value);
-                });
-            });
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
             const archiveTab = document.getElementById('archive-tab');
-            const archiveYearInput = document.getElementById('archiveYear');
-
-            // Check if there's a stored value for archive year, if not, set default to 5
-            const storedArchiveYear = localStorage.getItem('archiveYear');
-            if (storedArchiveYear) {
-                archiveYearInput.value = storedArchiveYear;
-            } else {
-                archiveYearInput.value = 5; // Default value
-            }
-
             archiveTab.addEventListener('click', function (event) {
-                // Store the current value of archive year in local storage
-                localStorage.setItem('archiveYear', archiveYearInput.value);
+                event.preventDefault(); // Prevent the default tab switch behavior
+                window.location.href = '/Ncr/Archived'; // Navigate to the desired URL
             });
         });
     </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const voidButtons = document.querySelectorAll('.void-button');
-            const confirmVoidButton = document.getElementById('confirmVoidButton');
-
-            let currentNcrId;
-
-            voidButtons.forEach(button => {
-                button.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    currentNcrId = this.getAttribute('data-id');
-                    $('#voidConfirmationModal').modal('show');
-                });
-            });
-
-            confirmVoidButton.addEventListener('click', function () {
-                const voidReason = document.getElementById('voidReasonInput').value;
-                if (!voidReason) {
-                    alert('Please provide a reason for voiding the NCR.');
-                    return;
-                }
-                // Proceed with the voiding and pass the void reason to the action method
-                window.location.href = `/Ncr/VoidNcr?id=${currentNcrId}&voidReason=${encodeURIComponent(voidReason)}`;
-            });
-
-            // Ensure the modal is closed on cancel
-            $('#voidConfirmationModal').on('hidden.bs.modal', function () {
-                currentNcrId = null;
-                document.getElementById('voidReasonInput').value = '';
-            });
-        });
-    </script>
+   
 
 
 

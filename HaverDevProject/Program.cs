@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using OfficeOpenXml;
 using System.Text.Json.Serialization;
+using HaverDevProject.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,6 +66,12 @@ builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 //For email service configuration
 builder.Services.AddSingleton<IEmailConfiguration>(builder.Configuration
     .GetSection("EmailConfiguration").Get<EmailConfiguration>());
+
+//NcrArchivingService
+builder.Services.AddScoped<NcrArchivingService>();
+
+//AutomaticArchivingService as a hosted service
+builder.Services.AddHostedService<AutomaticNcrArchivingService>();
 
 //For the Identity System
 builder.Services.AddTransient<IEmailSender, EmailSender>();
