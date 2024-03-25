@@ -70,7 +70,6 @@ builder.Services.AddSingleton<IEmailConfiguration>(builder.Configuration
 //NcrArchivingService
 builder.Services.AddScoped<NcrArchivingService>();
 
-//AutomaticArchivingService as a hosted service
 builder.Services.AddHostedService<AutomaticNcrArchivingService>();
 
 //For the Identity System
