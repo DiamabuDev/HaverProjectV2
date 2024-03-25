@@ -14,14 +14,14 @@
 
             <div class="row">
                 <div class="col-3 mb-5">
-                    <a class="dashboard-item text-decoration-none bg-primary text-white" asp-area="" asp-controller="Ncr" asp-action="Index">
+                    <a class="dashboard-item text-decoration-none bg-primary" asp-area="" asp-controller="Ncr" asp-action="Index">
                         <i class="bi bi-file-earmark-spreadsheet"></i>
                         <p>NCR Log</p>
                     </a>
                 </div>            
                 <div class="col-3 mb-5">
                     <div class="dropdown">
-                        <a role="button" href="#" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false" class="dashboard-item dropdown-with text-decoration-none bg-primary text-white">
+                        <a role="button" href="#" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false" class="dashboard-item dropdown-with text-decoration-none bg-primary ">
                             <i class="bi bi-building-gear"></i>
                             <p class="dropdown-toggle">
                                 Sections
@@ -37,7 +37,7 @@
                     </div>
                 </div>
                 <div class="col-3">
-                    <a class="dashboard-item text-decoration-none bg-primary text-white" asp-area="" asp-controller="Supplier" asp-action="Index">
+                    <a class="dashboard-item text-decoration-none bg-primary" asp-area="" asp-controller="Supplier" asp-action="Index">
                         <i class="bi bi-buildings"></i>
                         <p>Suppliers</p>
                     </a>
@@ -46,7 +46,7 @@
             </div>
             <div class="row">
                 <div class="col-3">
-                    <a class=" dashboard-item text-decoration-none bg-primary text-white" asp-area="" asp-controller="UserRole" asp-action="Index">
+                    <a class=" dashboard-item text-decoration-none bg-primary" asp-area="" asp-controller="UserRole" asp-action="Index">
                         <i class="bi bi-buildings"></i>
                         <p>Users</p>
                     </a>
@@ -59,7 +59,7 @@
                 </div>
                 <div class="col-3">
                     <div class="dropdown">
-                        <a role="button" href="#" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false" class="dashboard-item dropdown-with text-decoration-none bg-primary text-white">
+                        <a role="button" href="#" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false" class="dashboard-item dropdown-with text-decoration-none bg-primary ">
                             <i class="bi bi-building-gear"></i>
                             <p class="dropdown-toggle">
                                 Administrator
@@ -86,15 +86,15 @@
             </div>
             <div class="row">
                 <div class="col-md-3 mb-5">
-                    <div class="dashboard-item text-decoration-none bg-warning text-white">
+                    <a class="dashboard-item text-decoration-none bg-warning" asp-area="" asp-controller="NcrReInspect" asp-action="Index">
                         <i class="bi bi-bell-fill"></i>
                         <p id="pendingCountReInsp"></p>
-                    </div>
+                    </a>
                 </div>
                 <div class="col-md-4">
                 </div>
                 <div class="col-md-3 mb-5">
-                    <a class="dashboard-item newncr text-decoration-none bg-success text-white" asp-area="" asp-controller="NcrQa" asp-action="Create">
+                    <a class="dashboard-item newncr text-decoration-none bg-success" asp-area="" asp-controller="NcrQa" asp-action="Create">
                         <i class="bi bi-file-earmark-plus"></i>
                         <p>New NCR</p>
                     </a>
@@ -102,7 +102,7 @@
             </div>
             <div class="row">
                 <div class="col-md-3">
-                    <a class="dashboard-item text-decoration-none bg-primary text-white" asp-area="" asp-controller="NcrQa" asp-action="Index">
+                    <a class="dashboard-item text-decoration-none bg-primary" asp-area="" asp-controller="NcrQa" asp-action="Index">
                         <i class="bi bi-file-earmark-spreadsheet"></i>
                         <p>NCR Quality Log</p>
                     </a>
@@ -110,7 +110,7 @@
                 <div class="col-md-4">
                 </div>
                 <div class="col-md-3">
-                    <a class="dashboard-item text-decoration-none bg-primary text-white" asp-area="" asp-controller="NcrReInspect" asp-action="Index">
+                    <a class="dashboard-item text-decoration-none bg-primary" asp-area="" asp-controller="NcrReInspect" asp-action="Index">
                         <i class="bi bi-file-earmark-spreadsheet"></i>
                         <p>NCR ReInspection Log</p>
                     </a>
@@ -128,15 +128,15 @@
             </div>
             <div class="row">
                 <div class="col-md-3">
-                    <div class="dashboard-item text-decoration-none bg-warning text-white">
+                    <a class="dashboard-item text-decoration-none bg-warning" asp-area="" asp-controller="NcrEng" asp-action="Index">
                         <i class="bi bi-bell-fill"></i>
                         <p id="pendingCountEng"></p>
-                    </div>
+                    </a>
                 </div>
                 <div class="col-md-4">
                 </div>
                 <div class="col-md-3">
-                    <a class="dashboard-item text-decoration-none bg-primary text-white" asp-area="" asp-controller="NcrEng" asp-action="Index">
+                    <a class="dashboard-item text-decoration-none bg-primary" asp-area="" asp-controller="NcrEng" asp-action="Index">
                         <i class="bi bi-file-earmark-spreadsheet"></i>
                         <p>NCR Log</p>
                     </a>
@@ -154,15 +154,15 @@
             </div>
             <div class="row">
                 <div class="col-md-3">
-                    <div class="dashboard-item text-decoration-none bg-warning text-white">
+                    <a class="dashboard-item text-decoration-none bg-warning" asp-area="" asp-controller="NcrOperation" asp-action="Index">
                         <i class="bi bi-bell-fill"></i>
                         <p id="pendingCountOp"></p>
-                    </div>
+                    </a>
                 </div>
                 <div class="col-md-4">
                 </div>
                 <div class="col-md-3">
-                    <a class="dashboard-item text-decoration-none bg-primary text-white" asp-area="" asp-controller="NcrOperation" asp-action="Index">
+                    <a class="dashboard-item text-decoration-none bg-primary" asp-area="" asp-controller="NcrOperation" asp-action="Index">
                         <i class="bi bi-file-earmark-spreadsheet"></i>
                         <p>NCR Log</p>
                     </a>
@@ -180,15 +180,15 @@
             </div>
             <div class="row">
                 <div class="col-md-3">
-                    <div class="dashboard-item text-decoration-none bg-warning text-white">
+                    <a class="dashboard-item text-decoration-none bg-warning" asp-area="" asp-controller="NcrProcurement" asp-action="Index">
                         <i class="bi bi-bell-fill"></i>
                         <p id="pendingCountProc"></p>
-                    </div>
+                    </a>
                 </div>
                 <div class="col-md-4">
                 </div>
                 <div class="col-md-3">
-                    <a class="dashboard-item text-decoration-none bg-primary text-white" asp-area="" asp-controller="NcrProcurement" asp-action="Index">
+                    <a class="dashboard-item text-decoration-none bg-primary" asp-area="" asp-controller="NcrProcurement" asp-action="Index">
                         <i class="bi bi-file-earmark-spreadsheet"></i>
                         <p>NCR Log</p>
                     </a>
