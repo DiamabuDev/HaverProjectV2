@@ -108,10 +108,7 @@
                                     </tbody>
                                 </table>
                             </div>
-
-                            </div>
-
-                            
+                            </div>                            
                         }
                         </div>
                         <div class="card">
@@ -127,8 +124,8 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td class="three-cols">@ViewData["CreatorFirstName"] @ViewData["CreatorLastName"]</td>
-                                    <td class="three-cols">@ViewData["EditorFirstName"] @ViewData["EditorLastName"]</td>
+                                    <td class="three-cols">@await Component.InvokeAsync("UserDetails", new { userEmail = Model.CreatedBy, section = "eng" })</td>
+                                    <td class="three-cols">@await Component.InvokeAsync("UserDetails", new { userEmail = Model.UpdatedBy, section = "eng" })</td>
                                     <td class="three-cols">@Model.Ncr.NcrQa.NcrQacreationDate.ToString("yyyy-MM-dd")</td>
                                     <td class="three-cols">
                                         @{

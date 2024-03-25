@@ -1,4 +1,4 @@
-﻿@model HaverDevProject.ViewModels.NcrQaDetailsVM
+﻿@model HaverDevProject.Models.NcrQa
 
 <style>
     .modal1 {
@@ -61,10 +61,10 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td class="four-cols">@(Model.NcrQa.NcrQaProcessApplicable == true ? "Supplier or Rec-Insp" : "WIP (Production Order)")</td>
-                                    <td class="four-cols">@Model.NcrQa.Supplier.SupplierName</td>
-                                    <td class="four-cols">@Model.NcrQa.NcrQaOrderNumber</td>
-                                    <td class="four-cols">@Model.NcrQa.NcrQaSalesOrder</td>
+                                    <td class="four-cols">@(Model.NcrQaProcessApplicable == true ? "Supplier or Rec-Insp" : "WIP (Production Order)")</td>
+                                    <td class="four-cols">@Model.Supplier.SupplierName</td>
+                                    <td class="four-cols">@Model.NcrQaOrderNumber</td>
+                                    <td class="four-cols">@Model.NcrQaSalesOrder</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -79,8 +79,8 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td class="two-cols-1">@(Model.NcrQa.NcrQaItemMarNonConforming == true ? "Yes" : "No")</td>
-                                    <td class="two-cols">@(Model.NcrQa.NcrQaEngDispositionRequired == true ? "Yes" : "No")</td>
+                                    <td class="two-cols-1">@(Model.NcrQaItemMarNonConforming == true ? "Yes" : "No")</td>
+                                    <td class="two-cols">@(Model.NcrQaEngDispositionRequired == true ? "Yes" : "No")</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -101,10 +101,10 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td class="four-cols">@Model.NcrQa.Item.ItemNumber</td>
-                                        <td class="four-cols">@Model.NcrQa.Item.ItemName</td>
-                                        <td class="four-cols">@Model.NcrQa.NcrQaQuanReceived</td>
-                                        <td class="four-cols">@Model.NcrQa.NcrQaQuanDefective</td>
+                                        <td class="four-cols">@Model.Item.ItemNumber</td>
+                                        <td class="four-cols">@Model.Item.ItemName</td>
+                                        <td class="four-cols">@Model.NcrQaQuanReceived</td>
+                                        <td class="four-cols">@Model.NcrQaQuanDefective</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -124,8 +124,8 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td class="two-cols-1">@Model.NcrQa.Defect.DefectName</td>
-                                        <td class="two-cols">@Model.NcrQa.NcrQaDescriptionOfDefect</td>
+                                        <td class="two-cols-1">@Model.Defect.DefectName</td>
+                                        <td class="two-cols">@Model.NcrQaDescriptionOfDefect</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -145,14 +145,14 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td class="three-cols">@Model.Creator.FirstName @Model.Creator.LastName</td>
-                                    <td class="three-cols">@Model.Editor.FirstName @Model.Editor.LastName</td>
-                                    <td class="three-cols">@Model.NcrQa.NcrQacreationDate.ToString("yyyy-MM-dd")</td>
+                                    <td class="three-cols">@await Component.InvokeAsync("UserDetails", new { userEmail = Model.CreatedBy, section = "qa" })</td>
+                                    <td class="three-cols">@await Component.InvokeAsync("UserDetails", new { userEmail = Model.UpdatedBy, section = "qa" })</td>
+                                    <td class="three-cols">@Model.NcrQacreationDate.ToString("yyyy-MM-dd")</td>
                                     <td class="three-cols">
                                         @{
-                                            if (Model.NcrQa.UpdatedOn.HasValue)
+                                            if (Model.UpdatedOn.HasValue)
                                             {
-                                                DateTime localUpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(Model.NcrQa.UpdatedOn.Value, TimeZoneInfo.Local);
+                                                DateTime localUpdatedOn = TimeZoneInfo.ConvertTimeFromUtc(Model.UpdatedOn.Value, TimeZoneInfo.Local);
                                                 @localUpdatedOn.ToString("yyyy-MM-dd HH:mm:ss")
                                             }
                                             else
@@ -166,8 +166,8 @@
                     </div>
                 </div>
                 @{
-                    bool hasImages = Model.NcrQa.ItemDefectPhotos != null && Model.NcrQa.ItemDefectPhotos.Any(p => p.ItemDefectPhotoContent != null);
-                    bool hasVideos = Model.NcrQa.NcrQaDefectVideo != null;
+                    bool hasImages = Model.ItemDefectPhotos != null && Model.ItemDefectPhotos.Any(p => p.ItemDefectPhotoContent != null);
+                    bool hasVideos = Model.NcrQaDefectVideo != null;
                 }
                 @if (hasImages || hasVideos)
                 {
@@ -183,9 +183,9 @@
                             <div class="card-body pb-0">
                                 <div class="row justify-content-center">
                                     @{
-                                        if (Model.NcrQa.ItemDefectPhotos != null && Model.NcrQa.ItemDefectPhotos.Any())
+                                        if (Model.ItemDefectPhotos != null && Model.ItemDefectPhotos.Any())
                                         {
-                                            foreach (var photo in Model.NcrQa.ItemDefectPhotos)
+                                            foreach (var photo in Model.ItemDefectPhotos)
                                             {
                                                 if (photo.ItemDefectPhotoContent != null)
                                                 {
@@ -193,7 +193,7 @@
                                                     string imageSrc = string.Format("data:" + photo.ItemDefectPhotoMimeType + ";base64,{0}", imageBase64);
 
                                                     <div class="text-center pb-3 col-6">
-                                                        <img src="@imageSrc" alt="Photo of @Model.NcrQa.Ncr.NcrQa.NcrId" class="img-fluid rounded" onclick="openModal('@imageSrc')" />
+                                                        <img src="@imageSrc" alt="Photo of @Model.Ncr.NcrQa.NcrId" class="img-fluid rounded" onclick="openModal('@imageSrc')" />
                                                     </div>
                                                 }
                                             }
@@ -208,9 +208,9 @@
                                 Videos
                             </div>
                             <div class="card-body">
-                                @if (Model.NcrQa.NcrQaDefectVideo != null)
+                                @if (Model.NcrQaDefectVideo != null)
                                 {
-                                    @foreach (var videoUrl in Model.NcrQa.NcrQaDefectVideo.Split(','))
+                                    @foreach (var videoUrl in Model.NcrQaDefectVideo.Split(','))
                                     {
                                         <a href="@videoUrl" target="_blank">Video Link</a>
                                         <br />

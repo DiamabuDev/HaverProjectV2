@@ -309,26 +309,8 @@ namespace HaverDevProject.Controllers
             ViewBag.IsNCRReInspView = false;
 
             ViewBag.NCRSectionId = id;
-                        
-            ApplicationUser creator = null;
-            ApplicationUser editor = null;
 
-            creator = await _userManager.FindByEmailAsync(ncrQa.CreatedBy.ToString());                 
-            editor = await _userManager.FindByEmailAsync(ncrQa.UpdatedBy.ToString());                        
-
-            var ncrQaVM = new NcrQaDetailsVM
-            {
-                Ncr = ncrQa.Ncr,        
-                NcrQa = ncrQa,
-                NcrEng = ncrQa.Ncr?.NcrEng, 
-                NcrOperation = ncrQa.Ncr?.NcrOperation,
-                NcrProcurement = ncrQa.Ncr?.NcrProcurement,
-                NcrReInspect = ncrQa.Ncr?.NcrReInspect,
-                Creator = creator,
-                Editor = editor
-            };
-
-            return View(ncrQaVM);
+            return View(ncrQa);
         }
 
         // GET: NcrQa/Create
