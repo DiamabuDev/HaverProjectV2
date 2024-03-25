@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using Spire.Xls;
 using OfficeOpenXml;
 using System.Drawing;
+using System.IO;
 
 namespace HaverDevProject.Controllers
 {
@@ -1099,11 +1100,16 @@ namespace HaverDevProject.Controllers
             try
             {
                 // Load NCR excel template 
-                var excelFilePath = "\\ncr-template.xlsx";
-                var excelPictureFilePath = "~\\picture-template.xlsx";
+                string solutionDir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+                string excelPictureFilePath = Path.Combine(solutionDir, "picture-template.xlsx");
+                string solutionDirtwo = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+                string excelPictureFilePathtwo = Path.Combine(solutionDirtwo, "ncr-template.xlsx");
+
+                //var excelFilePath = "ncr-template.xlsx";
+                //var excelPictureFilePath = "picture-template.xlsx";
                 Workbook workbook = new Workbook();
                 Workbook workbookPicture = new Workbook();
-                workbook.LoadTemplateFromFile(excelFilePath);
+                workbook.LoadTemplateFromFile(excelPictureFilePathtwo);
                 workbookPicture.LoadTemplateFromFile(excelPictureFilePath);
 
 
