@@ -898,8 +898,8 @@ namespace HaverDevProject.Controllers
                 {
                     worksheet.Cells[row, 1].Value = item.Ncr.NcrNumber;
                     worksheet.Cells[row, 2].Value = item.Ncr.NcrQa.Supplier.SupplierName;
-                    worksheet.Cells[row, 3].Value = item.NcrProcSupplierReturnReq;
-                    worksheet.Cells[row, 4].Value = item.NcrProcSAPReturnCompleted;
+                    worksheet.Cells[row, 3].Value = item.NcrProcSupplierReturnReq ? "Yes" : "No";
+                    worksheet.Cells[row, 4].Value = item.NcrProcSAPReturnCompleted ? "Yes" : "No";
                     worksheet.Cells[row, 5].Value = item.Ncr.NcrPhase.ToString();
                     worksheet.Cells[row, 6].Value = item.Ncr.NcrQa.NcrQacreationDate.ToString();
                     worksheet.Cells[row, 7].Value = item.Ncr.NcrLastUpdated.ToString();
