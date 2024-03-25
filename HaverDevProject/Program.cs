@@ -1,10 +1,14 @@
 using HaverDevProject.Data;
+using HaverDevProject.Utilities;
+using HaverDevProject.ViewModels;
 using HaverDevProject.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using OfficeOpenXml;
 using System.Text.Json.Serialization;
+using HaverDevProject.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,6 +63,22 @@ ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 //To give access to IHttpContextAccesor for Audit Data with IAuditable
 builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+//For email service configuration
+builder.Services.AddSingleton<IEmailConfiguration>(builder.Configuration
+    .GetSection("EmailConfiguration").Get<EmailConfiguration>());
+
+//NcrArchivingService
+builder.Services.AddScoped<NcrArchivingService>();
+
+//AutomaticArchivingService as a hosted service
+builder.Services.AddHostedService<AutomaticNcrArchivingService>();
+
+//For the Identity System
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+
+//Email with added methods for production use.
+builder.Services.AddTransient<IMyEmailSender, MyEmailSender>();
+
 builder.Services.AddControllers()
     .AddJsonOptions(o =>
     {
@@ -107,6 +127,7 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
+//Seed Sata
 HaverInitializer.Seed(app);
 ApplicationDbInitializer.Seed(app);
 

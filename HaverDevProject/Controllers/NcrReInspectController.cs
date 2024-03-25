@@ -14,6 +14,9 @@ using HaverDevProject.Utilities;
 using HaverDevProject.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Identity;
+using OfficeOpenXml.Style;
+using OfficeOpenXml;
 
 namespace HaverDevProject.Controllers
 {
@@ -21,10 +24,12 @@ namespace HaverDevProject.Controllers
     public class NcrReInspectController : ElephantController
     {
         private readonly HaverNiagaraContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public NcrReInspectController(HaverNiagaraContext context)
+        public NcrReInspectController(HaverNiagaraContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: NcrReInspect
@@ -61,25 +66,10 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
-                //.Where(n => n.Ncr.NcrPhase == NcrPhase.ReInspection)
                 .Where(n => n.Ncr.NcrPhase == NcrPhase.Closed)
                 .AsNoTracking();
 
             GetNcrs();
-
-            //Filterig values            
-            //if (!System.String.IsNullOrEmpty(filter))
-            //{
-            //    if (filter == "Closed")
-            //    {
-            //        ncrReInspect = ncrReInspect.Where(n => n.Ncr.NcrStatus == true);
-            //    }
-            //    else //(filter == "Closed")
-            //    {
-
-            //        ncrReInspect = ncrReInspect.Where(n => n.Ncr.NcrStatus == false);
-            //    }
-            //}
 
             if (!System.String.IsNullOrEmpty(SearchCode))
             {
@@ -282,7 +272,14 @@ namespace HaverDevProject.Controllers
             ViewBag.IsNCRReInspView = true;
 
             ViewBag.NCRSectionId = id;
-            
+
+            var user = await _userManager.FindByIdAsync(ncrReInspect.NcrReInspectUserId.ToString());
+            if (user != null)
+            {
+                ViewBag.UserFirstName = user.FirstName;
+                ViewBag.UserLastName = user.LastName;
+            }
+
             return View(ncrReInspect);
         }
 
@@ -303,7 +300,6 @@ namespace HaverDevProject.Controllers
             {
                 ncrReInspect = new NcrReInspect
                 {
-                    //Ncr = ncr,
                     NcrId = ncrId,
                     NcrReInspectCreationDate = DateTime.Now,
                     NcrNumber = ncrNumber
@@ -335,21 +331,38 @@ namespace HaverDevProject.Controllers
                         .ThenInclude(proc => proc.ProcDefectPhotos)
                 .FirstOrDefaultAsync(n => n.NcrId == ncrId);
 
-
             ncrReInspect.Ncr = ncr;
-            //NcrReInspect ncrReInspect = new NcrReInspect
-            //{
-            //    Ncr = ncr,
-            //    NcrId = ncrId,
-            //    NcrReInspectCreationDate = DateTime.Now,
-            //    NcrNumber = ncrNumber
-            //};
+
+            var readOnlyDetails = await _context.Ncrs
+                .Include(n => n.NcrQa)
+                        .ThenInclude(item => item.Supplier)
+                .Include(n => n.NcrQa)
+                            .ThenInclude(defect => defect.Defect)
+                .Include(n => n.NcrQa)
+                            .ThenInclude(i => i.Item)
+                .Include(n => n.NcrQa)
+                    .ThenInclude(qa => qa.ItemDefectPhotos)
+                .Include(n => n.NcrEng)
+                    .ThenInclude(eng => eng.EngDispositionType)
+                .Include(n => n.NcrEng)
+                    .ThenInclude(eng => eng.Drawing)
+                .Include(n => n.NcrEng)
+                    .ThenInclude(eng => eng.EngDefectPhotos)
+                .Include(n => n.NcrOperation)
+                    .ThenInclude(op => op.OpDispositionType)
+                .Include(n => n.NcrOperation)
+                    .ThenInclude(op => op.FollowUpType)
+                .Include(n => n.NcrOperation)
+                    .ThenInclude(op => op.OpDefectPhotos)
+                .FirstOrDefaultAsync(n => n.NcrId == ncrId);
 
             ViewBag.IsNCRQaView = false;
             ViewBag.IsNCREngView = false;
             ViewBag.IsNCROpView = false;
             ViewBag.IsNCRProcView = false;
             ViewBag.IsNCRReInspView = false;
+
+            ViewBag.ncrDetails = readOnlyDetails;
 
             return View(ncrReInspect);
         }
@@ -380,9 +393,12 @@ namespace HaverDevProject.Controllers
 
                 if (ModelState.IsValid)
                 {
-                    //await AddReInspectPictures(ncrReInspect, Photos);
+                    var user = await _userManager.GetUserAsync(User);
 
-                    //ncrReInspect.NcrReInspectNewNcrNumber = GetNcrNumber();
+                    if (user != null)
+                    {
+                        ncrReInspect.NcrReInspectUserId = user.Id;
+                    }                    
 
                     string isAcceptable = form["NcrReInspectAcceptable"];
 
@@ -393,6 +409,9 @@ namespace HaverDevProject.Controllers
 
                     var ncrToUpdate = await _context.Ncrs
                         .AsNoTracking()
+                        .Include(n => n.NcrQa.Supplier)
+                        .Include(n => n.NcrQa.Item)
+                        .Include(n => n.NcrQa.Defect)
                         .FirstOrDefaultAsync(n => n.NcrId == ncrReInspect.NcrId);
 
                     ncrToUpdate.NcrPhase = NcrPhase.Closed;
@@ -405,11 +424,48 @@ namespace HaverDevProject.Controllers
 
                     if (isAcceptable == "false")
                     {
-                        //var supplierName = ncrReInspect.Ncr.NcrQa.Supplier.SupplierName;
-                        //var itemName = ncrReInspect.Ncr.NcrQa.Item.ItemName;
-                        //var defectName = ncrReInspect.Ncr.NcrQa.Defect.DefectName;
+                        string newNcrNumber = GetNcrNumber();
 
-                        return RedirectToAction("Create", "NcrQa", new { parentNcrId = ncrReInspect.NcrId/*, supplier = supplierName, item = itemName, defect = defectName*/ });
+                        ncrReInspect.NcrReInspectNewNcrNumber = newNcrNumber;
+
+                        Ncr newNcr = new Ncr
+                        {
+                            NcrNumber = newNcrNumber,
+                            NcrStatus = true,
+                            NcrLastUpdated = DateTime.Now                            
+                        };
+
+                        _context.Ncrs.Add(newNcr);
+                        await _context.SaveChangesAsync();
+
+                        var ncrNewId = await _context.Ncrs
+                            .AsNoTracking()
+                            .FirstOrDefaultAsync(n => n.NcrNumber == newNcrNumber);
+
+                        NcrQa newNcrQa = new NcrQa
+                        {
+                            NcrId = ncrNewId.NcrId,
+                            NcrQaOrderNumber = ncrToUpdate.NcrQa.NcrQaOrderNumber,
+                            NcrQaItemMarNonConforming = ncrToUpdate.NcrQa.NcrQaItemMarNonConforming,
+                            NcrQaProcessApplicable = ncrToUpdate.NcrQa.NcrQaProcessApplicable,
+                            NcrQaSalesOrder = ncrToUpdate.NcrQa.NcrQaSalesOrder,
+                            NcrQaQuanReceived = ncrToUpdate.NcrQa.NcrQaQuanReceived,
+                            NcrQaQuanDefective = ncrToUpdate.NcrQa.NcrQaQuanDefective,
+                            NcrQaDescriptionOfDefect = "NCR was recreated as it was not acceptable" /*ncrToUpdate.NcrQa.NcrQaDescriptionOfDefect*/,
+                            SupplierId = ncrToUpdate.NcrQa.SupplierId,
+                            ItemId = ncrToUpdate.NcrQa.ItemId,
+                            DefectId = ncrToUpdate.NcrQa.DefectId,
+                            NcrQacreationDate = DateTime.Now,
+                            NcrQaUserId = user.Id//,
+                            //NcrQaEngDispositionRequired = ncrToUpdate.NcrQa.NcrQaEngDispositionRequired
+                        };
+
+                        _context.NcrQas.Add(newNcrQa);
+                        await _context.SaveChangesAsync();
+
+                        TempData["SuccessMessage"] = "This NCR was automatically created using the previous NCRs information";
+
+                        return RedirectToAction("Edit", "NcrQa", new { id = ncrNewId.NcrId });
                     }
                     else
                     {
@@ -477,7 +533,7 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, List<IFormFile> Photos)
+        public async Task<IActionResult> Edit(int id, List<IFormFile> Photos, IFormCollection form)
         {
             var ncrReInspectToUpdate = await _context.NcrReInspects
                 .Include(r => r.Ncr)
@@ -491,15 +547,22 @@ namespace HaverDevProject.Controllers
 
             if (await TryUpdateModelAsync<NcrReInspect>(ncrReInspectToUpdate, "",
                 r => r.NcrReInspectAcceptable, r => r.NcrReInspectNewNcrNumber, r => r.NcrReInspectUserId,
-                r => r.NcrId, r => r.NcrReInspectDefectVideo, r => r.NcrReInspectPhotos, r => r.NcrReInspectCreationDate))
+                r => r.NcrId, r => r.NcrReInspectDefectVideo, r => r.NcrReInspectPhotos, r => r.NcrReInspectCreationDate, r => r.NcrReInspectNotes))
             {
                 try
                 {
+                    var user = await _userManager.GetUserAsync(User);
+                    if (user != null)
+                    {
+                        ncrReInspectToUpdate.NcrReInspectUserId = user.Id;
+                    }
+
                     await AddReInspectPictures(ncrReInspectToUpdate, Photos);
 
-                    //await _context.SaveChangesAsync();
-
                     var ncrToUpdate = await _context.Ncrs.FindAsync(ncrReInspectToUpdate.NcrId);
+
+                    bool isAcceptable = form["NcrReInspectAcceptable"] == "true";
+
                     if (ncrToUpdate != null)
                     {
                         ncrToUpdate.NcrStatus = false;
@@ -509,7 +572,9 @@ namespace HaverDevProject.Controllers
 
                     TempData["SuccessMessage"] = "NCR " + ncrReInspectToUpdate.NcrNumber + " edited successfully!";
                     int updateNcrReInspect = ncrReInspectToUpdate.NcrReInspectId;
+                    Response.Cookies.Delete("DraftNCRReInspect" + ncrReInspectToUpdate.NcrNumber);
                     return RedirectToAction("Details", new { id = updateNcrReInspect });
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -550,54 +615,6 @@ namespace HaverDevProject.Controllers
             ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrReInspectToUpdate.NcrId);
             return View(ncrReInspectToUpdate);
         }
-
-        // GET: NcrReInspect/Delete/5
-        //public async Task<IActionResult> Delete(int? id)
-        //{
-        //    if (id == null || _context.NcrReInspects == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var ncrReInspect = await _context.NcrReInspects
-        //        .Include(n => n.Ncr)
-        //        .FirstOrDefaultAsync(m => m.NcrReInspectId == id);
-        //    if (ncrReInspect == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(ncrReInspect);
-        //}
-
-        //// POST: NcrReInspect/Delete/5
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(int id)
-        //{
-        //    if (_context.NcrReInspects == null)
-        //    {
-        //        return Problem("There are no Re-Inspections to delete.");
-        //    }
-        //    var ncrReInspect = await _context.NcrReInspects.FindAsync(id);
-
-        //    try
-        //    {
-        //        if (ncrReInspect != null)
-        //        {
-        //            _context.NcrReInspects.Remove(ncrReInspect);
-        //        }
-
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch (DbUpdateException)
-        //    {
-        //        ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
-        //    }
-
-        //    return View(ncrReInspect);
-        //}
 
         private async Task AddReInspectPictures(NcrReInspect ncrReInspect, List<IFormFile> pictures)
         {
@@ -645,21 +662,6 @@ namespace HaverDevProject.Controllers
 
         public JsonResult GetNcrs()
         {
-            // Get the list of NcrIds that already exist in NcrOperation
-            //List<int> ncrOpPending = _context.Ncrs
-            //    .Where(n => n.NcrPhase == NcrPhase.Operations)
-            //    .Select(n => n.NcrId)
-            //    .ToList();
-
-            //// Include related data in the query for NcrEng
-            //List<NcrEng> pendings = _context.NcrEngs
-            //    .Include(n => n.Ncr)
-            //        .ThenInclude(n => n.NcrQa)
-            //            .ThenInclude(n => n.Item)
-            //                .ThenInclude(n => n.Supplier) 
-            //    .Where(ncrEng => !existingNcrIds.Contains(ncrEng.NcrId))
-            //    .ToList();
-
             List<Ncr> pendings = _context.Ncrs
                 .Include(n => n.NcrQa).ThenInclude(n => n.Supplier)
                 .Where(n => n.NcrPhase == NcrPhase.ReInspection)
@@ -680,22 +682,6 @@ namespace HaverDevProject.Controllers
 
         public JsonResult GetPendingCount()
         {
-            // Get the list of NcrIds that already exist in NcrOperation
-            //List<int> existingNcrIds = _context.NcrOperations.Select(op => op.NcrId).ToList();
-
-            //List<int> ncrOpPending = _context.Ncrs
-            //    .Where(n => n.NcrPhase == NcrPhase.Operations)
-            //    .Select(n => n.NcrId)
-            //    .ToList();
-
-
-            //// Count only the unique NcrIds in NcrEngs
-            //int pendingCount = _context.NcrEngs
-            //    .Where(ncrEng => ncrOpPending.Contains(ncrEng.NcrId))
-            //    .Select(ncrEng => ncrEng.NcrId)
-            //    .Distinct()
-            //    .Count();
-
             int pendingCount = _context.Ncrs
                 .Where(n => n.NcrPhase == NcrPhase.ReInspection)
                 .Count();
@@ -711,6 +697,19 @@ namespace HaverDevProject.Controllers
         //        .FirstOrDefaultAsync();
         //    return File(theFile.NcrReInspectPhotoContent, theFile.NcrReInspectPhotoMimeType, theFile.FileName);
         //}
+
+        [HttpPost]
+        public async Task<IActionResult> DeletePhoto(int photoId)
+        {
+            var photo = await _context.NcrReInspectPhotos.FindAsync(photoId);
+            if (photo != null)
+            {
+                _context.NcrReInspectPhotos.Remove(photo);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Photo deleted successfully." });
+            }
+            return Json(new { success = false, message = "Photo not found." });
+        }
 
         public string GetNcrNumber()
         {
@@ -744,6 +743,76 @@ namespace HaverDevProject.Controllers
         private bool NcrReInspectExists(int id)
         {
             return _context.NcrReInspects.Any(e => e.NcrReInspectId == id);
+        }
+
+        public IActionResult ExportToExcel()
+        {
+            var ncrOperation = _context.NcrReInspects
+                .Include(n => n.Ncr)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
+                .Where(n => n.Ncr.NcrPhase != NcrPhase.Archive)
+                .AsNoTracking()
+                .ToList(); // Load data into memory
+
+            // Create Excel package
+            using (var package = new ExcelPackage())
+            {
+                // Add a new worksheet to the Excel package
+                var worksheet = package.Workbook.Worksheets.Add("NCR Data");
+
+                // Define the columns in Excel
+                worksheet.Cells[2, 1].Value = "NCR Number";
+                worksheet.Cells[2, 2].Value = "Supplier";
+                worksheet.Cells[2, 3].Value = "Acceptable";
+                worksheet.Cells[2, 4].Value = "Inspected By";
+                worksheet.Cells[2, 5].Value = "Phase";
+                worksheet.Cells[2, 6].Value = "Created";
+                worksheet.Cells[2, 7].Value = "Last Update";
+
+                // Apply center alignment to the header cells
+                worksheet.Cells["A2:F2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+                // Add the header with col span over all columns
+                worksheet.Cells[1, 1, 1, 7].Merge = true;  // Merge 6 columns starting from A1
+                worksheet.Cells[1, 1].Value = "NCR Reinspection Log";
+
+                // Apply styling to header row (including the merged header cell)
+                using (var range = worksheet.Cells[1, 1, 1, 7])
+                {
+                    range.Style.Font.Bold = true;
+                    range.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    range.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
+                }
+
+                // Fill data into Excel
+                int row = 3;
+                foreach (var item in ncrOperation)
+                {
+                    worksheet.Cells[row, 1].Value = item.Ncr.NcrNumber;
+                    worksheet.Cells[row, 2].Value = item.Ncr.NcrQa.Supplier.SupplierName;
+                    worksheet.Cells[row, 3].Value = item.NcrReInspectAcceptable;
+                    worksheet.Cells[row, 4].Value = item.NcrReInspectId;
+                    worksheet.Cells[row, 5].Value = item.Ncr.NcrPhase.ToString();
+                    worksheet.Cells[row, 6].Value = item.Ncr.NcrQa.NcrQacreationDate.ToString();
+                    worksheet.Cells[row, 7].Value = item.Ncr.NcrLastUpdated.ToString();
+
+                    row++;
+                }
+
+                // Auto-fit columns for better appearance
+                worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+                // Set content type and filename for the Excel file
+                var content = package.GetAsByteArray();
+                var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                var fileName = "NCR_Reinspection_Data.xlsx";
+
+                // Return the Excel file as a file download
+                return File(content, contentType, fileName);
+            }
         }
     }
 }

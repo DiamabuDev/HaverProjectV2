@@ -54,7 +54,7 @@ namespace HaverDevProject.Data
                 {
                     ApplicationUser user = new ApplicationUser
                     {
-                        FirstName = "R",
+                        FirstName = "Rachel",
                         LastName = "May",
                         UserName = "quality@outlook.com",
                         Email = "quality@outlook.com",
@@ -72,8 +72,8 @@ namespace HaverDevProject.Data
                 {
                     ApplicationUser user = new ApplicationUser
                     {
-                        FirstName = "Engineer",
-                        LastName = "",
+                        FirstName = "Michael",
+                        LastName = "Smith",
                         UserName = "engineer@outlook.com",
                         Email = "engineer@outlook.com",
                         EmailConfirmed = true
@@ -90,8 +90,8 @@ namespace HaverDevProject.Data
                 {
                     ApplicationUser user = new ApplicationUser
                     {
-                        FirstName = "Operations",
-                        LastName = "",
+                        FirstName = "Leslie",
+                        LastName = "Pentland",
                         UserName = "operations@outlook.com",
                         Email = "operations@outlook.com",
                         EmailConfirmed = true
@@ -108,10 +108,28 @@ namespace HaverDevProject.Data
                 {
                     ApplicationUser user = new ApplicationUser
                     {
-                        FirstName = "Leslie",
-                        LastName = "Pentland",
+                        FirstName = "Rick",
+                        LastName = "Johnson",
                         UserName = "procurement@outlook.com",
                         Email = "procurement@outlook.com",
+                        EmailConfirmed = true
+                    };
+
+                    IdentityResult result = userManager.CreateAsync(user, "Pa55w@rd").Result;
+
+                    if (result.Succeeded)
+                    {
+                        userManager.AddToRoleAsync(user, "Procurement").Wait();
+                    }
+                }
+                if (userManager.FindByEmailAsync("jorge11_44@hotmail.com").Result == null)
+                {
+                    ApplicationUser user = new ApplicationUser
+                    {
+                        FirstName = "Jorge",
+                        LastName = "Castano",
+                        UserName = "jorge11_44@hotmail.com",
+                        Email = "jorge11_44@hotmail.com",
                         EmailConfirmed = true
                     };
 

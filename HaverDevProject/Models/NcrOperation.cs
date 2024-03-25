@@ -39,7 +39,7 @@ public class NcrOperation : Auditable
     public int? FollowUpTypeId { get; set; }
     public FollowUpType FollowUpType { get; set; }
     public DateTime UpdateOp { get; set; }
-    public int NcrPurchasingUserId { get; set; }
+    public string NcrOperationUserId { get; set; }
     public NcrEng NcrEng { get; set; }
     public string NcrOperationVideo { get; set; }
     public ICollection<OpDefectPhoto> OpDefectPhotos { get; set; } = new HashSet<OpDefectPhoto>();

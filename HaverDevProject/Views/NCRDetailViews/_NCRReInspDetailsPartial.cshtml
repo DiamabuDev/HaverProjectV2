@@ -1,5 +1,45 @@
 ﻿@model HaverDevProject.Models.NcrReInspect
 
+<style>
+    .modal1 {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 9999; /* Sit on top */
+        padding-top: 15px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+    }
+
+    .modal1-content {
+        margin: auto;
+        display: block;
+        width: 80%;
+        max-width: 700px; /* Adjust maximum width as needed */
+    }
+
+    .close {
+        color: #fff;
+        position: absolute;
+        top: 15px;
+        right: 35px;
+        font-size: 40px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+</style>
+
 <div class="mt-2">
 
             <button class="btn custom-header-bg icon-drop text-start mb-0" type="button" data-bs-toggle="collapse" data-bs-target="#reInspectSection" aria-expanded="@ViewBag.IsNCRReInspView.ToString().ToLower()" aria-controls="reInspectSection">
@@ -41,20 +81,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                            <td class="three-cols">
-                                @if (Model.NcrReInspectUserId == 1)
-                                {
-                                    <text>Jamie</text>
-                                }
-                                else if (Model.NcrReInspectUserId == 2)
-                                {
-                                    <text>R. May</text>
-                                }
-                                else
-                                {
-                                    <text>J. Doe</text>
-                                }
-                                    </td>
+                            <td class="three-cols">@(Model.NcrReInspectUserId == "1" ? "Rachel May" : ViewBag.UserFirstName + " " + ViewBag.UserLastName)</td>
                                     <td class="three-cols">@Model.NcrReInspectCreationDate.ToString("yyyy-MM-dd")</td>
                                     <td class="three-cols">
                                         @{
@@ -76,7 +103,7 @@
         @{
                     bool hasImages = Model.NcrReInspectPhotos != null && Model.NcrReInspectPhotos.Any(p => p.NcrReInspectPhotoContent != null);
                     bool hasVideos = Model.Ncr.NcrReInspect.NcrReInspectDefectVideo != null;
-                    bool hasNotes = Model.NcrReInspectNotes != null;
+                    bool hasNotes = Model.NcrReInspectNotes != null && Model.NcrReInspectAcceptable == false;
         }
                 @if (hasImages || hasVideos || hasNotes)
                 {
@@ -102,8 +129,8 @@
                                                     string imageBase64 = Convert.ToBase64String(photo.NcrReInspectPhotoContent);
                                                     string imageSrc = string.Format("data:" + photo.NcrReInspectPhotoMimeType + ";base64,{0}", imageBase64);
 
-                                                    <div class="text-center pb-3 col-6">
-                                                        <img src="@imageSrc" alt="Photo of @Model.Ncr.NcrQa.NcrId" class="img-fluid rounded" />
+                                                    <div class="text-center pb-3 col-6 click-zoom">
+                                                        <img src="@imageSrc" alt="Photo of @Model.Ncr.NcrQa.NcrId" class="img-fluid rounded" onclick="openModal('@imageSrc')" />
                                                     </div>
                                                 }
                                             }
@@ -142,5 +169,50 @@
                         }
                     </div>
                 }
-            </div>
+            </div>    
 </div>
+<div id="imageModal" class="modal1">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <img id="modalImage" class="modal1-content" />
+</div>
+
+<script>
+    function openModal(imageSrc) {
+        var modal = document.getElementById("imageModal");
+        var modalImg = document.getElementById("modalImage");
+        modal.style.display = "block";
+        modalImg.src = imageSrc;
+    }
+
+    function closeModal() {
+        var modal = document.getElementById("imageModal");
+        modal.style.display = "none";
+    }
+</script>
+
+<script>
+    // Get the modal
+    var modal = document.getElementById("imageModal");
+
+    // Get the image and close button
+    var modalImg = document.getElementById("modalImage");
+    var closeBtn = document.getElementsByClassName("close")[0]; // Assuming there's only one close button
+
+    // When the user clicks anywhere outside of the image, close the modal
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+
+    // Function to open the modal
+    function openModal(imageSrc) {
+        modal.style.display = "flex";
+        modalImg.src = imageSrc;
+    }
+
+    // Function to close the modal
+    function closeModal() {
+        modal.style.display = "none";
+    }
+</script>

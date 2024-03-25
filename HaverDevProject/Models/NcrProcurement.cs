@@ -19,7 +19,7 @@ namespace HaverDevProject.Models
         public bool NcrProcSupplierBilled { get; set; }
         public decimal NcrProcRejectedValue { get; set; }
         public bool NcrProcFlagStatus { get; set; }
-        public int NcrProcUserId { get; set; }
+        public string NcrProcUserId { get; set; }
         public DateTime NcrProcCreated { get; set; }
         public DateTime NcrProcCompleteDate { get; set; }
         //public int SupplierReturnId { get; set; }
@@ -29,8 +29,6 @@ namespace HaverDevProject.Models
         public string SupplierReturnAccount { get; set; }
         public int NcrId { get; set; }
         public virtual Ncr Ncr { get; set; }
-
-
         public string NcrProcDefectVideo { get; set; }
         public ICollection<ProcDefectPhoto> ProcDefectPhotos { get; set; } = new HashSet<ProcDefectPhoto>();
 

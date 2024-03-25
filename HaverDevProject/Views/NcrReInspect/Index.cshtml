@@ -45,13 +45,12 @@
     <div class="row mt-3 mb-2">
         <div class="col-8">
             <div class="d-flex justify-content-start">
-@*                 <input type="radio" class="btn-check btn-filter" name="filter" id="Active" autocomplete="off" checked value="Active" data-filter="Active">
-                <label class="btn btn-success me-2" for="Active">Active NCRs</label> *@
-
                 <input type="radio" class="btn-check btn-filter" name="filter" id="Closed" autocomplete="off" value="Closed" data-filter="Closed">
                 <label class="btn btn-danger me-2" for="Closed">Closed NCRs </label>
 
-                <button type="button" id="pendingCountIndicator" class="btn btn-warning btn-block" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></button>
+                <button type="button" id="pendingCountIndicator" class="btn btn-warning btn-block me-2" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></button>
+
+                <a asp-action="ExportToExcel" class="btn btn-info float-end me-2"><i class="bi bi-download"></i> Download Log Report</a>
             </div>
         </div>
         <div class="col-4 d-flex justify-content-end">
@@ -64,10 +63,6 @@
     <div class="form-horizontal">
         <div class="card card-body bg-custom-color mb-2">
             <div class="row d-flex justify-content-left align-items-left">
-@*                 <div class="form-group col-lg-3 col-md-5 col-sm-10 col-10">
-                    <label class="control-label">Filter by Suppliers:</label>
-                    @Html.DropDownList("SupplierID", null, "All Suppliers", htmlAttributes: new { @class = "form-control" })
-                </div> *@
                 <div class="form-group col-lg-2">
                     <label class="control-label">Start Date:</label>
                     @Html.TextBox("StartDate", @ViewData["StartDate"], new { @class = "form-control", type = "date" })
@@ -133,18 +128,6 @@
                         @Html.Raw(ViewData["filterApplied:Last Updated"])
                     </button>
                 </th>
-@*                 <th>
-                    @Html.DisplayNameFor(model => model.NcrReInspectAcceptable)
-                </th> *@
-@*                 <th>
-                    @Html.DisplayNameFor(model => model.NcrReInspectNewNcrNumber)
-                </th> *@
-@*                 <th>
-                    @Html.DisplayNameFor(model => model.NcrReInspectUserId)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Ncr)
-                </th> *@
                 <th></th>
             </tr>
         </thead>
@@ -161,38 +144,15 @@
                     <td class="standout">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrNumber)
                     </td>
-                    @* <td>
-                        @Html.DisplayFor(modelItem => item.NcrReInspectAcceptable)
-                    </td> *@
                     <td class="col-1">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrQa.Supplier.SupplierName)
                     </td>
                     <td class="col-auto">
-                        @if (item.NcrReInspectAcceptable)
-                        {
-                            <text>Yes</text>
-                        }
-                        else
-                        {
-                            <text>No</text>
-                        }
+                        <span class="badge @(item.NcrReInspectAcceptable ? "bg-success" : "bg-danger")">
+                            @(item.NcrReInspectAcceptable ? "Yes" : "No")
+                        </span>                
                     </td>
-                    @* <td class="col-1">
-                        @Html.DisplayFor(modelItem => item.NcrReInspectUserId)
-                    </td> *@
                     <td class="col-auto">
-                        @if (item.NcrReInspectUserId == 1)
-                        {
-                            <text>Jamie</text>
-                        }
-                        else if (item.NcrReInspectUserId == 2)
-                        {
-                            <text>R. May</text>
-                        }
-                        else
-                        {
-                            <text>J. Doe</text>
-                        }
                     </td>
 
                     <td class="d-none d-md-table-cell">
@@ -201,19 +161,6 @@
                     <td class="d-none d-xxl-table-cell">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrLastUpdated)
                     </td>
-@*                     <td>
-                        @Html.DisplayFor(modelItem => item.NcrReInspectAcceptable)
-                    </td>
- *@@*                     <td>
-                        @Html.DisplayFor(modelItem => item.NcrReInspectNewNcrNumber)
-                    </td> *@
-@*                     <td>
-                        @Html.DisplayFor(modelItem => item.NcrReInspectUserId)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Ncr.NcrNumber)
-                    </td>
-                *@
                     <td>
                         @if (item.Ncr.NcrPhase != NcrPhase.Closed)
                         {

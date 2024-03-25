@@ -1,33 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Threading.Tasks;
+﻿using HaverDevProject.CustomControllers;
+using HaverDevProject.Data;
+using HaverDevProject.Models;
+using HaverDevProject.Utilities;
+using HaverDevProject.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using HaverDevProject.Data;
-using HaverDevProject.Models;
-using HaverDevProject.ViewModels;
-using HaverDevProject.Utilities;
-using HaverDevProject.CustomControllers;
-using System.Numerics;
 using Microsoft.EntityFrameworkCore.Storage;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using System.Runtime.ConstrainedExecution;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.Identity.Client;
+using MimeKit;
 using Newtonsoft.Json;
+using OfficeOpenXml.Style;
+using OfficeOpenXml;
+
 
 namespace HaverDevProject.Controllers
 {
     [Authorize(Roles = "Operations, Admin")]
     public class NcrOperationController : ElephantController
     {
-        private readonly HaverNiagaraContext _context;
+        //for sending email
+        private readonly IMyEmailSender _emailSender;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public NcrOperationController(HaverNiagaraContext context)
+        private readonly HaverNiagaraContext _context;
+        public NcrOperationController(HaverNiagaraContext context, IMyEmailSender emailSender, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _emailSender = emailSender;
+            _userManager = userManager;
         }
 
         // GET: NcrOperation
@@ -267,11 +270,11 @@ namespace HaverDevProject.Controllers
             var pagedData = await PaginatedList<NcrOperation>.CreateAsync(ncrOperation.AsNoTracking(), page ?? 1, pageSize);
 
             return View(pagedData);
-        }   
+        }
 
 
-    // GET: NcrOperation/Details/5
-    public async Task<IActionResult> Details(int? id)
+        // GET: NcrOperation/Details/5
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.NcrOperations == null)
             {
@@ -311,6 +314,13 @@ namespace HaverDevProject.Controllers
 
             ViewBag.NCRSectionId = id;
 
+            var user = await _userManager.FindByIdAsync(ncrOperation.NcrOperationUserId.ToString());
+            if (user != null)
+            {
+                ViewBag.UserFirstName = user.FirstName;
+                ViewBag.UserLastName = user.LastName;
+            }
+
             return View(ncrOperation);
         }
 
@@ -345,16 +355,6 @@ namespace HaverDevProject.Controllers
                 };
             }
 
-            //int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
-            //NcrOperationDTO ncr = new NcrOperationDTO();
-            //ncr.NcrNumber = ncrNumber; // Set the NcrNumber from the parameter
-            //ncr.NcrOpCompleteDate = DateTime.Now;
-            //ncr.UpdateOp = DateTime.Now;
-            //ncr.ExpectedDate = DateTime.Now;
-            //ncr.NcrStatus = true; // Active
-            //ncr.FollowUp = true;
-            //ncr.Car = true;
-
             var readOnlyDetails = await _context.Ncrs
                 .Include(n => n.NcrQa)
                         .ThenInclude(item => item.Supplier)
@@ -372,7 +372,6 @@ namespace HaverDevProject.Controllers
                     .ThenInclude(eng => eng.EngDefectPhotos)
                 .FirstOrDefaultAsync(n => n.NcrId == ncrId);
 
-            //ncr.NcrOpCreationDate = readOnlyDetails.NcrEng.NcrEngCreationDate;
 
             ViewBag.IsNCRQaView = false;
             ViewBag.IsNCREngView = false;
@@ -383,8 +382,6 @@ namespace HaverDevProject.Controllers
             ViewBag.ncrDetails = readOnlyDetails;
 
             PopulateDropDownLists();
-            //ViewData["FollowUpTypeId"] = new SelectList(_context.FollowUpTypes, "FollowUpTypeId", "FollowUpTypeName");
-            //ViewData["OpDispositionTypeId"] = new SelectList(_context.OpDispositionTypes, "OpDispositionTypeId", "OpDispositionTypeName");
             return View(ncr);
         }
 
@@ -414,6 +411,7 @@ namespace HaverDevProject.Controllers
 
                 if (ModelState.IsValid)
                 {
+                    var user = await _userManager.GetUserAsync(User);
                     int ncrIdObt = _context.Ncrs
                         .Where(n => n.NcrNumber == ncrOperationDTO.NcrNumber)
                         .Select(n => n.NcrId)
@@ -430,11 +428,11 @@ namespace HaverDevProject.Controllers
                         CarNumber = ncrOperationDTO.CarNumber,
                         FollowUp = ncrOperationDTO.FollowUp,
                         ExpectedDate = ncrOperationDTO.ExpectedDate,
+                        NcrOpCreationDate = DateTime.Now,
                         NcrOpCompleteDate = DateTime.Now,
-                        NcrOpCreationDate = ncrOperationDTO.NcrOpCreationDate,
                         FollowUpTypeId = ncrOperationDTO.FollowUpTypeId,
                         UpdateOp = DateTime.Now,
-                        NcrPurchasingUserId = 1,
+                        NcrOperationUserId = user.Id,
                         OpDefectPhotos = ncrOperationDTO.OpDefectPhotos,
                         NcrOperationVideo = ncrOperationDTO.NcrOperationVideo
 
@@ -448,10 +446,24 @@ namespace HaverDevProject.Controllers
                     _context.Ncrs.Update(ncr);
                     await _context.SaveChangesAsync();
 
+
                     TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " saved successfully!";
                     //Delete cookies
                     Response.Cookies.Delete("DraftNCROperation" + ncr.NcrNumber);
                     int ncrOpId = ncrOperation.NcrOpId;
+
+                    //include supplier name in the email
+                    var ncrOp = await _context.NcrOperations
+                        .Include(n => n.Ncr)
+                        .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
+                        .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
+                        .FirstOrDefaultAsync(n => n.NcrOpId == ncrOpId);
+
+                    // Send notification email to Procurement
+                    var subject = "New NCR Created " + ncr.NcrNumber;
+                    var emailContent = "A new NCR has been created:<br><br>Ncr #: " + ncr.NcrNumber + "<br>Supplier: " + ncr.NcrQa.Supplier.SupplierName;
+                    await NotificationCreate(ncrOpId, subject, emailContent);
+
                     return RedirectToAction("Details", new { id = ncrOpId });
                 }
             }
@@ -472,6 +484,8 @@ namespace HaverDevProject.Controllers
         // GET: NcrOperation/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            var user = await _userManager.GetUserAsync(User);
+
             if (id == null)
             {
                 return NotFound();
@@ -512,7 +526,7 @@ namespace HaverDevProject.Controllers
                 ExpectedDate = DateTime.Now,
                 FollowUpTypeId = ncrOperation.FollowUpTypeId,
                 UpdateOp = ncrOperation.UpdateOp,
-                NcrPurchasingUserId = ncrOperation.NcrPurchasingUserId,
+                NcrOperationUserId = user.Id,
                 NcrEng = ncrOperation.NcrEng,
                 NcrOperationVideo = ncrOperation.NcrOperationVideo,
                 OpDefectPhotos = ncrOperation.OpDefectPhotos,
@@ -544,7 +558,6 @@ namespace HaverDevProject.Controllers
             ViewBag.ncrDetails = readOnlyDetails;
 
             ViewData["FollowUpTypeId"] = new SelectList(_context.FollowUpTypes, "FollowUpTypeId", "FollowUpTypeName", ncrOperation.FollowUpTypeId);
-            //ViewData["NcrId"] = new SelectList(_context.Ncrs, "NcrId", "NcrNumber", ncrOperation.NcrId);
             ViewData["OpDispositionTypeId"] = new SelectList(_context.OpDispositionTypes, "OpDispositionTypeId", "OpDispositionTypeName", ncrOperation.OpDispositionTypeId);
             return View(ncrOperationDTO);
         }
@@ -556,11 +569,6 @@ namespace HaverDevProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, NcrOperationDTO ncrOperationDTO, List<IFormFile> Photos)
         {
-            //ncrOperationDTO.NcrOpId = id;
-            //if (id != ncrOperationDTO.NcrOpId)
-            //{
-            //    return NotFound();
-            //}
 
             if (ModelState.IsValid)
             {
@@ -571,9 +579,7 @@ namespace HaverDevProject.Controllers
                     .Include(n => n.Ncr)
                     .Include(n => n.OpDispositionType)
                     .Include(n => n.FollowUpType)
-                    //.Include(n => n.OpDefectPhotos)
                     .FirstOrDefaultAsync(ne => ne.NcrOpId == id);
-
 
                     ncrOperation.OpDispositionTypeId = ncrOperationDTO.OpDispositionTypeId;
                     ncrOperation.NcrPurchasingDescription = ncrOperationDTO.NcrPurchasingDescription;
@@ -585,22 +591,33 @@ namespace HaverDevProject.Controllers
                     ncrOperation.ExpectedDate = ncrOperationDTO.ExpectedDate;
                     ncrOperation.FollowUpTypeId = ncrOperationDTO.FollowUpTypeId;
                     ncrOperation.UpdateOp = DateTime.Today;
-                    ncrOperation.NcrPurchasingUserId = 1;
+                    ncrOperation.NcrOperationUserId = "b58514b4-b008-43a4-bae2-4a4f4f5408ff";
                     ncrOperation.NcrOperationVideo = ncrOperationDTO.NcrOperationVideo;
                     ncrOperation.OpDefectPhotos = ncrOperationDTO.OpDefectPhotos;
 
                     _context.Update(ncrOperation);
                     await _context.SaveChangesAsync();
 
-
                     var ncr = await _context.Ncrs.FirstOrDefaultAsync(n => n.NcrId == ncrOperation.NcrId);
-                    //ncr.NcrPhase = NcrPhase.Procurement;
                     ncr.NcrLastUpdated = DateTime.Now;
                     _context.Update(ncr);
                     await _context.SaveChangesAsync();
 
                     TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " edited successfully!";
                     int ncrOpId = ncrOperation.NcrOpId;
+
+                    //include supplier name in the email
+                    var ncrOp = await _context.NcrOperations
+                        .Include(n => n.Ncr)
+                        .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
+                        .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
+                        .FirstOrDefaultAsync(n => n.NcrOpId == ncrOpId);
+
+                    // Send notification email to Procurement
+                    var subject = "NCR Edited " + ncr.NcrNumber;
+                    var emailContent = "A NCR has been edited :<br><br>Ncr #: " + ncr.NcrNumber + "<br>Supplier: " + ncr.NcrQa.Supplier.SupplierName;
+                    await NotificationEdit(ncrOpId, subject, emailContent);
+
                     return RedirectToAction("Details", new { id = ncrOpId });
                 }
                 catch (DbUpdateConcurrencyException)
@@ -626,52 +643,11 @@ namespace HaverDevProject.Controllers
             }
             return View(ncrOperationDTO);
         }
-
-        // GET: NcrOperation/Delete/5
-        //public async Task<IActionResult> Delete(int? id)
-        //{
-        //    if (id == null || _context.NcrOperations == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var ncrOperation = await _context.NcrOperations
-        //        .Include(n => n.FollowUpType)
-        //        .Include(n => n.Ncr)
-        //        .Include(n => n.OpDispositionType)
-        //        .FirstOrDefaultAsync(m => m.NcrOpId == id);
-        //    if (ncrOperation == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(ncrOperation);
-        //}
-
-        //// POST: NcrOperation/Delete/5
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(int id)
-        //{
-        //    if (_context.NcrOperations == null)
-        //    {
-        //        return Problem("Entity set 'HaverNiagaraContext.NcrOperations'  is null.");
-        //    }
-        //    var ncrOperation = await _context.NcrOperations.FindAsync(id);
-        //    if (ncrOperation != null)
-        //    {
-        //        _context.NcrOperations.Remove(ncrOperation);
-        //    }
-            
-        //    await _context.SaveChangesAsync();
-        //    return RedirectToAction(nameof(Index));
-        //}
-
+        
         private bool NcrOperationExists(int id)
         {
-          return _context.NcrOperations.Any(e => e.NcrOpId == id);
+            return _context.NcrOperations.Any(e => e.NcrOpId == id);
         }
-
 
         private SelectList OpDispositionTypeSelectList(int? selectedId)
         {
@@ -687,27 +663,10 @@ namespace HaverDevProject.Controllers
 
         public JsonResult GetNcrs()
         {
-            // Get the list of NcrIds that already exist in NcrOperation
-            //List<int> ncrOpPending = _context.Ncrs
-            //    .Where(n => n.NcrPhase == NcrPhase.Operations)
-            //    .Select(n => n.NcrId)
-            //    .ToList();
-
-            //// Include related data in the query for NcrEng
-            //List<NcrEng> pendings = _context.NcrEngs
-            //    .Include(n => n.Ncr)
-            //        .ThenInclude(n => n.NcrQa)
-            //            .ThenInclude(n => n.Item)
-            //                .ThenInclude(n => n.Supplier) 
-            //    .Where(ncrEng => !existingNcrIds.Contains(ncrEng.NcrId))
-            //    .ToList();
-
             List<Ncr> pendings = _context.Ncrs
                 .Include(n => n.NcrQa).ThenInclude(n => n.Supplier)
                 .Where(n => n.NcrPhase == NcrPhase.Operations)
                 .ToList();
-
-
 
             // Extract relevant data for the client-side
             var ncrs = pendings.Select(ncr => new
@@ -755,6 +714,7 @@ namespace HaverDevProject.Controllers
                                 FileName = picture.FileName
                             });
                         }
+
                     }
                 }
             }
@@ -762,22 +722,6 @@ namespace HaverDevProject.Controllers
 
         public JsonResult GetPendingCount()
         {
-            // Get the list of NcrIds that already exist in NcrOperation
-            //List<int> existingNcrIds = _context.NcrOperations.Select(op => op.NcrId).ToList();
-
-            //List<int> ncrOpPending = _context.Ncrs
-            //    .Where(n => n.NcrPhase == NcrPhase.Engineer)
-            //    .Select(n => n.NcrId)
-            //    .ToList();
-
-
-            //// Count only the unique NcrIds in NcrEngs
-            //int pendingCount = _context.NcrEngs
-            //    .Where(ncrEng => ncrOpPending.Contains(ncrEng.NcrId))
-            //    .Select(ncrEng => ncrEng.NcrId)
-            //    .Distinct()
-            //    .Count();
-
             int pendingCount = _context.Ncrs
                 .Where(n => n.NcrPhase == NcrPhase.Operations)
                 .Count();
@@ -815,5 +759,196 @@ namespace HaverDevProject.Controllers
             }
             return Json(new { success = false, message = "Photo not found." });
         }
+
+        //// CREATE/POST: Operation/Notification/5
+        public async Task<IActionResult> NotificationCreate(int? id, string Subject, string emailContent)
+        {
+            
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            NcrOperation o = await _context.NcrOperations.FindAsync(id);
+
+            ViewData["id"] = id;
+
+            try
+            {
+                var procurementUsers = await _userManager.GetUsersInRoleAsync("Procurement");
+                var emailAddresses = procurementUsers.Select(u => new EmailAddress
+                {
+                    Name = u.UserName,
+                    Address = u.Email
+                }).ToList();
+
+                if (emailAddresses.Any())
+                {
+                    string link = "https://haverv2team3.azurewebsites.net/ncroperation/details/" + id;
+                    string logo = "https://haverniagara.com/wp-content/themes/haver/images/logo-haver.png";
+                    var msg = new EmailMessage()
+                    {
+                        ToAddresses = emailAddresses,
+                        Subject = Subject,
+                        Content = "<p>" + emailContent + "<br><br></p><p>Please access to <strong>Haver NCR APP</strong> to review.</p><br>Link: <a href=\"" + link + "\">" + "Click Here" + "</a><br>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
+                    };
+                    await _emailSender.SendToManyAsync(msg);
+                }
+                else
+                {
+                    ViewData["Message"] = "Message NOT sent! No Procurement users found.";
+                }
+            }
+            catch (Exception ex)
+            {
+                string errMsg = ex.GetBaseException().Message;
+                ViewData["Message"] = $"Error: Could not send email message to Procurement users. Error: {errMsg}";
+            }
+
+            return View();
+        }
+
+        //// EDIT/POST: Operation/Notification/5
+        public async Task<IActionResult> NotificationEdit(int? id, string Subject, string emailContent)
+        {
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            NcrOperation o = await _context.NcrOperations.FindAsync(id);
+
+            ViewData["id"] = id;
+
+            try
+            {
+                var procurementUsers = await _userManager.GetUsersInRoleAsync("Procurement");
+                var qualityUsers = await _userManager.GetUsersInRoleAsync("Quality");
+                var allUsers = procurementUsers.Concat(qualityUsers).Distinct();
+                var emailAddresses = allUsers.Select(u => new EmailAddress
+                {
+                    Name = u.UserName,
+                    Address = u.Email
+                }).ToList();
+
+                if (emailAddresses.Any())
+                {
+                    string link = "https://haverv2team3.azurewebsites.net/ncroperation/details/" + id;
+                    string logo = "https://haverniagara.com/wp-content/themes/haver/images/logo-haver.png";
+                    var msg = new EmailMessage()
+                    {
+                        ToAddresses = emailAddresses,
+                        Subject = Subject,
+                        Content = "<p>" + emailContent + "<br><br></p><p>Please access to <strong>Haver NCR APP</strong> to review.</p><br>Link: <a href=\"" + link + "\">" + "Click Here" + "</a><br>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
+                    };
+                    await _emailSender.SendToManyAsync(msg);
+                }
+                else
+                {
+                    ViewData["Message"] = "Message NOT sent! No Procurement users found.";
+                }
+            }
+            catch (Exception ex)
+            {
+                string errMsg = ex.GetBaseException().Message;
+                ViewData["Message"] = $"Error: Could not send email message to Procurement users. Error: {errMsg}";
+            }
+
+            return View();
+        }
+
+        //// 24 Hours Notification
+        public async Task CheckAndSendEmailNotifications()
+        {
+            // Get pending NCRs from Engineering that are older than 24 hours
+            var pendingNCRs = await _context.NcrEngs
+                .Where(n => n.NcrPhase == NcrPhase.Engineer && n.NcrEngCreationDate <= DateTime.Now.AddHours(-24))
+                .ToListAsync();
+
+            foreach (var ncr in pendingNCRs)
+            {
+                // Check if an NCR has not been created in Operations
+                var ncrInOps = await _context.NcrOperations.FirstOrDefaultAsync(op => op.NcrId == ncr.NcrId);
+                if (ncrInOps == null)
+                {
+                    // Send notification email to Operations or Admin role
+                    var subject = "NCR Pending in Operations";
+                    var emailContent = "An NCR from Engineering is pending in Operations and has not been created yet.";
+                    await NotificationCreate(ncr.NcrId, subject, emailContent);
+                }
+            }
+        }
+
+        public IActionResult ExportToExcel()
+        {
+            var ncrOperation = _context.NcrOperations
+                .Include(n => n.NcrEng)
+                .Include(n => n.Ncr)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
+                .Include(n => n.OpDispositionType)
+                .Include(n => n.FollowUpType)
+                .Where(n => n.Ncr.NcrPhase != NcrPhase.Archive)
+                .AsNoTracking()
+                .ToList(); // Load data into memory
+
+            // Create Excel package
+            using (var package = new ExcelPackage())
+            {
+                // Add a new worksheet to the Excel package
+                var worksheet = package.Workbook.Worksheets.Add("NCR Data");
+
+                // Define the columns in Excel
+                worksheet.Cells[2, 1].Value = "NCR Number";
+                worksheet.Cells[2, 2].Value = "Supplier";
+                worksheet.Cells[2, 3].Value = "Disposition Type";
+                worksheet.Cells[2, 4].Value = "Phase";
+                worksheet.Cells[2, 5].Value = "Created";
+                worksheet.Cells[2, 6].Value = "Last Update";
+
+                // Apply center alignment to the header cells
+                worksheet.Cells["A2:F2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+                // Add the header with col span over all columns
+                worksheet.Cells[1, 1, 1, 6].Merge = true;  // Merge 6 columns starting from A1
+                worksheet.Cells[1, 1].Value = "NCR Operation Log";
+
+                // Apply styling to header row (including the merged header cell)
+                using (var range = worksheet.Cells[1, 1, 1, 6])
+                {
+                    range.Style.Font.Bold = true;
+                    range.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    range.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
+                }
+
+                // Fill data into Excel
+                int row = 3;
+                foreach (var item in ncrOperation)
+                {
+                    worksheet.Cells[row, 1].Value = item.Ncr.NcrNumber;
+                    worksheet.Cells[row, 2].Value = item.Ncr.NcrQa.Supplier.SupplierName;
+                    worksheet.Cells[row, 3].Value = item.OpDispositionType.OpDispositionTypeName;
+                    worksheet.Cells[row, 4].Value = item.Ncr.NcrPhase.ToString();
+                    worksheet.Cells[row, 5].Value = item.NcrOpCreationDate.ToString();
+                    worksheet.Cells[row, 6].Value = item.Ncr.NcrLastUpdated.ToString();
+
+                    row++;
+                }
+
+                // Auto-fit columns for better appearance
+                worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+                // Set content type and filename for the Excel file
+                var content = package.GetAsByteArray();
+                var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                var fileName = "NCR_Operation_Data.xlsx";
+
+                // Return the Excel file as a file download
+                return File(content, contentType, fileName);
+            }
+        }
+
     }
 }

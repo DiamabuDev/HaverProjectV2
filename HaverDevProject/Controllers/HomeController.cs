@@ -1,7 +1,9 @@
-﻿using HaverDevProject.Models;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using HaverDevProject.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HaverDevProject.Controllers
 {
@@ -9,14 +11,33 @@ namespace HaverDevProject.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _logger = logger;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
-
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var user = await _userManager.GetUserAsync(User);
+            if (user != null)
+            {
+                ViewBag.FirstName = user.FirstName;
+                ViewBag.LastName = user.LastName;
+
+                var roles = await _userManager.GetRolesAsync(user);
+                ViewBag.Role = roles.FirstOrDefault();
+            }
+            else
+            {
+                ViewBag.FirstName = "Guest";
+                ViewBag.LastName = "";
+                ViewBag.Role = "None";
+            }
+
             return View();
         }
 

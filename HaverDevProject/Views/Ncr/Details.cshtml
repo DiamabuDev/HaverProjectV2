@@ -6,6 +6,19 @@
 
             @await Html.PartialAsync("~/Views/NCRDetailViews/_HeadingDetailsNCRMain.cshtml", Model)
 
+            @if (Model.NcrPhase == NcrPhase.Void)
+            {
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Reason for Void:</h4>
+                                <p class="card-text">@Model.NcrVoidReason</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
             @if (Model.NcrQa != null)
             {
                 @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", Model.NcrQa)
@@ -35,10 +48,7 @@
 </div>
 
 
-<h1>Download PDF</h1>
-<a href="@Url.Action("DownloadPDF", "Ncr")">Download NCR</a>
 
-<a asp-controller="Ncr" asp-action=" DownloadPDF" class="btn btn-primary ms-4"> <i class="bi bi-filetype-pdf"></i> PDF</a>
 
 
 @await Html.PartialAsync("~/Views/NCRDetailViews/_ActionButtonsNCRMain.cshtml", Model);

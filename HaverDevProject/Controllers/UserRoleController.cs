@@ -18,11 +18,14 @@ namespace HaverDevProject.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UserRoleController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public UserRoleController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _context = context;
             _userManager = userManager;
+            _roleManager = roleManager;
+
         }
         // GET: User
         public async Task<IActionResult> Index(string SearchUser, string SearchRole, int? page, int? pageSizeID,
@@ -35,7 +38,7 @@ namespace HaverDevProject.Controllers
 
             var users = await (from u in _context.Users
                                .OrderBy(u => u.UserName)
-                               select new CreateUserVM
+                               select new UserVM
                                {
                                    ID = u.Id,
                                    FirstName = u.FirstName,
@@ -149,6 +152,10 @@ namespace HaverDevProject.Controllers
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
 
+            // Retrieve all roles
+            var rolesDropdown = await _context.Roles.OrderBy(r => r.Name).ToListAsync();
+            ViewBag.Roles = new SelectList(rolesDropdown, "Name", "Name");
+
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, ControllerName());
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
 
@@ -161,10 +168,37 @@ namespace HaverDevProject.Controllers
                 pageIndex--;
                 items = users.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
             }
-            var pageData = new PaginatedList<CreateUserVM>(items, count, pageIndex, pageSize);
+            var pageData = new PaginatedList<UserVM>(items, count, pageIndex, pageSize);
 
             return View(pageData);
         }
+
+        // GET: Users/Details/5
+        public async Task<IActionResult> Details(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+            var role = roles.FirstOrDefault(); 
+
+            var userDetailsViewModel = new UserDetailsVM
+            {
+                User = user,
+                Role = role 
+            };
+
+            return View(userDetailsViewModel);
+        }
+
 
         //GET: Users/Create
         [HttpGet]
@@ -177,7 +211,7 @@ namespace HaverDevProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateUserVM model)
+        public async Task<IActionResult> Create(UserVM model)
         {
             if (ModelState.IsValid)
             {
@@ -205,6 +239,7 @@ namespace HaverDevProject.Controllers
                         return View(model);
                     }
 
+                    TempData["SuccessMessage"] = "User created successfully!";
                     return RedirectToAction("Index");
                 }
                 else
@@ -235,7 +270,7 @@ namespace HaverDevProject.Controllers
             }
 
             var userRoles = await _userManager.GetRolesAsync(user);
-            var model = new CreateUserVM
+            var model = new UserVM
             {
                 Email = user.Email,
                 FirstName = user.FirstName,
@@ -243,15 +278,15 @@ namespace HaverDevProject.Controllers
                 SelectedRole = userRoles.FirstOrDefault() 
             };
 
+
             PopulateRoles();
             return View(model);
         }
 
         // POST: Users/Edit/5
-        // POST: Users/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, CreateUserVM model)
+        public async Task<IActionResult> Edit(string id, UserVM model)
         {
             if (id == null)
             {
@@ -308,6 +343,7 @@ namespace HaverDevProject.Controllers
                     }
                 }
 
+                TempData["SuccessMessage"] = "User edited successfully!";
                 return RedirectToAction(nameof(Index));
             }
 
