@@ -319,21 +319,7 @@ namespace HaverDevProject.Controllers
             ViewBag.IsNCRReInspView = false;
 
             ViewBag.NCRSectionId = id;
-
-            if (ncrEng.CreatedBy.ToString() == "Seed Data")
-            {
-                ncrEng.CreatedBy = "engineer@outlook.com";
-            }
-
-            var createdBy = await _userManager.FindByEmailAsync(ncrEng.CreatedBy.ToString());
-            var updatedBy = await _userManager.FindByEmailAsync(ncrEng.UpdatedBy.ToString());
-
-            ViewData["CreatorFirstName"] = createdBy?.FirstName ?? "Unknown";
-            ViewData["CreatorLastName"] = createdBy?.LastName ?? "Unknown";
-
-            ViewData["EditorFirstName"] = updatedBy?.FirstName ?? "Unknown";
-            ViewData["EditorLastName"] = updatedBy?.LastName ?? "Unknown";
-            
+                    
             return View(ncrEng);
         }
 
