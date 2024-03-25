@@ -1,4 +1,4 @@
-﻿@model HaverDevProject.Models.NcrQa
+﻿@model HaverDevProject.ViewModels.NcrQaDetailsVM
 
 <div class="container-fluid mt-2">
     <div class="row justify-content-center">
@@ -6,29 +6,29 @@
 
     @await Html.PartialAsync("~/Views/NCRDetailViews/_HeadingDetails.cshtml", Model)
 
-    @if (Model.Ncr.NcrQa != null)
+    @if (Model.NcrQa != null)
     {
-        @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", Model.Ncr.NcrQa)
+        @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", Model)
     }
 
-    @if (Model.Ncr.NcrEng != null)
+    @if (Model.NcrEng != null)
     {
-        @await Html.PartialAsync("~/Views/NCRDetailViews/_NCREngDetailsPartial.cshtml", Model.Ncr.NcrEng)
+        @await Html.PartialAsync("~/Views/NCRDetailViews/_NCREngDetailsPartial.cshtml", Model.NcrEng)
     }
 
-    @if (Model.Ncr.NcrOperation != null)
+    @if (Model.NcrOperation != null)
     {
-        @await Html.PartialAsync("~/Views/NCRDetailViews/_NCROpDetailsPartial.cshtml", Model.Ncr.NcrOperation)
+        @await Html.PartialAsync("~/Views/NCRDetailViews/_NCROpDetailsPartial.cshtml", Model.NcrOperation)
     }
 
-    @if (Model.Ncr.NcrProcurement != null)
+    @if (Model.NcrProcurement != null)
     {
-        @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRProcDetailsPartial.cshtml", Model.Ncr.NcrProcurement)
+        @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRProcDetailsPartial.cshtml", Model.NcrProcurement)
     }
 
-    @if (Model.Ncr.NcrReInspect != null)
+    @if (Model.NcrReInspect != null)
     {
-        @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRReInspDetailsPartial.cshtml", Model.Ncr.NcrReInspect)
+        @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRReInspDetailsPartial.cshtml", Model.NcrReInspect)
     }
         </div>
     </div>

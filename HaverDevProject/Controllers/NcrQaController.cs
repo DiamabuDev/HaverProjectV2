@@ -270,7 +270,7 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: NcrQa/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, string referrer)
         {
             if (id == null || _context.NcrQas == null)
             {
@@ -309,15 +309,26 @@ namespace HaverDevProject.Controllers
             ViewBag.IsNCRReInspView = false;
 
             ViewBag.NCRSectionId = id;
+                        
+            ApplicationUser creator = null;
+            ApplicationUser editor = null;
 
-            var user = await _userManager.FindByIdAsync(ncrQa.NcrQaUserId.ToString());
-            if (user != null)
+            creator = await _userManager.FindByEmailAsync(ncrQa.CreatedBy.ToString());                 
+            editor = await _userManager.FindByEmailAsync(ncrQa.UpdatedBy.ToString());                        
+
+            var ncrQaVM = new NcrQaDetailsVM
             {
-                ViewBag.UserFirstName = user.FirstName;
-                ViewBag.UserLastName = user.LastName;
-            }
+                Ncr = ncrQa.Ncr,        
+                NcrQa = ncrQa,
+                NcrEng = ncrQa.Ncr?.NcrEng, 
+                NcrOperation = ncrQa.Ncr?.NcrOperation,
+                NcrProcurement = ncrQa.Ncr?.NcrProcurement,
+                NcrReInspect = ncrQa.Ncr?.NcrReInspect,
+                Creator = creator,
+                Editor = editor
+            };
 
-            return View(ncrQa);
+            return View(ncrQaVM);
         }
 
         // GET: NcrQa/Create
@@ -451,7 +462,7 @@ namespace HaverDevProject.Controllers
                 var emailContent = "A new NCR has been created:<br><br>Ncr #: " + ncr.NcrNumber + "<br>Supplier: " + Supplier.SupplierName;
                 await NotificationCreate(NcrQaId, subject, emailContent);
 
-                return RedirectToAction("Details", new { id = ncrQaId });
+                return RedirectToAction("Details", new { id = ncrQaId, referrer = "Create" });
             }
 
             PopulateDropDownLists();
@@ -644,7 +655,7 @@ namespace HaverDevProject.Controllers
                         var emailContent = "A NCR has been edited :<br><br>Ncr #: " + ncrToUpdate.NcrNumber + "<br>Supplier: " + ncrToUpdate.NcrQa.Supplier.SupplierName;
                         await NotificationCreate(NcrQaId, subject, emailContent);
 
-                        return RedirectToAction("Details", new { id = updateNcrQa });
+                        return RedirectToAction("Details", new { id = updateNcrQa, referrer = "Edit" });
                     }
                     catch (RetryLimitExceededException)
                     {

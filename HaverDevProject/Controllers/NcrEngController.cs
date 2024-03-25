@@ -280,7 +280,7 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: NcrEng/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, string referrer)
         {
             if (id == null || _context.NcrEngs == null)
             {
@@ -320,16 +320,19 @@ namespace HaverDevProject.Controllers
 
             ViewBag.NCRSectionId = id;
 
-            var user = await _userManager.FindByIdAsync(ncrEng.NcrEngUserId.ToString());
-            if (user != null)
+            var createdBy = await _userManager.FindByEmailAsync(ncrEng.CreatedBy.ToString());
+            ViewData["CreatorFirstName"] = createdBy?.FirstName ?? "Unknown";
+            ViewData["CreatorLastName"] = createdBy?.LastName ?? "Unknown";
+
+            if (!string.IsNullOrEmpty(ncrEng.UpdatedBy))
             {
-                ViewBag.UserFirstName = user.FirstName;
-                ViewBag.UserLastName = user.LastName;
+                var updatedBy = await _userManager.FindByEmailAsync(ncrEng.UpdatedBy.ToString());
+                ViewData["EditorFirstName"] = updatedBy?.FirstName ?? "Unknown";
+                ViewData["EditorLastName"] = updatedBy?.LastName ?? "Unknown";
             }
 
             return View(ncrEng);
         }
-
 
         // GET: NcrEng/Create
         public async Task<IActionResult> Create(string ncrNumber)
@@ -489,7 +492,7 @@ namespace HaverDevProject.Controllers
                     var subject = "New NCR Created " + ncr.NcrNumber;
                     var emailContent = "A new NCR has been created:<br><br>Ncr #: " + ncr.NcrNumber + "<br>Supplier: " + ncr.NcrQa.Supplier.SupplierName;
                     await NotificationCreate(ncrEngId, subject, emailContent);
-                    return RedirectToAction("Details", new { id = ncrEngId });
+                    return RedirectToAction("Details", new { id = ncrEngId, referrer = "Create" });
                 }
 
             }
@@ -610,7 +613,6 @@ namespace HaverDevProject.Controllers
                     _context.Update(ncrEng);
                     await _context.SaveChangesAsync();
 
-
                     var ncr = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrEng.NcrId);
                     ncr.NcrLastUpdated = DateTime.Now;
                     _context.Update(ncr);
@@ -632,7 +634,7 @@ namespace HaverDevProject.Controllers
                     var emailContent = "A NCR has been edited :<br><br>Ncr #: " + ncr.NcrNumber + "<br>Supplier: " + ncr.NcrQa.Supplier.SupplierName;
                     await NotificationEdit(ncrEngId, subject, emailContent);
 
-                    return RedirectToAction("Details", new { id = ncrEngId });
+                    return RedirectToAction("Details", new { id = ncrEngId, referrer = "Edit" });
                 }
                 catch (DbUpdateConcurrencyException)
                 {
