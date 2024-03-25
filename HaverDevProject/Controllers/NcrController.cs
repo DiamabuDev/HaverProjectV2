@@ -1100,16 +1100,16 @@ namespace HaverDevProject.Controllers
             try
             {
                 // Load NCR excel template 
-                string solutionDir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
-                string excelPictureFilePath = Path.Combine(solutionDir, "picture-template.xlsx");
-                string solutionDirtwo = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
-                string excelPictureFilePathtwo = Path.Combine(solutionDirtwo, "ncr-template.xlsx");
+                //string solutionDir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+                //string excelPictureFilePath = Path.Combine(solutionDir, "picture-template.xlsx");
+                //string solutionDirtwo = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+                //string excelPictureFilePathtwo = Path.Combine(solutionDirtwo, "ncr-template.xlsx");
 
-                //var excelFilePath = "ncr-template.xlsx";
-                //var excelPictureFilePath = "picture-template.xlsx";
+                var excelFilePath = "./ncr-template.xlsx";
+                var excelPictureFilePath = "./picture-template.xlsx";
                 Workbook workbook = new Workbook();
                 Workbook workbookPicture = new Workbook();
-                workbook.LoadTemplateFromFile(excelPictureFilePathtwo);
+                workbook.LoadTemplateFromFile(excelFilePath);
                 workbookPicture.LoadTemplateFromFile(excelPictureFilePath);
 
 
