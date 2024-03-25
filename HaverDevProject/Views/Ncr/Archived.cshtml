@@ -40,13 +40,11 @@
     <div class="row">
         <div class="col-md-6 col-lg-4" style="padding-top: 20px;">
             <!-- Adjust column size as needed -->
-            <button class="btn btn-primary mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#archiveCollapse" aria-expanded="false" aria-controls="archiveCollapse">
-                Archive NCRs
-            </button>
-            <div class="collapse" id="archiveCollapse">
+            <div id="archiveCollapse" class="collapse show">
+                <!-- removed the button and surrounding div -->
                 <div class="card mb-3">
                     <div class="card-body">
-                        <h5 class="card-title" data-bs-toggle="tooltip" data-bs-placement="top" title="How many years ago from today that an NCR was created">Select Number of Years to Archive NCRs</h5>
+                        <h5 class="card-title" data-bs-toggle="tooltip" data-bs-placement="top" title="An NCR is 'x' amount of years or older">Archive Multiple NCRs by Age</h5>
                         <form method="post" action="@Url.Action("ArchiveManyNcrs", "Ncr")">
                             <div class="input-group">
                                 <input type="number" class="form-control" id="archiveYear" name="archiveYear" min="1" placeholder="Enter number of years" required>
@@ -59,6 +57,7 @@
         </div>
     </div>
 </div>
+
 
 
 
