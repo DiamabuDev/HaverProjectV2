@@ -1099,8 +1099,8 @@ namespace HaverDevProject.Controllers
             try
             {
                 // Load NCR excel template 
-                var excelFilePath = "ncr-template.xlsx";
-                var excelPictureFilePath = "picture-template.xlsx";
+                var excelFilePath = "C:\\home\\site\\wwwroot\\ncr-template.xlsx";
+                var excelPictureFilePath = "C:\\home\\site\\wwwroot\\picture-template.xlsx";
                 Workbook workbook = new Workbook();
                 Workbook workbookPicture = new Workbook();
                 workbook.LoadTemplateFromFile(excelFilePath);
