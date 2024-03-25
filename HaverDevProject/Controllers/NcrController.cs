@@ -12,7 +12,8 @@ using HaverDevProject.CustomControllers;
 using HaverDevProject.Services;
 using Microsoft.AspNetCore.Authorization;
 using Spire.Xls;
-
+using OfficeOpenXml;
+using System.Drawing;
 
 namespace HaverDevProject.Controllers
 {
@@ -1069,6 +1070,407 @@ namespace HaverDevProject.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+
+
+        #region DownloadPDF
+        public async Task<IActionResult> DownloadPDF(int id)
+        {
+            var ncr = await _context.Ncrs
+                .Include(n => n.NcrQa)
+                .Include(n => n.NcrQa).ThenInclude(n => n.Item)
+                .Include(n => n.NcrQa).ThenInclude(n => n.Defect)
+                .Include(n => n.NcrQa).ThenInclude(n => n.Supplier)
+                .Include(n => n.NcrQa).ThenInclude(n => n.ItemDefectPhotos)
+                .Include(n => n.NcrEng)
+                .Include(n => n.NcrEng).ThenInclude(n => n.EngDispositionType)
+                .Include(n => n.NcrEng).ThenInclude(n => n.Drawing)
+                .Include(n => n.NcrEng).ThenInclude(n => n.EngDefectPhotos)
+                .Include(n => n.NcrOperation)
+                .Include(n => n.NcrOperation).ThenInclude(n => n.OpDispositionType)
+                .Include(n => n.NcrOperation).ThenInclude(n => n.FollowUpType)
+                .Include(n => n.NcrOperation).ThenInclude(n => n.OpDefectPhotos)
+                .Include(n => n.NcrProcurement)
+                .Include(n => n.NcrProcurement).ThenInclude(n => n.ProcDefectPhotos)
+                .Include(n => n.NcrReInspect)
+                .Include(n => n.NcrReInspect).ThenInclude(n => n.NcrReInspectPhotos)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(n => n.NcrId == id);
+            try
+            {
+                // Load NCR excel template 
+                var excelFilePath = "ncr-template.xlsx";
+                var excelPictureFilePath = "picture-template.xlsx";
+                Workbook workbook = new Workbook();
+                Workbook workbookPicture = new Workbook();
+                workbook.LoadTemplateFromFile(excelFilePath);
+                workbookPicture.LoadTemplateFromFile(excelPictureFilePath);
+
+
+                //Fill the data 
+                var worksheet = workbook.Worksheets["NCR"];
+                bool checkpictures = false;
+                int firstpage = 1;
+                int morepages = 1;
+                worksheet.Range["Z4"].Value = firstpage.ToString();
+                worksheet.Range["AC4"].Value = morepages.ToString();
+
+
+
+                //Quality Representative
+                if (ncr.NcrQa != null)
+                {
+
+                    worksheet.Range["AC5"].Value = ncr.NcrNumber;
+                    worksheet.Range["AC6"].Value = ncr.NcrQa.NcrQaOrderNumber;
+                    worksheet.Range["AC7"].Value = ncr.NcrQa.NcrQaSalesOrder;
+                    worksheet.Range["M7"].Value = ncr.NcrQa.Supplier.SupplierName;
+                    worksheet.Range["AF8"].Value = ncr.NcrQa.NcrQaQuanReceived.ToString();
+                    worksheet.Range["AF9"].Value = ncr.NcrQa.NcrQaQuanDefective.ToString();
+                    worksheet.Range["B9"].Value = ncr.NcrQa.Item.ItemName;
+                    worksheet.Range["B11"].Value = ncr.NcrQa.NcrQaDescriptionOfDefect;
+                    //worksheet.Range["U15"].Value = ncr.NcrQa.CreatedBy;
+                    worksheet.Range["AE15"].Value = ncr.NcrQa.CreatedOn.ToString();
+                    if (ncr.NcrQa.NcrQaProcessApplicable.Equals(true))
+                    {
+                        worksheet.Range["C6"].Value = "X";
+                    }
+                    else
+                    {
+                        worksheet.Range["C7"].Value = "X";
+                    }
+                    if (ncr.NcrQa.NcrQaItemMarNonConforming.Equals(true))
+                    {
+                        worksheet.Range["C14"].Value = "X";
+                    }
+                    else
+                    {
+                        worksheet.Range["H14"].Value = "X";
+                    }
+                    if (ncr.NcrQa.NcrQaEngDispositionRequired.Equals(true))
+                    {
+                        worksheet.Range["T14"].Value = "X";
+                    }
+                    else
+                    {
+                        worksheet.Range["Y14"].Value = "X";
+                    }
+                    if (ncr.NcrQa.ItemDefectPhotos.Count > 0 || ncr.NcrQa.NcrQaDefectVideo != null)
+                    {
+
+                        firstpage += 1;
+                        morepages += 1;
+                        int qapages = morepages;
+                        checkpictures = true;
+                        var wb = workbookPicture.Worksheets["Pictures"];
+
+
+                        //ExcelPackage excel = new ExcelPackage();
+                        //var worksheeet = excel.Workbook.Worksheets.Add("Pictures");
+
+
+                        //var QaPic = _context.ItemDefectPhotos.FirstOrDefault();
+                        //byte[] imageBytes = QaPic.ItemDefectPhotoContent;
+                        //MemoryStream stream = new MemoryStream(imageBytes);
+                        //Image image = Image.FromStream(stream);
+
+                        //var picture = worksheeet.Drawings.AddPicture("Pic", image);
+                        //picture.SetPosition(4, 0, 2, 0);
+
+
+
+                        //for (int a = 0; a < 5; a++)
+                        //{
+                        //    wb.Row(a * 4).Height = 39.000;
+                        //}
+
+                        //byte[] imageBytes = ncr.NcrQa.ItemDefectPhotos.FirstOrDefault().FileContent.Content.ToArray();
+
+                        //Image logo = Image.FromStream(new MemoryStream(imageBytes));
+
+                        //for (int a = 0; a < 5; a++)
+                        //{
+                        //    var picture = worksheeet.Drawings.AddPicture(a.ToString(), logo);
+                        //    picture.SetPosition(a * 4, 0, 2, 0);
+                        //}
+
+                        wb.Range["A6"].Value = "Quality";
+                        //wb.Range["B6"].Value = "picture";
+                        //wb.Range["R6"].Value = "picture";
+                        //wb.Range["B21"].Value = "picture";
+                        //wb.Range["R21"].Value = "picture";
+                        wb.Range["B37"].Value = ncr.NcrQa.NcrQaDefectVideo;
+                        wb.Range["Z4"].Value = firstpage.ToString();
+                        //wb.Range["AC4"].Value = qapages.ToString();
+                        worksheet.Range["AC4"].Value = morepages.ToString();
+                    }
+                }
+
+                //Engineering
+                if (ncr.NcrEng != null)
+                {
+                    worksheet.Range["B21"].Value = ncr.NcrEng.NcrEngDispositionDescription;
+                    //worksheet.Range["T26"].Value = ncr.NcrEng.CreatedBy;
+                    worksheet.Range["AD26"].Value = ncr.NcrEng.CreatedOn.ToString();
+                    if (ncr.NcrEng.NcrEngCustomerNotification.Equals(true))
+                    {
+                        worksheet.Range["Q18"].Value = "X";
+                    }
+                    else
+                    {
+                        worksheet.Range["U18"].Value = "X";
+                    }
+                    if (ncr.NcrEng.DrawingRequireUpdating.Equals(true))
+                    {
+                        worksheet.Range["O23"].Value = "X";
+                        worksheet.Range["J24"].Value = ncr.NcrEng.DrawingOriginalRevNumber.ToString();
+                        worksheet.Range["T24"].Value = ncr.NcrEng.DrawingUpdatedRevNumber.ToString();
+                        worksheet.Range["T25"].Value = ncr.NcrEng.DrawingRevDate.ToString();
+                    }
+                    else
+                    {
+                        worksheet.Range["T23"].Value = "X";
+                    }
+                    switch (ncr.NcrEng.EngDispositionType.EngDispositionTypeId)
+                    {
+                        case 1:
+                            worksheet.Range["E17"].Value = "X";
+                            break;
+                        case 2:
+                            worksheet.Range["J17"].Value = "X";
+                            break;
+                        case 3:
+                            worksheet.Range["N17"].Value = "X";
+                            break;
+                        case 4:
+                            worksheet.Range["S17"].Value = "X";
+                            break;
+                    }
+                    if (ncr.NcrEng.EngDefectPhotos.Count > 0 || ncr.NcrEng.NcrEngDefectVideo != null)
+                    {
+
+                        firstpage += 1;
+                        morepages += 1;
+                        int engpages = morepages;
+                        checkpictures = true;
+                        var wbE = workbookPicture.Worksheets["Pictures"];
+                        workbookPicture.Worksheets.AddCopy(wbE);
+                        wbE.Range["A6"].Value = "Engineering";
+
+
+
+
+                        //wb.Pictures.Add(4, 4, @"E:\HaverNiagara\V6\HaverProjectV2\HaverDevProject\wwwroot\images\1.jpg");
+
+                        //ExcelPicture picture4 = wb.Pictures.Add(12, 14, @"D:\HaverNiagara\V6\HaverProjectV2\HaverDevProject\wwwroot\images\4.jpg");
+                        //picture4.Width = 300;
+                        //picture4.Height = 300;
+                        //picture4.Left = 350;
+                        //picture4.Top = 475;
+                        wbE.Range["B37"].Value = ncr.NcrEng.NcrEngDefectVideo;
+                        wbE.Range["Z4"].Value = firstpage.ToString();
+                        //wbE.Range["AC4"].Value = engpages.ToString();
+                        worksheet.Range["AC4"].Value = morepages.ToString();
+                    }
+                }
+
+                //Operations
+                if (ncr.NcrOperation != null)
+                {
+                    worksheet.Range["B29"].Value = ncr.NcrOperation.NcrPurchasingDescription;
+                    //worksheet.Range["V33"].Value = ncr.NcrOperation.CreatedBy;
+                    worksheet.Range["AD33"].Value = ncr.NcrOperation.CreatedOn.ToString();
+                    switch (ncr.NcrOperation.OpDispositionType.OpDispositionTypeId)
+                    {
+                        case 1:
+                            worksheet.Range["B28"].Value = "X";
+                            break;
+                        case 2:
+                            worksheet.Range["K28"].Value = "X";
+                            break;
+                        case 3:
+                            worksheet.Range["027"].Value = "X";
+                            break;
+                        case 4:
+                            worksheet.Range["S28"].Value = "X";
+                            break;
+                    }
+                    if (ncr.NcrOperation.Car.Equals(true))
+                    {
+                        worksheet.Range["L31"].Value = "X";
+                        worksheet.Range["Z31"].Value = ncr.NcrOperation.CarNumber;
+                    }
+                    else
+                    {
+                        worksheet.Range["N31"].Value = "X";
+                    }
+                    if (ncr.NcrOperation.FollowUp.Equals(true))
+                    {
+                        worksheet.Range["L32"].Value = "X";
+                        worksheet.Range["AD32"].Value = ncr.NcrOperation.ExpectedDate.ToString();
+                    }
+                    else
+                    {
+                        worksheet.Range["N32"].Value = "X";
+                    }
+                    if (ncr.NcrOperation.OpDefectPhotos.Count > 0 || ncr.NcrOperation.NcrOperationVideo != null)
+                    {
+                        firstpage += 1;
+                        morepages += 1;
+                        int oppages = morepages;
+                        checkpictures = true;
+                        var wbO = workbookPicture.Worksheets["Pictures"];
+                        workbookPicture.Worksheets.AddCopy(wbO);
+                        wbO.Range["A6"].Value = "Operations";
+                        wbO.Range["B37"].Value = ncr.NcrOperation.NcrOperationVideo;
+                        wbO.Range["Z4"].Value = firstpage.ToString();
+                        //wbO.Range["AC4"].Value = oppages.ToString();
+                        worksheet.Range["AC4"].Value = morepages.ToString();
+                    }
+                }
+
+                //Procurement
+                if (ncr.NcrProcurement != null)
+                {
+                    //worksheet.Range["T40"].Value = ncr.NcrProcurement.CreatedBy;
+                    worksheet.Range["AD40"].Value = ncr.NcrProcurement.CreatedOn.ToString();
+                    if (ncr.NcrProcurement.NcrProcSupplierReturnReq.Equals(true))
+                    {
+                        worksheet.Range["L34"].Value = "X";
+                        worksheet.Range["T36"].Value = ncr.NcrProcurement.SupplierReturnAccount;
+                        worksheet.Range["T35"].Value = ncr.NcrProcurement.SupplierReturnName;
+                        worksheet.Range["H35"].Value = ncr.NcrProcurement.SupplierReturnMANum;
+                        worksheet.Range["H36"].Value = ncr.NcrProcurement.NcrProcExpectedDate.ToString();
+                    }
+                    if (ncr.NcrProcurement.NcrProcSupplierBilled.Equals(true))
+                    {
+                        worksheet.Range["L37"].Value = "X";
+                    }
+                    else
+                    {
+                        worksheet.Range["N37"].Value = "X";
+                    }
+                    if (ncr.NcrProcurement.NcrProcCreditExpected.Equals(true))
+                    {
+                        worksheet.Range["L38"].Value = "X";
+                        worksheet.Range["AB38"].Value = ncr.NcrProcurement.NcrProcRejectedValue.ToString();
+
+                    }
+                    else
+                    {
+                        worksheet.Range["N38"].Value = "X";
+                    }
+                    if (ncr.NcrProcurement.NcrProcSAPReturnCompleted.Equals(true))
+                    {
+                        worksheet.Range["L39"].Value = "X";
+                    }
+                    else
+                    {
+                        worksheet.Range["N39"].Value = "X";
+                    }
+                    if (ncr.NcrProcurement.ProcDefectPhotos.Count > 0 || ncr.NcrProcurement.NcrProcDefectVideo != null)
+                    {
+                        firstpage += 1;
+                        morepages += 1;
+                        int procpages = morepages;
+                        checkpictures = true;
+                        var wbR = workbookPicture.Worksheets["Pictures"];
+                        workbookPicture.Worksheets.AddCopy(wbR);
+                        wbR.Range["A6"].Value = "Procurement";
+                        wbR.Range["B37"].Value = ncr.NcrProcurement.NcrProcDefectVideo;
+                        wbR.Range["Z4"].Value = firstpage.ToString();
+                        //wbR.Range["AC4"].Value = procpages.ToString();
+                        worksheet.Range["AC4"].Value = morepages.ToString();
+                    }
+                }
+
+                //Reinspection
+                if (ncr.NcrReInspect != null)
+                {
+                    worksheet.Range["F42"].Value = ncr.NcrReInspect.NcrReInspectNotes;
+                    //worksheet.Range["V43"].Value = ncr.NcrReInspect.CreatedBy;
+                    worksheet.Range["AE43"].Value = ncr.NcrReInspect.CreatedOn.ToString();
+                    if (ncr.NcrReInspect.NcrReInspectAcceptable.Equals(true))
+                    {
+                        worksheet.Range["L41"].Value = "X";
+
+
+                    }
+                    else
+                    {
+                        worksheet.Range["N41"].Value = "X";
+                        worksheet.Range["J43"].Value = ncr.NcrReInspect.NcrReInspectNewNcrNumber;
+                    }
+                    if (ncr.NcrPhase == NcrPhase.Closed)
+                    {
+                        worksheet.Range["G44"].Value = "X";
+                    }
+
+                    if (ncr.NcrReInspect.NcrReInspectPhotos.Count > 0 || ncr.NcrReInspect.NcrReInspectDefectVideo != null)
+                    {
+                        firstpage += 1;
+                        morepages += 1;
+                        int repages = morepages;
+                        checkpictures = true;
+                        var wbP = workbookPicture.Worksheets["Pictures"];
+                        workbookPicture.Worksheets.AddCopy(wbP);
+                        wbP.Range["A6"].Value = "Reinspection";
+                        //wbP.Range["B6"].Value = "picture";
+                        //wbP.Range["R6"].Value = "picture";
+                        //wbP.Range["B21"].Value = "picture";
+                        //wbP.Range["R21"].Value = "picture";
+                        wbP.Range["B37"].Value = ncr.NcrReInspect.NcrReInspectDefectVideo;
+                        wbP.Range["Z4"].Value = firstpage.ToString();
+                        //wbP.Range["AC4"].Value = repages.ToString();
+                        worksheet.Range["AC4"].Value = morepages.ToString();
+                    }
+                }
+
+
+
+
+                Workbook exportWorkbook = new Workbook();
+                foreach (Worksheet sheet in workbook.Worksheets)
+                {
+                    exportWorkbook.Worksheets.AddCopy(sheet);
+                }
+
+                if (checkpictures == true)
+                {
+                    // Copy worksheets from the second workbook
+                    foreach (Worksheet sheet in workbookPicture.Worksheets)
+                    {
+                        exportWorkbook.Worksheets.AddCopy(sheet);
+                    }
+                }
+                //exportWorkbook.ConverterSetting.SheetFitToPage = true;
+                string filename = ncr.NcrNumber;
+                string defaultDownloadFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                string downloadsFolder = Path.Combine(defaultDownloadFolder, "Downloads");
+                string pdfFilePath = Path.Combine(downloadsFolder, $"{filename}.pdf");
+
+                exportWorkbook.SaveToFile(pdfFilePath, FileFormat.PDF);
+
+
+                var cd = new System.Net.Mime.ContentDisposition
+                {
+                    FileName = $"{filename}.pdf",
+                    Inline = false, // Set to false to force download
+                };
+                Response.Headers.Add("Content-Disposition", cd.ToString());
+
+                // Return the file
+                return PhysicalFile(pdfFilePath, "application/pdf");
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error generating PDF: {ex.Message}");
+            }
+
+
+        }
+        #endregion
 
 
         private bool NcrExists(int id)
