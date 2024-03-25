@@ -5,7 +5,7 @@
 <div class="dashboard mt-3">
     @if (User.IsInRole("Admin"))
     {
-        <div class="container">
+        <div class="container" style="padding-left: 250px;">
             <div class="row">
                 <div class="col-5 mb-3">
                     <h2>Hello @ViewBag.FirstName @ViewBag.LastName, <span class="badge bg-secondary">@ViewBag.Role</span></h2>
@@ -52,7 +52,7 @@
                     </a>
                 </div>
                 <div class="col-3">
-                    <a class="dashboard-item text-decoration-none custom-bg-dashboard-item bg-secondary" asp-area="" asp-controller="" asp-action="">
+                    <a class="dashboard-item text-decoration-none custom-bg-dashboard-item bg-primary" asp-area="" asp-controller="Home" asp-action="KPIDashboard">
                         <i class="bi bi-graph-down"></i>
                         <p>KPI Dashboard</p>
                     </a>

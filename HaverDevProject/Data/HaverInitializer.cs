@@ -419,7 +419,7 @@ namespace HaverDevProject.Data
                         {
                             NcrQaItemMarNonConforming = true,
                             NcrQaSalesOrder = "10401227",
-                            NcrQacreationDate = DateTime.Parse("2023-10-07"), 
+                            NcrQacreationDate = DateTime.Parse("2021-10-07"), 
                             NcrQaUserId = "1", 
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-137").NcrId,
                             NcrQaProcessApplicable = false,
@@ -436,7 +436,7 @@ namespace HaverDevProject.Data
                         {
                             NcrQaItemMarNonConforming = true,
                             NcrQaSalesOrder = "10401228",
-                            NcrQacreationDate = DateTime.Parse("2023-11-09"),
+                            NcrQacreationDate = DateTime.Parse("2022-11-09"),
                             NcrQaUserId = "1", 
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-138").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Bearing Housing").ItemId,
@@ -452,7 +452,7 @@ namespace HaverDevProject.Data
                         {
                             NcrQaItemMarNonConforming = true,
                             NcrQaSalesOrder = "10401229",
-                            NcrQacreationDate = DateTime.Parse("2023-11-11"),
+                            NcrQacreationDate = DateTime.Parse("2020-11-11"),
                             NcrQaUserId = "1", 
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-139").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Bearing Housing").ItemId,
@@ -469,7 +469,7 @@ namespace HaverDevProject.Data
                         {
                             NcrQaItemMarNonConforming = true,
                             NcrQaSalesOrder = "10401230",
-                            NcrQacreationDate = DateTime.Parse("2023-12-13"),
+                            NcrQacreationDate = DateTime.Parse("2012-12-13"),
                             NcrQaUserId = "1", 
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-140").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Backing Shield").ItemId,

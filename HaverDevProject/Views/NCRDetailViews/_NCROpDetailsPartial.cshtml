@@ -95,15 +95,16 @@
                         <table class="table">
                             <thead class="custom-light-bg">
                                 <tr>
-                                    <th class="three-cols">Operations Manager</th>
-                                    <th class="three-cols">Creation Date</th>
-                                    <th class="three-cols">Last Updated</th>
+                                    <th class="three-cols">Created By</th>
+                                    <th class="three-cols">Updated By</th>
+                                    <th class="three-cols">Created On</th>
+                                    <th class="three-cols">Updated On</th>
                                 </tr>
                             </thead>
                             <tbody>
-
                                 <tr>
-                            <td class="three-cols">@(Model.NcrOperationUserId == "3" ? "Leslie Pentland" : ViewBag.UserFirstName + " " + ViewBag.UserLastName)</td>
+                                    <td class="three-cols">@await Component.InvokeAsync("UserDetails", new { userEmail = Model.CreatedBy, section = "op" })</td>
+                                    <td class="three-cols">@await Component.InvokeAsync("UserDetails", new { userEmail = Model.UpdatedBy, section = "op" })</td>
                                     <td class="three-cols">@Model.NcrOpCreationDate.ToString("yyyy-MM-dd")</td>
                                     <td class="three-cols">
                                         @{

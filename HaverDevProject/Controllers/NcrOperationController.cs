@@ -643,7 +643,7 @@ namespace HaverDevProject.Controllers
             }
             return View(ncrOperationDTO);
         }
-        
+
         private bool NcrOperationExists(int id)
         {
             return _context.NcrOperations.Any(e => e.NcrOpId == id);
@@ -763,7 +763,7 @@ namespace HaverDevProject.Controllers
         //// CREATE/POST: Operation/Notification/5
         public async Task<IActionResult> NotificationCreate(int? id, string Subject, string emailContent)
         {
-            
+
             if (id == null)
             {
                 return NotFound();

@@ -270,7 +270,7 @@ namespace HaverDevProject.Controllers
         }
 
         // GET: NcrQa/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, string referrer)
         {
             if (id == null || _context.NcrQas == null)
             {
@@ -309,13 +309,6 @@ namespace HaverDevProject.Controllers
             ViewBag.IsNCRReInspView = false;
 
             ViewBag.NCRSectionId = id;
-
-            var user = await _userManager.FindByIdAsync(ncrQa.NcrQaUserId.ToString());
-            if (user != null)
-            {
-                ViewBag.UserFirstName = user.FirstName;
-                ViewBag.UserLastName = user.LastName;
-            }
 
             return View(ncrQa);
         }
@@ -451,7 +444,7 @@ namespace HaverDevProject.Controllers
                 var emailContent = "A new NCR has been created:<br><br>Ncr #: " + ncr.NcrNumber + "<br>Supplier: " + Supplier.SupplierName;
                 await NotificationCreate(NcrQaId, subject, emailContent);
 
-                return RedirectToAction("Details", new { id = ncrQaId });
+                return RedirectToAction("Details", new { id = ncrQaId, referrer = "Create" });
             }
 
             PopulateDropDownLists();
@@ -644,7 +637,7 @@ namespace HaverDevProject.Controllers
                         var emailContent = "A NCR has been edited :<br><br>Ncr #: " + ncrToUpdate.NcrNumber + "<br>Supplier: " + ncrToUpdate.NcrQa.Supplier.SupplierName;
                         await NotificationCreate(NcrQaId, subject, emailContent);
 
-                        return RedirectToAction("Details", new { id = updateNcrQa });
+                        return RedirectToAction("Details", new { id = updateNcrQa, referrer = "Edit" });
                     }
                     catch (RetryLimitExceededException)
                     {

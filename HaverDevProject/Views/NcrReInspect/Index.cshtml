@@ -153,11 +153,7 @@
                         </span>                
                     </td>
                     <td class="col-auto">
-                        @if (item.NcrReInspectUserId != null)
-                        {
-                            @(item.NcrReInspectUserId == "1" ? "Rachel May" : item.CreatedBy)
-                        }
-                    </td>
+                        @await Component.InvokeAsync("UserDetails", new { userEmail = item.CreatedBy, section = "reinsp" })
                     <td class="d-none d-md-table-cell">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrPhase)
                     </td>

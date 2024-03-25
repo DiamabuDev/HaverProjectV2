@@ -1,4 +1,7 @@
 ﻿@model HaverDevProject.Models.NcrEng
+@{
+    var referrer = ViewData["Referrer"] as string;
+}
 
 <style>
     .modal1 {
@@ -105,10 +108,7 @@
                                     </tbody>
                                 </table>
                             </div>
-
-                            </div>
-
-                            
+                            </div>                            
                         }
                         </div>
                         <div class="card">
@@ -116,14 +116,16 @@
                         <table class="table m-0">
                             <thead class="custom-light-bg">
                                 <tr>
-                                    <th class="three-cols">Engineer</th>
-                                    <th class="three-cols">Creation Date</th>
-                                    <th class="three-cols">Last Updated</th>
+                                    <th class="three-cols">Created By</th>
+                                    <th class="three-cols">Updated By</th>
+                                    <th class="three-cols">Created On</th>
+                                    <th class="three-cols">Updated On</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td class="three-cols">@(Model.NcrEngUserId == "2" ? "Michael Smith" : ViewBag.UserFirstName + " " + ViewBag.UserLastName)</td>
+                                    <td class="three-cols">@await Component.InvokeAsync("UserDetails", new { userEmail = Model.CreatedBy, section = "eng" })</td>
+                                    <td class="three-cols">@await Component.InvokeAsync("UserDetails", new { userEmail = Model.UpdatedBy, section = "eng" })</td>
                                     <td class="three-cols">@Model.Ncr.NcrQa.NcrQacreationDate.ToString("yyyy-MM-dd")</td>
                                     <td class="three-cols">
                                         @{
