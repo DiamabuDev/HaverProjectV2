@@ -1,6 +1,6 @@
-﻿@{
+﻿@* @{
     string loginUrl = ViewContext.HttpContext.Request.Path;
-}
+} *@
 
 <!DOCTYPE html>
 <html lang="en">
@@ -21,8 +21,8 @@
 </head>
 <body>
     
-    @if (!loginUrl.Contains("/Identity/Account/Login"))
-    {        
+    @* @if (!loginUrl.Contains("/Identity/Account/Login"))
+    { *@        
 
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark border-bottom box-shadow mb-3">
@@ -144,12 +144,12 @@
         </div>
     </footer>
 
-    }       
-    
+    @*}
+
     <!-- Specific code for login -->
     <div class="container-fluid" style="background-color: white;">
         @RenderBody()
-    </div>
+    </div> *@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
