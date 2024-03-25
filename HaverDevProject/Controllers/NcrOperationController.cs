@@ -314,13 +314,6 @@ namespace HaverDevProject.Controllers
 
             ViewBag.NCRSectionId = id;
 
-            var user = await _userManager.FindByIdAsync(ncrOperation.NcrOperationUserId.ToString());
-            if (user != null)
-            {
-                ViewBag.UserFirstName = user.FirstName;
-                ViewBag.UserLastName = user.LastName;
-            }
-
             return View(ncrOperation);
         }
 
