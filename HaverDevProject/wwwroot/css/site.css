@@ -390,3 +390,9 @@ body {
     border: 1px solid #ced4da !important;
     color: #212529 !important;
 }
+
+.reporte-bi{
+    width: 100%;
+    height: 60vw;
+    max-height: 38vw;
+}
