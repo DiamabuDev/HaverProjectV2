@@ -51,17 +51,21 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th class="two-cols-1">Acceptable</th>
-                                    <th class="two-cols">@(Model.NcrReInspectNewNcrNumber == null ? "" : "New NCR#")
+                                    <th class="three-cols">Acceptable</th>
+                                    <th class="three-cols">@(Model.NcrReInspectNewNcrNumber == null ? "" : "New NCR#")</th>
+                                    <th class="three-cols">@(Model.NcrReInspectNotes == null ? "" : "Reinspection Notes")</th>
                                 </tr>
                             </thead>                
                             <tbody>
                                 <tr>
-                                    <td class="two-cols-1">
+                                    <td class="three-cols">
                                         @(Model.NcrReInspectAcceptable ? "Yes" : "No")
                                     </td>
-                                    <td class="two-cols">
-                                        @(Model.NcrReInspectNewNcrNumber == null ? "" : Model.NcrReInspectNewNcrNumber.ToString())
+                                    <td class="three-cols">
+                                        @(Model.NcrReInspectNewNcrNumber == null ? "" : Model.NcrReInspectNewNcrNumber.ToString())                                        
+                                    </td>
+                                    <td class="three-cols">
+                                        @(Model.NcrReInspectNotes == null ? "" : Model.NcrReInspectNotes)
                                     </td>
                                 </tr>
                             </tbody>
@@ -103,9 +107,9 @@
         @{
                     bool hasImages = Model.NcrReInspectPhotos != null && Model.NcrReInspectPhotos.Any(p => p.NcrReInspectPhotoContent != null);
                     bool hasVideos = Model.Ncr.NcrReInspect.NcrReInspectDefectVideo != null;
-                    bool hasNotes = Model.NcrReInspectNotes != null && Model.NcrReInspectAcceptable == false;
+                    //bool hasNotes = Model.NcrReInspectNotes != null && Model.NcrReInspectAcceptable == false;
         }
-                @if (hasImages || hasVideos || hasNotes)
+                @if (hasImages || hasVideos @* || hasNotes *@)
                 {
                     <button class="btn custom-secondary-bg icon-drop text-start" type="button" data-bs-toggle="collapse" data-bs-target="#additionalInfoReInsp" aria-expanded="false" aria-controls="additionalInfo2">
                         Additional Information <i class="bi bi-chevron-down"></i>
@@ -155,7 +159,7 @@
                                 }
                             </div>
                         }
-                        @if (hasNotes)
+                        @* @if (hasNotes)
                         {
                             <div class="card-header">
                                 Notes
@@ -166,7 +170,7 @@
                                     @Html.Raw(Model.NcrReInspectNotes)
                                 }
                             </div>
-                        }
+                        } *@
                     </div>
                 }
             </div>    

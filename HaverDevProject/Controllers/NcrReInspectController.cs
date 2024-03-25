@@ -17,6 +17,7 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Identity;
 using OfficeOpenXml.Style;
 using OfficeOpenXml;
+using SkiaSharp;
 
 namespace HaverDevProject.Controllers
 {
@@ -451,7 +452,7 @@ namespace HaverDevProject.Controllers
                             NcrQaSalesOrder = ncrToUpdate.NcrQa.NcrQaSalesOrder,
                             NcrQaQuanReceived = ncrToUpdate.NcrQa.NcrQaQuanReceived,
                             NcrQaQuanDefective = ncrToUpdate.NcrQa.NcrQaQuanDefective,
-                            NcrQaDescriptionOfDefect = "NCR was recreated as it was not acceptable" /*ncrToUpdate.NcrQa.NcrQaDescriptionOfDefect*/,
+                            NcrQaDescriptionOfDefect = $"NCR was recreated from NCR #{ncrReInspect.NcrNumber} as it was not acceptable." /*ncrToUpdate.NcrQa.NcrQaDescriptionOfDefect*/,
                             SupplierId = ncrToUpdate.NcrQa.SupplierId,
                             ItemId = ncrToUpdate.NcrQa.ItemId,
                             DefectId = ncrToUpdate.NcrQa.DefectId,
@@ -463,7 +464,7 @@ namespace HaverDevProject.Controllers
                         _context.NcrQas.Add(newNcrQa);
                         await _context.SaveChangesAsync();
 
-                        TempData["SuccessMessage"] = "This NCR was automatically created using the previous NCRs information";
+                        TempData["SuccessMessage"] = $"This NCR was automatically created using NCR #{ncrReInspect.NcrNumber}s information";
 
                         return RedirectToAction("Edit", "NcrQa", new { id = ncrNewId.NcrId });
                     }
