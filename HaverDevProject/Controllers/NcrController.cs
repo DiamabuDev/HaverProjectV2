@@ -1115,8 +1115,9 @@ namespace HaverDevProject.Controllers
                 //string solutionDirtwo = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
                 //string excelPictureFilePathtwo = Path.Combine(solutionDirtwo, "ncr-template.xlsx");
 
-                var excelFilePath = "./ncr-template.xlsx";
-                var excelPictureFilePath = "./picture-template.xlsx";
+               
+                var excelFilePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\uploads", "ncr-template.xlsx");
+                var excelPictureFilePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\uploads", "picture-template.xlsx");
                 Workbook workbook = new Workbook();
                 Workbook workbookPicture = new Workbook();
                 workbook.LoadTemplateFromFile(excelFilePath);
