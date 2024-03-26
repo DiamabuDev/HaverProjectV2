@@ -56,7 +56,7 @@ namespace HaverDevProject.Models
         [Required(ErrorMessage = "Total Rejected Value is required.")]
         [Column("ncrProcRejectedValue")]
         [DataType(DataType.Currency)]
-        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
+        //[DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
         public decimal NcrProcRejectedValue { get; set; }
 
         [Display(Name = "Procurement")]

@@ -156,34 +156,11 @@
                     </td>
 
                     <td class="align-middle">
-                        @if (item.NcrPhase == NcrPhase.Archive && item.NcrQa.NcrQacreationDate.AddYears(5) > DateTime.Now)
-                        {
-                            <div class="btn-group" role="group" aria-label="NCR Actions">
-                                <a asp-action="Details" asp-route-id="@item.NcrId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Details">
-                                    <i class="bi bi-eye-fill"></i>
-                                </a>
-
-                                <a asp-action="RestoreNcr" asp-route-id="@item.NcrId" class="btn btn-sm btn-success me-1" data-bs-toggle="tooltip" title="Restore NCR">
-                                    <i class="bi bi-archive-fill"></i>
-                                </a>
-
-                                <a href="#" class="btn btn-sm btn-danger delete-button" data-bs-toggle="tooltip" title="Delete NCR" data-id="@item.NcrId">
-                                    <i class="bi bi-trash"></i>
-                                </a>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="btn-group" role="group" aria-label="NCR Actions">
-                                <a asp-action="Details" asp-route-id="@item.NcrId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Details">
-                                    <i class="bi bi-eye-fill"></i>
-                                </a>
-
-                                <a href="#" class="btn btn-sm btn-danger delete-button" data-bs-toggle="tooltip" title="Delete NCR" data-id="@item.NcrId">
-                                    <i class="bi bi-trash"></i>
-                                </a>
-                            </div>
-                        }
+                        <div class="btn-group" role="group" aria-label="NCR Actions">
+                            <a asp-action="Details" asp-route-id="@item.NcrId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Details">
+                                <i class="bi bi-eye-fill"></i>
+                            </a>
+                        </div>
                     </td>
 
                 </tr>
