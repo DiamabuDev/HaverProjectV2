@@ -19,7 +19,7 @@ using OfficeOpenXml;
 
 namespace HaverDevProject.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Quality")]
     public class SupplierController : ElephantController
     {
         private readonly HaverNiagaraContext _context;
