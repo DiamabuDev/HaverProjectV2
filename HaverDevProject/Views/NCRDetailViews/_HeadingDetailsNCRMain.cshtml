@@ -6,11 +6,33 @@
     <div class="col-auto fs-5">
         @Model.NcrNumber
     </div>
-    <div class="col-auto">
-        <span class="btn @(Model.NcrStatus == false ? "text-white bg-danger" : "text-white bg-success")" style="cursor: default;">
-            @(Model.NcrStatus == true ? "Active" : "Closed")
-        </span>
-    </div>
+    @if (Model.NcrPhase != NcrPhase.Archive && Model.NcrPhase != NcrPhase.Void)
+    {
+        <div class="col-auto">
+            <span class="btn @(Model.NcrStatus == false ? "text-white bg-danger" : "text-white bg-success")" style="cursor: default;">
+                @(Model.NcrStatus == true ? "Active" : "Closed")
+            </span>
+        </div>
+    }
+    @if (Model.NcrPhase == NcrPhase.Archive)
+    {
+        <div class="col-auto">
+            <span class="btn text-white bg-secondary" style="cursor: default;">
+                Archived
+            </span>
+        </div>
+
+
+    }
+    @if (Model.NcrPhase == NcrPhase.Void)
+    {
+        <div class="col-auto">
+            <span class="btn text-white bg-danger" style="cursor: default;">
+                Void
+            </span>
+        </div>
+
+    }
     @if (Model.NcrStatus == true)
     {
         <div class="col-auto">
