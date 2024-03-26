@@ -15,6 +15,7 @@ using Spire.Xls;
 using OfficeOpenXml;
 using System.Drawing;
 using System.IO;
+using HaverDevProject.Configurations;
 
 namespace HaverDevProject.Controllers
 {
@@ -22,10 +23,12 @@ namespace HaverDevProject.Controllers
     public class NcrController : ElephantController
     {
         private readonly HaverNiagaraContext _context;
+        private readonly ITargetYearService _targetYearService;
 
-        public NcrController(HaverNiagaraContext context)
+        public NcrController(HaverNiagaraContext context, ITargetYearService targetYearService)
         {
             _context = context;
+            _targetYearService = targetYearService;
         }
 
         // GET: Ncr
@@ -917,6 +920,13 @@ namespace HaverDevProject.Controllers
                 // Redirect back to the previous page or any other desired page
                 return RedirectToAction("Archived"); // Change "Archived" to the action name you want to redirect to
             }
+        }
+
+        [HttpPost]
+        public IActionResult AutomaticArchiveYear(int targetYear)
+        {
+            _targetYearService.TargetYear = targetYear;
+            return RedirectToAction("Archived"); // Redirect to a different action
         }
 
         //[HttpPost]

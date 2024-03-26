@@ -419,7 +419,7 @@ namespace HaverDevProject.Data
                         {
                             NcrQaItemMarNonConforming = true,
                             NcrQaSalesOrder = "10401227",
-                            NcrQacreationDate = DateTime.Parse("2021-10-07"), 
+                            NcrQacreationDate = DateTime.Parse("2018-10-07"), 
                             NcrQaUserId = "1", 
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-137").NcrId,
                             NcrQaProcessApplicable = false,

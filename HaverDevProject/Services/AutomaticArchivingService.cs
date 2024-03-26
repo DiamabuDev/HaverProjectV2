@@ -1,4 +1,4 @@
-﻿using HaverDevProject.Controllers;
+﻿using HaverDevProject.Configurations;
 using HaverDevProject.Data;
 using HaverDevProject.Models;
 using Microsoft.EntityFrameworkCore;
@@ -14,53 +14,48 @@ namespace HaverDevProject.Services
     public class AutomaticNcrArchivingService : BackgroundService
     {
         private readonly IServiceProvider _serviceProvider;
-        public AutomaticNcrArchivingService(IServiceProvider serviceProvider)
+        private readonly ITargetYearService _targetYearService;
+
+        public AutomaticNcrArchivingService(IServiceProvider serviceProvider, ITargetYearService targetYearService)
         {
             _serviceProvider = serviceProvider;
-
+            _targetYearService = targetYearService;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                // Execute the archiving process after 5 years
-                await ArchiveNcrsAfter5Years();
+                var targetYear = _targetYearService.TargetYear;
 
-                // Wait for 24 hours before checking again
-                await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
-            }
-        }
-
-        private async Task ArchiveNcrsAfter5Years()
-        {
-            using (var scope = _serviceProvider.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<HaverNiagaraContext>();
-
-                try
+                using (var scope = _serviceProvider.CreateScope())
                 {
-                    int archiveYear = DateTime.Now.Year - 5;
-                    var archiveStartDate = new DateTime(archiveYear, 1, 1);
+                    var dbContext = scope.ServiceProvider.GetRequiredService<HaverNiagaraContext>();
 
-                    var ncrsToArchive = dbContext.Ncrs
-                        .Where(n => n.NcrPhase == NcrPhase.Closed && n.NcrPhase != NcrPhase.Archive &&
-                                    n.NcrQa.NcrQacreationDate.Date < archiveStartDate)
-                        .ToList();
-
-                    foreach (var ncr in ncrsToArchive)
+                    try
                     {
-                        ncr.NcrPhase = NcrPhase.Archive;
-                        dbContext.Update(ncr);
-                    }
+                        var ncrsToArchive = dbContext.Ncrs
+                            .Where(n => n.NcrPhase == NcrPhase.Closed && n.NcrPhase != NcrPhase.Archive &&
+                                        n.NcrQa.NcrQacreationDate.Year <= targetYear)
+                            .ToList();
 
-                    await dbContext.SaveChangesAsync();
+                        foreach (var ncr in ncrsToArchive)
+                        {
+                            ncr.NcrPhase = NcrPhase.Archive;
+                            dbContext.Update(ncr);
+                        }
+
+                        await dbContext.SaveChangesAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Handle exception
+                        Console.WriteLine($"Error occurred while archiving NCR objects: {ex.Message}");
+                    }
                 }
-                catch (Exception ex)
-                {
-                    // Handle exception
-                    Console.WriteLine($"Error occurred while archiving NCR objects: {ex.Message}");
-                }
+
+                // Wait for a specified interval before checking again
+                await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
             }
         }
     }

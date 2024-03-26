@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<HaverDevProject.Models.Ncr>
+@inject HaverDevProject.Configurations.ITargetYearService TargetYearService
 
 @{
     ViewData["Title"] = "Archived";
@@ -49,6 +50,28 @@
                             <div class="input-group">
                                 <input type="number" class="form-control" id="archiveYear" name="archiveYear" min="1" placeholder="Enter number of years" required>
                                 <button type="submit" class="btn btn-primary">Archive NCRs</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6 col-lg-4" style="padding-top: 20px;">
+            <!-- Adjust column size as needed -->
+            <div id="archiveCollapse" class="collapse show">
+                <!-- removed the button and surrounding div -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title" data-bs-toggle="tooltip" data-bs-placement="top" title="An NCR is 'x' amount of years or older">Automatically Archive NCRs by Year</h5>
+                        <form method="post" action="@Url.Action("AutomaticArchiveYear", "Ncr")" onsubmit="showConfirmation()">
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="targetYear" name="targetYear" min="1900" max="2100" placeholder="Enter target year" value="@TargetYearService.TargetYear" required>
+                                <button type="submit" class="btn btn-primary">Update Target Year</button>
                             </div>
                         </form>
                     </div>
@@ -309,7 +332,12 @@
             });
         });
     </script>
-   
+    <script>
+        function showConfirmation() {
+            var targetYear = document.getElementById("targetYear").value;
+            alert("The changes will take effect in the next service cycle (24 hours). Target Year: " + targetYear);
+        }
+    </script>
 
 
 
