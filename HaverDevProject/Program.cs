@@ -10,6 +10,7 @@ using OfficeOpenXml;
 using System.Text.Json.Serialization;
 using HaverDevProject.Services;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.AspNetCore.Authorization;
 using HaverDevProject.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -113,7 +114,16 @@ else
 
 app.Use(async (context, next) =>
 {
-    if (!context.User.Identity.IsAuthenticated && !context.Request.Path.StartsWithSegments("/Identity"))
+    var endpoint = context.GetEndpoint();
+    var allowAnonymous = endpoint?.Metadata.GetMetadata<IAllowAnonymous>() != null;
+    var isApiRequest = context.Request.Path.StartsWithSegments("/api/Ncrs");
+    var isLoginPage = context.Request.Path.StartsWithSegments("/Identity/Account/Login");
+
+    //if (!context.User.Identity.IsAuthenticated && !context.Request.Path.StartsWithSegments("/Identity"))
+    if (!context.User.Identity.IsAuthenticated && 
+        !allowAnonymous &&
+        !isApiRequest &&
+        !isLoginPage)
     {
         // Redirect to login page
         context.Response.Redirect("/Identity/Account/Login");
@@ -129,7 +139,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthorization();
+//app.UseAuthorization();
 app.UseAuthorization();
 
 app.MapControllerRoute(
