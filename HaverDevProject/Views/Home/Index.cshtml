@@ -4,78 +4,89 @@
 
 <div class="dashboard mt-3">
     @if (User.IsInRole("Admin"))
-    {
-        <div class="container" style="padding-left: 250px;">
-            <div class="row">
-                <div class="col-5 mb-3">
-                    <h2>Hello @ViewBag.FirstName @ViewBag.LastName, <span class="badge bg-secondary">@ViewBag.Role</span></h2>
-                </div>
-            </div>
+    {             
+        <div class="container">
 
             <div class="row">
-                <div class="col-3 mb-5">
-                    <a class="dashboard-item text-decoration-none bg-primary" asp-area="" asp-controller="Ncr" asp-action="Index">
-                        <i class="bi bi-file-earmark-spreadsheet"></i>
-                        <p>NCR Log</p>
-                    </a>
-                </div>            
-                <div class="col-3 mb-5">
-                    <div class="dropdown">
-                        <a role="button" href="#" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false" class="dashboard-item dropdown-with text-decoration-none bg-primary ">
-                            <i class="bi bi-building-gear"></i>
-                            <p class="dropdown-toggle">
-                                Sections
-                            </p>
-                        </a>
-                        <ul class="dropdown-menu custom-dropdown-color" aria-labelledby="adminDropdown">
-                            <li><a class="dropdown-item" asp-area="" asp-controller="NcrQa" asp-action="Index">Quality</a></li>
-                            <li><a class="dropdown-item" asp-area="" asp-controller="NcrEng" asp-action="Index">Engineer</a></li>
-                            <li><a class="dropdown-item" asp-area="" asp-controller="NcrOperation" asp-action="Index">Operations</a></li>
-                            <li><a class="dropdown-item" asp-area="" asp-controller="NcrProcurement" asp-action="Index">Procurement</a></li>
-                            <li><a class="dropdown-item" asp-area="" asp-controller="NcrReInspect" asp-action="Index">ReInspection</a></li>
-                        </ul>
+                <div class="col-2">
+                </div>
+                <div class="col-8">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <h2>Hello @ViewBag.FirstName @ViewBag.LastName, <span class="badge bg-secondary">@ViewBag.Role</span></h2>
+                        </div>
                     </div>
-                </div>
-                <div class="col-3">
-                    <a class="dashboard-item text-decoration-none bg-primary" asp-area="" asp-controller="Supplier" asp-action="Index">
-                        <i class="bi bi-buildings"></i>
-                        <p>Suppliers</p>
-                    </a>
-                </div>
 
-            </div>
-            <div class="row">
-                <div class="col-3">
-                    <a class=" dashboard-item text-decoration-none bg-primary" asp-area="" asp-controller="UserRole" asp-action="Index">
-                        <i class="bi bi-buildings"></i>
-                        <p>Users</p>
-                    </a>
-                </div>
-                <div class="col-3">
-                    <a class="dashboard-item text-decoration-none custom-bg-dashboard-item bg-primary" asp-area="" asp-controller="Home" asp-action="KPIDashboard">
-                        <i class="bi bi-graph-down"></i>
-                        <p>KPI Dashboard</p>
-                    </a>
-                </div>
-                <div class="col-3">
-                    <div class="dropdown">
-                        <a role="button" href="#" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false" class="dashboard-item dropdown-with text-decoration-none bg-primary ">
-                            <i class="bi bi-building-gear"></i>
-                            <p class="dropdown-toggle">
-                                Administrator
-                            </p>
-                        </a>
-                        <ul class="dropdown-menu custom-dropdown-color" aria-labelledby="adminDropdown">
-                            <li><a class="dropdown-item" asp-area="" asp-controller="Item" asp-action="Index">Items</a></li>
-                            <li><a class="dropdown-item" asp-area="" asp-controller="Defects" asp-action="Index">Defect Types</a></li>
-                            <li><a class="dropdown-item" asp-area="" asp-controller="Lookup" asp-action="Index">Lookup Values</a></li>
-                        </ul>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <a class="dashboard-item text-decoration-none custom-bg-dashboard-item bg-primary" asp-area="" asp-controller="Ncr" asp-action="Index">
+                                <i class="bi bi-file-earmark-spreadsheet"></i>
+                                <p>NCR Log</p>
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="dropdown">
+                                <a role="button" href="#" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false" class="dashboard-item dropdown-with text-decoration-none bg-primary">
+                                    <i class="bi bi-building-gear"></i>
+                                    <p class="dropdown-toggle">
+                                        Sections
+                                    </p>
+                                </a>
+                                <ul class="dropdown-menu custom-dropdown-color" aria-labelledby="adminDropdown">
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="NcrQa" asp-action="Index">Quality</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="NcrEng" asp-action="Index">Engineer</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="NcrOperation" asp-action="Index">Operations</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="NcrProcurement" asp-action="Index">Procurement</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="NcrReInspect" asp-action="Index">ReInspection</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a class="dashboard-item text-decoration-none bg-primary" asp-area="" asp-controller="Supplier" asp-action="Index">
+                                <i class="bi bi-buildings"></i>
+                                <p>Suppliers</p>
+                            </a>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <a class=" dashboard-item text-decoration-none bg-primary" asp-area="" asp-controller="UserRole" asp-action="Index">
+                                <i class="bi bi-buildings"></i>
+                                <p>Users</p>
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a class="dashboard-item text-decoration-none custom-bg-dashboard-item bg-primary" asp-area="" asp-controller="Home" asp-action="KPIDashboard">
+                                <i class="bi bi-graph-down"></i>
+                                <p>KPI Dashboard</p>
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="dropdown">
+                                <a role="button" href="#" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false" class="dashboard-item dropdown-with text-decoration-none bg-primary">
+                                    <i class="bi bi-building-gear"></i>
+                                    <p class="dropdown-toggle">
+                                        Administrator
+                                    </p>
+                                </a>
+                                <ul class="dropdown-menu custom-dropdown-color" aria-labelledby="adminDropdown">
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Item" asp-action="Index">Items</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Defects" asp-action="Index">Defect Types</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Lookup" asp-action="Index">Lookup Values</a></li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                <div class="col-2">
+                </div>
             </div>
+            
         </div>
-    }
 
+    }
+ 
     @if (User.IsInRole("Quality"))
     {
         <div>
@@ -85,7 +96,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-3 mb-5">
+                <div class="col-md-3 mb-3">
                     <a class="dashboard-item text-decoration-none bg-warning" asp-area="" asp-controller="NcrReInspect" asp-action="Index">
                         <i class="bi bi-bell-fill"></i>
                         <p id="pendingCountReInsp"></p>
@@ -93,7 +104,7 @@
                 </div>
                 <div class="col-md-4">
                 </div>
-                <div class="col-md-3 mb-5">
+                <div class="col-md-3 mb-3">
                     <a class="dashboard-item newncr text-decoration-none bg-success" asp-area="" asp-controller="NcrQa" asp-action="Create">
                         <i class="bi bi-file-earmark-plus"></i>
                         <p>New NCR</p>
@@ -101,7 +112,7 @@
                 </div>          
             </div>
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-3 mb-3">
                     <a class="dashboard-item text-decoration-none bg-primary" asp-area="" asp-controller="NcrQa" asp-action="Index">
                         <i class="bi bi-file-earmark-spreadsheet"></i>
                         <p>NCR Quality Log</p>
@@ -127,7 +138,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-3 mb-3">
                     <a class="dashboard-item text-decoration-none bg-warning" asp-area="" asp-controller="NcrEng" asp-action="Index">
                         <i class="bi bi-bell-fill"></i>
                         <p id="pendingCountEng"></p>
@@ -135,7 +146,7 @@
                 </div>
                 <div class="col-md-4">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3 mb-3">
                     <a class="dashboard-item text-decoration-none bg-primary" asp-area="" asp-controller="NcrEng" asp-action="Index">
                         <i class="bi bi-file-earmark-spreadsheet"></i>
                         <p>NCR Log</p>
@@ -153,7 +164,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-3 mb-3">
                     <a class="dashboard-item text-decoration-none bg-warning" asp-area="" asp-controller="NcrOperation" asp-action="Index">
                         <i class="bi bi-bell-fill"></i>
                         <p id="pendingCountOp"></p>
@@ -161,7 +172,7 @@
                 </div>
                 <div class="col-md-4">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3 mb-3">
                     <a class="dashboard-item text-decoration-none bg-primary" asp-area="" asp-controller="NcrOperation" asp-action="Index">
                         <i class="bi bi-file-earmark-spreadsheet"></i>
                         <p>NCR Log</p>
@@ -179,7 +190,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-3 mb-3">
                     <a class="dashboard-item text-decoration-none bg-warning" asp-area="" asp-controller="NcrProcurement" asp-action="Index">
                         <i class="bi bi-bell-fill"></i>
                         <p id="pendingCountProc"></p>
@@ -187,7 +198,7 @@
                 </div>
                 <div class="col-md-4">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3 mb-3">
                     <a class="dashboard-item text-decoration-none bg-primary" asp-area="" asp-controller="NcrProcurement" asp-action="Index">
                         <i class="bi bi-file-earmark-spreadsheet"></i>
                         <p>NCR Log</p>
