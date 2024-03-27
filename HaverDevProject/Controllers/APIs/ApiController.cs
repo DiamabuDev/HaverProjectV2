@@ -4,9 +4,11 @@ using HaverDevProject.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using HaverDevProject.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HaverDevProject.Controllers.APIs
 {
+    
     public class ApiController : Controller
     {
         private readonly HaverNiagaraContext _context;
@@ -14,10 +16,11 @@ namespace HaverDevProject.Controllers.APIs
         public ApiController(HaverNiagaraContext context)
         {
             _context = context;
-        }        
+        }
 
         // GET: api/Ncrs
-        [HttpGet]
+        [AllowAnonymous]
+        [HttpGet]        
         [Route("api/Ncrs")]
         public async Task<ActionResult<IEnumerable<NcrQaApiDTO>>> GetNcrs()
         {
