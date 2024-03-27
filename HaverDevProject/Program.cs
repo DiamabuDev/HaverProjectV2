@@ -75,7 +75,7 @@ builder.Services.AddSingleton<IEmailConfiguration>(builder.Configuration
     .GetSection("EmailConfiguration").Get<EmailConfiguration>());
 
 //Configuration Registration
-builder.Services.AddSingleton<ITargetYearService, TargetYearService>();
+builder.Services.AddSingleton<INumYearsService, NumYearsService>();
 
 //NcrArchivingService for Manual Archiving
 builder.Services.AddScoped<NcrArchivingService>();

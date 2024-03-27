@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<HaverDevProject.Models.Ncr>
-@inject HaverDevProject.Configurations.ITargetYearService TargetYearService
+@inject HaverDevProject.Configurations.INumYearsService TargetYearService
 
 @{
     ViewData["Title"] = "Archived";
@@ -37,49 +37,66 @@
     </li>
 </ul>
 
-<div class="container-fluid">
+<div class="container-fluid mt-4" >
     <div class="row">
-        <div class="col-md-6 col-lg-4" style="padding-top: 20px;">
+        <div class="col-md-6 col-lg-4">
             <!-- Adjust column size as needed -->
             <div id="archiveCollapse" class="collapse show">
-                <!-- removed the button and surrounding div -->
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title" data-bs-toggle="tooltip" data-bs-placement="top" title="An NCR is 'x' amount of years or older">Archive Multiple NCRs by Age</h5>
-                        <form method="post" action="@Url.Action("ArchiveManyNcrs", "Ncr")">
-                            <div class="input-group">
-                                <input type="number" class="form-control" id="archiveYear" name="archiveYear" min="1" placeholder="Enter number of years" required>
-                                <button type="submit" class="btn btn-primary">Archive NCRs</button>
-                            </div>
-                        </form>
+                <div class="row">
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-primary" onclick="openSettingsModal()">Open Settings</button>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    <!-- Add more rows and columns as needed -->
+</div>
+
+
+
+<!-- Settings Modal -->
+<div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="settingsModalLabel">Settings</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Form for number of years -->
+                <form id="settingsForm" action="@Url.Action("AutomaticArchiveYear", "Ncr")" method="post">
+                    <h5>Automatic Archive Service</h5>
+                    <div class="mb-3">
+                        <label for="numYears" class="form-label" data-bs-toggle="tooltip" data-bs-placement="top" title="Archive NCRs that are 'x' amount of years old or older">Enter # of Years</label>
+                        <input type="number" class="form-control" id="numYears" name="numYears" min="1" max="100" placeholder="Enter number of years" value="5" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Archive Service</button>
+                </form>
+                <div style="margin-top: 20px;"></div>
+                <!-- Form for archive by age -->
+                <form method="post" action="@Url.Action("ArchiveManyNcrs", "Ncr")">
+                    <h5>Manual Bulk Archiving</h5>
+                    <div class="mb-3">
+                        <label for="archiveYear" class="form-label" data-bs-toggle="tooltip" data-bs-placement="top" title="Select a year for any NCRs that were created on or before that year">Archive NCRs by Year</label>
+                        <select class="form-select" id="archiveYear" name="archiveYear" required>
+                            @for (int year = DateTime.Now.Year; year >= 2010; year--)
+                            {
+                                <option value="@year">@year</option>
+                            }
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Archive NCRs</button>
+                </form>
+
             </div>
         </div>
     </div>
 </div>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-6 col-lg-4" style="padding-top: 20px;">
-            <!-- Adjust column size as needed -->
-            <div id="archiveCollapse" class="collapse show">
-                <!-- removed the button and surrounding div -->
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title" data-bs-toggle="tooltip" data-bs-placement="top" title="An NCR is 'x' amount of years or older">Automatically Archive NCRs by Year</h5>
-                        <form method="post" action="@Url.Action("AutomaticArchiveYear", "Ncr")" onsubmit="showConfirmation()">
-                            <div class="input-group">
-                                <input type="number" class="form-control" id="targetYear" name="targetYear" min="1900" max="2100" placeholder="Enter target year" value="@TargetYearService.TargetYear" required>
-                                <button type="submit" class="btn btn-primary">Update Target Year</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
+
+
 
 
 
@@ -88,7 +105,7 @@
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
     <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
     <input type="hidden" id="filter" name="filter" value="@ViewData["filter"]" />
-    <div class="row mb-2">
+    <div class="row">
         <div class="col-12 text-end">
             <button class="btn @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
                 @ViewData["numberFilters"]
@@ -283,6 +300,7 @@
     </script>
 
     <script>
+        //Deleting Ncrs
         document.addEventListener('DOMContentLoaded', function () {
             const deleteButtons = document.querySelectorAll('.delete-button');
             const confirmDeleteButton = document.getElementById('confirmDeleteButton');
@@ -333,13 +351,25 @@
         });
     </script>
     <script>
-        function showConfirmation() {
-            var targetYear = document.getElementById("targetYear").value;
-            alert("The changes will take effect in the next service cycle (24 hours). Target Year: " + targetYear);
+        // Retrieve the value of numberOfYears from localStorage
+        var numberOfYearsValue = localStorage.getItem('numYears');
+        if (numberOfYearsValue) {
+            // Set the value of the input field to the retrieved value
+            document.getElementById('numYears').value = numberOfYearsValue;
         }
+
+        // Add an event listener to the input field to store its value in localStorage when it changes
+        document.getElementById('numYears').addEventListener('input', function () {
+            localStorage.setItem('numYears', this.value);
+        });
     </script>
 
-
+    <script>
+        //Settings pop-up modal for archive service
+        function openSettingsModal() {
+            $('#settingsModal').modal('show');
+        }
+    </script>
 
 }
 

@@ -23,12 +23,12 @@ namespace HaverDevProject.Controllers
     public class NcrController : ElephantController
     {
         private readonly HaverNiagaraContext _context;
-        private readonly ITargetYearService _targetYearService;
+        private readonly INumYearsService _numOfYearsService;
 
-        public NcrController(HaverNiagaraContext context, ITargetYearService targetYearService)
+        public NcrController(HaverNiagaraContext context, INumYearsService numYearsService)
         {
             _context = context;
-            _targetYearService = targetYearService;
+            _numOfYearsService = numYearsService;
         }
 
         // GET: Ncr
@@ -896,18 +896,17 @@ namespace HaverDevProject.Controllers
             return RedirectToAction("Index");
         }
 
-        //Manually Archiving many Ncrs
+        // Manually Archiving many NCRs
         [HttpPost]
         public async Task<IActionResult> ArchiveManyNcrs(int archiveYear, [FromServices] NcrArchivingService ncrArchivingService)
         {
             try
             {
-
                 // Call the ArchiveNcrsByYear method from the injected NcrArchivingService
                 var archivedCount = await ncrArchivingService.ArchiveNcrsByYear(archiveYear);
 
                 // Set success message in TempData
-                TempData["SuccessMessage"] = $"{archivedCount} NCRs archived successfully!";
+                TempData["SuccessMessage"] = $"{archivedCount} NCRs Archived";
 
                 // Redirect back to the previous page or any other desired page
                 return RedirectToAction("Archived"); // Change "Archived" to the action name you want to redirect to
@@ -915,7 +914,7 @@ namespace HaverDevProject.Controllers
             catch (Exception ex)
             {
                 // Handle any exceptions that occur during archiving
-                TempData["ErrorMessage"] = $"Error occurred while archiving NCR objects: {ex.Message}";
+                TempData["ErrorMessage"] = $"Error occurred while Archiving NCR objects: {ex.Message}";
 
                 // Redirect back to the previous page or any other desired page
                 return RedirectToAction("Archived"); // Change "Archived" to the action name you want to redirect to
@@ -923,10 +922,12 @@ namespace HaverDevProject.Controllers
         }
 
         [HttpPost]
-        public IActionResult AutomaticArchiveYear(int targetYear)
+        public IActionResult AutomaticArchiveYear(int numYears)
         {
-            _targetYearService.TargetYear = targetYear;
+            _numOfYearsService.NumOfYears = numYears;
+            TempData["SuccessMessage"] = $"Archiving Service set to: {numYears} Years";
             return RedirectToAction("Archived"); // Redirect to a different action
+            
         }
 
         //[HttpPost]

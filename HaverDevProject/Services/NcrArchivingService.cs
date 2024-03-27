@@ -18,17 +18,15 @@ namespace HaverDevProject.Services
             _context = context;
         }
 
-        // Method triggered by user action to archive NCRs based on the specified number of years
-        public async Task<int> ArchiveNcrsByYear(int yearsBeforeCurrentYear)
+        public async Task<int> ArchiveNcrsByYear(int archiveYear)
         {
             try
             {
-                int archiveYear = DateTime.Now.Year - yearsBeforeCurrentYear;
-                var archiveStartDate = new DateTime(archiveYear, 1, 1);
+                var archiveEndDate = new DateTime(archiveYear, 12, 31);
 
                 var ncrsToArchive = _context.Ncrs
                     .Where(n => n.NcrPhase == NcrPhase.Closed && n.NcrPhase != NcrPhase.Archive &&
-                                n.NcrQa.NcrQacreationDate.Date < archiveStartDate)
+                                n.NcrQa.NcrQacreationDate.Date <= archiveEndDate)
                     .ToList();
 
                 foreach (var ncr in ncrsToArchive)
