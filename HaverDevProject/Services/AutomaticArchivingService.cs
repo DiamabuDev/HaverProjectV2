@@ -1,7 +1,6 @@
 ﻿using HaverDevProject.Configurations;
 using HaverDevProject.Data;
 using HaverDevProject.Models;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -14,19 +13,19 @@ namespace HaverDevProject.Services
     public class AutomaticNcrArchivingService : BackgroundService
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly ITargetYearService _targetYearService;
+        private readonly INumYearsService _numYearsService;
 
-        public AutomaticNcrArchivingService(IServiceProvider serviceProvider, ITargetYearService targetYearService)
+        public AutomaticNcrArchivingService(IServiceProvider serviceProvider, INumYearsService numYearsService)
         {
             _serviceProvider = serviceProvider;
-            _targetYearService = targetYearService;
+            _numYearsService = numYearsService;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                var targetYear = _targetYearService.TargetYear;
+                var numOfYears = _numYearsService.NumOfYears;
 
                 using (var scope = _serviceProvider.CreateScope())
                 {
@@ -34,9 +33,11 @@ namespace HaverDevProject.Services
 
                     try
                     {
+                        var archiveStartDate = DateTime.Now.AddYears(-numOfYears);
+
                         var ncrsToArchive = dbContext.Ncrs
                             .Where(n => n.NcrPhase == NcrPhase.Closed && n.NcrPhase != NcrPhase.Archive &&
-                                        n.NcrQa.NcrQacreationDate.Year <= targetYear)
+                                        n.NcrQa.NcrQacreationDate.Date < archiveStartDate)
                             .ToList();
 
                         foreach (var ncr in ncrsToArchive)
