@@ -11,6 +11,7 @@ using System.Text.Json.Serialization;
 using HaverDevProject.Services;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.AspNetCore.Authorization;
+using HaverDevProject.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,9 +75,13 @@ builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddSingleton<IEmailConfiguration>(builder.Configuration
     .GetSection("EmailConfiguration").Get<EmailConfiguration>());
 
-//NcrArchivingService
+//Configuration Registration
+builder.Services.AddSingleton<ITargetYearService, TargetYearService>();
+
+//NcrArchivingService for Manual Archiving
 builder.Services.AddScoped<NcrArchivingService>();
 
+//Background Service for Archiving
 builder.Services.AddHostedService<AutomaticNcrArchivingService>();
 
 //For the Identity System

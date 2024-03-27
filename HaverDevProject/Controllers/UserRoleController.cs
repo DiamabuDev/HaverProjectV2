@@ -10,22 +10,27 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq.Expressions;
 using HaverDevProject.Utilities;
 using Elfie.Serialization;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Text;
+using System.Text.Encodings.Web;
 
 namespace HaverDevProject.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class UserRoleController : CognizantController
     {
+        private readonly IMyEmailSender _emailSender;
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-
-        public UserRoleController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        private readonly LinkGenerator _linkGenerator;
+        public UserRoleController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IMyEmailSender emailSender, LinkGenerator linkGenerator)
         {
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
-
+            _emailSender = emailSender;
+            _linkGenerator = linkGenerator;
         }
         // GET: User
         public async Task<IActionResult> Index(string SearchUser, string SearchRole, int? page, int? pageSizeID,
@@ -227,9 +232,12 @@ namespace HaverDevProject.Controllers
                 string defaultPassword = "Pa55w@rd";
 
                 var createResult = await _userManager.CreateAsync(user, defaultPassword);
+                
 
                 if (createResult.Succeeded && !string.IsNullOrWhiteSpace(model.SelectedRole))
-                {
+                {                   
+                    await NotificationCreate(user.Id);
+
                     var roleResult = await _userManager.AddToRoleAsync(user, model.SelectedRole);
                     if (!roleResult.Succeeded)
                     {
@@ -239,7 +247,7 @@ namespace HaverDevProject.Controllers
                         return View(model);
                     }
 
-                    TempData["SuccessMessage"] = "User created successfully!";
+                    TempData["SuccessMessage"] = "User created successfully! A password reset link has been sent to the email.";
                     return RedirectToAction("Index");
                 }
                 else
@@ -356,7 +364,62 @@ namespace HaverDevProject.Controllers
             var roles = _context.Roles.ToList();
             ViewBag.Roles = new SelectList(roles, "Name", "Name");
         }
-        
+
+        public async Task<IActionResult> NotificationCreate(string? id)
+        {
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _context.Users.FindAsync(id);
+
+            ViewData["id"] = id;
+
+            try
+            {
+                if (user != null)
+                {
+                    var emailAddress = new EmailAddress
+                    {
+                        Name = user.UserName,
+                        Address = user.Email
+                    };
+
+                    var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                    var callbackUrl = Url.Page(
+                        "/Account/ResetPassword",
+                        pageHandler: null,
+                        values: new { area = "Identity", code },
+                        protocol: Request.Scheme);
+
+                    string logo = "https://haverniagara.com/wp-content/themes/haver/images/logo-haver.png";
+                    var msg = new EmailMessage()
+                    {
+                        ToAddresses = new List<EmailAddress> { emailAddress},
+                        Subject = "New User. Reset Password",
+                        Content = $"<p>New User created.<br></p>" +
+                                  "<p>Please reset your password. <a href=\"" + callbackUrl + "\">Click Here</a></p>" +
+                                  $"<img src=\"{logo}\">" +
+                                  "<p>This is an automated email. Please do not reply.</p>",
+                };
+                    await _emailSender.SendToManyAsync(msg);
+                }
+                else
+                {
+                    ViewData["Message"] = "Message NOT sent! No users found.";
+                }
+            }
+            catch (Exception ex)
+            {
+                string errMsg = ex.GetBaseException().Message;
+                ViewData["Message"] = $"Error: Could not send email message to users. Error: {errMsg}";
+            }
+
+            return View();
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

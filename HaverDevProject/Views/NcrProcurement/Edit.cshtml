@@ -35,7 +35,7 @@
             @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRReInspDetailsPartial.cshtml", (NcrReInspect)ViewBag.ncrDetails.NcrReInspect)
         }
     </div>
-    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+    <form id="formProcurement" asp-action="Edit" method="post" enctype="multipart/form-data" novalidate>
         <div class="card border-2 mt-2">
             <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
                 <div>
@@ -298,12 +298,80 @@
                 }
             }
 
-            // Call the function on page load
+            // Function to validate the form on submit
+            $('#formProcurement').submit(function (event) {
+                var isValid = true;
+
+                // Check if SupplierReturnRequest is set to true
+                var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
+
+                // Check each required field individually
+                $('.supplier-return-fields [required]').each(function () {
+                    if ($.trim($(this).val()) === '') {
+                        isValid = false;
+                        // Display custom error message based on field and SupplierReturnRequest value
+                        if ($(this).attr('id') === 'SupplierReturnMANum' && supplierReturnRequest === 'true') {
+                            $(this).next('.text-danger').text('Supplier RMA# is required.');
+                        } else if ($(this).attr('id') === 'SupplierReturnName' && supplierReturnRequest === 'true') {
+                            $(this).next('.text-danger').text('Carrier Name is required.');
+                        } else if ($(this).attr('id') === 'SupplierReturnAccount' && supplierReturnRequest === 'true') {
+                            $(this).next('.text-danger').text('Account # is required.');
+                        } else {
+                            // Clear any previous error messages
+                            $(this).next('.text-danger').text('');
+                        }
+                    }
+                });
+
+                // If the form is not valid, prevent the default form submission
+                if (!isValid) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                // Return the validity status of the form
+                return isValid;
+            });
+
+            // Call the function initially
             toggleSupplierReturnFields();
 
             // Bind the function to the change event of SupplierReturnRequest radio buttons
             $('input[name="NcrProcSupplierReturnReq"]').change(function () {
                 toggleSupplierReturnFields();
+            });
+
+            // Custom validation for Supplier RMA field
+            $('#SupplierReturnMANum').blur(function () {
+                var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
+                var supplierRMAField = $(this);
+                if (supplierReturnRequest === 'true' && $.trim(supplierRMAField.val()) === '') {
+                    supplierRMAField.next('.text-danger').text('Supplier RMA# is required.');
+                } else {
+                    supplierRMAField.next('.text-danger').text('');
+                }
+            });
+
+            // Custom validation for Carrier Name field
+            $('#SupplierReturnName').blur(function () {
+                var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
+                var carrierNameField = $(this);
+                if (supplierReturnRequest === 'true' && $.trim(carrierNameField.val()) === '') {
+                    carrierNameField.next('.text-danger').text('Carrier Name is required.');
+                } else {
+                    carrierNameField.next('.text-danger').text('');
+                }
+            });
+
+            // Custom validation for Account field
+            $('#SupplierReturnAccount').blur(function () {
+                var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
+                var accountField = $(this);
+                if (supplierReturnRequest === 'true' && $.trim(accountField.val()) === '') {
+                    accountField.next('.text-danger').text('Account # is required.');
+                } else {
+                    accountField.next('.text-danger').text('');
+                }
             });
         });
     </script>

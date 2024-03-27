@@ -15,6 +15,7 @@ using Spire.Xls;
 using OfficeOpenXml;
 using System.Drawing;
 using System.IO;
+using HaverDevProject.Configurations;
 
 namespace HaverDevProject.Controllers
 {
@@ -22,10 +23,12 @@ namespace HaverDevProject.Controllers
     public class NcrController : ElephantController
     {
         private readonly HaverNiagaraContext _context;
+        private readonly ITargetYearService _targetYearService;
 
-        public NcrController(HaverNiagaraContext context)
+        public NcrController(HaverNiagaraContext context, ITargetYearService targetYearService)
         {
             _context = context;
+            _targetYearService = targetYearService;
         }
 
         // GET: Ncr
@@ -919,6 +922,13 @@ namespace HaverDevProject.Controllers
             }
         }
 
+        [HttpPost]
+        public IActionResult AutomaticArchiveYear(int targetYear)
+        {
+            _targetYearService.TargetYear = targetYear;
+            return RedirectToAction("Archived"); // Redirect to a different action
+        }
+
         //[HttpPost]
         //public async Task<IActionResult> ArchiveNcrs(int years)
         //{
@@ -1105,8 +1115,9 @@ namespace HaverDevProject.Controllers
                 //string solutionDirtwo = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
                 //string excelPictureFilePathtwo = Path.Combine(solutionDirtwo, "ncr-template.xlsx");
 
-                var excelFilePath = "./ncr-template.xlsx";
-                var excelPictureFilePath = "./picture-template.xlsx";
+               
+                var excelFilePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\uploads", "ncr-template.xlsx");
+                var excelPictureFilePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\uploads", "picture-template.xlsx");
                 Workbook workbook = new Workbook();
                 Workbook workbookPicture = new Workbook();
                 workbook.LoadTemplateFromFile(excelFilePath);
