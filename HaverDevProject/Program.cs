@@ -114,16 +114,12 @@ else
 
 app.Use(async (context, next) =>
 {
-    var endpoint = context.GetEndpoint();
-    var allowAnonymous = endpoint?.Metadata.GetMetadata<IAllowAnonymous>() != null;
-    var isApiRequest = context.Request.Path.StartsWithSegments("/api/Ncrs");
-    var isLoginPage = context.Request.Path.StartsWithSegments("/Identity/Account/Login");
+    var path = context.Request.Path;
 
-    //if (!context.User.Identity.IsAuthenticated && !context.Request.Path.StartsWithSegments("/Identity"))
-    if (!context.User.Identity.IsAuthenticated && 
-        !allowAnonymous &&
-        !isApiRequest &&
-        !isLoginPage)
+    bool isApiPath = path.StartsWithSegments("/api");
+    bool isIdentityPath = path.StartsWithSegments("/Identity");
+
+    if (!context.User.Identity.IsAuthenticated && !isIdentityPath && !isApiPath)
     {
         // Redirect to login page
         context.Response.Redirect("/Identity/Account/Login");
@@ -139,7 +135,6 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-//app.UseAuthorization();
 app.UseAuthorization();
 
 app.MapControllerRoute(

@@ -120,35 +120,12 @@
                             </div>
                         </div>
                     </div>
-@*                     <div class="row">
-                        <div class="col-6">
-                            <div class="form-group">
-                                <strong> <label asp-for="DrawingUserId" class="control-label"></label></strong>
-                                <input asp-for="DrawingUserId" class="form-control" />
-                                <span asp-validation-for="DrawingUserId" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-group">
-                               <strong> <label asp-for="NcrEngUserId" class="control-label"></label></strong>
-                                <input asp-for="NcrEngUserId" class="form-control" />
-                                <span asp-validation-for="NcrEngUserId" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div> *@
 
                     <div class="col-6">
                         <div class="form-group">
                             <strong>Revision Date</strong>
-                            @* <label asp-for="NcrNumber" class="control-label"></label> *@
                             <input asp-for="DrawingRevDate" class="form-control" readonly />
                         </div>
-
-@*                         <div class="form-group">
-                           <strong> <label asp-for="DrawingRevDate" class="control-label"></label></strong>
-                            <input asp-for="DrawingRevDate" class="form-control" />
-                            <span asp-validation-for="DrawingRevDate" class="text-danger"></span>
-                        </div> *@
                     </div>
                 </div>
             </div>
@@ -195,9 +172,6 @@
             function saveDraft() {
                 document.getElementById("isDraftInput").value = "true";
                 var formData = new FormData(document.querySelector('#formEng'));
-                // for (var pair of formData.entries()) {
-                //     console.log(pair[0] + ', ' + pair[1]);
-                // }
                 $.ajax({
                     url: '/NcrEng/Create',
                     type: 'POST',
@@ -221,8 +195,6 @@
             $('#saveDraftButton').click(saveDraft);
         });
     </script>
-
-
 
     @* Hidden drawing section to show if DrawingRequireUpdating is selected *@
     <script>
