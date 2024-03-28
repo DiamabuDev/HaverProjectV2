@@ -33,8 +33,15 @@ namespace HaverDevProject.Controllers
             _linkGenerator = linkGenerator;
         }
         // GET: User
-        public async Task<IActionResult> Index(string SearchUser, string SearchRole, int? page, int? pageSizeID,
-            string actionButton, string sortDirection = "asc", string sortField = "FirstName")
+        public async Task<IActionResult> Index(
+            string SearchUser, 
+            string SearchRole,
+            int? page, 
+            int? pageSizeID,
+            string actionButton, 
+            string sortDirection = "asc", 
+            string sortField = "FirstName", 
+            string filter = "Active")
         {
             ViewData["Filtering"] = "btn-block invisible";
             int numberFilters = 0;
@@ -48,6 +55,7 @@ namespace HaverDevProject.Controllers
                                    ID = u.Id,
                                    FirstName = u.FirstName,
                                    LastName = u.LastName,
+                                   Status = u.Status,
                                    Email = u.Email
                                }).ToListAsync();
             foreach (var u in users)
@@ -56,7 +64,31 @@ namespace HaverDevProject.Controllers
                 var roles = (List<string>)await _userManager.GetRolesAsync(_user);
                 u.SelectedRole = roles[0]; 
                 //Note: we needed the explicit cast above because GetRolesAsync() returns an IList<string>
-            };                      
+            };
+
+            if (!String.IsNullOrEmpty(filter))
+            {
+                if (filter == "All")
+                {
+                    ViewData["filterApplied:ButtonAll"] = "btn-primary";
+                    ViewData["filterApplied:ButtonActive"] = "btn-success custom-opacity";
+                    ViewData["filterApplied:ButtonClosed"] = "btn-danger custom-opacity";
+                }
+                else if (filter == "Active")
+                {
+                    users = users.Where(u => u.Status == true).ToList();
+                    ViewData["filterApplied:ButtonActive"] = "btn-success";
+                    ViewData["filterApplied:ButtonAll"] = "btn-primary custom-opacity";
+                    ViewData["filterApplied:ButtonClosed"] = "btn-danger custom-opacity";
+                }
+                else //(filter == "Closed")
+                {
+                    users = users.Where(u => u.Status == false).ToList();
+                    ViewData["filterApplied:ButtonClosed"] = "btn-danger";
+                    ViewData["filterApplied:ButtonAll"] = "btn-primary custom-opacity";
+                    ViewData["filterApplied:ButtonActive"] = "btn-success custom-opacity";
+                }
+            }
 
             //Filterig values                       
             if (!String.IsNullOrEmpty(SearchUser))
@@ -156,6 +188,7 @@ namespace HaverDevProject.Controllers
             //Set sort for next time
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
+            ViewData["filter"] = filter;
 
             // Retrieve all roles
             var rolesDropdown = await _context.Roles.OrderBy(r => r.Name).ToListAsync();
@@ -213,7 +246,7 @@ namespace HaverDevProject.Controllers
             return View();
         }
 
-
+        // POST: User/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(UserVM model)
@@ -226,13 +259,13 @@ namespace HaverDevProject.Controllers
                     Email = model.Email,
                     FirstName = model.FirstName,
                     LastName = model.LastName,
+                    Status = model.Status,
                     EmailConfirmed = true
                 };
 
                 string defaultPassword = "Pa55w@rd";
 
-                var createResult = await _userManager.CreateAsync(user, defaultPassword);
-                
+                var createResult = await _userManager.CreateAsync(user, defaultPassword);                
 
                 if (createResult.Succeeded && !string.IsNullOrWhiteSpace(model.SelectedRole))
                 {                   
@@ -283,9 +316,9 @@ namespace HaverDevProject.Controllers
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                SelectedRole = userRoles.FirstOrDefault() 
+                SelectedRole = userRoles.FirstOrDefault(),
+                Status = user.Status
             };
-
 
             PopulateRoles();
             return View(model);
@@ -313,6 +346,7 @@ namespace HaverDevProject.Controllers
                 user.UserName = model.Email; 
                 user.FirstName = model.FirstName;
                 user.LastName = model.LastName;
+                user.Status = model.Status;
 
                 var updateResult = await _userManager.UpdateAsync(user);
                 if (!updateResult.Succeeded)

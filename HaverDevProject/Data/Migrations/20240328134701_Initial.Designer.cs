@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HaverDevProject.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240324150917_Initial")]
+    [Migration("20240328134701_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -70,6 +70,9 @@ namespace HaverDevProject.Data.Migrations
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("INTEGER");
