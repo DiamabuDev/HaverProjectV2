@@ -428,8 +428,8 @@ namespace HaverDevProject.Controllers
                         NcrOperationUserId = user.Id,
                         OpDefectPhotos = ncrOperationDTO.OpDefectPhotos,
                         NcrOperationVideo = ncrOperationDTO.NcrOperationVideo
-
                     };
+
                     _context.NcrOperations.Add(ncrOperation);
                     await _context.SaveChangesAsync();
 
