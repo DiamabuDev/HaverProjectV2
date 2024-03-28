@@ -357,8 +357,8 @@ namespace HaverDevProject.Data
                         {
                             NcrNumber = "2023-141",
                             NcrLastUpdated = DateTime.Parse("2024-01-14"),
-                            NcrStatus = true,
-                            NcrPhase = NcrPhase.ReInspection
+                            NcrStatus = false,
+                            NcrPhase = NcrPhase.Closed
                         },
                         new Ncr
                         {
@@ -469,7 +469,7 @@ namespace HaverDevProject.Data
                         {
                             NcrQaItemMarNonConforming = true,
                             NcrQaSalesOrder = "10401230",
-                            NcrQacreationDate = DateTime.Parse("2012-12-13"),
+                            NcrQacreationDate = DateTime.Parse("2019-12-13"),
                             NcrQaUserId = "1", 
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-140").NcrId,
                             ItemId = context.Items.FirstOrDefault(f => f.ItemName == "Backing Shield").ItemId,
@@ -1040,6 +1040,7 @@ namespace HaverDevProject.Data
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
                             SupplierReturnAccount = "12345",
+                            NcrProcRejectedValue = 1500.00M,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-137").NcrId
                         },
                         new NcrProcurement
@@ -1056,6 +1057,7 @@ namespace HaverDevProject.Data
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
                             SupplierReturnAccount = "12345",
+                            NcrProcRejectedValue = 15087.00M,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-138").NcrId
                         },
                         new NcrProcurement
@@ -1072,6 +1074,7 @@ namespace HaverDevProject.Data
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
                             SupplierReturnAccount = "12345",
+                            NcrProcRejectedValue = 5634.25M,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-139").NcrId
                         },
                         new NcrProcurement
@@ -1088,6 +1091,7 @@ namespace HaverDevProject.Data
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
                             SupplierReturnAccount = "12345",
+                            NcrProcRejectedValue = 1111.75M,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-140").NcrId
                         },
                         new NcrProcurement
@@ -1104,6 +1108,7 @@ namespace HaverDevProject.Data
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
                             SupplierReturnAccount = "12345",
+                            NcrProcRejectedValue = 2714.50M,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-141").NcrId
                         },
                         new NcrProcurement
@@ -1120,6 +1125,7 @@ namespace HaverDevProject.Data
                             SupplierReturnMANum = "11345",
                             SupplierReturnName = "FEDEX",
                             SupplierReturnAccount = "12345",
+                            NcrProcRejectedValue = 1000.00M,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2024-006").NcrId
                         }
                         );
