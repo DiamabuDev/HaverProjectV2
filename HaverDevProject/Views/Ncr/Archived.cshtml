@@ -76,11 +76,11 @@
                 <div style="margin-top: 20px;"></div>
                 <!-- Form for archive by age -->
                 <form method="post" action="@Url.Action("ArchiveManyNcrs", "Ncr")">
-                    <h5>Manual Bulk Archiving</h5>
+                    <h5>Manual Archiving</h5>
                     <div class="mb-3">
-                        <label for="archiveYear" class="form-label" data-bs-toggle="tooltip" data-bs-placement="top" title="Select a year for any NCRs that were created on or before that year">Archive NCRs by Year</label>
+                        <label for="archiveYear" class="form-label" data-bs-toggle="tooltip" data-bs-placement="top" title="Select a year for any NCRs that were created on or before that year">Archive Multiple NCRs by Year</label>
                         <select class="form-select" id="archiveYear" name="archiveYear" required>
-                            @for (int year = DateTime.Now.Year; year >= 2010; year--)
+                            @for (int year = DateTime.Now.Year; year >= DateTime.Now.Year - 10; year--)
                             {
                                 <option value="@year">@year</option>
                             }

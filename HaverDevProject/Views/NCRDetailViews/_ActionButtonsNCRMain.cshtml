@@ -50,7 +50,7 @@
                     }
                 </div>
                 <div>
-                    @if (Model.NcrPhase == NcrPhase.Archive && Model.NcrQa.NcrQacreationDate.AddYears(5) > DateTime.Now)
+                    @if (Model.NcrPhase == NcrPhase.Archive)
                     {
                         <form asp-action="RestoreNcr" asp-route-id="@Model.NcrId" method="post">
                             <button type="submit" class="btn btn-success ms-4" data-bs-toggle="tooltip" title="Restore NCR">
@@ -67,9 +67,18 @@
                         </a>
                     }
                 </div>
+                <div>
+                    @if (Model.NcrStatus == true)
+                    {
+                        <form asp-action="VoidNcr" asp-route-id="@Model.NcrId" method="post">
+                            <button type="submit" class="btn btn-danger ms-4" data-bs-toggle="tooltip" title="Void NCR">
+                                <i class="bi bi-slash-circle"></i> Void NCR
+                            </button>
+                        </form>
+                    }
+                </div>
             </div>
         </div>
     </div>
 </div>
-
 
