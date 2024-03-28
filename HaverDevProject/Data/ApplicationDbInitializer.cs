@@ -140,6 +140,78 @@ namespace HaverDevProject.Data
                         userManager.AddToRoleAsync(user, "Admin").Wait();
                     }
                 }
+                if (userManager.FindByEmailAsync("cspileanu@gmail.com").Result == null)
+                {
+                    ApplicationUser user = new ApplicationUser
+                    {
+                        FirstName = "Rachel",
+                        LastName = "May",
+                        UserName = "cspileanu@gmail.com",
+                        Email = "cspileanu@gmail.com",
+                        EmailConfirmed = true
+                    };
+
+                    IdentityResult result = userManager.CreateAsync(user, "Pa55w@rd").Result;
+
+                    if (result.Succeeded)
+                    {
+                        userManager.AddToRoleAsync(user, "Quality").Wait();
+                    }
+                }
+                if (userManager.FindByEmailAsync("cspileanu@hotmail.com").Result == null)
+                {
+                    ApplicationUser user = new ApplicationUser
+                    {
+                        FirstName = "Michael",
+                        LastName = "Anderson",
+                        UserName = "cspileanu@hotmail.com",
+                        Email = "cspileanu@hotmail.com",
+                        EmailConfirmed = true
+                    };
+
+                    IdentityResult result = userManager.CreateAsync(user, "Pa55w@rd").Result;
+
+                    if (result.Succeeded)
+                    {
+                        userManager.AddToRoleAsync(user, "Engineer").Wait();
+                    }
+                }
+                if (userManager.FindByEmailAsync("lopezchavezvictorh@gmail.com").Result == null)
+                {
+                    ApplicationUser user = new ApplicationUser
+                    {
+                        FirstName = "John",
+                        LastName = "Conley",
+                        UserName = "lopezchavezvictorh@gmail.com",
+                        Email = "lopezchavezvictorh@gmail.com",
+                        EmailConfirmed = true
+                    };
+
+                    IdentityResult result = userManager.CreateAsync(user, "Pa55w@rd").Result;
+
+                    if (result.Succeeded)
+                    {
+                        userManager.AddToRoleAsync(user, "Procurement").Wait();
+                    }
+                }
+                if (userManager.FindByEmailAsync("diana.maldonado130@gmail.com").Result == null)
+                {
+                    ApplicationUser user = new ApplicationUser
+                    {
+                        FirstName = "Lucy",
+                        LastName = "Nichols",
+                        UserName = "diana.maldonado130@gmail.com",
+                        Email = "diana.maldonado130@gmail.com",
+                        EmailConfirmed = true
+                    };
+
+                    IdentityResult result = userManager.CreateAsync(user, "Pa55w@rd").Result;
+
+                    if (result.Succeeded)
+                    {
+                        userManager.AddToRoleAsync(user, "Operations").Wait();
+                    }
+                }
             }
             catch (Exception ex)
             {

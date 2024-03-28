@@ -22,6 +22,7 @@
 
             [Display(Name = "Role")]
             public string SelectedRole { get; set; }
+            public bool Status { get; set; } = true;
         }
     }
 
