@@ -197,7 +197,7 @@ namespace HaverDevProject.Controllers
             }
             else if (sortField == "Creation")
             {
-                if (sortDirection == "desc") //desc by default
+                if (sortDirection == "asc") //asc by default
                 {
                     ncrOperation = ncrOperation
                         .OrderBy(p => p.Ncr.NcrQa.NcrQacreationDate);

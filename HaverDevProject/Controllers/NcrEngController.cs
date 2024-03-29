@@ -203,7 +203,7 @@ namespace HaverDevProject.Controllers
 
             else if (sortField == "Created")
             {
-                if (sortDirection == "desc") //desc by default
+                if (sortDirection == "asc") //asc by default
                 {
                     ncrEng = ncrEng
                         .OrderBy(p => p.Ncr.NcrQa.NcrQacreationDate);
