@@ -35,4 +35,13 @@
     <!--<PackageReference Include="Spire.XLS" Version="14.2.1" />-->
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="ncr-template.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="picture-template.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
