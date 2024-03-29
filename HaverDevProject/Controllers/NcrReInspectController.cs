@@ -113,7 +113,7 @@ namespace HaverDevProject.Controllers
 
             if (sortField == "Created")
             {
-                if (sortDirection == "desc") //desc by default
+                if (sortDirection == "asc") //asc by default
                 {
                     ncrReInspect = ncrReInspect
                         .OrderBy(p => p.Ncr.NcrQa.NcrQacreationDate);
