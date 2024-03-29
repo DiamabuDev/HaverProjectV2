@@ -710,3 +710,4 @@ FodyWeavers.xsd
 /HaverDevProject/HaverNiagara.db-shm
 /HaverDevProject/HaverNiagara.db-wal
 /HaverDevProject/Data/QLMigrations/20240304134459_Initial.Designer.cs
+/HaverDevProject/Properties/ServiceDependencies/CatalinHaver - Web Deploy/profile.arm.json

@@ -1085,6 +1085,8 @@ namespace HaverDevProject.Controllers
 
 
 
+
+
         #region DownloadPDF
         public async Task<IActionResult> DownloadPDF(int id)
         {
@@ -1108,6 +1110,8 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.NcrReInspect).ThenInclude(n => n.NcrReInspectPhotos)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(n => n.NcrId == id);
+
+
             try
             {
                 // Load NCR excel template 
@@ -1116,13 +1120,19 @@ namespace HaverDevProject.Controllers
                 //string solutionDirtwo = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
                 //string excelPictureFilePathtwo = Path.Combine(solutionDirtwo, "ncr-template.xlsx");
 
-               
-                var excelFilePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\uploads", "ncr-template.xlsx");
-                var excelPictureFilePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\uploads", "picture-template.xlsx");
+                var excelFilePath = "ncr-template.xlsx";
+                var excelPictureFilePath = "picture-template.xlsx";
+
+
+                //var excelFilePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\uploads", "ncr-template.xlsx");
+                //var excelPictureFilePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\uploads", "picture-template.xlsx");
+
+
+
                 Workbook workbook = new Workbook();
                 Workbook workbookPicture = new Workbook();
-                workbook.LoadTemplateFromFile(excelFilePath);
-                workbookPicture.LoadTemplateFromFile(excelPictureFilePath);
+                workbook.LoadFromFile(excelFilePath);
+                workbookPicture.LoadFromFile(excelPictureFilePath);
 
 
                 //Fill the data 
@@ -1178,49 +1188,52 @@ namespace HaverDevProject.Controllers
 
                         firstpage += 1;
                         morepages += 1;
-                        int qapages = morepages;
+
+
                         checkpictures = true;
-                        var wb = workbookPicture.Worksheets["Pictures"];
-
-
-                        //ExcelPackage excel = new ExcelPackage();
-                        //var worksheeet = excel.Workbook.Worksheets.Add("Pictures");
-
-
-                        //var QaPic = _context.ItemDefectPhotos.FirstOrDefault();
-                        //byte[] imageBytes = QaPic.ItemDefectPhotoContent;
-                        //MemoryStream stream = new MemoryStream(imageBytes);
-                        //Image image = Image.FromStream(stream);
-
-                        //var picture = worksheeet.Drawings.AddPicture("Pic", image);
-                        //picture.SetPosition(4, 0, 2, 0);
-
-
-
-                        //for (int a = 0; a < 5; a++)
-                        //{
-                        //    wb.Row(a * 4).Height = 39.000;
-                        //}
-
-                        //byte[] imageBytes = ncr.NcrQa.ItemDefectPhotos.FirstOrDefault().FileContent.Content.ToArray();
-
-                        //Image logo = Image.FromStream(new MemoryStream(imageBytes));
-
-                        //for (int a = 0; a < 5; a++)
-                        //{
-                        //    var picture = worksheeet.Drawings.AddPicture(a.ToString(), logo);
-                        //    picture.SetPosition(a * 4, 0, 2, 0);
-                        //}
-
+                        //var wb = workbookPicture.Worksheets["Pictures"];
+                        var wb = workbookPicture.Worksheets.Add("Quality");
+                        workbookPicture.Worksheets["Quality"].CopyFrom(workbookPicture.Worksheets["Pictures"]);
                         wb.Range["A6"].Value = "Quality";
-                        //wb.Range["B6"].Value = "picture";
-                        //wb.Range["R6"].Value = "picture";
-                        //wb.Range["B21"].Value = "picture";
-                        //wb.Range["R21"].Value = "picture";
+                        int picCount = _context.ItemDefectPhotos.Count();
+                        var Pics = _context.ItemDefectPhotos.Take(Math.Min(4, picCount)).ToList();
+                        List<ExcelPicture> pictures = new List<ExcelPicture>();
+                        for (int i = 0; i < Pics.Count; i++)
+                        {
+                            byte[] imageBytes = Pics[i].ItemDefectPhotoContent;
+                            MemoryStream stream = new MemoryStream(imageBytes);
+                            ExcelPicture picture = wb.Pictures.Add(i + 1, 5, stream);
+                            picture.Height = 300;
+                            picture.Width = 300;
+                            pictures.Add(picture);
+                        }
+
+                        if (pictures.Count > 0)
+                        {
+                            pictures[0].LeftColumn = 3;
+                            pictures[0].TopRow = 7;
+                        }
+                        if (pictures.Count > 1)
+                        {
+                            pictures[1].LeftColumn = 18;
+                            pictures[1].TopRow = 7;
+                        }
+                        if (pictures.Count > 2)
+                        {
+                            pictures[2].LeftColumn = 3;
+                            pictures[2].TopRow = 22;
+                        }
+                        if (pictures.Count > 3)
+                        {
+                            pictures[3].LeftColumn = 18;
+                            pictures[3].TopRow = 22;
+                        }
                         wb.Range["B37"].Value = ncr.NcrQa.NcrQaDefectVideo;
                         wb.Range["Z4"].Value = firstpage.ToString();
-                        //wb.Range["AC4"].Value = qapages.ToString();
+                        wb.Range["AE5"].Value = ncr.NcrNumber;
+
                         worksheet.Range["AC4"].Value = morepages.ToString();
+                        wb.Range["AC4"].Value = worksheet.Range["AC4"].Value;
                     }
                 }
 
@@ -1269,26 +1282,52 @@ namespace HaverDevProject.Controllers
 
                         firstpage += 1;
                         morepages += 1;
-                        int engpages = morepages;
+
                         checkpictures = true;
-                        var wbE = workbookPicture.Worksheets["Pictures"];
-                        workbookPicture.Worksheets.AddCopy(wbE);
+                        var wbE = workbookPicture.Worksheets.Add("Engineering");
+                        workbookPicture.Worksheets["Engineering"].CopyFrom(workbookPicture.Worksheets["Pictures"]);
+                        //var wbE = workbookPicture.Worksheets["Pictures"];
+                        //workbookPicture.Worksheets.AddCopyBefore(wbE);
                         wbE.Range["A6"].Value = "Engineering";
+                        int picCount = _context.EngDefectPhotos.Count();
+                        var Pics = _context.EngDefectPhotos.Take(Math.Min(4, picCount)).ToList();
+                        List<ExcelPicture> pictures = new List<ExcelPicture>();
+                        for (int i = 0; i < Pics.Count; i++)
+                        {
+                            byte[] imageBytes = Pics[i].EngDefectPhotoContent;
+                            MemoryStream stream = new MemoryStream(imageBytes);
+                            ExcelPicture picture = wbE.Pictures.Add(i + 1, 5, stream);
+                            picture.Height = 300;
+                            picture.Width = 300;
+                            pictures.Add(picture);
+                        }
 
-
-
-
-                        //wb.Pictures.Add(4, 4, @"E:\HaverNiagara\V6\HaverProjectV2\HaverDevProject\wwwroot\images\1.jpg");
-
-                        //ExcelPicture picture4 = wb.Pictures.Add(12, 14, @"D:\HaverNiagara\V6\HaverProjectV2\HaverDevProject\wwwroot\images\4.jpg");
-                        //picture4.Width = 300;
-                        //picture4.Height = 300;
-                        //picture4.Left = 350;
-                        //picture4.Top = 475;
+                        if (pictures.Count > 0)
+                        {
+                            pictures[0].LeftColumn = 3;
+                            pictures[0].TopRow = 7;
+                        }
+                        if (pictures.Count > 1)
+                        {
+                            pictures[1].LeftColumn = 18;
+                            pictures[1].TopRow = 7;
+                        }
+                        if (pictures.Count > 2)
+                        {
+                            pictures[2].LeftColumn = 3;
+                            pictures[2].TopRow = 22;
+                        }
+                        if (pictures.Count > 3)
+                        {
+                            pictures[3].LeftColumn = 18;
+                            pictures[3].TopRow = 22;
+                        }
                         wbE.Range["B37"].Value = ncr.NcrEng.NcrEngDefectVideo;
                         wbE.Range["Z4"].Value = firstpage.ToString();
-                        //wbE.Range["AC4"].Value = engpages.ToString();
+                        wbE.Range["AE5"].Value = ncr.NcrNumber;
+
                         worksheet.Range["AC4"].Value = morepages.ToString();
+                        wbE.Range["AC4"].Value = worksheet.Range["AC4"].Value;
                     }
                 }
 
@@ -1335,15 +1374,52 @@ namespace HaverDevProject.Controllers
                     {
                         firstpage += 1;
                         morepages += 1;
-                        int oppages = morepages;
+
                         checkpictures = true;
-                        var wbO = workbookPicture.Worksheets["Pictures"];
-                        workbookPicture.Worksheets.AddCopy(wbO);
+                        var wbO = workbookPicture.Worksheets.Add("Operations");
+                        workbookPicture.Worksheets["Operations"].CopyFrom(workbookPicture.Worksheets["Pictures"]);
+                        //var wbO = workbookPicture.Worksheets["Pictures"];
+                        //workbookPicture.Worksheets.AddCopyBefore(wbO);
                         wbO.Range["A6"].Value = "Operations";
+                        int picCount = _context.OpDefectPhotos.Count();
+                        var Pics = _context.OpDefectPhotos.Take(Math.Min(4, picCount)).ToList();
+                        List<ExcelPicture> pictures = new List<ExcelPicture>();
+                        for (int i = 0; i < Pics.Count; i++)
+                        {
+                            byte[] imageBytes = Pics[i].OpDefectPhotoContent;
+                            MemoryStream stream = new MemoryStream(imageBytes);
+                            ExcelPicture picture = wbO.Pictures.Add(i + 1, 5, stream);
+                            picture.Height = 300;
+                            picture.Width = 300;
+                            pictures.Add(picture);
+                        }
+
+                        if (pictures.Count > 0)
+                        {
+                            pictures[0].LeftColumn = 3;
+                            pictures[0].TopRow = 7;
+                        }
+                        if (pictures.Count > 1)
+                        {
+                            pictures[1].LeftColumn = 18;
+                            pictures[1].TopRow = 7;
+                        }
+                        if (pictures.Count > 2)
+                        {
+                            pictures[2].LeftColumn = 3;
+                            pictures[2].TopRow = 22;
+                        }
+                        if (pictures.Count > 3)
+                        {
+                            pictures[3].LeftColumn = 18;
+                            pictures[3].TopRow = 22;
+                        }
                         wbO.Range["B37"].Value = ncr.NcrOperation.NcrOperationVideo;
                         wbO.Range["Z4"].Value = firstpage.ToString();
-                        //wbO.Range["AC4"].Value = oppages.ToString();
+                        wbO.Range["AE5"].Value = ncr.NcrNumber;
+
                         worksheet.Range["AC4"].Value = morepages.ToString();
+                        wbO.Range["AC4"].Value = worksheet.Range["AC4"].Value;
                     }
                 }
 
@@ -1390,15 +1466,52 @@ namespace HaverDevProject.Controllers
                     {
                         firstpage += 1;
                         morepages += 1;
-                        int procpages = morepages;
+
                         checkpictures = true;
-                        var wbR = workbookPicture.Worksheets["Pictures"];
-                        workbookPicture.Worksheets.AddCopy(wbR);
-                        wbR.Range["A6"].Value = "Procurement";
-                        wbR.Range["B37"].Value = ncr.NcrProcurement.NcrProcDefectVideo;
-                        wbR.Range["Z4"].Value = firstpage.ToString();
-                        //wbR.Range["AC4"].Value = procpages.ToString();
+                        var wbP = workbookPicture.Worksheets.Add("Procurement");
+                        workbookPicture.Worksheets["Procurement"].CopyFrom(workbookPicture.Worksheets["Pictures"]);
+                        //var wbP = workbookPicture.Worksheets["Pictures"];
+                        //workbookPicture.Worksheets.AddCopyBefore(wbP);
+                        wbP.Range["A6"].Value = "Procurement";
+                        int picCount = _context.ProcDefectPhotos.Count();
+                        var Pics = _context.ProcDefectPhotos.Take(Math.Min(4, picCount)).ToList();
+                        List<ExcelPicture> pictures = new List<ExcelPicture>();
+                        for (int i = 0; i < Pics.Count; i++)
+                        {
+                            byte[] imageBytes = Pics[i].ProcDefectPhotoContent;
+                            MemoryStream stream = new MemoryStream(imageBytes);
+                            ExcelPicture picture = wbP.Pictures.Add(i + 1, 5, stream);
+                            picture.Height = 300;
+                            picture.Width = 300;
+                            pictures.Add(picture);
+                        }
+
+                        if (pictures.Count > 0)
+                        {
+                            pictures[0].LeftColumn = 3;
+                            pictures[0].TopRow = 7;
+                        }
+                        if (pictures.Count > 1)
+                        {
+                            pictures[1].LeftColumn = 18;
+                            pictures[1].TopRow = 7;
+                        }
+                        if (pictures.Count > 2)
+                        {
+                            pictures[2].LeftColumn = 3;
+                            pictures[2].TopRow = 22;
+                        }
+                        if (pictures.Count > 3)
+                        {
+                            pictures[3].LeftColumn = 18;
+                            pictures[3].TopRow = 22;
+                        }
+                        wbP.Range["B37"].Value = ncr.NcrProcurement.NcrProcDefectVideo;
+                        wbP.Range["Z4"].Value = firstpage.ToString();
+                        wbP.Range["AE5"].Value = ncr.NcrNumber;
+
                         worksheet.Range["AC4"].Value = morepages.ToString();
+                        wbP.Range["AC4"].Value = worksheet.Range["AC4"].Value;
                     }
                 }
 
@@ -1428,19 +1541,52 @@ namespace HaverDevProject.Controllers
                     {
                         firstpage += 1;
                         morepages += 1;
-                        int repages = morepages;
+
                         checkpictures = true;
-                        var wbP = workbookPicture.Worksheets["Pictures"];
-                        workbookPicture.Worksheets.AddCopy(wbP);
-                        wbP.Range["A6"].Value = "Reinspection";
-                        //wbP.Range["B6"].Value = "picture";
-                        //wbP.Range["R6"].Value = "picture";
-                        //wbP.Range["B21"].Value = "picture";
-                        //wbP.Range["R21"].Value = "picture";
-                        wbP.Range["B37"].Value = ncr.NcrReInspect.NcrReInspectDefectVideo;
-                        wbP.Range["Z4"].Value = firstpage.ToString();
-                        //wbP.Range["AC4"].Value = repages.ToString();
+                        var wbR = workbookPicture.Worksheets.Add("Reinspection");
+                        workbookPicture.Worksheets["Reinspection"].CopyFrom(workbookPicture.Worksheets["Pictures"]);
+                        //var wbR = workbookPicture.Worksheets["Pictures"];
+                        //workbookPicture.Worksheets.AddCopyBefore(wbR);
+                        wbR.Range["A6"].Value = "Reinspection";
+                        int picCount = _context.NcrReInspectPhotos.Count();
+                        var Pics = _context.NcrReInspectPhotos.Take(Math.Min(4, picCount)).ToList();
+                        List<ExcelPicture> pictures = new List<ExcelPicture>();
+                        for (int i = 0; i < Pics.Count; i++)
+                        {
+                            byte[] imageBytes = Pics[i].NcrReInspectPhotoContent;
+                            MemoryStream stream = new MemoryStream(imageBytes);
+                            ExcelPicture picture = wbR.Pictures.Add(i + 1, 5, stream);
+                            picture.Height = 300;
+                            picture.Width = 300;
+                            pictures.Add(picture);
+                        }
+
+                        if (pictures.Count > 0)
+                        {
+                            pictures[0].LeftColumn = 3;
+                            pictures[0].TopRow = 7;
+                        }
+                        if (pictures.Count > 1)
+                        {
+                            pictures[1].LeftColumn = 18;
+                            pictures[1].TopRow = 7;
+                        }
+                        if (pictures.Count > 2)
+                        {
+                            pictures[2].LeftColumn = 3;
+                            pictures[2].TopRow = 22;
+                        }
+                        if (pictures.Count > 3)
+                        {
+                            pictures[3].LeftColumn = 18;
+                            pictures[3].TopRow = 22;
+                        }
+                        wbR.Range["B37"].Value = ncr.NcrReInspect.NcrReInspectDefectVideo;
+                        wbR.Range["Z4"].Value = firstpage.ToString();
+                        wbR.Range["AE5"].Value = ncr.NcrNumber;
+
                         worksheet.Range["AC4"].Value = morepages.ToString();
+                        wbR.Range["AC4"].Value = worksheet.Range["AC4"].Value;
                     }
                 }
 
@@ -1448,19 +1594,26 @@ namespace HaverDevProject.Controllers
 
 
                 Workbook exportWorkbook = new Workbook();
-                foreach (Worksheet sheet in workbook.Worksheets)
-                {
-                    exportWorkbook.Worksheets.AddCopy(sheet);
-                }
+
+                exportWorkbook.Worksheets.AddCopy(workbook.Worksheets);
+
+                //foreach (Worksheet sheet in workbook.Worksheets)
+                //{
+                //    exportWorkbook.Worksheets.AddCopy(sheet);
+                //}
 
                 if (checkpictures == true)
                 {
-                    // Copy worksheets from the second workbook
+                    List<string> sheetsToIgnore = new List<string> { "Pictures" };
                     foreach (Worksheet sheet in workbookPicture.Worksheets)
                     {
-                        exportWorkbook.Worksheets.AddCopy(sheet);
+                        if (!sheetsToIgnore.Contains(sheet.Name))
+                        {
+                            exportWorkbook.Worksheets.AddCopy(sheet);
+                        }
                     }
                 }
+
                 //exportWorkbook.ConverterSetting.SheetFitToPage = true;
                 string filename = ncr.NcrNumber;
                 string defaultDownloadFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
