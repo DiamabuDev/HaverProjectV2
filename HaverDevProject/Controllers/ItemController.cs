@@ -20,7 +20,8 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HaverDevProject.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Quality")]
+    [ActiveUserOnly]
     public class ItemController : ElephantController
     {
         private readonly HaverNiagaraContext _context;

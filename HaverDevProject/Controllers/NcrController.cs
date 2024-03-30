@@ -20,6 +20,7 @@ using HaverDevProject.Configurations;
 namespace HaverDevProject.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [ActiveUserOnly]
     public class NcrController : ElephantController
     {
         private readonly HaverNiagaraContext _context;

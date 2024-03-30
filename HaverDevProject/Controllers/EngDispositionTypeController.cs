@@ -8,9 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using HaverDevProject.Data;
 using HaverDevProject.Models;
 using HaverDevProject.CustomControllers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HaverDevProject.Controllers
 {
+    [Authorize(Roles = "Admin")]
+    [ActiveUserOnly]
     public class EngDispositionTypeController : LookupsController
     {
         private readonly HaverNiagaraContext _context;

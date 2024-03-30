@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace HaverDevProject.Controllers
 {
     [AllowAnonymous]
+    [ActiveUserOnly]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -25,39 +26,20 @@ namespace HaverDevProject.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user != null)
             {
-                var roles = await _userManager.GetRolesAsync(user);
-                var primaryRole = roles.FirstOrDefault();
-
                 ViewBag.FirstName = user.FirstName;
                 ViewBag.LastName = user.LastName;
-                ViewBag.Role = primaryRole;
 
-                if (primaryRole == "Admin" || primaryRole == "Quality")
-                {
-                    return View();
-                }
-                else
-                {
-                    switch (primaryRole)
-                    {
-                        case "Engineer":
-                            return RedirectToAction("Index", "NcrEng");
-                        case "Operations":
-                            return RedirectToAction("Index", "NcrOperation");
-                        case "Procurement":
-                            return RedirectToAction("Index", "NcrProcurement");
-                        default:
-                            return RedirectToAction("AccessDenied", "Identity/Account/Login");
-                    }
-                }
+                var roles = await _userManager.GetRolesAsync(user);
+                ViewBag.Role = roles.FirstOrDefault();
             }
             else
             {
                 ViewBag.FirstName = "Guest";
                 ViewBag.LastName = "";
                 ViewBag.Role = "None";
-                return View();
             }
+
+            return View();
         }
 
         public IActionResult Privacy()

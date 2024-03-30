@@ -19,6 +19,7 @@ using OfficeOpenXml;
 namespace HaverDevProject.Controllers
 {
     [Authorize(Roles = "Operations, Admin")]
+    [ActiveUserOnly]
     public class NcrOperationController : ElephantController
     {
         //for sending email

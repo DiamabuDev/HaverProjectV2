@@ -26,6 +26,7 @@ using OfficeOpenXml;
 namespace HaverDevProject.Controllers
 {
     [Authorize(Roles = "Quality, Admin")]
+    [ActiveUserOnly]
     public class NcrQaController : ElephantController
     {
         //for sending email
