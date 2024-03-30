@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HaverDevProject.Controllers
 {
+    [Authorize(Roles = "Admin")]
+    [ActiveUserOnly]
     public class FollowUpTypeController : LookupsController
     {
         private readonly HaverNiagaraContext _context;

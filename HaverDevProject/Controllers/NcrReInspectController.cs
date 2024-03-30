@@ -22,6 +22,7 @@ using SkiaSharp;
 namespace HaverDevProject.Controllers
 {
     [Authorize(Roles = "Quality, Admin")]
+    [ActiveUserOnly]
     public class NcrReInspectController : ElephantController
     {
         private readonly HaverNiagaraContext _context;

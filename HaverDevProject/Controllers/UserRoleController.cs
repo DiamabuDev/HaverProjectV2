@@ -17,6 +17,7 @@ using System.Text.Encodings.Web;
 namespace HaverDevProject.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [ActiveUserOnly]
     public class UserRoleController : CognizantController
     {
         private readonly IMyEmailSender _emailSender;

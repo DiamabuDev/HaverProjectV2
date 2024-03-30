@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace HaverDevProject.Controllers
 {
     [Authorize(Roles = "Admin")]
+    [ActiveUserOnly]
     public class DefectsController : ElephantController
     {
         private readonly HaverNiagaraContext _context;
