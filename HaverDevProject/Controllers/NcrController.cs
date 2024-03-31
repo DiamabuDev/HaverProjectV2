@@ -17,6 +17,7 @@ using System.Drawing;
 using System.IO;
 using HaverDevProject.Configurations;
 
+
 namespace HaverDevProject.Controllers
 {
     [Authorize(Roles = "Admin")]
@@ -1234,7 +1235,7 @@ namespace HaverDevProject.Controllers
                         wb.Range["AE5"].Value = ncr.NcrNumber;
 
                         worksheet.Range["AC4"].Value = morepages.ToString();
-                        wb.Range["AC4"].Value = worksheet.Range["AC4"].Value;
+                        //wb.Range["AC4"].Value = worksheet.Range["AC4"].Value;
                     }
                 }
 
@@ -1328,7 +1329,7 @@ namespace HaverDevProject.Controllers
                         wbE.Range["AE5"].Value = ncr.NcrNumber;
 
                         worksheet.Range["AC4"].Value = morepages.ToString();
-                        wbE.Range["AC4"].Value = worksheet.Range["AC4"].Value;
+                        //wbE.Range["AC4"].Value = worksheet.Range["AC4"].Value;
                     }
                 }
 
@@ -1356,7 +1357,8 @@ namespace HaverDevProject.Controllers
                     if (ncr.NcrOperation.Car.Equals(true))
                     {
                         worksheet.Range["L31"].Value = "X";
-                        worksheet.Range["Z31"].Value = ncr.NcrOperation.CarNumber;
+                        worksheet.Range["Z31"].Value = $"CAR"+ncr.NcrOperation.CarNumber;
+                       
                     }
                     else
                     {
@@ -1420,7 +1422,7 @@ namespace HaverDevProject.Controllers
                         wbO.Range["AE5"].Value = ncr.NcrNumber;
 
                         worksheet.Range["AC4"].Value = morepages.ToString();
-                        wbO.Range["AC4"].Value = worksheet.Range["AC4"].Value;
+                        //wbO.Range["AC4"].Value = worksheet.Range["AC4"].Value;
                     }
                 }
 
@@ -1448,7 +1450,7 @@ namespace HaverDevProject.Controllers
                     if (ncr.NcrProcurement.NcrProcCreditExpected.Equals(true))
                     {
                         worksheet.Range["L38"].Value = "X";
-                        worksheet.Range["AB38"].Value = ncr.NcrProcurement.NcrProcRejectedValue.ToString();
+                        worksheet.Range["AB38"].Value = $"$"+ncr.NcrProcurement.NcrProcRejectedValue.ToString();
 
                     }
                     else
@@ -1512,7 +1514,7 @@ namespace HaverDevProject.Controllers
                         wbP.Range["AE5"].Value = ncr.NcrNumber;
 
                         worksheet.Range["AC4"].Value = morepages.ToString();
-                        wbP.Range["AC4"].Value = worksheet.Range["AC4"].Value;
+                        //wbP.Range["AC4"].Value = worksheet.Range["AC4"].Value;
                     }
                 }
 
@@ -1587,7 +1589,7 @@ namespace HaverDevProject.Controllers
                         wbR.Range["AE5"].Value = ncr.NcrNumber;
 
                         worksheet.Range["AC4"].Value = morepages.ToString();
-                        wbR.Range["AC4"].Value = worksheet.Range["AC4"].Value;
+                        //wbR.Range["AC4"].Value = worksheet.Range["AC4"].Value;
                     }
                 }
 
@@ -1610,29 +1612,48 @@ namespace HaverDevProject.Controllers
                     {
                         if (!sheetsToIgnore.Contains(sheet.Name))
                         {
-                            exportWorkbook.Worksheets.AddCopy(sheet);
+                            if (ncr.NcrReInspect != null)
+                            {
+                                
+                                //worksheet.Range["U40"].Value = ncr.NcrReInspect.CreatedBy;
+                                worksheet.Range["AE40"].Value = ncr.NcrReInspect.CreatedOn.ToString();
+                                if (ncr.NcrReInspect.NcrReInspectAcceptable.Equals(true))
+                                {
+                                    worksheet.Range["L39"].Value = "X";
+
+
+                                }
+                                else
+                                {
+                                    worksheet.Range["Q39"].Value = "X";
+                                    worksheet.Range["J40"].Value = ncr.NcrReInspect.NcrReInspectNewNcrNumber;
+                                }
+                            }
+                            sheet.Range["AC4"].Value += morepages.ToString();
+                            exportWorkbook.Worksheets.AddCopy(sheet);                           
                         }
                     }
                 }
 
                 //exportWorkbook.ConverterSetting.SheetFitToPage = true;
-                string filename = ncr.NcrNumber;
-                string defaultDownloadFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-                string downloadsFolder = Path.Combine(defaultDownloadFolder, "Downloads");
-                string pdfFilePath = Path.Combine(downloadsFolder, $"{filename}.pdf");
-
+                string filename = ncr.NcrNumber;               
+                //string rootPath = Server.MapPath("~");
+                string rootPath = AppDomain.CurrentDomain.BaseDirectory;
+                string pdfFilePath = Path.Combine(rootPath, "Downloads", $"{filename}.pdf");
+                string downloadsFolder = Path.Combine(rootPath, "Downloads");
+                if (!Directory.Exists(downloadsFolder))
+                {
+                    Directory.CreateDirectory(downloadsFolder);
+                }
                 exportWorkbook.SaveToFile(pdfFilePath, FileFormat.PDF);
-
-
                 var cd = new System.Net.Mime.ContentDisposition
                 {
                     FileName = $"{filename}.pdf",
-                    Inline = false, // Set to false to force download
+                    Inline = false,
                 };
                 Response.Headers.Add("Content-Disposition", cd.ToString());
-
-                // Return the file
                 return PhysicalFile(pdfFilePath, "application/pdf");
+
 
             }
             catch (Exception ex)
