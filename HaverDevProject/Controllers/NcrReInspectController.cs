@@ -267,6 +267,10 @@ namespace HaverDevProject.Controllers
                 return NotFound();
             }
 
+            //Added code to take the NCR id from the newly created NCR and pass it to the viewbag for use in the details partial view
+            var ncrId = FindNcrId(ncrReInspect.NcrReInspectNewNcrNumber);            
+            ViewBag.NCRId = ncrId;
+
             ViewBag.IsNCRQaView = false;
             ViewBag.IsNCREngView = false;
             ViewBag.IsNCROpView = false;
@@ -450,7 +454,8 @@ namespace HaverDevProject.Controllers
                             ItemId = ncrToUpdate.NcrQa.ItemId,
                             DefectId = ncrToUpdate.NcrQa.DefectId,
                             NcrQacreationDate = DateTime.Now,
-                            NcrQaUserId = user.Id//,
+                            NcrQaUserId = user.Id,
+                            NcrQaEngDispositionRequired = ncrToUpdate.NcrQa.NcrQaEngDispositionRequired//,
                             //NcrQaEngDispositionRequired = ncrToUpdate.NcrQa.NcrQaEngDispositionRequired
                         };
 
@@ -737,6 +742,13 @@ namespace HaverDevProject.Controllers
         private bool NcrReInspectExists(int id)
         {
             return _context.NcrReInspects.Any(e => e.NcrReInspectId == id);
+        }
+
+        private int FindNcrId(string ncrNumber)
+        {
+            var ncr = _context.Ncrs.FirstOrDefault(n => n.NcrNumber == ncrNumber);
+            //if NCR id is null pass 0, otherwise pass the id
+            return ncr?.NcrId ?? 0;
         }
 
         public IActionResult ExportToExcel()
