@@ -62,7 +62,14 @@
                                         @(Model.NcrReInspectAcceptable ? "Yes" : "No")
                                     </td>
                                     <td class="three-cols">
-                                        @(Model.NcrReInspectNewNcrNumber == null ? "" : Model.NcrReInspectNewNcrNumber.ToString())                                        
+                                        @if (!string.IsNullOrEmpty(Model.NcrReInspectNewNcrNumber))
+                                        {
+                                            <a href="@Url.Action("Details", "NcrQa", new { id = ViewBag.NCRId })">@Model.NcrReInspectNewNcrNumber</a>
+                                        }
+                                        else
+                                        {
+                                            @Html.Raw("")
+                                        }
                                     </td>
                                     <td class="three-cols">
                                         @(Model.NcrReInspectNotes == null ? "" : Model.NcrReInspectNotes)
