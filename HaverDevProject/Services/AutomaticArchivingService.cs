@@ -56,7 +56,7 @@ namespace HaverDevProject.Services
                 }
 
                 // Wait for a specified interval before checking again
-                await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
+                await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
             }
         }
     }
