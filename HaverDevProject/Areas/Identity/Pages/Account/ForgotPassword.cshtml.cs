@@ -85,7 +85,7 @@ namespace HaverDevProject.Areas.Identity.Pages.Account
                 {
                     ToAddresses = new List<EmailAddress> { emailAddress },
                     Subject = "Reset Password",
-                    Content = $"<p>Please reset your password. <a href=\"" + callbackUrl + "\">Click Here</a></p>" +
+                    Content = $"<p>Please reset your password. <a href=\"" + callbackUrl + "\">Go to NCR</a></p>" +
                               $"<img src=\"{logo}\">" +
                               "<p>This is an automated email. Please do not reply.</p>",
                 };

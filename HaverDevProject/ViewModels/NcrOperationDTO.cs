@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 namespace HaverDevProject.ViewModels
 {
     [ModelMetadataType(typeof(NcrOperationMetaData))]
-    public class NcrOperationDTO
+    public class NcrOperationDTO : Auditable
     {
         public string NcrNumber { get; set; }
 
