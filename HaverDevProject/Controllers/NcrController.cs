@@ -1616,17 +1616,17 @@ namespace HaverDevProject.Controllers
                             {
                                 
                                 //worksheet.Range["U40"].Value = ncr.NcrReInspect.CreatedBy;
-                                worksheet.Range["AE40"].Value = ncr.NcrReInspect.CreatedOn.ToString();
+                                sheet.Range["AE40"].Value = ncr.NcrReInspect.CreatedOn.ToString();
                                 if (ncr.NcrReInspect.NcrReInspectAcceptable.Equals(true))
                                 {
-                                    worksheet.Range["L39"].Value = "X";
+                                    sheet.Range["L39"].Value = "X";
 
 
                                 }
                                 else
                                 {
-                                    worksheet.Range["Q39"].Value = "X";
-                                    worksheet.Range["J40"].Value = ncr.NcrReInspect.NcrReInspectNewNcrNumber;
+                                    sheet.Range["Q39"].Value = "X";
+                                    sheet.Range["J40"].Value = ncr.NcrReInspect.NcrReInspectNewNcrNumber;
                                 }
                             }
                             sheet.Range["AC4"].Value += morepages.ToString();
