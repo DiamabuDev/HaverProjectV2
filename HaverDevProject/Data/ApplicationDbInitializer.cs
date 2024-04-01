@@ -140,6 +140,42 @@ namespace HaverDevProject.Data
                         userManager.AddToRoleAsync(user, "Admin").Wait();
                     }
                 }
+                if (userManager.FindByEmailAsync("cspirleanu@hotmail.com").Result == null)
+                {
+                    ApplicationUser user = new ApplicationUser
+                    {
+                        FirstName = "Rachel",
+                        LastName = "May",
+                        UserName = "cspirleanu@hotmail.com",
+                        Email = "cspirleanu@hotmail.com",
+                        EmailConfirmed = true
+                    };
+
+                    IdentityResult result = userManager.CreateAsync(user, "Pa55w@rd").Result;
+
+                    if (result.Succeeded)
+                    {
+                        userManager.AddToRoleAsync(user, "Quality").Wait();
+                    }
+                }
+                if (userManager.FindByEmailAsync("cspirleanu@gmail.com").Result == null)
+                {
+                    ApplicationUser user = new ApplicationUser
+                    {
+                        FirstName = "Michael",
+                        LastName = "Brown",
+                        UserName = "cspirleanu@gmail.com",
+                        Email = "cspirleanu@gmail.com",
+                        EmailConfirmed = true
+                    };
+
+                    IdentityResult result = userManager.CreateAsync(user, "Pa55w@rd").Result;
+
+                    if (result.Succeeded)
+                    {
+                        userManager.AddToRoleAsync(user, "Engineer").Wait();
+                    }
+                }
                 if (userManager.FindByEmailAsync("lopezchavezvictorh@gmail.com").Result == null)
                 {
                     ApplicationUser user = new ApplicationUser
