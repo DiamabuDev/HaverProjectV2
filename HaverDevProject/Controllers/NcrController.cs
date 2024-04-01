@@ -1348,7 +1348,7 @@ namespace HaverDevProject.Controllers
                             worksheet.Range["K28"].Value = "X";
                             break;
                         case 3:
-                            worksheet.Range["027"].Value = "X";
+                            worksheet.Range["O27"].Value = "X";
                             break;
                         case 4:
                             worksheet.Range["S28"].Value = "X";
