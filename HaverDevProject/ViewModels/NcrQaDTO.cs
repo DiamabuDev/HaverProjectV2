@@ -31,7 +31,6 @@ namespace HaverDevProject.ViewModels
         public bool NcrQaEngDispositionRequired { get; set; }
         public string NcrQaDefectVideo { get; set; }
         public ICollection<ItemDefectPhoto> ItemDefectPhotos { get; set; } = new HashSet<ItemDefectPhoto>();
-
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (NcrQaQuanDefective > NcrQaQuanReceived)
