@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HaverDevProject.Data;
 using HaverDevProject.Models;
@@ -88,7 +83,7 @@ namespace HaverDevProject.Controllers
             }
 
             if (await TryUpdateModelAsync<FollowUpType>(followUpTypeToUpdate, "",
-                    dt => dt.FollowUpTypeName))
+                    ft => ft.FollowUpTypeName))
             {
                 try
                 {
@@ -124,7 +119,7 @@ namespace HaverDevProject.Controllers
 
             var followUpType = await _context.FollowUpTypes
                 .AsNoTracking()
-                .FirstOrDefaultAsync(m => m.FollowUpTypeId == id);
+                .FirstOrDefaultAsync(f => f.FollowUpTypeId == id);
             if (followUpType == null)
             {
                 return NotFound();
@@ -169,7 +164,7 @@ namespace HaverDevProject.Controllers
 
         private bool FollowUpTypeExists(int id)
         {
-          return _context.FollowUpTypes.Any(e => e.FollowUpTypeId == id);
+          return _context.FollowUpTypes.Any(f => f.FollowUpTypeId == id);
         }
     }
 }

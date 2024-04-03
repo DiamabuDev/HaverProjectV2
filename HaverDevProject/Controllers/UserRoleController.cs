@@ -159,7 +159,7 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:UserLastName"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
-            else if (sortField == "Email") //Sorting by Email
+            else if (sortField == "Email") 
             {
                 if (sortDirection == "asc")
                 {
@@ -172,7 +172,7 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:UserEmail"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
-            else //Sorting by Role
+            else 
             {
                 if (sortDirection == "asc")
                 {

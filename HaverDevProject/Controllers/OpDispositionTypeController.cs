@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HaverDevProject.Data;
 using HaverDevProject.Models;
@@ -125,7 +120,7 @@ namespace HaverDevProject.Controllers
 
             var opDispositionType = await _context.OpDispositionTypes
                 .AsNoTracking()
-                .FirstOrDefaultAsync(m => m.OpDispositionTypeId == id);
+                .FirstOrDefaultAsync(dt => dt.OpDispositionTypeId == id);
             if (opDispositionType == null)
             {
                 return NotFound();
@@ -170,7 +165,7 @@ namespace HaverDevProject.Controllers
 
         private bool OpDispositionTypeExists(int id)
         {
-          return _context.OpDispositionTypes.Any(e => e.OpDispositionTypeId == id);
+          return _context.OpDispositionTypes.Any(dt => dt.OpDispositionTypeId == id);
         }
     }
 }

@@ -9,7 +9,6 @@ namespace HaverDevProject.Models;
 [Table("engDispositionType")]
 public partial class EngDispositionType
 {
-    //[Key]
     [Column("engDispositionTypeId")]
     public int EngDispositionTypeId { get; set; }
 
@@ -19,7 +18,5 @@ public partial class EngDispositionType
     [StringLength(45)]
     [Unicode(false)]
     public string EngDispositionTypeName { get; set; }
-
-    //[InverseProperty("EngDispositionType")]
     public virtual ICollection<NcrEng> NcrEngs { get; set; } = new List<NcrEng>();
 }
