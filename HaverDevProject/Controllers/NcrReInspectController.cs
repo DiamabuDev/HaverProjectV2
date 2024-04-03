@@ -455,8 +455,7 @@ namespace HaverDevProject.Controllers
                             DefectId = ncrToUpdate.NcrQa.DefectId,
                             NcrQacreationDate = DateTime.Now,
                             NcrQaUserId = user.Id,
-                            NcrQaEngDispositionRequired = ncrToUpdate.NcrQa.NcrQaEngDispositionRequired//,
-                            //NcrQaEngDispositionRequired = ncrToUpdate.NcrQa.NcrQaEngDispositionRequired
+                            NcrQaEngDispositionRequired = ncrToUpdate.NcrQa.NcrQaEngDispositionRequired
                         };
 
                         _context.NcrQas.Add(newNcrQa);

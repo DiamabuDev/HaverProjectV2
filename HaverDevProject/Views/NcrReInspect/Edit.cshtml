@@ -12,37 +12,6 @@
 
 <div class="col-md-8 col-10 mx-auto">
     <h1><i class="bi bi-caret-right-fill"></i>Reinspection</h1>
-
-    @* <button class="btn custom-details-btn icon-drop text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#details" aria-expanded="false" aria-controls="details">
-        Details <i class="bi bi-chevron-down"></i>
-    </button>
-    <div class="collapse" id="details">
-        @if (Model.Ncr.NcrQa != null)
-        {
-            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRQaDetailsPartial.cshtml", Model.Ncr.NcrQa)
-        }
-
-        @if (Model.Ncr.NcrEng != null)
-        {
-            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCREngDetailsPartial.cshtml", Model.Ncr.NcrEng)
-        }
-
-        @if (Model.Ncr.NcrOperation != null)
-        {
-            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCROpDetailsPartial.cshtml", Model.Ncr.NcrOperation)
-        }
-
-        @if (Model.Ncr.NcrProcurement != null)
-        {
-            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRProcDetailsPartial.cshtml", Model.Ncr.NcrProcurement)
-        }
-
-        @if (Model.Ncr.NcrReInspect != null)
-        {
-            @await Html.PartialAsync("~/Views/NCRDetailViews/_NCRReInspDetailsPartial.cshtml", Model.Ncr.NcrReInspect)
-        }
-    </div> *@
-
     <form asp-action="Edit" method="post" enctype="multipart/form-data">
         <input type="hidden" asp-for="NcrReInspectId" />
         <input type="hidden" asp-for="NcrId" />
@@ -72,12 +41,6 @@
                             <input asp-for="NcrReInspectCreationDate" class="form-control" readonly />
                         </div>
                     </div>
-                    @* <div class="col-6">
-                    <div class="form-group">
-                    <label asp-for="NcrReInspectPhotos" class="control-label"></label>
-                    <input type="file" name="Photos" multiple />
-                    </div>
-                    </div> *@
                 </div>
                 <div class="row">
                     <div class="col-6">
@@ -95,20 +58,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    @* <div class="col-6">
-                        <div class="form-group">
-                            <label asp-for="NcrReInspectUserId" class="control-label"><b>Inspector's Name </b><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Name of the Inspector">(e.g. J. Doe)</small></label>
-                            <span class="fw-bold text-danger">*</span>
-                            <select asp-for="NcrReInspectUserId" class="form-control">
-                                <option value="1">Jamie</option>
-                                <option value="2">R. May</option>
-                            </select>
-                            <span asp-validation-for="NcrReInspectUserId" class="text-danger"></span>
-                        </div>
-                    </div> *@
-                    
+                    </div>                   
                 </div>
 
                 <div class="form-group" id="ReinspectNotes">
@@ -225,8 +175,8 @@
         });
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    
 
+    <!-- Functionality to open/close modals as well as Notes section-->
     <script>
         let isAcceptable = true;
 
@@ -238,29 +188,21 @@
             $('#acceptableReinspectionModal').modal('hide');
         }
 
-        // Function to show/hide notes field and manage validation
         function toggleReinspectionNotes() {
             var reinspectionAcceptable = $('input[name="NcrReInspectAcceptable"]:checked').val();
             var reinspectionNotes = $('#ReinspectNotes');
 
-            // Check the value of reinspectionAcceptable and toggle the visibility of notes field
             if (reinspectionAcceptable === 'false') {
-                // Show notes field
                 reinspectionNotes.slideDown();
-                // Set required attribute
                 reinspectionNotes.find('textarea').prop('required', true);
             } else {
-                // Hide notes field
                 reinspectionNotes.slideUp();
-                // Remove required attribute
                 reinspectionNotes.find('textarea').prop('required', false);
             }
         }
 
-        // Call the function on page load
         toggleReinspectionNotes();
 
-        // Bind the function to the change event of the "acceptable" radio buttons
         $('input[name="NcrReInspectAcceptable"]').change(function () {
             toggleReinspectionNotes();
 
@@ -277,20 +219,15 @@
 
         document.getElementById('btnSaveAndClose').addEventListener('click', function (event) {            
 
-            // Check if the notes field is required and has a value
             if ($('input[name="NcrReInspectAcceptable"]:checked').val() === 'false' && $('#ReinspectNotes textarea').val().trim() === '') {
-                // Display validation message
                 $('#ReinspectNotes span.text-danger').text('You must provide reinspection notes if NCR is not acceptable.');
                 event.preventDefault();
                 return;
             } else {
-                // Clear validation message
                 $('#ReinspectNotes span.text-danger').text('');
             }
 
-            // Check if the form is valid
             if ($('#reInspectFormId')[0].checkValidity()) {
-                // If the form is valid, show the modal
                 showCloseReinspectionModal();
             }
         });
@@ -302,7 +239,6 @@
         });
 
         function showCloseReinspectionModal() {
-            // Check if the form is valid before showing the modal
             if ($('#reInspectFormId')[0].checkValidity()) {
                 $('#closeReinspectionModal').modal('show');
 
@@ -326,6 +262,7 @@
 
     </script>
 
+    <!-- Functionality to delete unwanted photos-->
     <script>
         function deletePhoto(photoId) {
             if (!confirm("Are you sure you want to delete this photo?")) return;
