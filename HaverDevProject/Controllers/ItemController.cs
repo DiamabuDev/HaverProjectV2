@@ -87,14 +87,14 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     items = items
-                        .OrderBy(p => p.ItemNumber);
+                        .OrderBy(i => i.ItemNumber);
                     ViewData["filterApplied:ItemNumber"] = "<i class='bi bi-sort-up'></i>";
 
                 }
                 else
                 {
                     items = items
-                        .OrderByDescending(p => p.ItemNumber);
+                        .OrderByDescending(i => i.ItemNumber);
                     ViewData["filterApplied:ItemNumber"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -103,13 +103,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     items = items
-                        .OrderBy(p => p.ItemName);
+                        .OrderBy(i => i.ItemName);
                     ViewData["filterApplied:ItemName"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     items = items
-                        .OrderByDescending(p => p.ItemName);
+                        .OrderByDescending(i => i.ItemName);
                     ViewData["filterApplied:ItemName"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -290,7 +290,7 @@ namespace HaverDevProject.Controllers
         {
             if (_context.Items == null)
             {
-                return Problem("Entity set 'HaverNiagaraContext.Items'  is null.");
+                return Problem("Entity set 'HaverNiagaraContext.Items' is null.");
             }
             var item = await _context.Items.FindAsync(id);
             if (item != null)
@@ -369,7 +369,7 @@ namespace HaverDevProject.Controllers
             }
             else
             {
-                // Process items if there are no critical errors
+                // Process items if there are no errors
                 foreach (var (itemNumber, itemName) in itemDictionary)
                 {
                     var existingItem = await _context.Items
