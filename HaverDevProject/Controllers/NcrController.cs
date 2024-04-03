@@ -265,7 +265,7 @@ namespace HaverDevProject.Controllers
 
             return View(pagedData);
         }
-       
+
         // GET: Ncr/Details/5
         public async Task<IActionResult> Details(int? id, NcrPhase section)
         {
@@ -708,7 +708,7 @@ namespace HaverDevProject.Controllers
             _numOfYearsService.NumOfYears = numYears;
             TempData["SuccessMessage"] = $"Archiving Service set to: {numYears} Years";
             return RedirectToAction("Archived"); // Redirect to a different action
-            
+
         }
 
         public async Task<IActionResult> ArchiveNcr(int id)
@@ -736,7 +736,7 @@ namespace HaverDevProject.Controllers
             }
 
         }
-    
+
         public async Task<IActionResult> RestoreNcr(int id)
         {
             var ncrToUpdate = await _context.Ncrs
@@ -1327,8 +1327,8 @@ namespace HaverDevProject.Controllers
                     if (ncr.NcrOperation.Car.Equals(true))
                     {
                         worksheet.Range["L31"].Value = "X";
-                        worksheet.Range["Z31"].Value = $"CAR"+ncr.NcrOperation.CarNumber;
-                       
+                        worksheet.Range["Z31"].Value = $"CAR" + ncr.NcrOperation.CarNumber;
+
                     }
                     else
                     {
@@ -1420,7 +1420,7 @@ namespace HaverDevProject.Controllers
                     if (ncr.NcrProcurement.NcrProcCreditExpected.Equals(true))
                     {
                         worksheet.Range["L38"].Value = "X";
-                        worksheet.Range["AB38"].Value = $"$"+ncr.NcrProcurement.NcrProcRejectedValue.ToString();
+                        worksheet.Range["AB38"].Value = $"$" + ncr.NcrProcurement.NcrProcRejectedValue.ToString();
 
                     }
                     else
@@ -1584,7 +1584,7 @@ namespace HaverDevProject.Controllers
                         {
                             if (ncr.NcrReInspect != null)
                             {
-                                
+
                                 //worksheet.Range["U40"].Value = ncr.NcrReInspect.CreatedBy;
                                 sheet.Range["AE40"].Value = ncr.NcrReInspect.CreatedOn.ToString();
                                 if (ncr.NcrReInspect.NcrReInspectAcceptable.Equals(true))
@@ -1600,13 +1600,13 @@ namespace HaverDevProject.Controllers
                                 }
                             }
                             sheet.Range["AC4"].Value += morepages.ToString();
-                            exportWorkbook.Worksheets.AddCopy(sheet);                           
+                            exportWorkbook.Worksheets.AddCopy(sheet);
                         }
                     }
                 }
 
                 //exportWorkbook.ConverterSetting.SheetFitToPage = true;
-                string filename = ncr.NcrNumber;               
+                string filename = ncr.NcrNumber;
                 //string rootPath = Server.MapPath("~");
                 string rootPath = AppDomain.CurrentDomain.BaseDirectory;
                 string pdfFilePath = Path.Combine(rootPath, "Downloads", $"{filename}.pdf");
@@ -1634,7 +1634,6 @@ namespace HaverDevProject.Controllers
 
         }
         #endregion
-
 
         private bool NcrExists(int id)
         {

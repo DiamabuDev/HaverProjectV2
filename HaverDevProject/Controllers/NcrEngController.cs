@@ -69,7 +69,7 @@ namespace HaverDevProject.Controllers
             //List of sort options.
             string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "Disposition", "Phase", "Last Updated" };
 
-            
+
             PopulateDropDownLists();
             GetNcrs();
 
@@ -98,7 +98,7 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:ButtonActive"] = "btn-success";
                     ViewData["filterApplied:ButtonAll"] = "btn-primary custom-opacity";
                     ViewData["filterApplied:ButtonClosed"] = "btn-danger custom-opacity";
-                    
+
                 }
                 else //(filter == "Closed")
                 {
@@ -106,7 +106,7 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:ButtonClosed"] = "btn-danger";
                     ViewData["filterApplied:ButtonAll"] = "btn-primary custom-opacity";
                     ViewData["filterApplied:ButtonActive"] = "btn-success custom-opacity";
-                    
+
                 }
             }
 
@@ -125,11 +125,11 @@ namespace HaverDevProject.Controllers
                 ncrEng = ncrEng.Where(n => n.Ncr.NcrQa.NcrQacreationDate == StartDate);
                 numberFilters++;
             }
-            else 
+            else
             {
                 ncrEng = ncrEng.Where(n => n.Ncr.NcrQa.NcrQacreationDate >= StartDate &&
                          n.Ncr.NcrQa.NcrQacreationDate <= EndDate);
-                    
+
             }
 
             //keep track of the number of filters 
@@ -268,7 +268,7 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:Status"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
-            
+
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
             ViewData["filter"] = filter;
@@ -320,7 +320,7 @@ namespace HaverDevProject.Controllers
             ViewBag.IsNCRReInspView = false;
 
             ViewBag.NCRSectionId = id;
-                    
+
             return View(ncrEng);
         }
 
@@ -332,7 +332,7 @@ namespace HaverDevProject.Controllers
             int ncrId = _context.Ncrs.Where(n => n.NcrNumber == ncrNumber).Select(n => n.NcrId).FirstOrDefault();
 
             // Check if there are info in cookies
-            if (Request.Cookies.TryGetValue("DraftNCREng"+ncrNumber, out string draftJson))
+            if (Request.Cookies.TryGetValue("DraftNCREng" + ncrNumber, out string draftJson))
             {
                 // Convert the data from json file
                 ncrEngDTO = JsonConvert.DeserializeObject<NcrEngDTO>(draftJson);
@@ -340,7 +340,7 @@ namespace HaverDevProject.Controllers
             }
             else
             {
-                
+
                 ncrEngDTO = new NcrEngDTO
                 {
                     NcrNumber = ncrNumber, // Set the NcrNumber from the parameter
@@ -389,7 +389,7 @@ namespace HaverDevProject.Controllers
                     var json = JsonConvert.SerializeObject(ncrEngDTO);
 
                     // Save the object in a cookie with name "DraftData"
-                    Response.Cookies.Append("DraftNCREng"+ncrEngDTO.NcrNumber, json, new CookieOptions
+                    Response.Cookies.Append("DraftNCREng" + ncrEngDTO.NcrNumber, json, new CookieOptions
                     {
                         // Define time for cookies
                         Expires = DateTime.Now.AddMinutes(2880) // Cookied will expire in 48 hrs
@@ -437,10 +437,10 @@ namespace HaverDevProject.Controllers
                         DrawingOriginalRevNumber = ncrEngDTO.DrawingOriginalRevNumber,
                         DrawingUpdatedRevNumber = ncrEngDTO.DrawingUpdatedRevNumber,
                         DrawingRevDate = DateTime.Now,
-                        DrawingUserId = ncrEngDTO.DrawingUserId, 
+                        DrawingUserId = ncrEngDTO.DrawingUserId,
                         EngDefectPhotos = ncrEngDTO.EngDefectPhotos,
                         NcrEngDefectVideo = ncrEngDTO.NcrEngDefectVideo
-                       
+
                     };
                     _context.NcrEngs.Add(ncrEng);
                     await _context.SaveChangesAsync();
@@ -468,7 +468,7 @@ namespace HaverDevProject.Controllers
 
                     TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " saved successfully!";
                     //Delete cookies
-                    Response.Cookies.Delete("DraftNCREng"+ncr.NcrNumber);
+                    Response.Cookies.Delete("DraftNCREng" + ncr.NcrNumber);
                     int ncrEngId = ncrEng.NcrEngId;
 
                     //include supplier name in the email
@@ -490,13 +490,13 @@ namespace HaverDevProject.Controllers
             {
                 ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
             }
-            catch (DbUpdateException )
+            catch (DbUpdateException)
             {
-                ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");         
+                ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
             }
 
             PopulateDropDownLists();
-          
+
             return View(ncrEngDTO);
         }
 

@@ -17,7 +17,6 @@ namespace HaverDevProject.Controllers
         }
         public IActionResult Index(string Tab = "EngDispositionType-Tab")
         {
-            //Note: select the tab you want to load by passing in
             ViewData["Tab"] = Tab;
             return View();
         }

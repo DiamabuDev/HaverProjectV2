@@ -455,8 +455,7 @@ namespace HaverDevProject.Controllers
                             DefectId = ncrToUpdate.NcrQa.DefectId,
                             NcrQacreationDate = DateTime.Now,
                             NcrQaUserId = user.Id,
-                            NcrQaEngDispositionRequired = ncrToUpdate.NcrQa.NcrQaEngDispositionRequired//,
-                            //NcrQaEngDispositionRequired = ncrToUpdate.NcrQa.NcrQaEngDispositionRequired
+                            NcrQaEngDispositionRequired = ncrToUpdate.NcrQa.NcrQaEngDispositionRequired
                         };
 
                         _context.NcrQas.Add(newNcrQa);
@@ -665,8 +664,6 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.NcrQa).ThenInclude(n => n.Supplier)
                 .Where(n => n.NcrPhase == NcrPhase.ReInspection)
                 .ToList();
-
-
 
             // Extract relevant data for the client-side
             var ncrs = pendings.Select(ncr => new

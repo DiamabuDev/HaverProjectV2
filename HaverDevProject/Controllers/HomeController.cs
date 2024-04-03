@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HaverDevProject.Controllers
 {
-    [AllowAnonymous]
     [ActiveUserOnly]
     public class HomeController : Controller
     {

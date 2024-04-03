@@ -153,6 +153,7 @@
                     </td>
                     <td class="col-auto">
                         @await Component.InvokeAsync("UserDetails", new { userEmail = item.CreatedBy, section = "reinsp" })
+                    </td>
                     <td class="d-none d-md-table-cell">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrPhase)
                     </td>
@@ -239,6 +240,4 @@
             updatePendingCountIndicator();
         });
     </script>
-
-
 }

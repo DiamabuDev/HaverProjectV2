@@ -250,7 +250,7 @@ namespace HaverDevProject.Controllers
         {
             if (_context.Defects == null)
             {
-                return Problem("Entity set 'HaverNiagaraContext.Defects'  is null.");
+                return Problem("Entity set 'HaverNiagaraContext.Defects' is null.");
             }
             var defect = await _context.Defects.FindAsync(id);
             if (defect != null)
