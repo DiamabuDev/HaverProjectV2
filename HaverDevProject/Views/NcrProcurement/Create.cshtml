@@ -4,13 +4,12 @@
     ViewData["Title"] = "Create";
 }
 <head>
-    <!-- Other head elements, such as meta tags, title, and other stylesheets -->
-    <!-- Add the <style> block for CSS transitions -->
+
     <style>
-        /* Add CSS transition for smooth hide/show effect */
+
         .supplier-return-fields {
-            max-height: 1000px; /* Set a sufficiently large max-height */
-            transition: max-height 0.5s ease-out; /* Adjust the duration and easing as needed */
+            max-height: 1000px;
+            transition: max-height 0.5s ease-out; 
             overflow: hidden;
         }
     </style>
@@ -263,32 +262,25 @@
 
     <script>
         $(document).ready(function () {
-            // Function to show/hide elements and manage validation based on SupplierReturnRequest value
             function toggleSupplierReturnFields() {
                 var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
-
-                // Check the value of SupplierReturnRequest and toggle the max-height accordingly
                 if (supplierReturnRequest === 'true') {
-                    $('.supplier-return-fields').css('max-height', '1000px'); // Set a sufficiently large max-height
+                    $('.supplier-return-fields').css('max-height', '1000px');
 
-                    // Enable validation for fields by adding data-val attributes
                     $('.supplier-return-fields [data-val="true"]').each(function () {
                         $(this).attr('data-val', 'true');
                     });
                 } else {
                     $('.supplier-return-fields').css('max-height', '0');
 
-                    // Disable validation for fields by removing data-val attributes
                     $('.supplier-return-fields [data-val="true"]').each(function () {
                         $(this).attr('data-val', 'false');
                     });
                 }
             }
 
-            // Call the function on page load
             toggleSupplierReturnFields();
 
-            // Bind the function to the change event of SupplierReturnRequest radio buttons
             $('input[name="NcrProcSupplierReturnReq"]').change(function () {
                 toggleSupplierReturnFields();
             });
@@ -296,21 +288,18 @@
     </script>
     <script>
         $(document).ready(function () {
-            // Function to show/hide elements and manage validation based on SupplierReturnRequest value
             function toggleSupplierReturnFields() {
                 var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
                 var supplierRMAField = $('#SupplierReturnMANum');
                 var carrierNameField = $('#SupplierReturnName');
                 var accountField = $('#SupplierReturnAccount');
 
-                // Check the value of SupplierReturnRequest and toggle the required attribute accordingly
+
                 if (supplierReturnRequest === 'true') {
-                    // Set required attribute
                     supplierRMAField.prop('required', true);
                     carrierNameField.prop('required', true);
                     accountField.prop('required', true);
                 } else {
-                    // Remove required attribute
                     supplierRMAField.prop('required', false);
                     carrierNameField.prop('required', false);
                     accountField.prop('required', false);
@@ -321,14 +310,12 @@
             $('#formProcurement').submit(function (event) {
                 var isValid = true;
 
-                // Check if SupplierReturnRequest is set to true
+                
                 var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
 
-                // Check each required field individually
                 $('.supplier-return-fields [required]').each(function () {
                     if ($.trim($(this).val()) === '') {
                         isValid = false;
-                        // Display custom error message based on field and SupplierReturnRequest value
                         if ($(this).attr('id') === 'SupplierReturnMANum' && supplierReturnRequest === 'true') {
                             $(this).next('.text-danger').text('Supplier RMA# is required.');
                         } else if ($(this).attr('id') === 'SupplierReturnName' && supplierReturnRequest === 'true') {
@@ -336,31 +323,26 @@
                         } else if ($(this).attr('id') === 'SupplierReturnAccount' && supplierReturnRequest === 'true') {
                             $(this).next('.text-danger').text('Account # is required.');
                         } else {
-                            // Clear any previous error messages
+
                             $(this).next('.text-danger').text('');
                         }
                     }
                 });
 
-                // If the form is not valid, prevent the default form submission
                 if (!isValid) {
                     event.preventDefault();
                     event.stopPropagation();
                 }
 
-                // Return the validity status of the form
                 return isValid;
             });
 
-            // Call the function initially
             toggleSupplierReturnFields();
 
-            // Bind the function to the change event of SupplierReturnRequest radio buttons
             $('input[name="NcrProcSupplierReturnReq"]').change(function () {
                 toggleSupplierReturnFields();
             });
 
-            // Custom validation for Supplier RMA field
             $('#SupplierReturnMANum').blur(function () {
                 var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
                 var supplierRMAField = $(this);
@@ -371,7 +353,6 @@
                 }
             });
 
-            // Custom validation for Carrier Name field
             $('#SupplierReturnName').blur(function () {
                 var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
                 var carrierNameField = $(this);
@@ -382,7 +363,6 @@
                 }
             });
 
-            // Custom validation for Account field
             $('#SupplierReturnAccount').blur(function () {
                 var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
                 var accountField = $(this);
@@ -405,24 +385,20 @@
 
     @* Test button for live demo *@
     <script>
-        // Your existing scripts...
 
-        // Function to autofill SupplierReturnMANum, SupplierReturnName, SupplierReturnAccount, and NcrProcRejectedValue
         function autoFillTestValues() {
-            // Replace these values with the desired autofill values
             var supplierRMAValue = "RT20062090";
             var carrierNameValue = "Purolator";
             var accountValue = "12345";
             var rejectedValue = "10000";
 
-            // Autofill the fields
+
             $('#SupplierReturnMANum').val(supplierRMAValue);
             $('#SupplierReturnName').val(carrierNameValue);
             $('#SupplierReturnAccount').val(accountValue);
             $('#NcrProcRejectedValue').val(rejectedValue);
         }
 
-        // Bind the autofill function to the click event of the Test button
         $('#test').click(function () {
             autoFillTestValues();
         });

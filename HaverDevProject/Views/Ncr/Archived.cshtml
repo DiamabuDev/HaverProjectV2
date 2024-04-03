@@ -5,7 +5,7 @@
     ViewData["Title"] = "Archived";
 }
 
-<!--MODALS-->
+@* MODALS *@
 <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -38,11 +38,10 @@
     </li>
 </ul>
 
-<!-- Archive Settings Button-->
+@* Archive Settings Button *@
 <div class="container-fluid mt-4" >
     <div class="row">
         <div class="col-md-6 col-lg-4">
-            <!-- Adjust column size as needed -->
             <div id="archiveCollapse" class="collapse show">
                 <div class="row">
                     <div class="col-md-12">
@@ -52,12 +51,11 @@
             </div>
         </div>
     </div>
-    <!-- Add more rows and columns as needed -->
 </div>
 
 
 
-<!-- Settings Modal -->
+@* Settings Modal *@
 <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -96,7 +94,7 @@
     </div>
 </div>
 
-<!--BODY-->
+@* BODY *@
 <form id="ncrForm" asp-action="Archived" method="get">
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
     <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
@@ -265,7 +263,7 @@
         })
     </script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <!--Filtering-->
+    @* Filtering *@
     <script type="text/javascript">
         $(document).ready(function () {
             $('.btn-filter').on('click', function () {
@@ -296,7 +294,7 @@
         });
     </script>
 
-    <!--Delete-->
+    @* Delete *@
     <script>
         //Deleting Ncrs
         document.addEventListener('DOMContentLoaded', function () {
@@ -316,11 +314,11 @@
             });
 
             confirmDeleteButton.addEventListener('click', function () {
-                // Proceed with the deletion
+
                 window.location.href = `/Ncr/Delete/${currentNcrId}`;
             });
 
-            // Ensure the modal is closed on cancel
+
             $('#deleteConfirmationModal').on('hidden.bs.modal', function () {
                 currentNcrId = null;
             });
@@ -339,7 +337,7 @@
             source: '@Url.Action("GetSuppliersAuto", "Ncr")'
         });
     </script>
-    <!--Tabs-->
+    @* Tabs *@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const archiveTab = document.getElementById('archive-tab');
@@ -349,23 +347,21 @@
             });
         });
     </script>
-    <!--Archive Input-->
+   @*  Archive Input *@
     <script>
-        // Retrieve the value of numberOfYears from localStorage
+
         var numberOfYearsValue = localStorage.getItem('numYears');
         if (numberOfYearsValue) {
-            // Set the value of the input field to the retrieved value
+
             document.getElementById('numYears').value = numberOfYearsValue;
         }
 
-        // Add an event listener to the input field to store its value in localStorage when it changes
         document.getElementById('numYears').addEventListener('input', function () {
             localStorage.setItem('numYears', this.value);
         });
     </script>
 
     <script>
-        //Settings pop-up modal for archive service
         function openSettingsModal() {
             $('#settingsModal').modal('show');
         }
