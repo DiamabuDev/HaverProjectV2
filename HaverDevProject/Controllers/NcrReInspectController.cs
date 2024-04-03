@@ -665,8 +665,6 @@ namespace HaverDevProject.Controllers
                 .Where(n => n.NcrPhase == NcrPhase.ReInspection)
                 .ToList();
 
-
-
             // Extract relevant data for the client-side
             var ncrs = pendings.Select(ncr => new
             {
