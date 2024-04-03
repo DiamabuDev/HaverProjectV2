@@ -142,16 +142,7 @@ public partial class HaverNiagaraContext : DbContext
             entity.HasOne(d => d.NcrReInspect).WithMany(p => p.NcrReInspectPhotos)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_ncrReInspectPhoto_itemDefect");
-        });
-
-        //modelBuilder.Entity<OpDefectPhoto>(entity =>
-        //{
-        //    entity.HasKey(e => e.OpDefectPhotoId).HasName("pk_opDefectPhoto_opDefectPhotoId");
-
-        //    entity.HasOne(d => d.NcrOperation).WithMany(p => p.OpDefectPhotos)
-        //        .OnDelete(DeleteBehavior.ClientSetNull)
-        //        .HasConstraintName("fk_opDefectPhoto_itemDefect");
-        //});
+        });        
 
         modelBuilder.Entity<Ncr>(entity =>
         {
@@ -163,7 +154,6 @@ public partial class HaverNiagaraContext : DbContext
                 .HasConstraintName("fk_ncr_parentId") 
                 .OnDelete(DeleteBehavior.Restrict); 
         });
-
 
         modelBuilder.Entity<NcrEng>(entity =>
         {
@@ -240,7 +230,6 @@ public partial class HaverNiagaraContext : DbContext
         OnBeforeSaving();
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
-
     private void OnBeforeSaving()
     {
         var entries = ChangeTracker.Entries();

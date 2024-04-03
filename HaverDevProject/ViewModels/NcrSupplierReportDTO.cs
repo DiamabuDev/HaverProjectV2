@@ -6,7 +6,6 @@ namespace HaverDevProject.ViewModels
     public class NcrSupplierReportDTO
     {
         public string NcrNumber { get; set; }
-
         public bool NcrStatus { get; set; }
         public string SupplierName { get; set; }
         public string NcrQaOrderNumber { get; set; }
