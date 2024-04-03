@@ -12,8 +12,6 @@ namespace HaverDevProject.Models
         public byte[] Content { get; set; }
 
         public ItemDefectPhoto ItemDefectPhoto { get; set; }
-
-
-        //public ICollection<ItemDefectPhoto> ItemDefectPhoto { get; set; } = new HashSet<ItemDefectPhoto>();
+        
     }
 }

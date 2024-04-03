@@ -10,10 +10,7 @@ namespace HaverDevProject.Models
 
         [ScaffoldColumn(false)]
         public byte[] Content { get; set; }
-
         
-        public EngDefectPhoto EngDefectPhoto { get; set;}
-
-        //public ICollection<EngDefectPhoto> EngDefectPhoto { get; set; } = new HashSet<EngDefectPhoto>();
+        public EngDefectPhoto EngDefectPhoto { get; set;}        
     }
 }

@@ -39,7 +39,5 @@ public class ItemDefectPhoto
     [ForeignKey("NcrQaId")]
     [InverseProperty("ItemDefectPhotos")]
     public virtual NcrQa NcrQa { get; set; }
-
-    public FileContent FileContent { get; set; } = new FileContent();
-    //public ICollection<FileContent> FileContent { get; set; } = new HashSet<FileContent>();
+    public FileContent FileContent { get; set; } = new FileContent();    
 }
