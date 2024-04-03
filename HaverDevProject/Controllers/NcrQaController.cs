@@ -32,7 +32,6 @@ namespace HaverDevProject.Controllers
         //for sending email
         private readonly IMyEmailSender _emailSender;
         private readonly UserManager<ApplicationUser> _userManager;
-
         private readonly HaverNiagaraContext _context;
 
         public NcrQaController(HaverNiagaraContext context, IMyEmailSender emailSender, UserManager<ApplicationUser> userManager)
@@ -41,13 +40,11 @@ namespace HaverDevProject.Controllers
             _emailSender = emailSender;
             _userManager = userManager;
         }
-
         
         // GET: NcrQa
         public async Task<IActionResult> Index(string SearchCode, string SearchSupplier, DateTime StartDate, DateTime EndDate,
             int? page, int? pageSizeID, string actionButton, string sortDirection = "desc", string sortField = "Created", string filter = "Active")
         {
-
             ViewData["Filtering"] = "btn-block invisible";
             int numberFilters = 0;
 
@@ -108,7 +105,7 @@ namespace HaverDevProject.Controllers
             }
             if (!String.IsNullOrEmpty(SearchCode))
             {
-                ncrQa = ncrQa.Where(s => s.Defect.DefectName.ToUpper().Contains(SearchCode.ToUpper() ) //(s => s.Item.ItemDefects.FirstOrDefault().Defect.DefectName.ToUpper().Contains(SearchCode.ToUpper()) 
+                ncrQa = ncrQa.Where(s => s.Defect.DefectName.ToUpper().Contains(SearchCode.ToUpper() ) 
                 || s.Ncr.NcrNumber.ToUpper().Contains(SearchCode.ToUpper()));
                 numberFilters++;
             }
@@ -149,8 +146,7 @@ namespace HaverDevProject.Controllers
                     }
                     sortField = actionButton;//Sort by the button clicked
                 }
-            }
-            
+            }            
             if (sortField == "NCR #")
             {
                 if (sortDirection == "asc")
@@ -218,13 +214,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     ncrQa = ncrQa
-                        .OrderBy(p => p.Ncr.NcrPhase); //.OrderBy(p => p.Ncr.NcrStatus);
+                        .OrderBy(p => p.Ncr.NcrPhase); 
                     ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncrQa = ncrQa
-                        .OrderByDescending(p => p.Ncr.NcrPhase); //.OrderByDescending(p => p.Ncr.NcrStatus);
+                        .OrderByDescending(p => p.Ncr.NcrPhase);
                     ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -277,7 +273,6 @@ namespace HaverDevProject.Controllers
             {
                 return NotFound();
             }
-
             var ncrQa = await _context.NcrQas
                 .Include(n => n.Ncr)
                 .Include(i => i.Supplier)
@@ -336,13 +331,10 @@ namespace HaverDevProject.Controllers
                     NcrQaProcessApplicable = true, //Supplier or Rec-Insp
                     NcrQaItemMarNonConforming = true, //Yes
                     NcrQaEngDispositionRequired = true //Yes
-
                 };
             }
-
             PopulateDropDownLists();
-            return View(ncrQaDTO);
-            
+            return View(ncrQaDTO);            
         }
 
         // POST: NcrQa/Create
@@ -362,7 +354,7 @@ namespace HaverDevProject.Controllers
                 Response.Cookies.Append("DraftNCRQa", json, new CookieOptions
                 {
                     // Define time for cookies
-                    Expires = DateTime.Now.AddMinutes(2880) // Cookied will expire in 48 hrs
+                    Expires = DateTime.Now.AddMinutes(2880) // Cookies will expire in 48 hrs
                 });
 
                 return Ok(new { success = true, message = "Draft saved successfully.\nNote: This draft will be available for the next 48 hours." });                
@@ -376,7 +368,7 @@ namespace HaverDevProject.Controllers
                                 
                 Ncr ncr = new Ncr
                 {
-                    NcrNumber = NcrNewNumberValidated,//ncrQaDTO.NcrNumber,
+                    NcrNumber = NcrNewNumberValidated,
                     NcrLastUpdated = DateTime.Now,
                     NcrStatus = ncrQaDTO.NcrStatus,
                     NcrPhase = ncrQaDTO.NcrQaEngDispositionRequired == true ? NcrPhase.Engineer : NcrPhase.Operations,
@@ -388,7 +380,7 @@ namespace HaverDevProject.Controllers
 
                 //getting the ncrId through the NcrNumber 
                 int ncrIdObt = _context.Ncrs
-                    .Where(n => n.NcrNumber == NcrNewNumberValidated)//ncrQaDTO.NcrNumber)
+                    .Where(n => n.NcrNumber == NcrNewNumberValidated)
                     .Select(n => n.NcrId)
                     .FirstOrDefault();
 
@@ -604,7 +596,7 @@ namespace HaverDevProject.Controllers
                     {
                         ncrQaToUpdate.NcrQaItemMarNonConforming = ncrQaDTO.NcrQaItemMarNonConforming;
                         ncrQaToUpdate.NcrQaProcessApplicable = ncrQaDTO.NcrQaProcessApplicable;
-                        ncrQaToUpdate.NcrQacreationDate = ncrQaDTO.NcrQacreationDate; //checar
+                        ncrQaToUpdate.NcrQacreationDate = ncrQaDTO.NcrQacreationDate; 
                         ncrQaToUpdate.NcrQaOrderNumber = ncrQaDTO.NcrQaOrderNumber;
                         ncrQaToUpdate.NcrQaSalesOrder = ncrQaDTO.NcrQaSalesOrder;
                         ncrQaToUpdate.NcrQaQuanReceived = ncrQaDTO.NcrQaQuanReceived;
@@ -622,8 +614,7 @@ namespace HaverDevProject.Controllers
 
                         _context.NcrQas.Update(ncrQaToUpdate);
                         await _context.SaveChangesAsync();
-
-                        //TempData["SuccessMessage"] = "NCR edited successfully!";
+                        
                         TempData["SuccessMessage"] = "NCR " + ncrQaDTO.NcrNumber + " edited successfully!";
                         int updateNcrQa = ncrQaToUpdate.NcrQaId;
 
@@ -652,8 +643,7 @@ namespace HaverDevProject.Controllers
             }
             PopulateDropDownLists();return View(ncrQaDTO);            
         }
-
-        
+                
         public string GetNcrNumber()
         {
             string lastNcrNumber = _context.Ncrs
@@ -709,7 +699,6 @@ namespace HaverDevProject.Controllers
             ViewData["ItemId"] = ItemSelectList();
             ViewData["DefectId"] = DefectSelectList();
         }
-
 
         [HttpGet]
         public JsonResult GetSuppliers(int? id)
@@ -769,7 +758,6 @@ namespace HaverDevProject.Controllers
             }
         }
 
-
         public async Task<FileContentResult> Download(int id)
         {
             var theFile = await _context.ItemDefectPhotos
@@ -802,8 +790,7 @@ namespace HaverDevProject.Controllers
             {
                 TempData["ErrorMessage"] = "NCR not found for archiving.";
                 return RedirectToAction("Index");
-            }                
-
+            }      
         }
 
         public async Task<IActionResult> RestoreNcr(int id)
@@ -829,7 +816,6 @@ namespace HaverDevProject.Controllers
                 TempData["ErrorMessage"] = "NCR not found for archiving.";
                 return RedirectToAction("Index");
             }
-
         }
         #endregion
 
@@ -851,10 +837,11 @@ namespace HaverDevProject.Controllers
           return _context.NcrQas.Any(e => e.NcrQaId == id);
         }
 
+        #region Email Notifications
+
         //// Create - Email Notification
         public async Task<IActionResult> NotificationCreate(int? id, string Subject, string emailContent)
         {
-
             if (id == null)
             {
                 return NotFound();
@@ -862,7 +849,6 @@ namespace HaverDevProject.Controllers
 
             NcrOperation o = await _context.NcrOperations.FindAsync(id);
             ViewData["id"] = id;
-
             try
             {
                 var engUsers = await _userManager.GetUsersInRoleAsync("Engineer");
@@ -894,14 +880,12 @@ namespace HaverDevProject.Controllers
                 string errMsg = ex.GetBaseException().Message;
                 ViewData["Message"] = $"Error: Could not send email message to users. Error: {errMsg}";
             }
-
             return View();
         }
 
         //// Edit - Email Notification
         public async Task<IActionResult> NotificationEdit(int? id, string Subject, string emailContent)
         {
-
             if (id == null)
             {
                 return NotFound();
@@ -949,10 +933,10 @@ namespace HaverDevProject.Controllers
                 string errMsg = ex.GetBaseException().Message;
                 ViewData["Message"] = $"Error: Could not send email message to users. Error: {errMsg}";
             }
-
             return View();
         }
 
+        #endregion
         public IActionResult ExportToExcel()
         {
             var ncrOperation = _context.NcrQas
@@ -993,7 +977,6 @@ namespace HaverDevProject.Controllers
                     range.Style.Fill.PatternType = ExcelFillStyle.Solid;
                     range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
                 }
-
                 // Fill data into Excel
                 int row = 3;
                 foreach (var item in ncrOperation)
@@ -1005,10 +988,8 @@ namespace HaverDevProject.Controllers
                     worksheet.Cells[row, 5].Value = item.Ncr.NcrPhase.ToString();
                     worksheet.Cells[row, 6].Value = item.NcrQacreationDate.ToString();
                     worksheet.Cells[row, 7].Value = item.Ncr.NcrLastUpdated.ToString();
-
                     row++;
                 }
-
                 // Auto-fit columns for better appearance
                 worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
 

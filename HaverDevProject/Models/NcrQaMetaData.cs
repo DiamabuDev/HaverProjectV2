@@ -21,8 +21,7 @@ public class NcrQaMetaData
     [Display(Name = "Identify Process Applicable")]
     [Column("ncrQAProcessApplicable")]
     public bool NcrQaProcessApplicable { get; set; }
-    [Display(Name = "Creation Date")]
-    //[Required(ErrorMessage = "You must provide the date the NCR was created.")]
+    [Display(Name = "Creation Date")]    
     [Column("ncrQACreationDate", TypeName = "date")]
     [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
     [DataType(DataType.Date)]
@@ -80,8 +79,7 @@ public class NcrQaMetaData
 
     [ForeignKey("ItemId")]   
     public Item Item { get; set; }
-
-    //Validar
+    
     [Display(Name = "Defect")]
     [Required(ErrorMessage = "You must select a Defect.")]
     [Column("defectId")]
@@ -89,8 +87,7 @@ public class NcrQaMetaData
 
     [ForeignKey("DefectId")]
     public Defect Defect { get; set; }
-
-    //Validar
+    
     [Display(Name = "Supplier")]
     [Required(ErrorMessage = "You must select a Supplier.")]
     [Column("supplierId")]
@@ -98,15 +95,11 @@ public class NcrQaMetaData
 
     [ForeignKey("SupplierId")]
     public Supplier Supplier { get; set; }
-
-    //Validar
+    
     [Display(Name = "Video Link")]
     [StringLength(100, ErrorMessage = "Video link cannot be more than 100 characters.")]
     public string NcrQaDefectVideo { get; set; }
 
     [InverseProperty("NcrQa")]
-    public ICollection<ItemDefectPhoto> ItemDefectPhotos { get; set; } = new HashSet<ItemDefectPhoto>();
-
-    //[InverseProperty("NcrQa")]
-    //public ICollection<ItemDefectVideo> ItemDefectVideos { get; set; } = new HashSet<ItemDefectVideo>();
+    public ICollection<ItemDefectPhoto> ItemDefectPhotos { get; set; } = new HashSet<ItemDefectPhoto>();    
 }
