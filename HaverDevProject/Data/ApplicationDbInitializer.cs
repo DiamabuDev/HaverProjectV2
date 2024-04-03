@@ -104,24 +104,6 @@ namespace HaverDevProject.Data
                         userManager.AddToRoleAsync(user, "Admin").Wait();
                     }
                 }
-                if (userManager.FindByEmailAsync("ispirleanu1@ncstudents.niagaracollege.ca").Result == null)
-                {
-                    ApplicationUser user = new ApplicationUser
-                    {
-                        FirstName = "Catalin",
-                        LastName = "Spirleanu",
-                        UserName = "ispirleanu1@ncstudents.niagaracollege.ca",
-                        Email = "ispirleanu1@ncstudents.niagaracollege.ca",
-                        EmailConfirmed = true
-                    };
-
-                    IdentityResult result = userManager.CreateAsync(user, "Pa55w@rd").Result;
-
-                    if (result.Succeeded)
-                    {
-                        userManager.AddToRoleAsync(user, "Admin").Wait();
-                    }
-                }
                 if (userManager.FindByEmailAsync("dmaldonadoburgo1@ncstudents.niagaracollege.ca").Result == null)
                 {
                     ApplicationUser user = new ApplicationUser
@@ -230,32 +212,14 @@ namespace HaverDevProject.Data
                         userManager.AddToRoleAsync(user, "Engineer").Wait();
                     }
                 }
-                if (userManager.FindByEmailAsync("lopezchavezvictorh@gmail.com").Result == null)
-                {
-                    ApplicationUser user = new ApplicationUser
-                    {
-                        FirstName = "John",
-                        LastName = "Conley",
-                        UserName = "lopezchavezvictorh@gmail.com",
-                        Email = "lopezchavezvictorh@gmail.com",
-                        EmailConfirmed = true
-                    };
-
-                    IdentityResult result = userManager.CreateAsync(user, "Pa55w@rd").Result;
-
-                    if (result.Succeeded)
-                    {
-                        userManager.AddToRoleAsync(user, "Procurement").Wait();
-                    }
-                }
-                if (userManager.FindByEmailAsync("diana.maldonado130@gmail.com").Result == null)
+                if (userManager.FindByEmailAsync("ispirleanu1@ncstudents.niagaracollege.ca").Result == null)
                 {
                     ApplicationUser user = new ApplicationUser
                     {
                         FirstName = "Lucy",
                         LastName = "Nichols",
-                        UserName = "diana.maldonado130@gmail.com",
-                        Email = "diana.maldonado130@gmail.com",
+                        UserName = "ispirleanu1@ncstudents.niagaracollege.ca",
+                        Email = "ispirleanu1@ncstudents.niagaracollege.ca",
                         EmailConfirmed = true
                     };
 
@@ -266,6 +230,25 @@ namespace HaverDevProject.Data
                         userManager.AddToRoleAsync(user, "Operations").Wait();
                     }
                 }
+                if (userManager.FindByEmailAsync("catalinmctest@gmail.com").Result == null)
+                {
+                    ApplicationUser user = new ApplicationUser
+                    {
+                        FirstName = "John",
+                        LastName = "Conley",
+                        UserName = "catalinmctest@gmail.com",
+                        Email = "catalinmctest@gmail.com",
+                        EmailConfirmed = true
+                    };
+
+                    IdentityResult result = userManager.CreateAsync(user, "Pa55w@rd").Result;
+
+                    if (result.Succeeded)
+                    {
+                        userManager.AddToRoleAsync(user, "Procurement").Wait();
+                    }
+                }
+                
             }
             catch (Exception ex)
             {

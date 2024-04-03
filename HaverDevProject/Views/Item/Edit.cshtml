@@ -31,46 +31,6 @@
                         <input asp-for="ItemName" class="form-control" placeholder="Name / Description" />
                         <span asp-validation-for="ItemName" class="text-danger"></span>
                     </div>
-                    @* <div class="form-group">
-                        <label asp-for="ItemDescription" class="control-label">Item Description<small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Item Description"></small></label>
-                        <input asp-for="ItemDescription" class="form-control" placeholder="Item Description" />
-                        <span asp-validation-for="ItemDescription" class="text-danger"></span>
-                    </div> *@
-                    @* <div class="form-group">
-                        <label asp-for="SupplierId" class="control-label">Supplier <small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Item Supplier">(e.g. LAWRENCE SINTERED METALS)</small> <span class="fw-bold text-danger">*</span></label>
-                        <select asp-for="SupplierId" class="form-control" asp-items="ViewBag.SupplierId">
-                            <option value="">Select a Supplier</option>
-                        </select>
-                        <span asp-validation-for="SupplierId" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label">Defects</label><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Defects related to this item (One or Multiple)"> (e.g. Loose wire, Bend)</small>                        
-                        <div class="m-2">
-                            <table>
-                                <tr>
-                                    @{
-                                        int cnt = 0;
-                                        var checkboxes = ViewData["DefectOptions"] as List<HaverDevProject.ViewModels.CheckOptionVM>; 
-                                        foreach (var checkbox in checkboxes)
-                                        {
-                                            if (cnt++ % 2 == 0)
-                                            {
-                                            @:</tr><tr>
-                                            }
-                                            @:<td>
-                                                <input type="checkbox"
-                                                       name="selectedOptions"
-                                                       value="@checkbox.ID"
-                                                       @(Html.Raw(checkbox.Assigned ? "checked=\"checked\"" : "")) />
-                                                @checkbox.DisplayText @:&nbsp;&nbsp;
-                                            @:</td>
-                                        }
-                                    @:</tr>
-                                    }
-                            </table>
-                        </div>
-                    </div>
- *@
                 </div>
             </div>
             <div class="card-footer">
