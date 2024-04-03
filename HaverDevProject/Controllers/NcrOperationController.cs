@@ -715,6 +715,7 @@ namespace HaverDevProject.Controllers
             }
         }
 
+        //Pending NCRs count
         public JsonResult GetPendingCount()
         {
             int pendingCount = _context.Ncrs
@@ -875,6 +876,7 @@ namespace HaverDevProject.Controllers
             }
         }
 
+        //Log report excel
         public IActionResult ExportToExcel()
         {
             var ncrOperation = _context.NcrOperations
