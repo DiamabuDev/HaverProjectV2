@@ -28,11 +28,11 @@ namespace HaverDevProject.Views.Shared.Components
         {
             return section switch
             {
-                "qa" => "cspirleanu@gmail.com",
-                "eng" => "cspirleanu@hotmail.com",
-                "proc" => "lopezchavezvictorh@gmail.com",
-                "op" => "diana.maldonado130@gmail.com",
-                "reinsp" => "cspirleanu@gmail.com",
+                "qa" => "cspirleanu@hotmail.com",
+                "eng" => "cspirleanu@gmail.com",
+                "op" => "ispirleanu1@ncstudents.niagaracollege.ca",
+                "proc" => "catalinmctest@gmail.com",                
+                "reinsp" => "cspirleanu@hotmail.com",
                 _ => "admin@outlook.com" 
             };
         }
