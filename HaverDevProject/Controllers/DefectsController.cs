@@ -147,7 +147,7 @@ namespace HaverDevProject.Controllers
                     return RedirectToAction("Details", new { id = newDefectId });
                 }
             }
-            catch (RetryLimitExceededException /* dex */)
+            catch (RetryLimitExceededException)
             {
                 ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
             }
@@ -200,7 +200,7 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id/*, string[] selectedOptions*/)
+        public async Task<IActionResult> Edit(int id)
         {
 
             var defectToUpdate = await _context.Defects
@@ -258,7 +258,7 @@ namespace HaverDevProject.Controllers
         {
             if (_context.Defects == null)
             {
-                return Problem("Entity set 'HaverNiagaraContext.Defects'  is null.");
+                return Problem("Entity set 'HaverNiagaraContext.Defects' is null.");
             }
             var defect = await _context.Defects.FindAsync(id);
             if (defect != null)

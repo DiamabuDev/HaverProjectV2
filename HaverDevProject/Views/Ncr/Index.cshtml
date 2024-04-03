@@ -4,6 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
+<!-- MODALS-->
 <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -21,7 +22,6 @@
         </div>
     </div>
 </div>
-
 <div class="modal fade" id="voidConfirmationModal" tabindex="-1" aria-labelledby="voidConfirmationModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -41,6 +41,7 @@
     </div>
 </div>
 
+<!-- TOP OF PAGE-->
 <h1><i class="bi bi-caret-right-fill"></i> Non-Conformance Reports</h1>
 
 <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -55,7 +56,7 @@
     </li>
 </ul>
 
-
+<!-- BODY -->
 <form id="ncrForm" asp-action="Index" method="get">
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
     <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
@@ -188,7 +189,7 @@
                     <td class="d-none d-xxl-table-cell">
                         @Html.DisplayFor(modelItem => item.NcrLastUpdated)
                     </td>
-
+                    <!-- Buttons for NCRs depending on Phase/Status-->
                     <td class="align-middle">
                         @if (item.NcrPhase == NcrPhase.Closed)
                         {
@@ -252,6 +253,8 @@
         })
     </script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <!--Filtering-->
     <script type="text/javascript">
         $(document).ready(function () {
             $('.btn-filter').on('click', function () {
@@ -282,6 +285,7 @@
         });
     </script>
 
+    <!-- Script for Delete Button-->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const deleteButtons = document.querySelectorAll('.delete-button');
@@ -298,11 +302,11 @@
             });
 
             confirmDeleteButton.addEventListener('click', function () {
-                // Proceed with the deletion
+                // Proceed with the Deletion
                 window.location.href = `/Ncr/Delete/${currentNcrId}`;
             });
 
-            // Ensure the modal is closed on cancel
+            // Ensure the Modal is Closed on Cancel
             $('#deleteConfirmationModal').on('hidden.bs.modal', function () {
                 currentNcrId = null;
             });
@@ -321,6 +325,8 @@
             source: '@Url.Action("GetSuppliersAuto", "Ncr")'
         });
     </script>
+
+    <!-- Designated filter Active-->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const filters = document.querySelectorAll('.btn-filter');
@@ -341,26 +347,8 @@
             });
         });
     </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const archiveTab = document.getElementById('archive-tab');
-            const archiveYearInput = document.getElementById('archiveYear');
 
-            // Check if there's a stored value for archive year, if not, set default to 5
-            const storedArchiveYear = localStorage.getItem('archiveYear');
-            if (storedArchiveYear) {
-                archiveYearInput.value = storedArchiveYear;
-            } else {
-                archiveYearInput.value = 5; // Default value
-            }
-
-            archiveTab.addEventListener('click', function (event) {
-                // Store the current value of archive year in local storage
-                localStorage.setItem('archiveYear', archiveYearInput.value);
-            });
-        });
-    </script>
-
+    <!--Voiding Modal for Reason-->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const voidButtons = document.querySelectorAll('.void-button');
@@ -382,11 +370,11 @@
                     alert('Please provide a reason for voiding the NCR.');
                     return;
                 }
-                // Proceed with the voiding and pass the void reason to the action method
+                // Proceed with Voiding
                 window.location.href = `/Ncr/VoidNcr?id=${currentNcrId}&voidReason=${encodeURIComponent(voidReason)}`;
             });
 
-            // Ensure the modal is closed on cancel
+            // Ensure the Modal is Closed on Cancel
             $('#voidConfirmationModal').on('hidden.bs.modal', function () {
                 currentNcrId = null;
                 document.getElementById('voidReasonInput').value = '';

@@ -1,11 +1,8 @@
 ﻿@model IEnumerable<HaverDevProject.Models.NcrQa>
-
 @{
     ViewData["Title"] = "Index";
 }
-
 <h1><i class="bi bi-caret-right-fill"></i> Quality Non-Conformance Reports</h1>
-
 <form id="ncrForm" asp-action="Index" method="get">
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
     <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
@@ -15,13 +12,10 @@
             <div class="d-flex justify-content-start">
                 <input type="radio" class="btn-check btn-filter" name="filter" id="All" autocomplete="off" value="All" data-filter="All">
                 <label class="btn @ViewData["filterApplied:ButtonAll"] me-2" for="All">All NCRs</label>
-
                 <input type="radio" class="btn-check btn-filter" name="filter" id="Active" autocomplete="off" checked value="Active" data-filter="Active">
                 <label class="btn @ViewData["filterApplied:ButtonActive"] me-2" for="Active">Active NCRs</label>
-
                 <input type="radio" class="btn-check btn-filter" name="filter" id="Closed" autocomplete="off" value="Closed" data-filter="Closed">
                 <label class="btn @ViewData["filterApplied:ButtonClosed"] me-2" for="Closed">Closed NCRs </label>
-
                 <a asp-action="ExportToExcel" class="btn btn-info float-end me-2"><i class="bi bi-download"></i> Download Log Report</a>
             </div>
         </div>
@@ -32,7 +26,6 @@
             <a asp-action="Create" class="btn btn-primary ms-4"> <i class="bi bi-plus-square-dotted"></i> Create New NCR</a>
         </div>
     </div>
-
     <div class="form-horizontal">
         <div class="card card-body bg-custom-color mb-2">
             <div class="row d-flex justify-content-center align-items-center">
@@ -42,8 +35,7 @@
                 </div>
                 <div class="form-group col-lg-2">
                     <label class="control-label">Start Date:</label>
-                    @Html.TextBox("StartDate", @ViewData["StartDate"], new { @class = "form-control", type = "date" })
-                    
+                    @Html.TextBox("StartDate", @ViewData["StartDate"], new { @class = "form-control", type = "date" })                    
                 </div>
                 <div class="form-group col-lg-2">
                     <label class="control-label">End Date:</label>
@@ -137,26 +129,12 @@
                     <td class="d-none d-xxl-table-cell">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrLastUpdated)
                     </td>
-
                     <td>
                         @if (item.Ncr.NcrPhase != NcrPhase.Closed)
                         {
                             <a asp-action="Edit" asp-route-id="@item.NcrQaId" class="btn text-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
                         }
-                        <a asp-action="Details" asp-route-id="@item.NcrQaId" class="btn text-primary" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
-
-                        @* @if(item.Ncr.NcrPhase == NcrPhase.Closed)
-                        {
-                            <a asp-action="ArchiveNcr" asp-route-id="@item.Ncr.NcrId" class="btn btn-danger" data-bs-toggle="tooltip" title="Archive NCR"><i class="bi bi-archive-fill"></i></a>
-                        }
-
-                        @if (item.Ncr.NcrPhase == NcrPhase.Archive)
-                        {
-                            <a asp-action="RestoreNcr" asp-route-id="@item.Ncr.NcrId" class="btn btn-success" data-bs-toggle="tooltip" title="Restore NCR"><i class="bi bi-archive-fill"></i></a>
-                        } *@                      
-
-                
-                        @* <a asp-action="Delete" asp-route-id="@item.NcrQaId">Delete</a> *@                        
+                        <a asp-action="Details" asp-route-id="@item.NcrQaId" class="btn text-primary" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>                                            
                     </td>
                 </tr>
             }
@@ -182,14 +160,12 @@
                 $('#ncrForm').submit();
             });
         });
-    </script>    
-    
+    </script>   
     <script>
         $(document).ready(function () {            
             $("#StartDate, #EndDate").change(function () {
                 dateValidation();
             });
-
             // Function to validate date
             function dateValidation() {
                 var startDate = new Date($("#StartDate").val());
@@ -203,12 +179,10 @@
             }
         });        
     </script>
-
     <!--For Autocomplete fields-->
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
-
     <script type="text/javascript">
         $('#SearchSupplier').autocomplete({
             minLength: 1,
@@ -216,4 +190,3 @@
         });
     </script>
 }
-

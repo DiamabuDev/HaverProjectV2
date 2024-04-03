@@ -7,8 +7,7 @@ using HaverDevProject.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 
 namespace HaverDevProject.Controllers.APIs
-{
-    
+{    
     public class ApiController : Controller
     {
         private readonly HaverNiagaraContext _context;
