@@ -246,30 +246,30 @@
     }
     <script>
         $(document).ready(function () {
-            // Store the original value of NcrProcExpectedDate
+
             var originalExpectedDate = '@(Model.NcrProcExpectedDate?.ToString("yyyy-MM-dd"))';
 
-            // Function to show/hide elements based on SupplierReturnRequest value
+
             function toggleSupplierReturnFields() {
                 var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
                 var supplierReturnFields = $('.supplier-return-fields');
                 var expectedDateField = supplierReturnFields.find('input[name="NcrProcExpectedDate"]');
 
-                // Check the value of SupplierReturnRequest and toggle the visibility accordingly
+ 
                 if (supplierReturnRequest === 'true') {
-                    // If SupplierReturnReq is true, set the original value and show the fields
+
                     supplierReturnFields.show();
                     expectedDateField.val(originalExpectedDate);
                 } else {
-                    // If SupplierReturnReq is false, hide the fields without clearing the value
+
                     supplierReturnFields.hide();
                 }
             }
 
-            // Call the function on page load
+
             toggleSupplierReturnFields();
 
-            // Bind the function to the change event of SupplierReturnRequest radio buttons
+
             $('input[name="NcrProcSupplierReturnReq"]').change(function () {
                 toggleSupplierReturnFields();
             });
@@ -277,39 +277,32 @@
     </script>
     <script>
         $(document).ready(function () {
-            // Function to show/hide elements and manage validation based on SupplierReturnRequest value
             function toggleSupplierReturnFields() {
                 var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
                 var supplierRMAField = $('#SupplierReturnMANum');
                 var carrierNameField = $('#SupplierReturnName');
                 var accountField = $('#SupplierReturnAccount');
 
-                // Check the value of SupplierReturnRequest and toggle the required attribute accordingly
                 if (supplierReturnRequest === 'true') {
-                    // Set required attribute
                     supplierRMAField.prop('required', true);
                     carrierNameField.prop('required', true);
                     accountField.prop('required', true);
                 } else {
-                    // Remove required attribute
                     supplierRMAField.prop('required', false);
                     carrierNameField.prop('required', false);
                     accountField.prop('required', false);
                 }
             }
 
-            // Function to validate the form on submit
             $('#formProcurement').submit(function (event) {
                 var isValid = true;
 
-                // Check if SupplierReturnRequest is set to true
                 var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
 
-                // Check each required field individually
                 $('.supplier-return-fields [required]').each(function () {
                     if ($.trim($(this).val()) === '') {
                         isValid = false;
-                        // Display custom error message based on field and SupplierReturnRequest value
+
                         if ($(this).attr('id') === 'SupplierReturnMANum' && supplierReturnRequest === 'true') {
                             $(this).next('.text-danger').text('Supplier RMA# is required.');
                         } else if ($(this).attr('id') === 'SupplierReturnName' && supplierReturnRequest === 'true') {
@@ -317,31 +310,25 @@
                         } else if ($(this).attr('id') === 'SupplierReturnAccount' && supplierReturnRequest === 'true') {
                             $(this).next('.text-danger').text('Account # is required.');
                         } else {
-                            // Clear any previous error messages
                             $(this).next('.text-danger').text('');
                         }
                     }
                 });
 
-                // If the form is not valid, prevent the default form submission
                 if (!isValid) {
                     event.preventDefault();
                     event.stopPropagation();
                 }
 
-                // Return the validity status of the form
                 return isValid;
             });
 
-            // Call the function initially
             toggleSupplierReturnFields();
 
-            // Bind the function to the change event of SupplierReturnRequest radio buttons
             $('input[name="NcrProcSupplierReturnReq"]').change(function () {
                 toggleSupplierReturnFields();
             });
 
-            // Custom validation for Supplier RMA field
             $('#SupplierReturnMANum').blur(function () {
                 var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
                 var supplierRMAField = $(this);
@@ -352,7 +339,6 @@
                 }
             });
 
-            // Custom validation for Carrier Name field
             $('#SupplierReturnName').blur(function () {
                 var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
                 var carrierNameField = $(this);
@@ -363,7 +349,6 @@
                 }
             });
 
-            // Custom validation for Account field
             $('#SupplierReturnAccount').blur(function () {
                 var supplierReturnRequest = $('input[name="NcrProcSupplierReturnReq"]:checked').val();
                 var accountField = $(this);

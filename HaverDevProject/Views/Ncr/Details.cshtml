@@ -201,11 +201,9 @@
                 alert('Please provide a reason for voiding the NCR.');
                 return;
             }
-            // Proceed with the voiding and pass the void reason to the action method
             window.location.href = `/Ncr/VoidNcr?id=${currentNcrId}&voidReason=${encodeURIComponent(voidReason)}`;
         });
 
-        // Ensure the modal is closed on cancel
         $('#voidConfirmationModal').on('hidden.bs.modal', function () {
             currentNcrId = null;
             document.getElementById('voidReasonInput').value = '';
@@ -230,11 +228,9 @@
         });
 
         confirmDeleteButton.addEventListener('click', function () {
-            // Proceed with the deletion
             window.location.href = `/Ncr/Delete/${currentNcrId}`;
         });
 
-        // Ensure the modal is closed on cancel
         $('#deleteConfirmationModal').on('hidden.bs.modal', function () {
             currentNcrId = null;
         });
