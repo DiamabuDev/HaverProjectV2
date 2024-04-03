@@ -44,10 +44,10 @@ namespace HaverDevProject.Controllers
             if (EndDate == DateTime.MinValue)
             {
                 StartDate = _context.NcrQas
-                .Min(f => f.NcrQacreationDate.Date);
+                .Min(n => n.NcrQacreationDate.Date);
 
                 EndDate = _context.NcrQas
-                .Max(f => f.NcrQacreationDate.Date);
+                .Max(n => n.NcrQacreationDate.Date);
 
                 ViewData["StartDate"] = StartDate.ToString("yyyy-MM-dd");
                 ViewData["EndDate"] = EndDate.ToString("yyyy-MM-dd");
@@ -64,19 +64,9 @@ namespace HaverDevProject.Controllers
             string[] sortOptions = new[] { "Created", "NCR #", "Supplier", "Defect", "PO Number", "Phase" };
 
             var ncr = _context.Ncrs
-                //.Include(n => n.Item).ThenInclude(n => n.ItemDefects).ThenInclude(n => n.Defect)
                 .Include(n => n.NcrQa.Supplier)
                 .Include(n => n.NcrQa.Defect)
                 .AsNoTracking();
-
-            //foreach (var ncrItem in ncr)
-            //{
-            //    if (ncrItem.NcrQa.NcrQacreationDate.AddYears(5) <= DateTime.UtcNow)
-            //    {
-            //        // Call the ArchiveNcr method for this specific item
-            //        await ArchiveDateNcr(ncrItem.NcrId);
-            //    }
-            //}
 
             //Filterig values            
             if (!String.IsNullOrEmpty(filter))
@@ -104,7 +94,7 @@ namespace HaverDevProject.Controllers
             }
             if (!String.IsNullOrEmpty(SearchCode))
             {
-                ncr = ncr.Where(s => s.NcrQa.Defect.DefectName.ToUpper().Contains(SearchCode.ToUpper()) //(s => s.Item.ItemDefects.FirstOrDefault().Defect.DefectName.ToUpper().Contains(SearchCode.ToUpper()) 
+                ncr = ncr.Where(s => s.NcrQa.Defect.DefectName.ToUpper().Contains(SearchCode.ToUpper()) 
                 || s.NcrNumber.ToUpper().Contains(SearchCode.ToUpper()));
                 numberFilters++;
             }
@@ -152,13 +142,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     ncr = ncr
-                        .OrderBy(p => p.NcrNumber);
+                        .OrderBy(n => n.NcrNumber);
                     ViewData["filterApplied:NcrNumber"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncr = ncr
-                        .OrderByDescending(p => p.NcrNumber);
+                        .OrderByDescending(n => n.NcrNumber);
                     ViewData["filterApplied:NcrNumber"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -167,13 +157,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     ncr = ncr
-                        .OrderBy(p => p.NcrQa.Defect.DefectName);
+                        .OrderBy(n => n.NcrQa.Defect.DefectName);
                     ViewData["filterApplied:Defect"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncr = ncr
-                        .OrderByDescending(p => p.NcrQa.Defect.DefectName);
+                        .OrderByDescending(n => n.NcrQa.Defect.DefectName);
                     ViewData["filterApplied:Defect"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -182,13 +172,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     ncr = ncr
-                        .OrderBy(p => p.NcrQa.Supplier.SupplierName);
+                        .OrderBy(n => n.NcrQa.Supplier.SupplierName);
                     ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncr = ncr
-                        .OrderByDescending(p => p.NcrQa.Supplier.SupplierName);
+                        .OrderByDescending(n => n.NcrQa.Supplier.SupplierName);
                     ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -197,14 +187,14 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "desc") //desc by default
                 {
                     ncr = ncr
-                        .OrderBy(p => p.NcrQa.NcrQacreationDate);
+                        .OrderBy(n => n.NcrQa.NcrQacreationDate);
 
                     ViewData["filterApplied:Created"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncr = ncr
-                        .OrderByDescending(p => p.NcrQa.NcrQacreationDate);
+                        .OrderByDescending(n => n.NcrQa.NcrQacreationDate);
 
                     ViewData["filterApplied:Created"] = "<i class='bi bi-sort-down'></i>";
                 }
@@ -214,13 +204,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     ncr = ncr
-                        .OrderBy(p => p.NcrPhase); //.OrderBy(p => p.Ncr.NcrStatus);
+                        .OrderBy(n => n.NcrPhase); 
                     ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncr = ncr
-                        .OrderByDescending(p => p.NcrPhase); //.OrderByDescending(p => p.Ncr.NcrStatus);
+                        .OrderByDescending(n => n.NcrPhase); 
                     ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -229,28 +219,28 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "desc") //desc by default
                 {
                     ncr = ncr
-                        .OrderBy(p => p.NcrLastUpdated);
+                        .OrderBy(n => n.NcrLastUpdated);
                     ViewData["filterApplied:Last Updated"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncr = ncr
-                        .OrderByDescending(p => p.NcrLastUpdated);
+                        .OrderByDescending(n => n.NcrLastUpdated);
                     ViewData["filterApplied:Last Updated"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
-            else //(sortField == "PO Number")
+            else //(sortField == "Order Number")
             {
                 if (sortDirection == "asc")
                 {
                     ncr = ncr
-                        .OrderBy(p => p.NcrQa.NcrQaOrderNumber);
+                        .OrderBy(n => n.NcrQa.NcrQaOrderNumber);
                     ViewData["filterApplied:PONumber"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncr = ncr
-                        .OrderByDescending(p => p.NcrQa.NcrQaOrderNumber);
+                        .OrderByDescending(n => n.NcrQa.NcrQaOrderNumber);
                     ViewData["filterApplied:PONumber"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -276,7 +266,7 @@ namespace HaverDevProject.Controllers
             if (EndDate == DateTime.MinValue)
             {
                 StartDate = _context.NcrQas
-                .Min(f => f.NcrQacreationDate.Date);
+                .Min(n => n.NcrQacreationDate.Date);
 
                 EndDate = _context.NcrQas
                 .Max(f => f.NcrQacreationDate.Date);
@@ -376,13 +366,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     ncr = ncr
-                        .OrderBy(p => p.NcrNumber);
+                        .OrderBy(n => n.NcrNumber);
                     ViewData["filterApplied:NcrNumber"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncr = ncr
-                        .OrderByDescending(p => p.NcrNumber);
+                        .OrderByDescending(n => n.NcrNumber);
                     ViewData["filterApplied:NcrNumber"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -391,13 +381,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     ncr = ncr
-                        .OrderBy(p => p.NcrQa.Defect.DefectName);
+                        .OrderBy(n => n.NcrQa.Defect.DefectName);
                     ViewData["filterApplied:Defect"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncr = ncr
-                        .OrderByDescending(p => p.NcrQa.Defect.DefectName);
+                        .OrderByDescending(n => n.NcrQa.Defect.DefectName);
                     ViewData["filterApplied:Defect"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -406,13 +396,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     ncr = ncr
-                        .OrderBy(p => p.NcrQa.Supplier.SupplierName);
+                        .OrderBy(n => n.NcrQa.Supplier.SupplierName);
                     ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncr = ncr
-                        .OrderByDescending(p => p.NcrQa.Supplier.SupplierName);
+                        .OrderByDescending(n => n.NcrQa.Supplier.SupplierName);
                     ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -421,14 +411,14 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "desc") //desc by default
                 {
                     ncr = ncr
-                        .OrderBy(p => p.NcrQa.NcrQacreationDate);
+                        .OrderBy(n => n.NcrQa.NcrQacreationDate);
 
                     ViewData["filterApplied:Created"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncr = ncr
-                        .OrderByDescending(p => p.NcrQa.NcrQacreationDate);
+                        .OrderByDescending(n => n.NcrQa.NcrQacreationDate);
 
                     ViewData["filterApplied:Created"] = "<i class='bi bi-sort-down'></i>";
                 }
@@ -438,13 +428,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     ncr = ncr
-                        .OrderBy(p => p.NcrPhase); //.OrderBy(p => p.Ncr.NcrStatus);
+                        .OrderBy(p => p.NcrPhase); 
                     ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncr = ncr
-                        .OrderByDescending(p => p.NcrPhase); //.OrderByDescending(p => p.Ncr.NcrStatus);
+                        .OrderByDescending(p => p.NcrPhase); 
                     ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -453,13 +443,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "desc") //desc by default
                 {
                     ncr = ncr
-                        .OrderBy(p => p.NcrLastUpdated);
+                        .OrderBy(n => n.NcrLastUpdated);
                     ViewData["filterApplied:Last Updated"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncr = ncr
-                        .OrderByDescending(p => p.NcrLastUpdated);
+                        .OrderByDescending(n => n.NcrLastUpdated);
                     ViewData["filterApplied:Last Updated"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -468,13 +458,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     ncr = ncr
-                        .OrderBy(p => p.NcrQa.NcrQaOrderNumber);
+                        .OrderBy(n => n.NcrQa.NcrQaOrderNumber);
                     ViewData["filterApplied:PONumber"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncr = ncr
-                        .OrderByDescending(p => p.NcrQa.NcrQaOrderNumber);
+                        .OrderByDescending(n => n.NcrQa.NcrQaOrderNumber);
                     ViewData["filterApplied:PONumber"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -500,10 +490,10 @@ namespace HaverDevProject.Controllers
             if (EndDate == DateTime.MinValue)
             {
                 StartDate = _context.NcrQas
-                .Min(f => f.NcrQacreationDate.Date);
+                .Min(n => n.NcrQacreationDate.Date);
 
                 EndDate = _context.NcrQas
-                .Max(f => f.NcrQacreationDate.Date);
+                .Max(n => n.NcrQacreationDate.Date);
 
                 ViewData["StartDate"] = StartDate.ToString("yyyy-MM-dd");
                 ViewData["EndDate"] = EndDate.ToString("yyyy-MM-dd");
@@ -600,13 +590,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     ncr = ncr
-                        .OrderBy(p => p.NcrNumber);
+                        .OrderBy(n => n.NcrNumber);
                     ViewData["filterApplied:NcrNumber"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncr = ncr
-                        .OrderByDescending(p => p.NcrNumber);
+                        .OrderByDescending(n => n.NcrNumber);
                     ViewData["filterApplied:NcrNumber"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -615,13 +605,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     ncr = ncr
-                        .OrderBy(p => p.NcrQa.Defect.DefectName);
+                        .OrderBy(n => n.NcrQa.Defect.DefectName);
                     ViewData["filterApplied:Defect"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncr = ncr
-                        .OrderByDescending(p => p.NcrQa.Defect.DefectName);
+                        .OrderByDescending(n => n.NcrQa.Defect.DefectName);
                     ViewData["filterApplied:Defect"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -630,13 +620,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     ncr = ncr
-                        .OrderBy(p => p.NcrQa.Supplier.SupplierName);
+                        .OrderBy(n => n.NcrQa.Supplier.SupplierName);
                     ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncr = ncr
-                        .OrderByDescending(p => p.NcrQa.Supplier.SupplierName);
+                        .OrderByDescending(n => n.NcrQa.Supplier.SupplierName);
                     ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -645,14 +635,14 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "desc") //desc by default
                 {
                     ncr = ncr
-                        .OrderBy(p => p.NcrQa.NcrQacreationDate);
+                        .OrderBy(n => n.NcrQa.NcrQacreationDate);
 
                     ViewData["filterApplied:Created"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncr = ncr
-                        .OrderByDescending(p => p.NcrQa.NcrQacreationDate);
+                        .OrderByDescending(n => n.NcrQa.NcrQacreationDate);
 
                     ViewData["filterApplied:Created"] = "<i class='bi bi-sort-down'></i>";
                 }
@@ -662,13 +652,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     ncr = ncr
-                        .OrderBy(p => p.NcrPhase); //.OrderBy(p => p.Ncr.NcrStatus);
+                        .OrderBy(n => n.NcrPhase); 
                     ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncr = ncr
-                        .OrderByDescending(p => p.NcrPhase); //.OrderByDescending(p => p.Ncr.NcrStatus);
+                        .OrderByDescending(p => p.NcrPhase); 
                     ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -677,13 +667,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "desc") //desc by default
                 {
                     ncr = ncr
-                        .OrderBy(p => p.NcrLastUpdated);
+                        .OrderBy(n => n.NcrLastUpdated);
                     ViewData["filterApplied:Last Updated"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncr = ncr
-                        .OrderByDescending(p => p.NcrLastUpdated);
+                        .OrderByDescending(n => n.NcrLastUpdated);
                     ViewData["filterApplied:Last Updated"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -692,13 +682,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     ncr = ncr
-                        .OrderBy(p => p.NcrQa.NcrQaOrderNumber);
+                        .OrderBy(n => n.NcrQa.NcrQaOrderNumber);
                     ViewData["filterApplied:PONumber"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncr = ncr
-                        .OrderByDescending(p => p.NcrQa.NcrQaOrderNumber);
+                        .OrderByDescending(n => n.NcrQa.NcrQaOrderNumber);
                     ViewData["filterApplied:PONumber"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -760,8 +750,6 @@ namespace HaverDevProject.Controllers
         // GET: Ncr/Create
         public IActionResult Create()
         {
-            //string example = "2024-0018";
-            //ViewData["NCRNumber"] = example;
             Ncr ncr = new Ncr();
             return View(ncr);
         }
@@ -833,93 +821,23 @@ namespace HaverDevProject.Controllers
             return View(ncr);
         }
 
-        // GET: Ncr/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Ncrs == null)
-            {
-                return NotFound();
-            }
-
-            var ncr = await _context.Ncrs
-                .FirstOrDefaultAsync(m => m.NcrId == id);
-
-            if (ncr != null)
-            {
-
-                _context.Ncrs.Remove(ncr);
-                await _context.SaveChangesAsync();
-
-                if (ncr.NcrPhase == NcrPhase.Archive)
-                {
-                    TempData["SuccessMessage"] = "NCR deleted successfully!";
-                    return RedirectToAction("Archived");
-                }
-                else
-                {
-                    TempData["SuccessMessage"] = "NCR deleted successfully!";
-                    return RedirectToAction("Index");
-                }
-
-            }
-            else
-            {
-                if (ncr.NcrPhase == NcrPhase.Archive)
-                {
-                    TempData["ErrorMessage"] = "NCR could not be deleted.";
-                    return RedirectToAction("Archived");
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "NCR could not be deleted.";
-                    return RedirectToAction("Index");
-                }
-
-            }
-        }
-
-        // POST: Ncr/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Ncrs == null)
-            {
-                return Problem("Entity set 'HaverNiagaraContext.Ncrs'  is null.");
-            }
-
-            var ncr = await _context.Ncrs.FindAsync(id);
-            if (ncr != null)
-            {
-                _context.Ncrs.Remove(ncr);
-                await _context.SaveChangesAsync();
-            }
-
-            return RedirectToAction("Index");
-        }
-
         // Manually Archiving many NCRs
         [HttpPost]
         public async Task<IActionResult> ArchiveManyNcrs(int archiveYear, [FromServices] NcrArchivingService ncrArchivingService)
         {
             try
             {
-                // Call the ArchiveNcrsByYear method from the injected NcrArchivingService
                 var archivedCount = await ncrArchivingService.ArchiveNcrsByYear(archiveYear);
 
-                // Set success message in TempData
                 TempData["SuccessMessage"] = $"{archivedCount} NCRs Archived";
 
-                // Redirect back to the previous page or any other desired page
-                return RedirectToAction("Archived"); // Change "Archived" to the action name you want to redirect to
+                return RedirectToAction("Archived"); 
             }
             catch (Exception ex)
             {
-                // Handle any exceptions that occur during archiving
                 TempData["ErrorMessage"] = $"Error occurred while Archiving NCR objects: {ex.Message}";
 
-                // Redirect back to the previous page or any other desired page
-                return RedirectToAction("Archived"); // Change "Archived" to the action name you want to redirect to
+                return RedirectToAction("Archived"); 
             }
         }
 
@@ -928,20 +846,8 @@ namespace HaverDevProject.Controllers
         {
             _numOfYearsService.NumOfYears = numYears;
             TempData["SuccessMessage"] = $"Archiving Service set to: {numYears} Years";
-            return RedirectToAction("Archived"); // Redirect to a different action
-            
+            return RedirectToAction("Archived");            
         }
-
-        //[HttpPost]
-        //public async Task<IActionResult> ArchiveNcrs(int years)
-        //{
-        //    // Call the method in NcrArchiveManager to archive NCRs based on the specified number of years
-        //    await _ncrArchiveManager.ArchiveNcrsByYear(years);
-
-        //    // Optionally, redirect to a relevant page after archiving
-        //    return RedirectToAction("Index", "Home");
-        //}
-
         private SelectList SupplierSelectList(int? selectedId)
         {
             return new SelectList(_context.Suppliers
@@ -954,7 +860,6 @@ namespace HaverDevProject.Controllers
             return new SelectList(_context.Items
                 .OrderBy(s => s.ItemName), "ItemId", "Summary");
         }
-
         private SelectList DefectSelectList()
         {
             return new SelectList(_context.Defects
@@ -968,7 +873,6 @@ namespace HaverDevProject.Controllers
             ViewData["DefectId"] = DefectSelectList();
         }
 
-
         [HttpGet]
         public JsonResult GetSuppliers(int? id)
         {
@@ -979,7 +883,6 @@ namespace HaverDevProject.Controllers
         {
             var result = from s in _context.Suppliers
                          where s.SupplierName.ToUpper().Contains(term.ToUpper())
-                         //|| d.FirstName.ToUpper().Contains(term.ToUpper())
                          orderby s.SupplierName
                          select new { value = s.SupplierName };
             return Json(result);
@@ -1010,29 +913,6 @@ namespace HaverDevProject.Controllers
             }
 
         }
-        //public async Task<IActionResult> ArchiveDateNcr(int id)
-        //{
-        //    var ncrToUpdate = await _context.Ncrs
-        //            .AsNoTracking()
-        //            .FirstOrDefaultAsync(n => n.NcrId == id);
-
-        //    if (ncrToUpdate != null)
-        //    {
-        //        //Update the phase
-        //        ncrToUpdate.NcrPhase = NcrPhase.Archive;
-
-        //        //saving the values
-        //        _context.Ncrs.Update(ncrToUpdate);
-        //        await _context.SaveChangesAsync();
-
-        //        return RedirectToAction("Index");
-        //    }
-        //    else
-        //    {
-        //        return RedirectToAction("Index");
-        //    }
-
-        //}
         public async Task<IActionResult> RestoreNcr(int id)
         {
             var ncrToUpdate = await _context.Ncrs
@@ -1085,10 +965,6 @@ namespace HaverDevProject.Controllers
             }
         }
 
-
-
-
-
         #region DownloadPDF
         public async Task<IActionResult> DownloadPDF(int id)
         {
@@ -1113,29 +989,15 @@ namespace HaverDevProject.Controllers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(n => n.NcrId == id);
 
-
             try
             {
-                // Load NCR excel template 
-                //string solutionDir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
-                //string excelPictureFilePath = Path.Combine(solutionDir, "picture-template.xlsx");
-                //string solutionDirtwo = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
-                //string excelPictureFilePathtwo = Path.Combine(solutionDirtwo, "ncr-template.xlsx");
-
                 var excelFilePath = "ncr-template.xlsx";
                 var excelPictureFilePath = "picture-template.xlsx";
-
-
-                //var excelFilePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\uploads", "ncr-template.xlsx");
-                //var excelPictureFilePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\uploads", "picture-template.xlsx");
-
-
 
                 Workbook workbook = new Workbook();
                 Workbook workbookPicture = new Workbook();
                 workbook.LoadFromFile(excelFilePath);
                 workbookPicture.LoadFromFile(excelPictureFilePath);
-
 
                 //Fill the data 
                 var worksheet = workbook.Worksheets["NCR"];
@@ -1145,12 +1007,9 @@ namespace HaverDevProject.Controllers
                 worksheet.Range["Z4"].Value = firstpage.ToString();
                 worksheet.Range["AC4"].Value = morepages.ToString();
 
-
-
                 //Quality Representative
                 if (ncr.NcrQa != null)
                 {
-
                     worksheet.Range["AC5"].Value = ncr.NcrNumber;
                     worksheet.Range["AC6"].Value = ncr.NcrQa.NcrQaOrderNumber;
                     worksheet.Range["AC7"].Value = ncr.NcrQa.NcrQaSalesOrder;
@@ -1187,10 +1046,8 @@ namespace HaverDevProject.Controllers
                     }
                     if (ncr.NcrQa.ItemDefectPhotos.Count > 0 || ncr.NcrQa.NcrQaDefectVideo != null)
                     {
-
                         firstpage += 1;
                         morepages += 1;
-
 
                         checkpictures = true;
                         //var wb = workbookPicture.Worksheets["Pictures"];
@@ -1527,8 +1384,6 @@ namespace HaverDevProject.Controllers
                     if (ncr.NcrReInspect.NcrReInspectAcceptable.Equals(true))
                     {
                         worksheet.Range["L41"].Value = "X";
-
-
                     }
                     else
                     {
@@ -1592,10 +1447,6 @@ namespace HaverDevProject.Controllers
                         //wbR.Range["AC4"].Value = worksheet.Range["AC4"].Value;
                     }
                 }
-
-
-
-
                 Workbook exportWorkbook = new Workbook();
 
                 exportWorkbook.Worksheets.AddCopy(workbook.Worksheets);
@@ -1653,19 +1504,13 @@ namespace HaverDevProject.Controllers
                 };
                 Response.Headers.Add("Content-Disposition", cd.ToString());
                 return PhysicalFile(pdfFilePath, "application/pdf");
-
-
             }
             catch (Exception ex)
             {
                 return BadRequest($"Error generating PDF: {ex.Message}");
             }
-
-
         }
         #endregion
-
-
         private bool NcrExists(int id)
         {
             return _context.Ncrs.Any(e => e.NcrId == id);

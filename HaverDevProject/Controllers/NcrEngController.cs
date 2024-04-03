@@ -50,14 +50,15 @@ namespace HaverDevProject.Controllers
             if (EndDate == DateTime.MinValue)
             {
                 StartDate = _context.Ncrs
-                .Min(f => f.NcrQa.NcrQacreationDate.Date);
+                .Min(n => n.NcrQa.NcrQacreationDate.Date);
 
                 EndDate = _context.Ncrs
-                .Max(f => f.NcrQa.NcrQacreationDate.Date);
+                .Max(n => n.NcrQa.NcrQacreationDate.Date);
 
                 ViewData["StartDate"] = StartDate.ToString("yyyy-MM-dd");
                 ViewData["EndDate"] = EndDate.ToString("yyyy-MM-dd");
             }
+
             //Check the order of the dates and swap them if required
             if (EndDate < StartDate)
             {
@@ -112,7 +113,7 @@ namespace HaverDevProject.Controllers
 
             if (!String.IsNullOrEmpty(SearchCode))
             {
-                ncrEng = ncrEng.Where(s => s.Ncr.NcrNumber.ToUpper().Contains(SearchCode.ToUpper()));
+                ncrEng = ncrEng.Where(n => n.Ncr.NcrNumber.ToUpper().Contains(SearchCode.ToUpper()));
                 numberFilters++;
             }
             if (EngDispositionTypeId.HasValue)
@@ -137,7 +138,7 @@ namespace HaverDevProject.Controllers
             {
                 ViewData["Filtering"] = " btn-danger";
                 ViewData["numberFilters"] = "(" + numberFilters.ToString()
-                    + " Filter" + (numberFilters > 1 ? "s" : "") + " Applied)";
+                    + " Filter" + (numberFilters > 1 ? "n" : "") + " Applied)";
             }
 
 
@@ -161,13 +162,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     ncrEng = ncrEng
-                        .OrderBy(p => p.Ncr.NcrNumber);
+                        .OrderBy(n => n.Ncr.NcrNumber);
                     ViewData["filterApplied:NcrNumber"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncrEng = ncrEng
-                        .OrderByDescending(p => p.Ncr.NcrNumber);
+                        .OrderByDescending(n => n.Ncr.NcrNumber);
                     ViewData["filterApplied:NcrNumber"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -176,13 +177,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     ncrEng = ncrEng
-                        .OrderBy(p => p.Ncr.NcrQa.Supplier.SupplierName);
+                        .OrderBy(n => n.Ncr.NcrQa.Supplier.SupplierName);
                     ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncrEng = ncrEng
-                        .OrderByDescending(p => p.Ncr.NcrQa.Supplier.SupplierName);
+                        .OrderByDescending(n => n.Ncr.NcrQa.Supplier.SupplierName);
                     ViewData["filterApplied:Supplier"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -191,13 +192,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     ncrEng = ncrEng
-                        .OrderBy(p => p.Ncr.NcrEng.EngDispositionType.EngDispositionTypeName);
+                        .OrderBy(n => n.Ncr.NcrEng.EngDispositionType.EngDispositionTypeName);
                     ViewData["filterApplied:Disposition"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncrEng = ncrEng
-                        .OrderByDescending(p => p.Ncr.NcrEng.EngDispositionType.EngDispositionTypeName);
+                        .OrderByDescending(n => n.Ncr.NcrEng.EngDispositionType.EngDispositionTypeName);
                     ViewData["filterApplied:Disposition"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -207,14 +208,14 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc") //asc by default
                 {
                     ncrEng = ncrEng
-                        .OrderBy(p => p.Ncr.NcrQa.NcrQacreationDate);
+                        .OrderBy(n => n.Ncr.NcrQa.NcrQacreationDate);
 
                     ViewData["filterApplied:Created"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncrEng = ncrEng
-                        .OrderByDescending(p => p.Ncr.NcrQa.NcrQacreationDate);
+                        .OrderByDescending(n => n.Ncr.NcrQa.NcrQacreationDate);
 
                     ViewData["filterApplied:Created"] = "<i class='bi bi-sort-down'></i>";
                 }
@@ -224,14 +225,14 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "desc") //desc by default
                 {
                     ncrEng = ncrEng
-                        .OrderBy(p => p.Ncr.NcrPhase);
+                        .OrderBy(n => n.Ncr.NcrPhase);
 
                     ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncrEng = ncrEng
-                        .OrderByDescending(p => p.Ncr.NcrPhase);
+                        .OrderByDescending(n => n.Ncr.NcrPhase);
 
                     ViewData["filterApplied:Phase"] = "<i class='bi bi-sort-down'></i>";
                 }
@@ -241,14 +242,14 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "desc") //desc by default
                 {
                     ncrEng = ncrEng
-                        .OrderBy(p => p.Ncr.NcrLastUpdated);
+                        .OrderBy(n => n.Ncr.NcrLastUpdated);
 
                     ViewData["filterApplied:Last Updated"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncrEng = ncrEng
-                        .OrderByDescending(p => p.Ncr.NcrLastUpdated);
+                        .OrderByDescending(n => n.Ncr.NcrLastUpdated);
 
                     ViewData["filterApplied:Last Updated"] = "<i class='bi bi-sort-down'></i>";
                 }
@@ -258,13 +259,13 @@ namespace HaverDevProject.Controllers
                 if (sortDirection == "asc")
                 {
                     ncrEng = ncrEng
-                        .OrderBy(p => p.Ncr.NcrStatus);
+                        .OrderBy(n => n.Ncr.NcrStatus);
                     ViewData["filterApplied:Status"] = "<i class='bi bi-sort-up'></i>";
                 }
                 else
                 {
                     ncrEng = ncrEng
-                        .OrderByDescending(p => p.Ncr.NcrStatus);
+                        .OrderByDescending(n => n.Ncr.NcrStatus);
                     ViewData["filterApplied:Status"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
@@ -339,8 +340,7 @@ namespace HaverDevProject.Controllers
                 TempData["SuccessMessage"] = "Draft successfully retrieved";
             }
             else
-            {
-                
+            {                
                 ncrEngDTO = new NcrEngDTO
                 {
                     NcrNumber = ncrNumber, // Set the NcrNumber from the parameter
@@ -353,11 +353,11 @@ namespace HaverDevProject.Controllers
             }
             var readOnlyDetails = await _context.Ncrs
                 .Include(n => n.NcrQa)
-                        .ThenInclude(item => item.Supplier)
+                    .ThenInclude(item => item.Supplier)
                 .Include(n => n.NcrQa)
-                        .ThenInclude(defect => defect.Item)
+                    .ThenInclude(defect => defect.Item)
                 .Include(n => n.NcrQa)
-                        .ThenInclude(defect => defect.Defect)
+                    .ThenInclude(defect => defect.Defect)
                 .Include(n => n.NcrQa)
                     .ThenInclude(qa => qa.ItemDefectPhotos)
                 .FirstOrDefaultAsync(n => n.NcrId == ncrId);
@@ -439,8 +439,7 @@ namespace HaverDevProject.Controllers
                         DrawingRevDate = DateTime.Now,
                         DrawingUserId = ncrEngDTO.DrawingUserId, 
                         EngDefectPhotos = ncrEngDTO.EngDefectPhotos,
-                        NcrEngDefectVideo = ncrEngDTO.NcrEngDefectVideo
-                       
+                        NcrEngDefectVideo = ncrEngDTO.NcrEngDefectVideo                       
                     };
                     _context.NcrEngs.Add(ncrEng);
                     await _context.SaveChangesAsync();
@@ -512,8 +511,8 @@ namespace HaverDevProject.Controllers
 
             var ncrEng = await _context.NcrEngs
                         .Include(ne => ne.Ncr)
-                          .Include(ne => ne.EngDispositionType)
-                          .Include(ne => ne.Drawing)
+                        .Include(ne => ne.EngDispositionType)
+                        .Include(ne => ne.Drawing)
                         .Include(n => n.EngDefectPhotos)
                         .AsNoTracking()
                         .FirstOrDefaultAsync(ne => ne.NcrEngId == id);
@@ -522,7 +521,6 @@ namespace HaverDevProject.Controllers
             {
                 return NotFound();
             }
-
 
             var ncrEngDTO = new NcrEngDTO
             {
@@ -549,13 +547,13 @@ namespace HaverDevProject.Controllers
 
             var readOnlyDetails = await _context.Ncrs
                 .Include(n => n.NcrQa)
-                        .ThenInclude(item => item.Supplier)
+                   .ThenInclude(item => item.Supplier)
                 .Include(n => n.NcrQa)
-                            .ThenInclude(defect => defect.Item)
+                   .ThenInclude(defect => defect.Item)
                 .Include(n => n.NcrQa)
-                            .ThenInclude(defect => defect.Defect)
+                   .ThenInclude(defect => defect.Defect)
                 .Include(n => n.NcrQa)
-                    .ThenInclude(qa => qa.ItemDefectPhotos)
+                   .ThenInclude(qa => qa.ItemDefectPhotos)
                 .FirstOrDefaultAsync(n => n.NcrId == id);
 
             ViewBag.IsNCRQaView = false;
@@ -649,8 +647,6 @@ namespace HaverDevProject.Controllers
             }
             return View(ncrEngDTO);
         }
-
-
         public JsonResult GetNcrs()
         {
 
@@ -730,7 +726,7 @@ namespace HaverDevProject.Controllers
         private SelectList EngDispositionTypeSelectList(int? selectedId)
         {
             return new SelectList(_context.EngDispositionTypes
-                .OrderBy(s => s.EngDispositionTypeName), "EngDispositionTypeId", "EngDispositionTypeName", selectedId);
+                .OrderBy(n => n.EngDispositionTypeName), "EngDispositionTypeId", "EngDispositionTypeName", selectedId);
         }
         private void PopulateDropDownLists(NcrEng ncrEng = null)
         {
@@ -761,7 +757,7 @@ namespace HaverDevProject.Controllers
             return Json(new { success = false, message = "Photo not found." });
         }
 
-        //// CREATE/POST: Email Noitications
+        //// CREATE/POST: Email Notifications
         public async Task<IActionResult> NotificationCreate(int? id, string Subject, string emailContent)
         {
 
@@ -791,7 +787,7 @@ namespace HaverDevProject.Controllers
                     {
                         ToAddresses = emailAddresses,
                         Subject = Subject,
-                        Content = "<p>" + emailContent + "<br><br></p><p>Please access to <strong>Haver NCR APP</strong> to review.</p><br>Link: <a href=\"" + link + "\">" + "Go to NCR" + "</a><br>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
+                        Content = "<n>" + emailContent + "<br><br></n><n>Please access to <strong>Haver NCR APP</strong> to review.</n><br>Link: <a href=\"" + link + "\">" + "Go to NCR" + "</a><br>" + "<br><img src=\"" + logo + "\">" + "<n>This is an automated email. Please do not reply.</n>",
                     };
                     await _emailSender.SendToManyAsync(msg);
                 }
@@ -809,7 +805,7 @@ namespace HaverDevProject.Controllers
             return View();
         }
 
-        //// EDIT/POST: Email  Notification
+        //// EDIT/POST: Email Notification
         public async Task<IActionResult> NotificationEdit(int? id, string Subject, string emailContent)
         {
 
@@ -833,7 +829,6 @@ namespace HaverDevProject.Controllers
                     .Concat(operationsUsers)
                     .Distinct();
 
-
                 var emailAddresses = allUsers.Select(u => new EmailAddress
                 {
                     Name = u.UserName,
@@ -848,7 +843,7 @@ namespace HaverDevProject.Controllers
                     {
                         ToAddresses = emailAddresses,
                         Subject = Subject,
-                        Content = "<p>" + emailContent + "<br><br></p><p>Please access to <strong>Haver NCR APP</strong> to review.</p><br>Link: <a href=\"" + link + "\">" + "Go to NCR" + "</a><br>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
+                        Content = "<n>" + emailContent + "<br><br></n><n>Please access to <strong>Haver NCR APP</strong> to review.</n><br>Link: <a href=\"" + link + "\">" + "Go to NCR" + "</a><br>" + "<br><img src=\"" + logo + "\">" + "<n>This is an automated email. Please do not reply.</n>",
                     };
                     await _emailSender.SendToManyAsync(msg);
                 }
