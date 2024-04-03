@@ -31,8 +31,6 @@ public class NcrReInspectMetaData
     [Column("ncrReInspectUserId")]
     public int NcrReInspectUserId { get; set; }
 
-    public bool NcrQaStatusFlag { get; set; }
-
     [Display(Name = "Notes")]
     [StringLength(250, ErrorMessage = "Reinspection notes cannot be more than 250 characters.")]
     public string NcrReInspectNotes { get; set; }

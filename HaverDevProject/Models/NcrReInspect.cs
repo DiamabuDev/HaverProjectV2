@@ -14,11 +14,9 @@ public class NcrReInspect : Auditable
     public bool NcrReInspectAcceptable { get; set; } = true;
     public string NcrNumber { get; set; }
     public DateTime NcrReInspectCreationDate { get; set; }    
-    public DateTime NcrReInspectCompleteDate { get; set; }
     public string NcrReInspectNewNcrNumber { get; set; }
     public string NcrReInspectNotes { get; set; }
     public string NcrReInspectUserId { get; set; }
-    public bool NcrQaStatusFlag { get; set; }
     public string NcrReInspectDefectVideo { get; set; }
     public int NcrId { get; set; }
     public Ncr Ncr { get; set; }
