@@ -265,6 +265,193 @@ namespace HaverDevProject.Controllers
 
             return View(pagedData);
         }
+       
+        // GET: Ncr/Details/5
+        public async Task<IActionResult> Details(int? id, NcrPhase section)
+        {
+            if (id == null || _context.Ncrs == null)
+            {
+                return NotFound();
+            }
+
+            var ncr = await _context.Ncrs
+                .Include(n => n.NcrQa)
+                .Include(n => n.NcrQa).ThenInclude(n => n.Item)
+                .Include(n => n.NcrQa).ThenInclude(n => n.Defect)
+                .Include(n => n.NcrQa).ThenInclude(n => n.Supplier)
+                .Include(n => n.NcrQa).ThenInclude(n => n.ItemDefectPhotos)
+                .Include(n => n.NcrEng)
+                .Include(n => n.NcrEng).ThenInclude(n => n.EngDispositionType)
+                .Include(n => n.NcrEng).ThenInclude(n => n.Drawing)
+                .Include(n => n.NcrEng).ThenInclude(n => n.EngDefectPhotos)
+                .Include(n => n.NcrOperation)
+                .Include(n => n.NcrOperation).ThenInclude(n => n.OpDispositionType)
+                .Include(n => n.NcrOperation).ThenInclude(n => n.FollowUpType)
+                .Include(n => n.NcrOperation).ThenInclude(n => n.OpDefectPhotos)
+                .Include(n => n.NcrProcurement)
+                .Include(n => n.NcrProcurement).ThenInclude(n => n.ProcDefectPhotos)
+                .Include(n => n.NcrReInspect)
+                .Include(n => n.NcrReInspect).ThenInclude(n => n.NcrReInspectPhotos)
+                .FirstOrDefaultAsync(m => m.NcrId == id);
+
+            if (ncr == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.IsNCRQaView = true;
+            ViewBag.IsNCREngView = false;
+            ViewBag.IsNCROpView = false;
+            ViewBag.IsNCRProcView = false;
+            ViewBag.IsNCRReInspView = false;
+
+            ViewBag.NCRSectionId = id;
+
+            return View(ncr);
+        }
+        // GET: Ncr/Create
+        public IActionResult Create()
+        {
+            //string example = "2024-0018";
+            //ViewData["NCRNumber"] = example;
+            Ncr ncr = new Ncr();
+            return View(ncr);
+        }
+
+        // POST: Ncr/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("NcrId,NcrNumber,NcrLastUpdated,NcrStatus")] Ncr ncr)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(ncr);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(ncr);
+        }
+
+        // GET: Ncr/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null || _context.Ncrs == null)
+            {
+                return NotFound();
+            }
+
+            var ncr = await _context.Ncrs.FindAsync(id);
+            if (ncr == null)
+            {
+                return NotFound();
+            }
+            return View(ncr);
+        }
+
+        // POST: Ncr/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("NcrId,NcrNumber,NcrLastUpdated,NcrStatus")] Ncr ncr)
+        {
+            if (id != ncr.NcrId)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(ncr);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!NcrExists(ncr.NcrId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(ncr);
+        }
+
+        // GET: Ncr/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null || _context.Ncrs == null)
+            {
+                return NotFound();
+            }
+
+            var ncr = await _context.Ncrs
+                .FirstOrDefaultAsync(m => m.NcrId == id);
+
+            if (ncr != null)
+            {
+
+                _context.Ncrs.Remove(ncr);
+                await _context.SaveChangesAsync();
+
+                if (ncr.NcrPhase == NcrPhase.Archive)
+                {
+                    TempData["SuccessMessage"] = "NCR deleted successfully!";
+                    return RedirectToAction("Archived");
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = "NCR deleted successfully!";
+                    return RedirectToAction("Index");
+                }
+
+            }
+            else
+            {
+                if (ncr.NcrPhase == NcrPhase.Archive)
+                {
+                    TempData["ErrorMessage"] = "NCR could not be deleted.";
+                    return RedirectToAction("Archived");
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "NCR could not be deleted.";
+                    return RedirectToAction("Index");
+                }
+
+            }
+        }
+
+        // POST: Ncr/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            if (_context.Ncrs == null)
+            {
+                return Problem("Entity set 'HaverNiagaraContext.Ncrs'  is null.");
+            }
+
+            var ncr = await _context.Ncrs.FindAsync(id);
+            if (ncr != null)
+            {
+                _context.Ncrs.Remove(ncr);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("Index");
+        }
+
+
+        //ARCHIVE SECTION
         // GET: Archived Ncrs
         public async Task<IActionResult> Archived(string SearchCode, string SearchSupplier, DateTime StartDate, DateTime EndDate,
             int? page, int? pageSizeID, string actionButton, string sortDirection = "desc", string sortField = "Created", string filter = "Active")
@@ -489,7 +676,96 @@ namespace HaverDevProject.Controllers
 
             return View(pagedData);
         }
-        // GET: Archived Ncrs
+
+        // Manually Archiving many NCRs
+        [HttpPost]
+        public async Task<IActionResult> ArchiveManyNcrs(int archiveYear, [FromServices] NcrArchivingService ncrArchivingService)
+        {
+            try
+            {
+                // Call the ArchiveNcrsByYear method from the injected NcrArchivingService
+                var archivedCount = await ncrArchivingService.ArchiveNcrsByYear(archiveYear);
+
+                // Set success message in TempData
+                TempData["SuccessMessage"] = $"{archivedCount} NCRs Archived";
+
+                // Redirect back to the previous page or any other desired page
+                return RedirectToAction("Archived"); // Change "Archived" to the action name you want to redirect to
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions that occur during archiving
+                TempData["ErrorMessage"] = $"Error occurred while Archiving NCR objects: {ex.Message}";
+
+                // Redirect back to the previous page or any other desired page
+                return RedirectToAction("Archived"); // Change "Archived" to the action name you want to redirect to
+            }
+        }
+
+        [HttpPost]
+        public IActionResult AutomaticArchiveYear(int numYears)
+        {
+            _numOfYearsService.NumOfYears = numYears;
+            TempData["SuccessMessage"] = $"Archiving Service set to: {numYears} Years";
+            return RedirectToAction("Archived"); // Redirect to a different action
+            
+        }
+
+        public async Task<IActionResult> ArchiveNcr(int id)
+        {
+            var ncrToUpdate = await _context.Ncrs
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(n => n.NcrId == id);
+
+            if (ncrToUpdate != null)
+            {
+                //Update the phase
+                ncrToUpdate.NcrPhase = NcrPhase.Archive;
+
+                //saving the values
+                _context.Ncrs.Update(ncrToUpdate);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "NCR Archived successfully!";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "NCR not found for Archiving.";
+                return RedirectToAction("Index");
+            }
+
+        }
+    
+        public async Task<IActionResult> RestoreNcr(int id)
+        {
+            var ncrToUpdate = await _context.Ncrs
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(n => n.NcrId == id);
+
+            if (ncrToUpdate != null)
+            {
+                //Update the phase
+                ncrToUpdate.NcrPhase = NcrPhase.Closed;
+
+                //saving the values
+                _context.Ncrs.Update(ncrToUpdate);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "NCR Restored successfully!";
+                return RedirectToAction("Archived");
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "NCR not found for Archiving.";
+                return RedirectToAction("Archived");
+            }
+
+        }
+
+
+        //VOID SECTION
+        // GET: Void Ncrs
         public async Task<IActionResult> Void(string SearchCode, string SearchSupplier, DateTime StartDate, DateTime EndDate,
             int? page, int? pageSizeID, string actionButton, string sortDirection = "desc", string sortField = "Created", string filter = "Active")
         {
@@ -713,351 +989,6 @@ namespace HaverDevProject.Controllers
 
             return View(pagedData);
         }
-
-        // GET: Ncr/Details/5
-        public async Task<IActionResult> Details(int? id, NcrPhase section)
-        {
-            if (id == null || _context.Ncrs == null)
-            {
-                return NotFound();
-            }
-
-            var ncr = await _context.Ncrs
-                .Include(n => n.NcrQa)
-                .Include(n => n.NcrQa).ThenInclude(n => n.Item)
-                .Include(n => n.NcrQa).ThenInclude(n => n.Defect)
-                .Include(n => n.NcrQa).ThenInclude(n => n.Supplier)
-                .Include(n => n.NcrQa).ThenInclude(n => n.ItemDefectPhotos)
-                .Include(n => n.NcrEng)
-                .Include(n => n.NcrEng).ThenInclude(n => n.EngDispositionType)
-                .Include(n => n.NcrEng).ThenInclude(n => n.Drawing)
-                .Include(n => n.NcrEng).ThenInclude(n => n.EngDefectPhotos)
-                .Include(n => n.NcrOperation)
-                .Include(n => n.NcrOperation).ThenInclude(n => n.OpDispositionType)
-                .Include(n => n.NcrOperation).ThenInclude(n => n.FollowUpType)
-                .Include(n => n.NcrOperation).ThenInclude(n => n.OpDefectPhotos)
-                .Include(n => n.NcrProcurement)
-                .Include(n => n.NcrProcurement).ThenInclude(n => n.ProcDefectPhotos)
-                .Include(n => n.NcrReInspect)
-                .Include(n => n.NcrReInspect).ThenInclude(n => n.NcrReInspectPhotos)
-                .FirstOrDefaultAsync(m => m.NcrId == id);
-
-            if (ncr == null)
-            {
-                return NotFound();
-            }
-
-            ViewBag.IsNCRQaView = true;
-            ViewBag.IsNCREngView = false;
-            ViewBag.IsNCROpView = false;
-            ViewBag.IsNCRProcView = false;
-            ViewBag.IsNCRReInspView = false;
-
-            ViewBag.NCRSectionId = id;
-
-            return View(ncr);
-        }
-        // GET: Ncr/Create
-        public IActionResult Create()
-        {
-            //string example = "2024-0018";
-            //ViewData["NCRNumber"] = example;
-            Ncr ncr = new Ncr();
-            return View(ncr);
-        }
-
-        // POST: Ncr/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("NcrId,NcrNumber,NcrLastUpdated,NcrStatus")] Ncr ncr)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(ncr);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(ncr);
-        }
-
-        // GET: Ncr/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Ncrs == null)
-            {
-                return NotFound();
-            }
-
-            var ncr = await _context.Ncrs.FindAsync(id);
-            if (ncr == null)
-            {
-                return NotFound();
-            }
-            return View(ncr);
-        }
-
-        // POST: Ncr/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("NcrId,NcrNumber,NcrLastUpdated,NcrStatus")] Ncr ncr)
-        {
-            if (id != ncr.NcrId)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(ncr);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!NcrExists(ncr.NcrId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(ncr);
-        }
-
-        // GET: Ncr/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Ncrs == null)
-            {
-                return NotFound();
-            }
-
-            var ncr = await _context.Ncrs
-                .FirstOrDefaultAsync(m => m.NcrId == id);
-
-            if (ncr != null)
-            {
-
-                _context.Ncrs.Remove(ncr);
-                await _context.SaveChangesAsync();
-
-                if (ncr.NcrPhase == NcrPhase.Archive)
-                {
-                    TempData["SuccessMessage"] = "NCR deleted successfully!";
-                    return RedirectToAction("Archived");
-                }
-                else
-                {
-                    TempData["SuccessMessage"] = "NCR deleted successfully!";
-                    return RedirectToAction("Index");
-                }
-
-            }
-            else
-            {
-                if (ncr.NcrPhase == NcrPhase.Archive)
-                {
-                    TempData["ErrorMessage"] = "NCR could not be deleted.";
-                    return RedirectToAction("Archived");
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "NCR could not be deleted.";
-                    return RedirectToAction("Index");
-                }
-
-            }
-        }
-
-        // POST: Ncr/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Ncrs == null)
-            {
-                return Problem("Entity set 'HaverNiagaraContext.Ncrs'  is null.");
-            }
-
-            var ncr = await _context.Ncrs.FindAsync(id);
-            if (ncr != null)
-            {
-                _context.Ncrs.Remove(ncr);
-                await _context.SaveChangesAsync();
-            }
-
-            return RedirectToAction("Index");
-        }
-
-        // Manually Archiving many NCRs
-        [HttpPost]
-        public async Task<IActionResult> ArchiveManyNcrs(int archiveYear, [FromServices] NcrArchivingService ncrArchivingService)
-        {
-            try
-            {
-                // Call the ArchiveNcrsByYear method from the injected NcrArchivingService
-                var archivedCount = await ncrArchivingService.ArchiveNcrsByYear(archiveYear);
-
-                // Set success message in TempData
-                TempData["SuccessMessage"] = $"{archivedCount} NCRs Archived";
-
-                // Redirect back to the previous page or any other desired page
-                return RedirectToAction("Archived"); // Change "Archived" to the action name you want to redirect to
-            }
-            catch (Exception ex)
-            {
-                // Handle any exceptions that occur during archiving
-                TempData["ErrorMessage"] = $"Error occurred while Archiving NCR objects: {ex.Message}";
-
-                // Redirect back to the previous page or any other desired page
-                return RedirectToAction("Archived"); // Change "Archived" to the action name you want to redirect to
-            }
-        }
-
-        [HttpPost]
-        public IActionResult AutomaticArchiveYear(int numYears)
-        {
-            _numOfYearsService.NumOfYears = numYears;
-            TempData["SuccessMessage"] = $"Archiving Service set to: {numYears} Years";
-            return RedirectToAction("Archived"); // Redirect to a different action
-            
-        }
-
-        //[HttpPost]
-        //public async Task<IActionResult> ArchiveNcrs(int years)
-        //{
-        //    // Call the method in NcrArchiveManager to archive NCRs based on the specified number of years
-        //    await _ncrArchiveManager.ArchiveNcrsByYear(years);
-
-        //    // Optionally, redirect to a relevant page after archiving
-        //    return RedirectToAction("Index", "Home");
-        //}
-
-        private SelectList SupplierSelectList(int? selectedId)
-        {
-            return new SelectList(_context.Suppliers
-                .Where(s => s.SupplierStatus == true && s.SupplierName != "NO SUPPLIER PROVIDED")
-                .OrderBy(s => s.SupplierName), "SupplierId", "Summary", selectedId);
-        }
-
-        private SelectList ItemSelectList()
-        {
-            return new SelectList(_context.Items
-                .OrderBy(s => s.ItemName), "ItemId", "Summary");
-        }
-
-        private SelectList DefectSelectList()
-        {
-            return new SelectList(_context.Defects
-                .OrderBy(s => s.DefectName), "DefectId", "DefectName");
-        }
-
-        private void PopulateDropDownLists()
-        {
-            ViewData["SupplierId"] = SupplierSelectList(null);
-            ViewData["ItemId"] = ItemSelectList();
-            ViewData["DefectId"] = DefectSelectList();
-        }
-
-
-        [HttpGet]
-        public JsonResult GetSuppliers(int? id)
-        {
-            return Json(SupplierSelectList(id));
-        }
-
-        public JsonResult GetSuppliersAuto(string term)
-        {
-            var result = from s in _context.Suppliers
-                         where s.SupplierName.ToUpper().Contains(term.ToUpper())
-                         //|| d.FirstName.ToUpper().Contains(term.ToUpper())
-                         orderby s.SupplierName
-                         select new { value = s.SupplierName };
-            return Json(result);
-        }
-
-        public async Task<IActionResult> ArchiveNcr(int id)
-        {
-            var ncrToUpdate = await _context.Ncrs
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(n => n.NcrId == id);
-
-            if (ncrToUpdate != null)
-            {
-                //Update the phase
-                ncrToUpdate.NcrPhase = NcrPhase.Archive;
-
-                //saving the values
-                _context.Ncrs.Update(ncrToUpdate);
-                await _context.SaveChangesAsync();
-
-                TempData["SuccessMessage"] = "NCR Archived successfully!";
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                TempData["ErrorMessage"] = "NCR not found for Archiving.";
-                return RedirectToAction("Index");
-            }
-
-        }
-        //public async Task<IActionResult> ArchiveDateNcr(int id)
-        //{
-        //    var ncrToUpdate = await _context.Ncrs
-        //            .AsNoTracking()
-        //            .FirstOrDefaultAsync(n => n.NcrId == id);
-
-        //    if (ncrToUpdate != null)
-        //    {
-        //        //Update the phase
-        //        ncrToUpdate.NcrPhase = NcrPhase.Archive;
-
-        //        //saving the values
-        //        _context.Ncrs.Update(ncrToUpdate);
-        //        await _context.SaveChangesAsync();
-
-        //        return RedirectToAction("Index");
-        //    }
-        //    else
-        //    {
-        //        return RedirectToAction("Index");
-        //    }
-
-        //}
-        public async Task<IActionResult> RestoreNcr(int id)
-        {
-            var ncrToUpdate = await _context.Ncrs
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(n => n.NcrId == id);
-
-            if (ncrToUpdate != null)
-            {
-                //Update the phase
-                ncrToUpdate.NcrPhase = NcrPhase.Closed;
-
-                //saving the values
-                _context.Ncrs.Update(ncrToUpdate);
-                await _context.SaveChangesAsync();
-
-                TempData["SuccessMessage"] = "NCR Restored successfully!";
-                return RedirectToAction("Archived");
-            }
-            else
-            {
-                TempData["ErrorMessage"] = "NCR not found for Archiving.";
-                return RedirectToAction("Archived");
-            }
-
-        }
         public async Task<IActionResult> VoidNcr(int id, string voidReason)
         {
             var ncrToUpdate = await _context.Ncrs
@@ -1086,9 +1017,48 @@ namespace HaverDevProject.Controllers
         }
 
 
+        //DROPDOWN LIST SECTION
+        [HttpGet]
+        public JsonResult GetSuppliers(int? id)
+        {
+            return Json(SupplierSelectList(id));
+        }
 
+        public JsonResult GetSuppliersAuto(string term)
+        {
+            var result = from s in _context.Suppliers
+                         where s.SupplierName.ToUpper().Contains(term.ToUpper())
+                         //|| d.FirstName.ToUpper().Contains(term.ToUpper())
+                         orderby s.SupplierName
+                         select new { value = s.SupplierName };
+            return Json(result);
+        }
 
+        private SelectList SupplierSelectList(int? selectedId)
+        {
+            return new SelectList(_context.Suppliers
+                .Where(s => s.SupplierStatus == true && s.SupplierName != "NO SUPPLIER PROVIDED")
+                .OrderBy(s => s.SupplierName), "SupplierId", "Summary", selectedId);
+        }
 
+        private SelectList ItemSelectList()
+        {
+            return new SelectList(_context.Items
+                .OrderBy(s => s.ItemName), "ItemId", "Summary");
+        }
+
+        private SelectList DefectSelectList()
+        {
+            return new SelectList(_context.Defects
+                .OrderBy(s => s.DefectName), "DefectId", "DefectName");
+        }
+
+        private void PopulateDropDownLists()
+        {
+            ViewData["SupplierId"] = SupplierSelectList(null);
+            ViewData["ItemId"] = ItemSelectList();
+            ViewData["DefectId"] = DefectSelectList();
+        }
         #region DownloadPDF
         public async Task<IActionResult> DownloadPDF(int id)
         {
