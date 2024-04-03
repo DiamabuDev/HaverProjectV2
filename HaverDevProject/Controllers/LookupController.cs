@@ -15,18 +15,11 @@ namespace HaverDevProject.Controllers
         {
             _context = context;
         }
-        public IActionResult Index(string Tab = "Information-Tab")
+        public IActionResult Index(string Tab = "EngDispositionType-Tab")
         {
             //Note: select the tab you want to load by passing in
             ViewData["Tab"] = Tab;
             return View();
-        }
-        public PartialViewResult DefectType()
-        {
-            ViewData["defectTypeId"] = new
-               SelectList(_context.Defects
-                .OrderBy(a => a.DefectName), "DefectId", "DefectName");
-            return PartialView("_DefectType");
         }
         public PartialViewResult EngDispositionType()
         {

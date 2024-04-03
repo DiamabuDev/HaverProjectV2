@@ -15,7 +15,6 @@ public partial class HaverNiagaraContext : DbContext
     {
         get; private set;
     }
-
     public HaverNiagaraContext(DbContextOptions<HaverNiagaraContext> options, IHttpContextAccessor httpContextAccessor)
         : base(options)
     {

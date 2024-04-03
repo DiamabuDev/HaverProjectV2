@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using HaverDevProject.CustomControllers;
+﻿using HaverDevProject.CustomControllers;
 using HaverDevProject.Data;
 using HaverDevProject.Models;
 using HaverDevProject.Utilities;
@@ -10,12 +6,9 @@ using HaverDevProject.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using OfficeOpenXml;
-
-//using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HaverDevProject.Controllers
 {
@@ -142,7 +135,7 @@ namespace HaverDevProject.Controllers
                     ViewData["filterApplied:SupplierName"] = "<i class='bi bi-sort-down'></i>";
                 }
             }
-            else if (sortField == "Email") //Sorting by Email
+            else if (sortField == "Email") 
             {
                 if (sortDirection == "asc")
                 {
@@ -185,8 +178,6 @@ namespace HaverDevProject.Controllers
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
             ViewData["filter"] = filter;
-
-            //return View(await suppliers.ToListAsync());
 
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, ControllerName());
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
@@ -389,7 +380,7 @@ namespace HaverDevProject.Controllers
                 return NotFound();
             }
 
-            var supplier = await _context.Suppliers.FirstOrDefaultAsync(m => m.SupplierId == id);
+            var supplier = await _context.Suppliers.FirstOrDefaultAsync(s => s.SupplierId == id);
             if (supplier == null)
             {
                 return NotFound();
@@ -482,8 +473,7 @@ namespace HaverDevProject.Controllers
                 EngDispositionDescription =
                     ncrData.NcrEng?.NcrEngDispositionDescription ?? "Not Available",
                 OpDispositionType =
-                    ncrData.NcrOperation?.OpDispositionType?.OpDispositionTypeName
-                    ?? "Not Available",
+                    ncrData.NcrOperation?.OpDispositionType?.OpDispositionTypeName ?? "Not Available",
                 OperationDescription =
                     ncrData.NcrOperation?.NcrPurchasingDescription ?? "Not Available",
             };
@@ -586,7 +576,7 @@ namespace HaverDevProject.Controllers
                     if (updated)
                     {
                         _context.Suppliers.Update(existingSupplier);
-                        successCount++; // Increment success count if any field is updated
+                        successCount++; 
                     }
                 }
                 else
@@ -599,7 +589,7 @@ namespace HaverDevProject.Controllers
                         SupplierEmail = !string.IsNullOrWhiteSpace(supplierInfo.Email) ? supplierInfo.Email : null,
                     };
                     _context.Suppliers.Add(newSupplier);
-                    successCount++; // Increment success count for new additions
+                    successCount++; 
                 }
             }
 

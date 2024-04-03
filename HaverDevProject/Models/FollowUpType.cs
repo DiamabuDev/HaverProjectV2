@@ -14,6 +14,5 @@ public partial class FollowUpType
     [Display(Name = "Follow Up Type")]
     [StringLength(45)]
     public string FollowUpTypeName { get; set; }
-
     public ICollection<NcrOperation> NcrOperations { get; set; } = new HashSet<NcrOperation>();
 }

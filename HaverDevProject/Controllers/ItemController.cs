@@ -1,20 +1,12 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HaverDevProject.Data;
 using HaverDevProject.Models;
 using HaverDevProject.CustomControllers;
 using HaverDevProject.Utilities;
 using Microsoft.EntityFrameworkCore.Storage;
-using HaverDevProject.ViewModels;
-using Microsoft.AspNetCore.Http.HttpResults;
 using OfficeOpenXml;
-using SQLitePCL;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Authorization;
 

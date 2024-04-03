@@ -23,6 +23,7 @@ namespace HaverDevProject.Controllers
         }
         public async Task<IActionResult> Index()
         {
+            //for getting the user full name and role in the dashboard
             var user = await _userManager.GetUserAsync(User);
             if (user != null)
             {
