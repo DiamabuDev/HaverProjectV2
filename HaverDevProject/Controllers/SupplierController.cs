@@ -208,7 +208,7 @@ namespace HaverDevProject.Controllers
                 return NotFound();
             }
 
-            var supplierViewModel = new SupplierDetailsViewModel
+            var supplierVM = new SupplierDetailsVM
             {
                 Supplier = supplier,
                 RelatedNCRs =
@@ -216,7 +216,7 @@ namespace HaverDevProject.Controllers
                     ?? new List<Ncr>()
             };
 
-            return View(supplierViewModel);
+            return View(supplierVM);
         }
 
         // GET: Supplier/Create

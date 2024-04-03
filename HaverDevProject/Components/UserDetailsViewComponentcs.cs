@@ -32,7 +32,7 @@ namespace HaverDevProject.Views.Shared.Components
                 "eng" => "cspirleanu@hotmail.com",
                 "proc" => "lopezchavezvictorh@gmail.com",
                 "op" => "diana.maldonado130@gmail.com",
-                "reinsp" => "cspileanu@gmail.com",
+                "reinsp" => "cspirleanu@gmail.com",
                 _ => "admin@outlook.com" 
             };
         }
