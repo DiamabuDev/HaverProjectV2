@@ -5,6 +5,7 @@
     ViewData["Title"] = "Archived";
 }
 
+<!--MODALS-->
 <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -37,6 +38,7 @@
     </li>
 </ul>
 
+<!-- Archive Settings Button-->
 <div class="container-fluid mt-4" >
     <div class="row">
         <div class="col-md-6 col-lg-4">
@@ -94,13 +96,7 @@
     </div>
 </div>
 
-
-
-
-
-
-
-
+<!--BODY-->
 <form id="ncrForm" asp-action="Archived" method="get">
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
     <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
@@ -269,6 +265,7 @@
         })
     </script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!--Filtering-->
     <script type="text/javascript">
         $(document).ready(function () {
             $('.btn-filter').on('click', function () {
@@ -299,6 +296,7 @@
         });
     </script>
 
+    <!--Delete-->
     <script>
         //Deleting Ncrs
         document.addEventListener('DOMContentLoaded', function () {
@@ -341,6 +339,7 @@
             source: '@Url.Action("GetSuppliersAuto", "Ncr")'
         });
     </script>
+    <!--Tabs-->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const archiveTab = document.getElementById('archive-tab');
@@ -350,6 +349,7 @@
             });
         });
     </script>
+    <!--Archive Input-->
     <script>
         // Retrieve the value of numberOfYears from localStorage
         var numberOfYearsValue = localStorage.getItem('numYears');

@@ -21,6 +21,7 @@ namespace HaverDevProject.Services
             _numYearsService = numYearsService;
         }
 
+        //Executing the Service
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
@@ -33,6 +34,7 @@ namespace HaverDevProject.Services
 
                     try
                     {
+                        //Logic for Archiving NCRs by Date
                         var archiveStartDate = DateTime.Now.AddYears(-numOfYears);
 
                         var ncrsToArchive = dbContext.Ncrs
@@ -55,8 +57,8 @@ namespace HaverDevProject.Services
                     }
                 }
 
-                // Wait for a specified interval before checking again
-                await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
+                //Service Checks every 24 hours
+                await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
             }
         }
     }
