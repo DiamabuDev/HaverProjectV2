@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HaverDevProject.Data;
 using HaverDevProject.Models;
 using HaverDevProject.CustomControllers;
 using HaverDevProject.Utilities;
-using HaverDevProject.ViewModels;
 using Microsoft.EntityFrameworkCore.Storage;
-using Defect = HaverDevProject.Models.Defect;
 using OfficeOpenXml;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Authorization;
@@ -24,7 +17,6 @@ namespace HaverDevProject.Controllers
     public class DefectsController : ElephantController
     {
         private readonly HaverNiagaraContext _context;
-
         public DefectsController(HaverNiagaraContext context)
         {
             _context = context;
@@ -33,7 +25,7 @@ namespace HaverDevProject.Controllers
         [Authorize(Roles = "Admin")]
 
         // GET: Defects
-        public async Task<IActionResult> Index(string SearchName, /*int? ItemID,*/ int? page, int? pageSizeID,
+        public async Task<IActionResult> Index(string SearchName, int? page, int? pageSizeID,
             string actionButton, string sortDirection = "asc", string sortField = "Defect")
         {
 
@@ -134,7 +126,7 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DefectId,DefectName,DefectDesription")] Defect defect)
+        public async Task<IActionResult> Create([Bind("DefectId,DefectName")] Defect defect)
         {
             try
             {
@@ -270,6 +262,7 @@ namespace HaverDevProject.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        //Excel Upload 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Upload(IFormFile file)

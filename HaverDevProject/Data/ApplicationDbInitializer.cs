@@ -32,6 +32,60 @@ namespace HaverDevProject.Data
                 //Create Users
                 var userManager = applicationBuilder.ApplicationServices.CreateScope()
                     .ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                if (userManager.FindByEmailAsync("mhardwick@niagaracollege.ca").Result == null)
+                {
+                    ApplicationUser user = new ApplicationUser
+                    {
+                        FirstName = "Mark",
+                        LastName = "Hardwick",
+                        UserName = "mhardwick@niagaracollege.ca",
+                        Email = "mhardwick@niagaracollege.ca",
+                        EmailConfirmed = true
+                    };
+
+                    IdentityResult result = userManager.CreateAsync(user, "Pa55w@rd").Result;
+
+                    if (result.Succeeded)
+                    {
+                        userManager.AddToRoleAsync(user, "Admin").Wait();
+                    }
+                }
+                if (userManager.FindByEmailAsync("mvanderlely@niagaracollege.ca").Result == null)
+                {
+                    ApplicationUser user = new ApplicationUser
+                    {
+                        FirstName = "Melissa",
+                        LastName = "VanderLely",
+                        UserName = "mvanderlely@niagaracollege.ca",
+                        Email = "mvanderlely@niagaracollege.ca",
+                        EmailConfirmed = true
+                    };
+
+                    IdentityResult result = userManager.CreateAsync(user, "Pa55w@rd").Result;
+
+                    if (result.Succeeded)
+                    {
+                        userManager.AddToRoleAsync(user, "Admin").Wait();
+                    }
+                }
+                if (userManager.FindByEmailAsync("l.pentland@haverniagara.ca").Result == null)
+                {
+                    ApplicationUser user = new ApplicationUser
+                    {
+                        FirstName = "Lesley",
+                        LastName = "Pentland",
+                        UserName = "l.pentland@haverniagara.ca",
+                        Email = "l.pentland@haverniagara.ca",
+                        EmailConfirmed = true
+                    };
+
+                    IdentityResult result = userManager.CreateAsync(user, "Pa55w@rd").Result;
+
+                    if (result.Succeeded)
+                    {
+                        userManager.AddToRoleAsync(user, "Admin").Wait();
+                    }
+                }
                 if (userManager.FindByEmailAsync("vlopezchavez1@ncstudents.niagaracollege.ca").Result == null)
                 {
                     ApplicationUser user = new ApplicationUser

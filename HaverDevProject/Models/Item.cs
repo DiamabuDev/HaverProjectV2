@@ -12,7 +12,6 @@ public class Item
     [Key]
     [Column("itemId")]
     public int ItemId { get; set; }
-
     public string Summary => $"{ItemNumber} - {ItemName}";
 
     [Column("itemNumber")]
