@@ -436,7 +436,7 @@ namespace HaverDevProject.Controllers
                         ToAddresses = new List<EmailAddress> { emailAddress},
                         Subject = "New User. Reset Password",
                         Content = $"<p>New User created.<br></p>" +
-                                  "<p>Please reset your password. <a href=\"" + callbackUrl + "\">Go to NCR</a></p>" +
+                                  "<p>Please reset your password. <a href=\"" + callbackUrl + "\">Reset Password</a></p>" +
                                   $"<img src=\"{logo}\">" +
                                   "<p>This is an automated email. Please do not reply.</p>",
                 };

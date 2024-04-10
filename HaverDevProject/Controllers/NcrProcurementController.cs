@@ -462,8 +462,8 @@ namespace HaverDevProject.Controllers
                         .FirstOrDefaultAsync(n => n.NcrProcurementId == ncrProcId);
 
                     // Send notification email to Procurement
-                    var subject = "New NCR Created " + ncr.NcrNumber;
-                    var emailContent = "A new NCR has been created:<br><br>Ncr #: " + ncr.NcrNumber + "<br>Supplier: " + ncr.NcrQa.Supplier.SupplierName;
+                    var subject = "New NCR Created in Procurement " + ncr.NcrNumber;
+                    var emailContent = "A new NCR has been created:<br><br>NCR #: " + ncr.NcrNumber + "<br>Supplier: " + ncr.NcrQa.Supplier.SupplierName;
                     await NotificationCreate(ncrProcId, subject, emailContent);
 
                     return RedirectToAction("Details", new { id = ncrProcId });
@@ -619,8 +619,8 @@ namespace HaverDevProject.Controllers
                         .FirstOrDefaultAsync(n => n.NcrProcurementId == ncrProcId);
 
                     // Send notification email to Procurement
-                    var subject = "NCR Edited " + ncr.NcrNumber;
-                    var emailContent = "A NCR has been edited :<br><br>Ncr #: " + ncr.NcrNumber + "<br>Supplier: " + ncr.NcrQa.Supplier.SupplierName;
+                    var subject = "NCR Edited in Procurement " + ncr.NcrNumber;
+                    var emailContent = "A NCR has been edited :<br><br>NCR #: " + ncr.NcrNumber + "<br>Supplier: " + ncr.NcrQa.Supplier.SupplierName;
                     await NotificationEdit(ncrProcId, subject, emailContent);
 
                     return RedirectToAction("Details", new { id = ncrProcId });
