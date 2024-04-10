@@ -21,5 +21,6 @@ namespace HaverDevProject.ViewModels
         public ItemApiDTO ItemApiDTO { get; set; }
         public int DefectId { get; set; }    
         public DefectApiDTO DefectApiDTO { get; set; }
+        public decimal? TotalCost { get; set; } = 0;
     }
 }
