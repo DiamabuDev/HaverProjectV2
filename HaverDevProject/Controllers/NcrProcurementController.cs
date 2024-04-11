@@ -373,7 +373,7 @@ namespace HaverDevProject.Controllers
 
             ViewBag.IsNCRQaView = false;
             ViewBag.IsNCREngView = false;
-            ViewBag.IsNCROpView = false;
+            ViewBag.IsNCROpView = true;
             ViewBag.IsNCRProcView = false;
             ViewBag.IsNCRReInspView = false;
 
