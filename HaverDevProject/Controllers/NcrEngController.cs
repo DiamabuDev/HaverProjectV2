@@ -362,7 +362,7 @@ namespace HaverDevProject.Controllers
                     .ThenInclude(qa => qa.ItemDefectPhotos)
                 .FirstOrDefaultAsync(n => n.NcrId == ncrId);
 
-            ViewBag.IsNCRQaView = false;
+            ViewBag.IsNCRQaView = true;
             ViewBag.IsNCREngView = false;
             ViewBag.IsNCROpView = false;
             ViewBag.IsNCRProcView = false;
