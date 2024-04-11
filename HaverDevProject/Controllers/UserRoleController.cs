@@ -343,6 +343,8 @@ namespace HaverDevProject.Controllers
 
             if (ModelState.IsValid)
             {
+                bool emailChanged = !user.Email.Equals(model.Email, StringComparison.OrdinalIgnoreCase);
+
                 user.Email = model.Email;
                 user.UserName = model.Email; 
                 user.FirstName = model.FirstName;
@@ -361,6 +363,14 @@ namespace HaverDevProject.Controllers
                 }
 
                 var currentRoles = await _userManager.GetRolesAsync(user);
+
+                if (currentRoles.Contains("Admin") && model.SelectedRole != "Admin")
+                {
+                    ModelState.AddModelError("", "Admins cannot change their own role.");
+                    PopulateRoles();
+                    return View(model);
+                }
+
                 var removeRoleResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
                 if (!removeRoleResult.Succeeded)
                 {
@@ -386,7 +396,16 @@ namespace HaverDevProject.Controllers
                     }
                 }
 
-                TempData["SuccessMessage"] = "User edited successfully!";
+                if (emailChanged)
+                {
+                    await NotificationCreate(user.Id);
+                    TempData["SuccessMessage"] = "User edited successfully! An email has been sent to reset the password.";
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = "User edited successfully!";
+                }
+
                 return RedirectToAction(nameof(Index));
             }
 
