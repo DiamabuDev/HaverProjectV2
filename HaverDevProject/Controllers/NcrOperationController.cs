@@ -869,7 +869,7 @@ namespace HaverDevProject.Controllers
                 if (ncrInOps == null)
                 {
                     // Check if it's exactly 24 hours since the NCR was created in Engineering
-                    if (DateTime.Now.Subtract(ncr.NcrEngCreationDate).TotalHours >= 24)
+                    if (DateTime.Now.Subtract(ncr.NcrEngCreationDate).TotalHours == 24)
                     {
                         // Send notification email to Operations or Admin role
                         var subject = "NCR Pending in Operations";
