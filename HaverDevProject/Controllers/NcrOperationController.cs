@@ -854,7 +854,7 @@ namespace HaverDevProject.Controllers
             return View();
         }
 
-        //// 24 Hours Notification
+        //24 Hour Notification
         public async Task CheckAndSendEmailNotifications()
         {
             // Get pending NCRs from Engineering that are older than 24 hours
@@ -868,10 +868,14 @@ namespace HaverDevProject.Controllers
                 var ncrInOps = await _context.NcrOperations.FirstOrDefaultAsync(op => op.NcrId == ncr.NcrId);
                 if (ncrInOps == null)
                 {
-                    // Send notification email to Operations or Admin role
-                    var subject = "NCR Pending in Operations";
-                    var emailContent = "An NCR from Engineering is pending in Operations and has not been created yet.";
-                    await NotificationCreate(ncr.NcrId, subject, emailContent);
+                    // Check if it's exactly 24 hours since the NCR was created in Engineering
+                    if (DateTime.Now.Subtract(ncr.NcrEngCreationDate).TotalHours >= 24)
+                    {
+                        // Send notification email to Operations or Admin role
+                        var subject = "NCR Pending in Operations";
+                        var emailContent = "An NCR from Engineering is pending in Operations and has not been created yet.";
+                        await NotificationCreate(ncr.NcrId, subject, emailContent);
+                    }
                 }
             }
         }

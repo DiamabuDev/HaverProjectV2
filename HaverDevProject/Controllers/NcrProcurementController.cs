@@ -846,6 +846,32 @@ namespace HaverDevProject.Controllers
             return View();
         }
 
+        //24 Hour Notification
+        public async Task CheckAndSendEmailNotifications()
+        {
+            // Get pending NCRs from Engineering that are older than 24 hours
+            var pendingNCRs = await _context.NcrOperations
+                .Where(n => n.Ncr.NcrPhase == NcrPhase.QualityInspector && n.NcrOpCreationDate <= DateTime.Now.AddHours(-24))
+                .ToListAsync();
+
+            foreach (var ncr in pendingNCRs)
+            {
+                // Check if an NCR has not been created in Operations
+                var ncrInOps = await _context.NcrProcurements.FirstOrDefaultAsync(op => op.NcrId == ncr.NcrId);
+                if (ncrInOps == null)
+                {
+                    // Check if it's exactly 24 hours since the NCR was created in Engineering
+                    if (DateTime.Now.Subtract(ncr.NcrOpCreationDate).TotalHours == 24)
+                    {
+                        // Send notification email to Operations or Admin role
+                        var subject = "NCR Pending in Procurement";
+                        var emailContent = "An NCR from Operations is pending in Operations and has not been created yet.";
+                        await NotificationCreate(ncr.NcrId, subject, emailContent);
+                    }
+                }
+            }
+        }
+
         public IActionResult ExportToExcel()
         {
             var ncrOperation = _context.NcrProcurements
