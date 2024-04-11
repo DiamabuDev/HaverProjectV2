@@ -665,7 +665,7 @@ namespace HaverDevProject.Controllers
                 NcrId = ncr.NcrId,
                 NcrNumber = ncr.NcrNumber,
                 SupplierName = ncr.NcrQa.Supplier.SupplierName,
-                Created = ncr.NcrQa.UpdatedOn
+                Created = ncr.NcrQa.NcrQacreationDate
             }).ToList();
 
             return Json(ncrs);
