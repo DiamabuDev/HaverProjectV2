@@ -270,7 +270,7 @@ namespace HaverDevProject.Controllers
 
                 if (createResult.Succeeded && !string.IsNullOrWhiteSpace(model.SelectedRole))
                 {                   
-                    await NotificationCreate(user.Id);
+                    await NotificationCreate(user.Id, "create");
 
                     var roleResult = await _userManager.AddToRoleAsync(user, model.SelectedRole);
                     if (!roleResult.Succeeded)
@@ -398,7 +398,7 @@ namespace HaverDevProject.Controllers
 
                 if (emailChanged)
                 {
-                    await NotificationCreate(user.Id);
+                    await NotificationCreate(user.Id, "edit");
                     TempData["SuccessMessage"] = "User edited successfully! An email has been sent to reset the password.";
                 }
                 else
@@ -419,7 +419,7 @@ namespace HaverDevProject.Controllers
             ViewBag.Roles = new SelectList(roles, "Name", "Name");
         }
 
-        public async Task<IActionResult> NotificationCreate(string? id)
+        public async Task<IActionResult> NotificationCreate(string? id, string operationType)
         {
 
             if (id == null)
@@ -449,12 +449,14 @@ namespace HaverDevProject.Controllers
                         values: new { area = "Identity", code },
                         protocol: Request.Scheme);
 
+                    var subject = operationType == "create" ? "New User Created" : "User Edited";
+
                     string logo = "https://haverniagara.com/wp-content/themes/haver/images/logo-haver.png";
                     var msg = new EmailMessage()
                     {
                         ToAddresses = new List<EmailAddress> { emailAddress},
-                        Subject = "New User. Reset Password",
-                        Content = $"<p>New User created.<br></p>" +
+                        Subject = subject,
+                        Content = $"<p>{subject}.<br></p>" +
                                   "<p>Please reset your password. <a href=\"" + callbackUrl + "\">Reset Password</a></p>" +
                                   $"<img src=\"{logo}\">" +
                                   "<p>This is an automated email. Please do not reply.</p>",
