@@ -430,7 +430,8 @@ namespace HaverDevProject.Controllers
                         {
                             NcrNumber = newNcrNumber,
                             NcrStatus = true,
-                            NcrLastUpdated = DateTime.Now                            
+                            NcrLastUpdated = DateTime.Now,
+                            NcrPhase = NcrPhase.Engineer
                         };
 
                         _context.Ncrs.Add(newNcr);
@@ -456,6 +457,8 @@ namespace HaverDevProject.Controllers
                             NcrQacreationDate = DateTime.Now,
                             NcrQaUserId = user.Id,
                             NcrQaEngDispositionRequired = ncrToUpdate.NcrQa.NcrQaEngDispositionRequired
+
+                            //Change phase to Engineering
                         };
 
                         _context.NcrQas.Add(newNcrQa);
@@ -616,6 +619,8 @@ namespace HaverDevProject.Controllers
 
         private async Task AddReInspectPictures(NcrReInspect ncrReInspect, List<IFormFile> pictures)
         {
+            var thumbnailUrls = new List<string>();
+
             if (pictures != null && pictures.Any())
             {
                 // If the NcrReInspect already has some photos, keep them
