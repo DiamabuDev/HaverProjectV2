@@ -28,6 +28,7 @@ namespace HaverDevProject.Controllers.APIs
                 .Include(n => n.Supplier)
                 .Include(n => n.Item)
                 .Include(n => n.Defect)
+                .Include(n => n.Ncr).ThenInclude(n => n.NcrProcurement)
                 .Select(n => new NcrQaApiDTO
                 {
                     NcrNumber = n.Ncr.NcrNumber,
@@ -41,6 +42,7 @@ namespace HaverDevProject.Controllers.APIs
                     NcrQaQuanReceived = n.NcrQaQuanReceived,
                     NcrQaQuanDefective = n.NcrQaQuanDefective,
                     SupplierId = n.SupplierId,
+                    TotalCost = n.Ncr.NcrProcurement.NcrProcRejectedValue, //Adding Cost
                     SupplierApiDTO = new SupplierApiDTO
                     {
                         SupplierId = n.Supplier.SupplierId,
@@ -72,7 +74,8 @@ namespace HaverDevProject.Controllers.APIs
             {
                 return NotFound(new { message = "Error: No Ncrs records in the system." });
             }
-        }
+        }       
+
     }    
 }
 

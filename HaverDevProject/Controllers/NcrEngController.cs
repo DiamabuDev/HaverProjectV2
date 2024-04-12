@@ -362,7 +362,7 @@ namespace HaverDevProject.Controllers
                     .ThenInclude(qa => qa.ItemDefectPhotos)
                 .FirstOrDefaultAsync(n => n.NcrId == ncrId);
 
-            ViewBag.IsNCRQaView = false;
+            ViewBag.IsNCRQaView = true;
             ViewBag.IsNCREngView = false;
             ViewBag.IsNCROpView = false;
             ViewBag.IsNCRProcView = false;
@@ -479,8 +479,8 @@ namespace HaverDevProject.Controllers
                         .FirstOrDefaultAsync(n => n.NcrEngId == ncrEngId);
 
                     // Send notification email to Procurement
-                    var subject = "New NCR Created " + ncr.NcrNumber;
-                    var emailContent = "A new NCR has been created:<br><br>Ncr #: " + ncr.NcrNumber + "<br>Supplier: " + ncr.NcrQa.Supplier.SupplierName;
+                    var subject = "New NCR Created in Engineer " + ncr.NcrNumber;
+                    var emailContent = "A new NCR has been created:<br><br>NCR #: " + ncr.NcrNumber + "<br>Supplier: " + ncr.NcrQa.Supplier.SupplierName;
                     await NotificationCreate(ncrEngId, subject, emailContent);
                     return RedirectToAction("Details", new { id = ncrEngId, referrer = "Create" });
                 }
@@ -620,8 +620,8 @@ namespace HaverDevProject.Controllers
                         .FirstOrDefaultAsync(n => n.NcrEngId == ncrEngId);
 
                     // Send notification email to Procurement
-                    var subject = "NCR Edited " + ncr.NcrNumber;
-                    var emailContent = "A NCR has been edited :<br><br>Ncr #: " + ncr.NcrNumber + "<br>Supplier: " + ncr.NcrQa.Supplier.SupplierName;
+                    var subject = "NCR Edited in Engineer " + ncr.NcrNumber;
+                    var emailContent = "A NCR has been edited :<br><br>NCR #: " + ncr.NcrNumber + "<br>Supplier: " + ncr.NcrQa.Supplier.SupplierName;
                     await NotificationEdit(ncrEngId, subject, emailContent);
 
                     return RedirectToAction("Details", new { id = ncrEngId, referrer = "Edit" });
@@ -665,7 +665,7 @@ namespace HaverDevProject.Controllers
                 NcrId = ncr.NcrId,
                 NcrNumber = ncr.NcrNumber,
                 SupplierName = ncr.NcrQa.Supplier.SupplierName,
-                Created = ncr.NcrQa.UpdatedOn
+                Created = ncr.NcrQa.NcrQacreationDate
             }).ToList();
 
             return Json(ncrs);
@@ -791,7 +791,7 @@ namespace HaverDevProject.Controllers
                     {
                         ToAddresses = emailAddresses,
                         Subject = Subject,
-                        Content = "<p>" + emailContent + "<br><br></p><p>Please access to <strong>Haver NCR APP</strong> to review.</p><br>Link: <a href=\"" + link + "\">" + "Go to NCR" + "</a><br>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
+                        Content = "<p>" + emailContent + "<br><br></p><p>Please access the <strong>Haver NCR APP</strong> to review.</p><br>Link: <a href=\"" + link + "\">" + "Go to NCR" + "</a><br>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
                     };
                     await _emailSender.SendToManyAsync(msg);
                 }
@@ -848,7 +848,7 @@ namespace HaverDevProject.Controllers
                     {
                         ToAddresses = emailAddresses,
                         Subject = Subject,
-                        Content = "<p>" + emailContent + "<br><br></p><p>Please access to <strong>Haver NCR APP</strong> to review.</p><br>Link: <a href=\"" + link + "\">" + "Go to NCR" + "</a><br>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
+                        Content = "<p>" + emailContent + "<br><br></p><p>Please access the <strong>Haver NCR APP</strong> to review.</p><br>Link: <a href=\"" + link + "\">" + "Go to NCR" + "</a><br>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
                     };
                     await _emailSender.SendToManyAsync(msg);
                 }
@@ -864,6 +864,32 @@ namespace HaverDevProject.Controllers
             }
 
             return View();
+        }
+
+        //24 Hour Notification
+        public async Task CheckAndSendEmailNotifications()
+        {
+            // Get pending NCRs from Engineering that are older than 24 hours
+            var pendingNCRs = await _context.NcrQas
+                .Where(n => n.Ncr.NcrPhase == NcrPhase.QualityInspector && n.NcrQacreationDate <= DateTime.Now.AddHours(-24))
+                .ToListAsync();
+
+            foreach (var ncr in pendingNCRs)
+            {
+                // Check if an NCR has not been created in Operations
+                var ncrInOps = await _context.NcrEngs.FirstOrDefaultAsync(op => op.NcrId == ncr.NcrId);
+                if (ncrInOps == null)
+                {
+                    // Check if it's exactly 24 hours since the NCR was created in Engineering
+                    if (DateTime.Now.Subtract(ncr.NcrQacreationDate).TotalHours == 24)
+                    {
+                        // Send notification email to Operations or Admin role
+                        var subject = "NCR Pending in Engineer";
+                        var emailContent = "An NCR from Quality is pending in Operations and has not been created yet.";
+                        await NotificationCreate(ncr.NcrId, subject, emailContent);
+                    }
+                }
+            }
         }
 
         public IActionResult ExportToExcel()

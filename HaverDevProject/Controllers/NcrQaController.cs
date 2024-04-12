@@ -433,8 +433,8 @@ namespace HaverDevProject.Controllers
                 .FirstOrDefaultAsync(n => n.SupplierId == ncrQa.SupplierId);
 
                 // Send notification email to Eng or Ops
-                var subject = "New NCR Created " + ncr.NcrNumber;
-                var emailContent = "A new NCR has been created:<br><br>Ncr #: " + ncr.NcrNumber + "<br>Supplier: " + Supplier.SupplierName;
+                var subject = "New NCR Created in Quality " + ncr.NcrNumber;
+                var emailContent = "A new NCR has been created:<br><br>NCR #: " + ncr.NcrNumber + "<br>Supplier: " + Supplier.SupplierName;
                 await NotificationCreate(NcrQaId, subject, emailContent);
 
                 return RedirectToAction("Details", new { id = ncrQaId, referrer = "Create" });
@@ -625,8 +625,8 @@ namespace HaverDevProject.Controllers
                             .FirstOrDefaultAsync(n => n.NcrQaId == NcrQaId);
 
                         // Send notification email to Eng or Ops
-                        var subject = "NCR Edited " + ncrToUpdate.NcrNumber;
-                        var emailContent = "A NCR has been edited :<br><br>Ncr #: " + ncrToUpdate.NcrNumber + "<br>Supplier: " + ncrToUpdate.NcrQa.Supplier.SupplierName;
+                        var subject = "NCR Edited in Quality " + ncrToUpdate.NcrNumber;
+                        var emailContent = "A NCR has been edited :<br><br>NCR #: " + ncrToUpdate.NcrNumber + "<br>Supplier: " + ncrToUpdate.NcrQa.Supplier.SupplierName;
                         await NotificationCreate(NcrQaId, subject, emailContent);
 
                         return RedirectToAction("Details", new { id = updateNcrQa, referrer = "Edit" });
@@ -866,7 +866,7 @@ namespace HaverDevProject.Controllers
                     {
                         ToAddresses = emailAddresses,
                         Subject = Subject,
-                        Content = "<p>" + emailContent + "<br><br></p><p>Please access to <strong>Haver NCR APP</strong> to review.</p><br>Link: <a href=\"" + link + "\">" + "Go to NCR" + "</a><br>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
+                        Content = "<p>" + emailContent + "<br><br></p><p>Please access the <strong>Haver NCR APP</strong> to review.</p><br>Link: <a href=\"" + link + "\">" + "Go to NCR" + "</a><br>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
                     };
                     await _emailSender.SendToManyAsync(msg);
                 }
@@ -919,7 +919,7 @@ namespace HaverDevProject.Controllers
                     {
                         ToAddresses = emailAddresses,
                         Subject = Subject,
-                        Content = "<p>" + emailContent + "<br><br></p><p>Please access to <strong>Haver NCR APP</strong> to review.</p><br>Link: <a href=\"" + link + "\">" + "Go to NCR" + "</a><br>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
+                        Content = "<p>" + emailContent + "<br><br></p><p>Please access the <strong>Haver NCR APP</strong> to review.</p><br>Link: <a href=\"" + link + "\">" + "Go to NCR" + "</a><br>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
                     };
                     await _emailSender.SendToManyAsync(msg);
                 }
