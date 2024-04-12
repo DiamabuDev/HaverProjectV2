@@ -20,5 +20,7 @@ namespace HaverDevProject.Models
         Archive,
         [Display(Name = "Void")]
         Void,
+        [Display(Name = "Draft")]
+        Draft,
     }
 }

@@ -77,7 +77,7 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Defect)
                 .Include(n => n.Ncr)
                 .Where(n => n.Ncr.NcrPhase != NcrPhase.Archive)
-                .AsNoTracking();
+                .AsNoTracking();                       
 
             //Filterig values            
             if (!String.IsNullOrEmpty(filter))
@@ -343,25 +343,78 @@ namespace HaverDevProject.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int NcrQaId, int NcrId, NcrQaDTO ncrQaDTO, List<IFormFile> Photos, bool isDraft = false) 
-        {
-            // validate if there are cookies available
+        {            
             if (isDraft)
             {
-                // convert the object to json format
-                var json = JsonConvert.SerializeObject(ncrQaDTO);
+                var user = await _userManager.GetUserAsync(User);
+                string NcrNewNumberValidated = GetNcrNumber();
 
-                // Save the object in a cookie with name "DraftData"
-                Response.Cookies.Append("DraftNCRQa", json, new CookieOptions
+                Ncr ncr = new Ncr
                 {
-                    // Define time for cookies
-                    Expires = DateTime.Now.AddMinutes(2880) // Cookies will expire in 48 hrs
-                });
+                    NcrNumber = NcrNewNumberValidated,
+                    NcrLastUpdated = DateTime.Now,
+                    NcrStatus = ncrQaDTO.NcrStatus,
+                    NcrPhase = NcrPhase.Draft
+                };
 
-                return Ok(new { success = true, message = "Draft saved successfully.\nNote: This draft will be available for the next 48 hours." });                
+                _context.Add(ncr);
+                await _context.SaveChangesAsync();
+
+                //getting the ncrId through the NcrNumber 
+                int ncrIdObt = _context.Ncrs
+                    .Where(n => n.NcrNumber == NcrNewNumberValidated)
+                    .Select(n => n.NcrId)
+                    .FirstOrDefault();
+
+                await AddPictures(ncrQaDTO, Photos);
+                NcrQa ncrQa = new NcrQa
+                {
+                    NcrQaItemMarNonConforming = ncrQaDTO.NcrQaItemMarNonConforming,
+                    NcrQaProcessApplicable = ncrQaDTO.NcrQaProcessApplicable,
+                    NcrQacreationDate = ncrQaDTO.NcrQacreationDate,
+                    NcrQaOrderNumber = ncrQaDTO.NcrQaOrderNumber,
+                    NcrQaSalesOrder = ncrQaDTO.NcrQaSalesOrder,
+                    NcrQaQuanReceived = ncrQaDTO.NcrQaQuanReceived,
+                    NcrQaQuanDefective = ncrQaDTO.NcrQaQuanDefective,
+                    NcrQaDescriptionOfDefect = ncrQaDTO.NcrQaDescriptionOfDefect,
+                    NcrQaDefectVideo = ncrQaDTO.NcrQaDefectVideo,
+                    ItemDefectPhotos = ncrQaDTO.ItemDefectPhotos,
+                    NcrQaUserId = user.Id,
+                    NcrId = ncrIdObt,
+                    SupplierId = ncrQaDTO.SupplierId,
+                    ItemId = ncrQaDTO.ItemId,
+                    DefectId = ncrQaDTO.DefectId,
+                    NcrQaEngDispositionRequired = ncrQaDTO.NcrQaEngDispositionRequired
+                };
+
+                _context.NcrQas.Add(ncrQa);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " was saved as draft successfully!";
+                //return Ok(new { success = true, message = "Draft saved successfully."});
+                
+                return RedirectToAction("Index");
             }
+
+            // validate if there are cookies available
+            //if (isDraft)
+            //{
+            //    // convert the object to json format
+            //    var json = JsonConvert.SerializeObject(ncrQaDTO);
+
+            //    // Save the object in a cookie with name "DraftData"
+            //    Response.Cookies.Append("DraftNCRQa", json, new CookieOptions
+            //    {
+            //        // Define time for cookies
+            //        Expires = DateTime.Now.AddMinutes(2880) // Cookies will expire in 48 hrs
+            //    });
+
+            //    return Ok(new { success = true, message = "Draft saved successfully.\nNote: This draft will be available for the next 48 hours." });                
+            //}
 
             if (ModelState.IsValid)
             {
+                
                 var user = await _userManager.GetUserAsync(User);
                 string NcrNewNumberValidated = GetNcrNumber();
                 bool engReq = ncrQaDTO.NcrQaEngDispositionRequired == true ? true : false;
@@ -436,7 +489,7 @@ namespace HaverDevProject.Controllers
                 var subject = "New NCR Created " + ncr.NcrNumber;
                 var emailContent = "A new NCR has been created:<br><br>Ncr #: " + ncr.NcrNumber + "<br>Supplier: " + Supplier.SupplierName;
                 await NotificationCreate(NcrQaId, subject, emailContent);
-
+                
                 return RedirectToAction("Details", new { id = ncrQaId, referrer = "Create" });
             }
 
@@ -482,6 +535,7 @@ namespace HaverDevProject.Controllers
                 NcrId = ncrQa.NcrId,                
                 SupplierId = ncrQa.SupplierId,
                 NcrNumber = ncrQa.Ncr.NcrNumber,
+                NcrPhase = ncrQa.Ncr.NcrPhase,
                 ItemId = ncrQa.ItemId,
                 DefectId = ncrQa.DefectId,
                 NcrQaEngDispositionRequired = ncrQa.NcrQaEngDispositionRequired,
@@ -536,7 +590,7 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int NcrQaId, int NcrId, NcrQaDTO ncrQaDTO, List<IFormFile> Photos)
+        public async Task<IActionResult> Edit(int NcrQaId, int NcrId, NcrQaDTO ncrQaDTO, List<IFormFile> Photos, bool isDraft = false)
         {
             if (ModelState.IsValid)
             {
@@ -557,16 +611,20 @@ namespace HaverDevProject.Controllers
                 if (ncrToUpdate == null)
                 {
                     return NotFound();
-                }
+                }                
+
                 else
-                {                
-                    if (ncrQaDTO.NcrQaEngDispositionRequired == true  && ncrEngExist == false)
+                {
+                    if (isDraft == false)
                     {
-                        ncrToUpdate.NcrPhase = NcrPhase.Engineer;
-                    }
-                    if(ncrQaDTO.NcrQaEngDispositionRequired == false && ncrOperationExist == false)
-                    {
-                        ncrToUpdate.NcrPhase = NcrPhase.Operations;
+                        if (ncrQaDTO.NcrQaEngDispositionRequired == true && ncrEngExist == false)
+                        {
+                            ncrToUpdate.NcrPhase = NcrPhase.Engineer;
+                        }
+                        if (ncrQaDTO.NcrQaEngDispositionRequired == false && ncrOperationExist == false)
+                        {
+                            ncrToUpdate.NcrPhase = NcrPhase.Operations;
+                        }
                     }
 
                     ncrToUpdate.NcrLastUpdated = DateTime.Now;

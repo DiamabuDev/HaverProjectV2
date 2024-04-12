@@ -234,7 +234,16 @@
                 </div>
             </div>
         </div>
-    </form>        
+    </form>
+    
+    <!-- Show Loading Message" -->
+    <div id="loadingOverlay">
+        <div id="loadingSpinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    
+
 </div>
 <div class="modal" tabindex="-1" role="dialog" id="engineerDispositionModal">
     <div class="modal-dialog" role="document">
@@ -263,11 +272,30 @@
 
     <!-- Draft functionality using cookies-->
     @* <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> *@
-    <script>
+    
+   @*  <script>
         $(document).ready(function () {
             $('#saveDraftButton').click(saveDraft);            
         });
-    </script>
+    </script> *@
+
+    <script>
+        $(document).ready(function () {            
+            $("#saveDraftButton").click(function () {
+                // Show the message.
+                var confirmMessage = "This record will be saved as a draft if all the required fields are filled. \nAre you sure you want to continue?";
+                if (confirm(confirmMessage)) {
+                    //if is true, change the value of the parameter  
+                    $("#isDraftInput").val("true");
+                    // Send the form
+                    $("#formQa").submit();
+                } else {                    
+                    return false; 
+                }
+            });
+        });
+    </script>  
+
     <script>
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
