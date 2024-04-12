@@ -454,11 +454,9 @@ namespace HaverDevProject.Controllers
                             SupplierId = ncrToUpdate.NcrQa.SupplierId,
                             ItemId = ncrToUpdate.NcrQa.ItemId,
                             DefectId = ncrToUpdate.NcrQa.DefectId,
-                            NcrQacreationDate = DateTime.Now,
+                            NcrQacreationDate = DateTime.Now.Date,
                             NcrQaUserId = user.Id,
                             NcrQaEngDispositionRequired = ncrToUpdate.NcrQa.NcrQaEngDispositionRequired
-
-                            //Change phase to Engineering
                         };
 
                         _context.NcrQas.Add(newNcrQa);

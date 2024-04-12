@@ -14,6 +14,11 @@
         max-height: 150px;
         margin: 5px;
     }
+
+    img {
+        max-width: 150px;
+        max-height: 150px
+    }
 </style>
 
 <div class="col-md-8 col-10 mx-auto">
@@ -97,7 +102,7 @@
                                                     string imageBase64 = Convert.ToBase64String(d.NcrReInspectPhotoContent);
                                                     string imageSrc = string.Format("data:" + d.NcrReInspectPhotoMimeType + ";base64,{0}", imageBase64);
 
-                                                    <img src="@imageSrc" alt="Photo of @d.FileName" class="img-fluid rounded" style="max-width: 150px; max-height: 150px" />
+                                                    <img src="@imageSrc" alt="Photo of @d.FileName" class="img-fluid rounded" />
                                                 }
                                                 <button type="button" class="btn btn-danger btn-sm ms-2" onclick="deletePhoto(@d.NcrReInspectPhotoId)"><i class="bi bi-trash"></i></button>
 
