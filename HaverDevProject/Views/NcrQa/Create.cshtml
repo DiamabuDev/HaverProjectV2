@@ -3,6 +3,20 @@
 @{
     ViewData["Title"] = "Create";
 }
+
+<style>
+    .thumbnail {
+        max-width: 150px;
+        max-height: 150px;
+        margin: 5px;
+    }
+
+    img {
+        max-width: 150px;
+        max-height: 150px
+    }
+</style>
+
 <div class="col-md-8 col-10 mx-auto">
     <h1><i class="bi bi-caret-right-fill"></i>Quality Representative</h1>
 </div>
@@ -159,8 +173,9 @@
                     <div class="form-group">
                         <label class="control-label custom-file-label"><strong>Upload Photos</strong></label>
                         <div class="input-group mb-3">
-                            <input type="file" class="form-control" name="Photos" multiple="multiple" />
+                            <input type="file" class="form-control" name="Photos" id="imageUpload" multiple="multiple" />
                         </div>                       
+                        <div id="imagePreview"></div>
                     </div>  
                     <div class="form-group">
                         <label asp-for="NcrQaDefectVideo" class="control-label">
@@ -475,5 +490,34 @@
             document.getElementById("Description").value = 'See photos. Packing slip and package labels do not match the actual dimensions of the washers.';
             document.getElementById("Video").value = "https://haverniagara.com/, https://www.google.ca";
         }
+    </script>
+
+    <!-- Functionality to display uploaded image thumbnails -->
+    <script>
+        document.getElementById("imageUpload").addEventListener("change", function (event) {
+            var imagePreview = document.getElementById("imagePreview");
+            imagePreview.innerHTML = "";
+
+            var files = event.target.files;
+
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+
+                if (!file.type.match('image.*')) {
+                    continue;
+                }
+
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    var img = new Image();
+                    img.src = e.target.result;
+                    img.classList.add("thumbnail");
+                    imagePreview.appendChild(img);
+                }
+
+                reader.readAsDataURL(file);
+            }
+        });
     </script>
 }

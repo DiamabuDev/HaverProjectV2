@@ -4,6 +4,19 @@
     ViewData["Title"] = "Edit";
 }
 
+<style>
+    .thumbnail {
+        max-width: 150px;
+        max-height: 150px;
+        margin: 5px;
+    }
+
+    img {
+        max-width: 150px;
+        max-height: 150px
+    }
+</style>
+
 <div class="col-md-8 col-10 mx-auto">
     <h1><i class="bi bi-caret-right-fill"></i>Engineer</h1>
     <button class="btn custom-details-btn icon-drop text-start mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#details" aria-expanded="false" aria-controls="details">
@@ -120,13 +133,22 @@
                                     <span class="badge bg-info" id="photoCounter">@fileCount</span> Photos...
                                 </a>
                                 <div class="collapse" id="collapsePhotos@(Model.NcrEngId)">
-                                    @foreach (var d in Model.EngDefectPhotos)
-                                    {
-                                        <div id="photo-@d.EngDefectPhotoId" class="d-flex align-items-center mb-2">
-                                            <a asp-controller="NcrEng" asp-action="Download" asp-route-id="@d.EngDefectPhotoId">@d.FileName</a>
-                                            <button type="button" class="btn btn-danger btn-sm ms-2" onclick="deletePhoto(@d.EngDefectPhotoId)"><i class="bi bi-trash"></i></button>
-                                        </div>
-                                    }
+                                    <div class="row justify-content-center">
+                                        @foreach (var d in Model.EngDefectPhotos)
+                                        {
+                                            <div id="photo-@d.EngDefectPhotoId" class="d-flex align-items-center mb-2">
+                                                @if (d.EngDefectPhotoContent != null)
+                                                {
+                                                    string imageBase64 = Convert.ToBase64String(d.EngDefectPhotoContent);
+                                                    string imageSrc = string.Format("data:" + d.EngDefectPhotoMimeType + ";base64,{0}", imageBase64);
+
+                                                    <img src="@imageSrc" alt="Photo of @d.FileName" class="img-fluid rounded" />
+                                                }
+                                                <button type="button" class="btn btn-danger btn-sm ms-2" onclick="deletePhoto(@d.EngDefectPhotoId)"><i class="bi bi-trash"></i></button>
+
+                                            </div>
+                                        }
+                                    </div>
                                 </div>
                             }
                             else
@@ -139,9 +161,9 @@
                 <div class="form-group">
                     <label class="control-label custom-file-label"> <strong>Upload Photos </strong></label>
                     <div class="input-group mb-3">
-                        <input type="file" class="form-control" name="Photos" multiple="multiple" />
+                        <input type="file" class="form-control" name="Photos" id="imageUpload" multiple="multiple" />
                     </div>
-
+                    <div id="imagePreview"></div>
                 </div>
 
 
@@ -374,5 +396,34 @@
                 }
             });
         }
+    </script>
+
+    <!-- Functionality to display uploaded image thumbnails -->
+    <script>
+        document.getElementById("imageUpload").addEventListener("change", function (event) {
+            var imagePreview = document.getElementById("imagePreview");
+            imagePreview.innerHTML = "";
+
+            var files = event.target.files;
+
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+
+                if (!file.type.match('image.*')) {
+                    continue;
+                }
+
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    var img = new Image();
+                    img.src = e.target.result;
+                    img.classList.add("thumbnail");
+                    imagePreview.appendChild(img);
+                }
+
+                reader.readAsDataURL(file);
+            }
+        });
     </script>
 }
