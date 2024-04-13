@@ -163,14 +163,20 @@
                         @Html.DisplayFor(modelItem => item.Ncr.NcrLastUpdated)
                     </td>
 
-                    <td>
+                    <td class="align-middle">
+                        <div class="btn-group" role="group" aria-label="NCR Actions">
                         @if (item.Ncr.NcrPhase != NcrPhase.Closed)
                         {
-                            <a asp-action="Edit" asp-route-id="@item.NcrOpId" class="btn text-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
+                            <a asp-action="Edit" asp-route-id="@item.NcrOpId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
                         }
 
-                        <td>
-                        <a asp-action="Details" asp-route-id="@item.NcrOpId" class="btn text-primary" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
+                        
+
+                        <a asp-controller="Report" asp-action="DownloadPDF" asp-route-id="@item.NcrId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Download PDF">
+                            <i class="bi bi-file-earmark-pdf"></i>
+                        </a>
+                        <a asp-action="Details" asp-route-id="@item.NcrOpId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
+                        </div>
                     </td>
                 </tr>
 
