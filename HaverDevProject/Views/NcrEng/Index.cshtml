@@ -138,8 +138,8 @@
         <tbody>
             @foreach (var item in Model)
             {
-                <tr class="@(item.Ncr.NcrPhase == NcrPhase.Draft ? "draft-row" : "")">
-                    @if (item.Ncr.NcrPhase == NcrPhase.Draft)
+                <tr class="@(item.NcrEngStatusFlag ? "draft-row" : "")">
+                    @if (item.NcrEngStatusFlag)
                     {
                         <td class="ps-1 draft-dot">
                             <i class="bi bi-circle-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="Draft"></i>
@@ -171,11 +171,11 @@
                     </td>
 
                     <td>
-                        @if (item.Ncr.NcrPhase == NcrPhase.Draft)
+                        @if (item.NcrEngStatusFlag)
                         {
                             <a asp-action="Edit" asp-route-id="@item.NcrEngId" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Edit Draft"><i class="bi bi-pencil-square"></i></a>
                         }
-                        @if (item.Ncr.NcrPhase != NcrPhase.Closed && item.Ncr.NcrPhase != NcrPhase.Draft)
+                        @if (item.Ncr.NcrPhase != NcrPhase.Closed && item.NcrEngStatusFlag == false)
                         {
                             <a asp-action="Edit" asp-route-id="@item.NcrEngId" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
                         }

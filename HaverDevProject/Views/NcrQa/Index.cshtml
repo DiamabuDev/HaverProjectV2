@@ -104,8 +104,8 @@
         <tbody>
             @foreach (var item in Model)
             {
-                <tr class="@(item.Ncr.NcrPhase == NcrPhase.Draft ? "draft-row" : "")">
-                    @if(item.Ncr.NcrPhase == NcrPhase.Draft)
+                <tr class="@(item.NcrQaStatusFlag ? "draft-row" : "")">
+                    @if(item.NcrQaStatusFlag)
                     {
                         <td class="ps-1 draft-dot">
                             <i class="bi bi-circle-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="Draft"></i>
@@ -143,11 +143,11 @@
                         @Html.DisplayFor(modelItem => item.Ncr.NcrLastUpdated)
                     </td>
                     <td>
-                        @if (item.Ncr.NcrPhase == NcrPhase.Draft)
+                        @if (item.NcrQaStatusFlag)
                         {
                             <a asp-action="Edit" asp-route-id="@item.NcrQaId" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Edit Draft"><i class="bi bi-pencil-square"></i></a>
                         }
-                        @if (item.Ncr.NcrPhase != NcrPhase.Closed && item.Ncr.NcrPhase != NcrPhase.Draft)
+                        @if (item.Ncr.NcrPhase != NcrPhase.Closed && item.NcrQaStatusFlag == false)
                         {
                             <a asp-action="Edit" asp-route-id="@item.NcrQaId" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
                         }

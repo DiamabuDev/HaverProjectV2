@@ -422,6 +422,9 @@ namespace HaverDevProject.Controllers
                     //PopulateDropDownLists();
                     await AddPictures(ncrEngDTO, Photos);
 
+                    if (isDraft) ncrEngDTO.NcrEngStatusFlag = true;
+                    
+
                     NcrEng ncrEng = new NcrEng
                     {
                         NcrId = ncrIdObt, // Assign the NcrId from the found Ncr entity
@@ -450,7 +453,7 @@ namespace HaverDevProject.Controllers
 
                     if (isDraft)
                     {
-                        ncr.NcrPhase = NcrPhase.Draft;
+                        ncr.NcrPhase = NcrPhase.Engineer;
                     }
                     else
                     {
@@ -589,15 +592,18 @@ namespace HaverDevProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, NcrEngDTO ncrEngDTO, List<IFormFile> Photos, bool isDraft = false)
         {
+            if (isDraft) ncrEngDTO.NcrEngStatusFlag = true;
+            
             if (ModelState.IsValid)
             {
+                
                 await AddPictures(ncrEngDTO, Photos);
                 try
                 {
                     var ncrEng = await _context.NcrEngs
                         .Include(ne => ne.Drawing)
                         .FirstOrDefaultAsync(ne => ne.NcrEngId == id);
-
+                    
                     ncrEng.NcrEngCustomerNotification = ncrEngDTO.NcrEngCustomerNotification;
                     ncrEng.NcrEngDispositionDescription = ncrEngDTO.NcrEngDispositionDescription;
                     ncrEng.NcrEngCreationDate = ncrEngDTO.NcrEngCreationDate;
@@ -619,10 +625,8 @@ namespace HaverDevProject.Controllers
 
                     var ncr = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrEng.NcrId);
                     ncr.NcrLastUpdated = DateTime.Now;
-                    if (!isDraft)
-                    {
-                        ncr.NcrPhase = NcrPhase.Operations;
-                    }
+
+                    if (!isDraft) ncr.NcrPhase = NcrPhase.Operations;
 
                     _context.Update(ncr);
                     await _context.SaveChangesAsync();
@@ -679,11 +683,16 @@ namespace HaverDevProject.Controllers
 
         public JsonResult GetNcrs()
         {
+            //List<Ncr> pendings = _context.Ncrs
+            //    .Include(n => n.NcrQa).ThenInclude(n => n.Supplier)
+            //    .Where(n => n.NcrPhase == NcrPhase.Engineer)
+            //    .ToList();
 
             List<Ncr> pendings = _context.Ncrs
-                .Include(n => n.NcrQa).ThenInclude(n => n.Supplier)
-                .Where(n => n.NcrPhase == NcrPhase.Engineer)
-                .ToList();
+               .Include(n => n.NcrQa).ThenInclude(n => n.Supplier)
+               
+               .Where(n => n.NcrPhase == NcrPhase.Engineer && n.NcrEng.NcrEngStatusFlag != true)
+               .ToList();
 
             // Extract relevant data for the client-side
             var ncrs = pendings.Select(ncr => new
@@ -699,10 +708,13 @@ namespace HaverDevProject.Controllers
 
         public JsonResult GetPendingCount()
         {
-
             int pendingCount = _context.Ncrs
-                .Where(n => n.NcrPhase == NcrPhase.Engineer)
-                .Count();
+                .Count(n => n.NcrPhase == NcrPhase.Engineer && n.NcrEng.NcrEngStatusFlag != true);
+
+            //int pendingCount = _context.NcrEngs
+            //    .Include(n=>n.Ncr)
+            //    .Where(n=>n.NcrEngStatusFlag == false && n.Ncr.NcrPhase == NcrPhase.Engineer)
+            //    .Count();
 
             return Json(pendingCount);
         }

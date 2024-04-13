@@ -252,7 +252,6 @@
                         </div>
                 </div>
 
-
             <div class="card-footer">
                 <div class="form-group d-flex justify-content-end mt-2">
                     <div>
@@ -260,7 +259,7 @@
                             <i class="bi bi-arrow-90deg-left"></i> Back to the NCR Log
                         </button>
                     </div>
-                    @if (Model.NcrPhase == NcrPhase.Draft)
+                    @if (Model.NcrEngStatusFlag)
                     {
                         <div>
                             <button type="button" id="saveDraftButton" class="btn btn-success ms-4 ">
@@ -277,8 +276,6 @@
                     </div>
                 </div>
             </div>
-
-
         </div>
     </form>
 </div>
