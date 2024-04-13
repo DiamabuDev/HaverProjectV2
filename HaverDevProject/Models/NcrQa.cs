@@ -13,7 +13,7 @@ namespace HaverDevProject.Models;
 public class NcrQa : Auditable
 {    
     public int NcrQaId { get; set; }
-    public bool NcrQaStatusFlag { get; set; }
+    public bool NcrQaStatusFlag { get; set; } = false;
     public bool NcrQaItemMarNonConforming { get; set; }    
     public bool NcrQaProcessApplicable { get; set; }    
     public DateTime NcrQacreationDate { get; set; }    
