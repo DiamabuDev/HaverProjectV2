@@ -36,125 +36,125 @@ namespace HaverDevProject.Data
                         {
                             SupplierCode = "793254",
                             SupplierName = "INTEGRITY WOVEN WIRE",
-                            SupplierEmail = "integritywire@example.com",
+                            SupplierEmail = "integritywire@integrity.com",
                             SupplierStatus = false
                         },
                         new Supplier
                         {
                             SupplierCode = "792356",
                             SupplierName = "FLO COMPONENTS LTD.",
-                            SupplierEmail = "flocompltd@example.com",
+                            SupplierEmail = "flocompltd@flo.com",
                             SupplierStatus = false
                         },
                         new Supplier
                         {
                             SupplierCode = "700009",
                             SupplierName = "AJAX TOCCO",
-                            SupplierEmail = "ajaxtocco@example.com"
+                            SupplierEmail = "ajaxtocco@ajax.com"
                         },
                         new Supplier
                         {
                             SupplierCode = "700013",
                             SupplierName = "HINGSTON METAL FABRICATORS",
-                            SupplierEmail = "hingstonmetal@example.com"
+                            SupplierEmail = "hingstonmetal@hingston.com"
                         },
                         new Supplier
                         {
                             SupplierCode = "700027",
                             SupplierName = "HOTZ ENVIRONMENTAL SERVICES",
-                            SupplierEmail = "hotzservices@example.com"
+                            SupplierEmail = "hotzservices@hotz.com"
                         },
                         new Supplier
                         {
                             SupplierCode = "700044",
                             SupplierName = "BLACK CREEK METAL",
-                            SupplierEmail = "blackcreekmetal@example.com",
+                            SupplierEmail = "blackcreekmetal@blackcreek.com",
                             SupplierStatus = false
                         },
                         new Supplier
                         {
                             SupplierCode = "700045",
                             SupplierName = "POLYMER EXTRUSIONS INC",
-                            SupplierEmail = "lsm@example.com"
+                            SupplierEmail = "lsm@polymerextrusions.com"
                         },
                         new Supplier
                         {
                             SupplierCode = "700087",
                             SupplierName = "DON CASSELMAN & SON LTD",
-                            SupplierEmail = "fastenal@example.com"
+                            SupplierEmail = "fastenal@casselman.com"
                         },
                         new Supplier
                         {
                             SupplierCode = "880006",
                             SupplierName = "W S TYLER - PARTICLE & FINE",
-                            SupplierEmail = "wstyler@example.com"
+                            SupplierEmail = "wstyler@wstyler.com"
                         },
                         new Supplier
                         {
                             SupplierCode = "790891",
                             SupplierName = "LAWRENCE SINTERED METALS",
-                            SupplierEmail = "lsm@example.com"
+                            SupplierEmail = "lsm@olawrence.com"
                         },
                         new Supplier
                         {
                             SupplierCode = "700493",
                             SupplierName = "FASTENAL COMPANY",
-                            SupplierEmail = "fastenal@example.com"
+                            SupplierEmail = "fastenalcompany@fastenal.com"
                         },
 
                         new Supplier
                         {
                             SupplierCode = "880065",
                             SupplierName = "HBC ENGINEERING",
-                            SupplierEmail = "hbc@example.com"
+                            SupplierEmail = "hbcengineering@hbc.com"
                         },
                         new Supplier
                         {
                             SupplierCode = "700502",
                             SupplierName = "ST CATHARINES PATTERN LTD",
-                            SupplierEmail = "stcathpattern@example.com"
+                            SupplierEmail = "stcathpattern@patternltd.com"
                         },
                         new Supplier
                         {
                             SupplierCode = "700505",
                             SupplierName = "NIAGARA PRECISION LTD",
-                            SupplierEmail = "niagaraprecision@example.com"
+                            SupplierEmail = "niagaraprecision@niagaraprecision.com"
                         },
                         new Supplier
                         {
                             SupplierCode = "700508",
                             SupplierName = "BORDER CITY CASTINGS",
-                            SupplierEmail = "bordercity@example.com"
+                            SupplierEmail = "bordercitycastings@bordercity.com"
                         },
                         new Supplier
                         {
                             SupplierCode = "888888",
                             SupplierName = "HBC PROCUREMENT",
-                            SupplierEmail = "hbcprocurement@example.com",
+                            SupplierEmail = "hbcprocurement@hbc.com",
                         },
                         new Supplier
                         {
                             SupplierCode = "792679",
                             SupplierName = "IFM EFFECTOR CANADA INC.",
-                            SupplierEmail = "ifm@example.com"
+                            SupplierEmail = "ifmeffector@ifm.com"
                         },
                         new Supplier
                         {
                             SupplierCode = "792565",
                             SupplierName = "PLAS-TECH DESIGN FABRICATION DISTRI",
-                            SupplierEmail = "plastech@example.com"
+                            SupplierEmail = "plastechdesign@plastech.com"
                         },
                         new Supplier
                         {
                             SupplierCode = "792493",
                             SupplierName = "SGF-SUDDEUTSCHE GELENKSCHEIBENFABRI",
-                            SupplierEmail = "sgfsudd@example.com"
+                            SupplierEmail = "sgfsudd@sgf.com"
                         },
                         new Supplier
                         {
                             SupplierCode = "792011",
                             SupplierName = "VANDER WEYDEN CONSTRUCTION",
-                            SupplierEmail = "vander@example.com"
+                            SupplierEmail = "vanderweydenconstruction@vander.com"
                         });
 
                     context.SaveChanges();
@@ -429,7 +429,7 @@ namespace HaverDevProject.Data
                             NcrQaOrderNumber = "4500695162",
                             NcrQaQuanReceived = 10,
                             NcrQaQuanDefective = 8,
-                            NcrQaDescriptionOfDefect = "Example description 1",
+                            NcrQaDescriptionOfDefect = "quality of item was not up to specifications",
                             NcrQaEngDispositionRequired = true
                         },
                         new NcrQa
@@ -445,7 +445,7 @@ namespace HaverDevProject.Data
                             NcrQaOrderNumber = "4500695429",
                             NcrQaQuanReceived = 5,
                             NcrQaQuanDefective = 5,
-                            NcrQaDescriptionOfDefect = "Example description 2",
+                            NcrQaDescriptionOfDefect = "The inner race has not the right size",
                             NcrQaEngDispositionRequired = true
                         },
                         new NcrQa
@@ -462,7 +462,7 @@ namespace HaverDevProject.Data
                             NcrQaOrderNumber = "4500684525",
                             NcrQaQuanReceived = 12,
                             NcrQaQuanDefective = 3,
-                            NcrQaDescriptionOfDefect = "Example description 3",
+                            NcrQaDescriptionOfDefect = "The outer race has not the right size",
                             NcrQaEngDispositionRequired = true
                         },
                         new NcrQa
@@ -478,7 +478,7 @@ namespace HaverDevProject.Data
                             NcrQaOrderNumber = "4500683983",
                             NcrQaQuanReceived = 28,
                             NcrQaQuanDefective = 14,
-                            NcrQaDescriptionOfDefect = "Example description 4",
+                            NcrQaDescriptionOfDefect = "Missing installation coils",
                             NcrQaEngDispositionRequired = true
                         },
                         new NcrQa
@@ -494,7 +494,7 @@ namespace HaverDevProject.Data
                             NcrQaOrderNumber = "4500694121",
                             NcrQaQuanReceived = 2,
                             NcrQaQuanDefective = 2,
-                            NcrQaDescriptionOfDefect = "Example description 5",
+                            NcrQaDescriptionOfDefect = "Item is too big, not the right size",
                             NcrQaEngDispositionRequired = true
                         },
                         new NcrQa
@@ -511,7 +511,7 @@ namespace HaverDevProject.Data
                             NcrQaOrderNumber = "4500681790",
                             NcrQaQuanReceived = 1,
                             NcrQaQuanDefective = 1,
-                            NcrQaDescriptionOfDefect = "Example description 6",
+                            NcrQaDescriptionOfDefect = "Missing necessary bolts",
                             NcrQaEngDispositionRequired = true
                         },
                         new NcrQa
@@ -527,7 +527,7 @@ namespace HaverDevProject.Data
                             NcrQaOrderNumber = "4500671162",
                             NcrQaQuanReceived = 9,
                             NcrQaQuanDefective = 8,
-                            NcrQaDescriptionOfDefect = "Example description 7",
+                            NcrQaDescriptionOfDefect = "Quality of item is not acceptable",
                             NcrQaEngDispositionRequired = true
                         },
                         new NcrQa
@@ -543,7 +543,7 @@ namespace HaverDevProject.Data
                             NcrQaOrderNumber = "4500685546",
                             NcrQaQuanReceived = 4,
                             NcrQaQuanDefective = 1,
-                            NcrQaDescriptionOfDefect = "Example description 8",
+                            NcrQaDescriptionOfDefect = "Not the right size, too big",
                             NcrQaEngDispositionRequired = true
                         },
                         new NcrQa
@@ -559,7 +559,7 @@ namespace HaverDevProject.Data
                             NcrQaOrderNumber = "4500683210",
                             NcrQaQuanReceived = 15,
                             NcrQaQuanDefective = 10,
-                            NcrQaDescriptionOfDefect = "Example description 9",
+                            NcrQaDescriptionOfDefect = "Not the right size, too big",
                             NcrQaEngDispositionRequired = true
                         },
                         new NcrQa
@@ -576,7 +576,7 @@ namespace HaverDevProject.Data
                             NcrQaOrderNumber = "4500700595",
                             NcrQaQuanReceived = 17,
                             NcrQaQuanDefective = 6,
-                            NcrQaDescriptionOfDefect = "Example description 10",
+                            NcrQaDescriptionOfDefect = "Quality of item is not acceptable",
                             NcrQaEngDispositionRequired = true
                         },
                         new NcrQa
@@ -592,7 +592,7 @@ namespace HaverDevProject.Data
                             NcrQaOrderNumber = "4500695645",
                             NcrQaQuanReceived = 12,
                             NcrQaQuanDefective = 2,
-                            NcrQaDescriptionOfDefect = "Example description 11",
+                            NcrQaDescriptionOfDefect = "Quality of item is not acceptable",
                             NcrQaEngDispositionRequired = true
                         },
                         new NcrQa
@@ -608,7 +608,7 @@ namespace HaverDevProject.Data
                             NcrQaOrderNumber = "4500691574",
                             NcrQaQuanReceived = 24,
                             NcrQaQuanDefective = 6,
-                            NcrQaDescriptionOfDefect = "Example description 12",
+                            NcrQaDescriptionOfDefect = "Missing three bolts",
                             NcrQaEngDispositionRequired = true
                         });
                     context.SaveChanges();
@@ -652,7 +652,7 @@ namespace HaverDevProject.Data
                         new NcrEng
                         {
                             NcrEngCustomerNotification = true,
-                            NcrEngDispositionDescription = "Example Description of Disposition 2",
+                            NcrEngDispositionDescription = "Item will be repaired in shop",
                             NcrEngUserId = "2",
                             NcrEngCreationDate = DateTime.Parse("2023-12-19"),
                             NcrEngCompleteDate = DateTime.Parse("2023-12-19"),
@@ -662,7 +662,7 @@ namespace HaverDevProject.Data
                         new NcrEng
                         {
                             NcrEngCustomerNotification = true,
-                            NcrEngDispositionDescription = "Example Description of Disposition 3",
+                            NcrEngDispositionDescription = "item will be reprocessed to ensure compliance of the product with applicable specifications",
                             NcrEngUserId = "2",
                             NcrEngCreationDate = DateTime.Parse("2023-12-23"),
                             NcrEngCompleteDate = DateTime.Parse("2023-12-23"),
@@ -702,7 +702,7 @@ namespace HaverDevProject.Data
                         new NcrEng
                         {
                             NcrEngCustomerNotification = true,
-                            NcrEngDispositionDescription = "Example Description of Disposition 7",
+                            NcrEngDispositionDescription = "item will be reprocessed to ensure compliance of the product with applicable specifications",
                             NcrEngUserId = "2",
                             NcrEngCreationDate = DateTime.Parse("2024-01-11"),
                             NcrEngCompleteDate = DateTime.Parse("2024-01-11"),
@@ -712,7 +712,7 @@ namespace HaverDevProject.Data
                         new NcrEng
                         {
                             NcrEngCustomerNotification = true,
-                            NcrEngDispositionDescription = "Example Description of Disposition 8",
+                            NcrEngDispositionDescription = "item will be reprocessed to ensure compliance of the product with applicable specifications",
                             NcrEngUserId = "2",
                             NcrEngCreationDate = DateTime.Parse("2024-01-15"),
                             NcrEngCompleteDate = DateTime.Parse("2024-01-15"),
@@ -722,7 +722,7 @@ namespace HaverDevProject.Data
                         new NcrEng
                         {
                             NcrEngCustomerNotification = false,
-                            NcrEngDispositionDescription = "Example Description of Disposition 9",
+                            NcrEngDispositionDescription = "Item will be repaired in shop to conform to requirements",
                             NcrEngUserId = "2", 
                             NcrEngCreationDate = DateTime.Parse("2024-01-22"),
                             NcrEngCompleteDate = DateTime.Parse("2024-01-22"),
@@ -1055,7 +1055,7 @@ namespace HaverDevProject.Data
                             NcrProcCreated = DateTime.Parse("2023-12-19"),
                             NcrProcCompleteDate = DateTime.Parse("2023-12-19"),
                             SupplierReturnMANum = "11345",
-                            SupplierReturnName = "FEDEX",
+                            SupplierReturnName = "Purolator",
                             SupplierReturnAccount = "12345",
                             NcrProcRejectedValue = 15087.00M,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-138").NcrId
@@ -1106,7 +1106,7 @@ namespace HaverDevProject.Data
                             NcrProcCreated = DateTime.Parse("2024-01-14"),
                             NcrProcCompleteDate = DateTime.Parse("2024-01-14"),
                             SupplierReturnMANum = "11345",
-                            SupplierReturnName = "FEDEX",
+                            SupplierReturnName = "Purolator",
                             SupplierReturnAccount = "12345",
                             NcrProcRejectedValue = 2714.50M,
                             NcrId = context.Ncrs.FirstOrDefault(f => f.NcrNumber == "2023-141").NcrId
