@@ -654,7 +654,6 @@ namespace HaverDevProject.Controllers
                         await NotificationEdit(ncrEngId, subject, emailContent);
                     }                    
 
-
                     return RedirectToAction("Details", new { id = ncrEngId, referrer = "Edit" });
                 }
                 catch (DbUpdateConcurrencyException)
@@ -690,8 +689,7 @@ namespace HaverDevProject.Controllers
             //    .ToList();
 
             List<Ncr> pendings = _context.Ncrs
-               .Include(n => n.NcrQa).ThenInclude(n => n.Supplier)
-               
+               .Include(n => n.NcrQa).ThenInclude(n => n.Supplier)               
                .Where(n => n.NcrPhase == NcrPhase.Engineer && n.NcrEng.NcrEngStatusFlag != true)
                .ToList();
 

@@ -150,10 +150,20 @@
         <tbody>
             @foreach (var item in Model.Where(ncr => ncr.Ncr.NcrPhase != NcrPhase.Archive))
             {
-                <tr>
-                    <td class="ps-1 @((item.Ncr.NcrStatus == true) ? "stillactive" : "closed" )">
-                        <i class="bi bi-circle-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="@((item.Ncr.NcrStatus == true) ? "Active" : "Closed")"></i>
-                    </td>
+                <tr class="@(item.NcrProcFlagStatus ? "draft-row" : "")">
+                    @if (item.NcrProcFlagStatus)
+                    {
+                        <td class="ps-1 draft-dot">
+                            <i class="bi bi-circle-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="Draft"></i>
+                        </td>
+                    }
+                    else
+                    {
+                        <td class="ps-1 @((item.Ncr.NcrStatus == true) ? "stillactive" : "closed" )">
+                            <i class="bi bi-circle-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="@((item.Ncr.NcrStatus == true) ? "Active" : "Closed")"></i>
+                        </td>
+                    }
+                    
                     <td class="d-none d-md-table-cell">
                         @Html.DisplayFor(modelItem => item.Ncr.NcrQa.NcrQacreationDate)
                     </td>
@@ -187,19 +197,22 @@
                 @Html.DisplayFor(modelItem => item.Ncr.NcrStatus)
                 </td> *@
 
-                    <td class="align-middle">
-                        <div class="btn-group" role="group" aria-label="NCR Actions">
-                        @if (item.Ncr.NcrPhase != NcrPhase.Closed)
-                        {
-                            <a asp-action="Edit" asp-route-id="@item.NcrProcurementId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
-                        }
 
+                    <td class="align-middle">
+                      <div class="btn-group" role="group" aria-label="NCR Actions">
+                        @if (item.NcrProcFlagStatus)
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.NcrProcurementId" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Edit Draft"><i class="bi bi-pencil-square"></i></a>
+                        }
+                        @if (item.Ncr.NcrPhase != NcrPhase.Closed && item.NcrProcFlagStatus == false)
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.NcrProcurementId" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
+                        }
                         <a asp-controller="Report" asp-action="DownloadPDF" asp-route-id="@item.NcrId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Download PDF">
                             <i class="bi bi-file-earmark-pdf"></i>
                         </a>
-
-                        <a asp-action="Details" asp-route-id="@item.NcrProcurementId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>
-
+                        <a asp-action="Details" asp-route-id="@item.NcrProcurementId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Details"><i class="bi bi-eye-fill"></i></a>                        
+                        
                         @* <a asp-action="Delete" asp-route-id="@item.NcrQaId">Delete</a> *@
                         </div>
                     </td>

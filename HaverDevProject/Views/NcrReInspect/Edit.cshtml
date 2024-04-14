@@ -23,10 +23,10 @@
 
 <div class="col-md-8 col-10 mx-auto">
     <h1><i class="bi bi-caret-right-fill"></i>Reinspection</h1>
-    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+    <form asp-action="Edit" method="post" enctype="multipart/form-data" id="formReInspect">
         <input type="hidden" asp-for="NcrReInspectId" />
         <input type="hidden" asp-for="NcrId" />
-
+        <input type="hidden" name="isDraft" value="false" id="isDraftInput" />
         <div class="card border-2">
             <div class="card-header bg-custom-color mb-2 d-flex justify-content-between">
                 <div>
@@ -142,6 +142,14 @@
                         <i class="bi bi-arrow-90deg-left"></i> Back to the NCR Log
                     </button>
                 </div>
+                @if (Model.NcrReInspStatusFlag)
+                {
+                    <div>
+                        <button type="button" id="saveDraftButton" class="btn btn-success ms-4 ">
+                            <i class="bi bi-pencil"></i> Save as Draft
+                        </button>
+                    </div>
+                }
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary ms-4" onclick="showCloseReinspectionModal()" id="btnSaveAndClose">
                         <i class="bi bi-floppy"></i> Save and Close
@@ -191,6 +199,23 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <!--Script for draft-->
+    <script>
+        $(document).ready(function () {
+            $("#saveDraftButton").click(function () {
+                // Show the message.
+                var confirmMessage = "This record will be saved as a draft if all the required fields are filled. \nAre you sure you want to continue?";
+                if (confirm(confirmMessage)) {
+                    //if is true, change the value of the parameter
+                    $("#isDraftInput").val("true");
+                    // Send the form
+                    $("#formReInspect").submit();
+                } else {
+                    return false;
+                }
+            });
+        });
+    </script>
     <script>
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
