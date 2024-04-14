@@ -8,6 +8,17 @@
     .red-asterisk {
         color: #DC3545;
     }
+
+    .thumbnail {
+        max-width: 150px;
+        max-height: 150px;
+        margin: 5px;
+    }
+
+    img {
+        max-width: 150px;
+        max-height: 150px
+    }
 </style>
 
 <div class="col-md-8 col-10 mx-auto">
@@ -58,7 +69,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>                   
+                    </div>
                 </div>
 
                 <div class="form-group" id="ReinspectNotes">
@@ -70,7 +81,7 @@
                     <textarea asp-for="NcrReInspectNotes" class="form-control" id="Notes"></textarea>
                     <span asp-validation-for="NcrReInspectNotes" class="text-danger"></span>
                 </div>
-               
+
                 <div class="form-group">
                     <label class="control-label"><strong>Current Photos:</strong></label>
                     <div class="ml-md-3">
@@ -82,13 +93,22 @@
                                     <span class="badge bg-info" id="photoCounter">@fileCount</span> Photos...
                                 </a>
                                 <div class="collapse" id="collapsePhotos@(Model.NcrReInspectId)">
-                                    @foreach (var d in Model.NcrReInspectPhotos)
-                                    {
-                                        <div id="photo-@d.NcrReInspectPhotoId" class="d-flex align-items-center mb-2">
-                                            <a asp-controller="NcrEng" asp-action="Download" asp-route-id="@d.NcrReInspectPhotoId">@d.FileName</a>
-                                            <button type="button" class="btn btn-danger btn-sm ms-2" onclick="deletePhoto(@d.NcrReInspectPhotoId)"><i class="bi bi-trash"></i></button>
-                                        </div>
-                                    }
+                                    <div class="row justify-content-center">
+                                        @foreach (var d in Model.NcrReInspectPhotos)
+                                        {
+                                            <div id="photo-@d.NcrReInspectPhotoId" class="d-flex align-items-center mb-2">
+                                                @if (d.NcrReInspectPhotoContent != null)
+                                                {
+                                                    string imageBase64 = Convert.ToBase64String(d.NcrReInspectPhotoContent);
+                                                    string imageSrc = string.Format("data:" + d.NcrReInspectPhotoMimeType + ";base64,{0}", imageBase64);
+
+                                                    <img src="@imageSrc" alt="Photo of @d.FileName" class="img-fluid rounded" />
+                                                }
+                                                <button type="button" class="btn btn-danger btn-sm ms-2" onclick="deletePhoto(@d.NcrReInspectPhotoId)"><i class="bi bi-trash"></i></button>
+
+                                            </div>
+                                        }
+                                    </div>
                                 </div>
                             }
                             else
@@ -96,13 +116,14 @@
                                 <p id="noPhotosMessage">No photos to display.</p>
                             }
                         </div>
-                    </div>                   
+                    </div>
                 </div>
                 <div class="form-group">
                     <label class="control-label custom-file-label"><b>Upload Additional Photos</b></label>
                     <div class="input-group mb-3">
-                        <input type="file" class="form-control" name="Photos" multiple="multiple" />
+                        <input type="file" class="form-control" name="Photos" id="imageUpload" multiple="multiple" />
                     </div>
+                    <div id="imagePreview"></div>
                 </div>
 
                 <div class="form-group">
@@ -167,7 +188,9 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
     <script>
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
@@ -217,7 +240,7 @@
             }
         });
 
-        document.getElementById('btnSaveAndClose').addEventListener('click', function (event) {            
+        document.getElementById('btnSaveAndClose').addEventListener('click', function (event) {
 
             if ($('input[name="NcrReInspectAcceptable"]:checked').val() === 'false' && $('#ReinspectNotes textarea').val().trim() === '') {
                 $('#ReinspectNotes span.text-danger').text('You must provide reinspection notes if NCR is not acceptable.');
@@ -293,5 +316,34 @@
                 }
             });
         }
+    </script>
+
+    <!-- Functionality to display uploaded image thumbnails -->
+    <script>
+        document.getElementById("imageUpload").addEventListener("change", function (event) {
+            var imagePreview = document.getElementById("imagePreview");
+            imagePreview.innerHTML = "";
+
+            var files = event.target.files;
+
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+
+                if (!file.type.match('image.*')) {
+                    continue;
+                }
+
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    var img = new Image();
+                    img.src = e.target.result;
+                    img.classList.add("thumbnail");
+                    imagePreview.appendChild(img);
+                }
+
+                reader.readAsDataURL(file);
+            }
+        });
     </script>
 }

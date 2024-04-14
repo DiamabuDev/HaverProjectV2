@@ -367,7 +367,7 @@ namespace HaverDevProject.Controllers
 
 
             ViewBag.IsNCRQaView = false;
-            ViewBag.IsNCREngView = false;
+            ViewBag.IsNCREngView = true;
             ViewBag.IsNCROpView = false;
             ViewBag.IsNCRProcView = false;
             ViewBag.IsNCRReInspView = false;
@@ -702,7 +702,7 @@ namespace HaverDevProject.Controllers
                 NcrId = ncr.NcrId,
                 NcrNumber = ncr.NcrNumber,
                 SupplierName = ncr.NcrQa.Supplier.SupplierName,
-                Created = ncr.NcrEng?.UpdatedOn ?? ncr.NcrQa?.UpdatedOn
+                Created = ncr.NcrEng?.NcrEngCompleteDate ?? ncr.NcrQa?.NcrQacreationDate
             }).ToList();
 
             return Json(ncrs);
@@ -824,7 +824,7 @@ namespace HaverDevProject.Controllers
                     {
                         ToAddresses = emailAddresses,
                         Subject = Subject,
-                        Content = "<p>" + emailContent + "<br><br></p><p>Please access to <strong>Haver NCR APP</strong> to review.</p><br>Link: <a href=\"" + link + "\">" + "Go to NCR" + "</a><br>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
+                        Content = "<p>" + emailContent + "<br><br></p><p>Please access the <strong>Haver NCR APP</strong> to review.</p><br>Link: <a href=\"" + link + "\">" + "Go to NCR" + "</a><br>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
                     };
                     await _emailSender.SendToManyAsync(msg);
                 }
@@ -874,7 +874,7 @@ namespace HaverDevProject.Controllers
                     {
                         ToAddresses = emailAddresses,
                         Subject = Subject,
-                        Content = "<p>" + emailContent + "<br><br></p><p>Please access to <strong>Haver NCR APP</strong> to review.</p><br>Link: <a href=\"" + link + "\">" + "Go to NCR" + "</a><br>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
+                        Content = "<p>" + emailContent + "<br><br></p><p>Please access the <strong>Haver NCR APP</strong> to review.</p><br>Link: <a href=\"" + link + "\">" + "Go to NCR" + "</a><br>" + "<br><img src=\"" + logo + "\">" + "<p>This is an automated email. Please do not reply.</p>",
                     };
                     await _emailSender.SendToManyAsync(msg);
                 }
@@ -892,7 +892,7 @@ namespace HaverDevProject.Controllers
             return View();
         }
 
-        //// 24 Hours Notification
+        //24 Hour Notification
         public async Task CheckAndSendEmailNotifications()
         {
             // Get pending NCRs from Engineering that are older than 24 hours
@@ -906,10 +906,14 @@ namespace HaverDevProject.Controllers
                 var ncrInOps = await _context.NcrOperations.FirstOrDefaultAsync(op => op.NcrId == ncr.NcrId);
                 if (ncrInOps == null)
                 {
-                    // Send notification email to Operations or Admin role
-                    var subject = "NCR Pending in Operations";
-                    var emailContent = "An NCR from Engineering is pending in Operations and has not been created yet.";
-                    await NotificationCreate(ncr.NcrId, subject, emailContent);
+                    // Check if it's exactly 24 hours since the NCR was created in Engineering
+                    if (DateTime.Now.Subtract(ncr.NcrEngCreationDate).TotalHours == 24)
+                    {
+                        // Send notification email to Operations or Admin role
+                        var subject = "NCR Pending in Operations";
+                        var emailContent = "An NCR from Engineering is pending in Operations and has not been created yet.";
+                        await NotificationCreate(ncr.NcrId, subject, emailContent);
+                    }
                 }
             }
         }

@@ -6,11 +6,21 @@
 <head>
 
     <style>
-
         .supplier-return-fields {
             max-height: 1000px;
             transition: max-height 0.5s ease-out; 
             overflow: hidden;
+        }
+
+        .thumbnail {
+            max-width: 150px;
+            max-height: 150px;
+            margin: 5px;
+        }
+
+        img {
+            max-width: 150px;
+            max-height: 150px
         }
     </style>
 
@@ -185,8 +195,9 @@
                 <div class="form-group">
                     <label class="control-label custom-file-label" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Choose a Photo to Upload"><strong>Upload Photos </strong></label>
                     <div class="input-group mb-3">
-                        <input type="file" class="form-control" name="photos" multiple="multiple" />
+                        <input type="file" class="form-control" name="photos" id="imageUpload" multiple="multiple" />
                     </div>
+                    <div id="imagePreview"></div>
                 </div>
                 <div class="form-group">
                     <label asp-for="NcrProcDefectVideo" class="control-label"><strong>Video Links </strong><small data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Add multiple video links separated by a comma">(e.g. https://haverniagara.com, https://www.google.ca)</small></label>
@@ -404,4 +415,32 @@
         });
     </script>
 
+    <!-- Functionality to display uploaded image thumbnails -->
+    <script>
+        document.getElementById("imageUpload").addEventListener("change", function (event) {
+            var imagePreview = document.getElementById("imagePreview");
+            imagePreview.innerHTML = "";
+
+            var files = event.target.files;
+
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+
+                if (!file.type.match('image.*')) {
+                    continue;
+                }
+
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    var img = new Image();
+                    img.src = e.target.result;
+                    img.classList.add("thumbnail");
+                    imagePreview.appendChild(img);
+                }
+
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
 }
