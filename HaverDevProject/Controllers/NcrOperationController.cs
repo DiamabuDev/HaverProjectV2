@@ -387,20 +387,20 @@ namespace HaverDevProject.Controllers
         {
             try
             {
-                if (isDraft)
-                {
-                    // convert the object to json format
-                    var json = JsonConvert.SerializeObject(ncrOperationDTO);
+                //if (isDraft)
+                //{
+                //    // convert the object to json format
+                //    var json = JsonConvert.SerializeObject(ncrOperationDTO);
 
-                    // Save the object in a cookie with name "DraftData"
-                    Response.Cookies.Append("DraftNCROperation" + ncrOperationDTO.NcrNumber, json, new CookieOptions
-                    {
-                        // Define time for cookies
-                        Expires = DateTime.Now.AddMinutes(2880) // Cookied will expire in 48 hrs
-                    });
+                //    // Save the object in a cookie with name "DraftData"
+                //    Response.Cookies.Append("DraftNCROperation" + ncrOperationDTO.NcrNumber, json, new CookieOptions
+                //    {
+                //        // Define time for cookies
+                //        Expires = DateTime.Now.AddMinutes(2880) // Cookied will expire in 48 hrs
+                //    });
 
-                    return Ok(new { success = true, message = "Draft saved successfully.\nNote: This draft will be available for the next 48 hours." });
-                }
+                //    return Ok(new { success = true, message = "Draft saved successfully.\nNote: This draft will be available for the next 48 hours." });
+                //}
 
                 if (ModelState.IsValid)
                 {
@@ -411,6 +411,8 @@ namespace HaverDevProject.Controllers
                         .FirstOrDefault();
 
                     await AddPictures(ncrOperationDTO, Photos);
+
+                    if (isDraft) ncrOperationDTO.NcrOpStatusFlag = true;
 
                     NcrOperation ncrOperation = new NcrOperation
                     {
@@ -427,7 +429,8 @@ namespace HaverDevProject.Controllers
                         UpdateOp = DateTime.Now,
                         NcrOperationUserId = user.Id,
                         OpDefectPhotos = ncrOperationDTO.OpDefectPhotos,
-                        NcrOperationVideo = ncrOperationDTO.NcrOperationVideo
+                        NcrOperationVideo = ncrOperationDTO.NcrOperationVideo,
+                        NcrOpStatusFlag = ncrOperationDTO.NcrOpStatusFlag
                     };
 
                     _context.NcrOperations.Add(ncrOperation);
@@ -435,28 +438,41 @@ namespace HaverDevProject.Controllers
 
                     //update ncr 
                     var ncr = await _context.Ncrs.AsNoTracking().FirstOrDefaultAsync(n => n.NcrId == ncrIdObt);
-                    ncr.NcrPhase = NcrPhase.Procurement;
+
+                    if (isDraft)
+                    {
+                        ncr.NcrPhase = NcrPhase.Operations;
+                    }
+                    else
+                    {
+                        ncr.NcrPhase = NcrPhase.Procurement;
+                    }
                     _context.Ncrs.Update(ncr);
                     await _context.SaveChangesAsync();
 
-
-                    TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " saved successfully!";
-                    //Delete cookies
-                    Response.Cookies.Delete("DraftNCROperation" + ncr.NcrNumber);
                     int ncrOpId = ncrOperation.NcrOpId;
+                    if (isDraft)
+                    {
+                        TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " was saved as draft successfully!";
+                    }
+                    else
+                    {                       
+                        TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " saved successfully!";
+                        //Delete cookies
+                        //Response.Cookies.Delete("DraftNCROperation" + ncr.NcrNumber);
+                    
+                        //include supplier name in the email
+                        var ncrOp = await _context.NcrOperations
+                            .Include(n => n.Ncr)
+                            .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
+                            .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
+                            .FirstOrDefaultAsync(n => n.NcrOpId == ncrOpId);
 
-                    //include supplier name in the email
-                    var ncrOp = await _context.NcrOperations
-                        .Include(n => n.Ncr)
-                        .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
-                        .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
-                        .FirstOrDefaultAsync(n => n.NcrOpId == ncrOpId);
-
-                    // Send notification email to Procurement
-                    var subject = "New NCR Created in Operations " + ncr.NcrNumber;
-                    var emailContent = "A new NCR has been created:<br><br>NCR #: " + ncr.NcrNumber + "<br>Supplier: " + ncr.NcrQa.Supplier.SupplierName;
-                    await NotificationCreate(ncrOpId, subject, emailContent);
-
+                        // Send notification email to Procurement
+                        var subject = "New NCR Created " + ncr.NcrNumber;
+                        var emailContent = "A new NCR has been created:<br><br>Ncr #: " + ncr.NcrNumber + "<br>Supplier: " + ncr.NcrQa.Supplier.SupplierName;
+                        await NotificationCreate(ncrOpId, subject, emailContent);
+                    }
                     return RedirectToAction("Details", new { id = ncrOpId });
                 }
             }
@@ -523,6 +539,7 @@ namespace HaverDevProject.Controllers
                 NcrEng = ncrOperation.NcrEng,
                 NcrOperationVideo = ncrOperation.NcrOperationVideo,
                 OpDefectPhotos = ncrOperation.OpDefectPhotos,
+                NcrOpStatusFlag = ncrOperation.NcrOpStatusFlag
             };
 
             var readOnlyDetails = await _context.Ncrs
@@ -560,8 +577,9 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, NcrOperationDTO ncrOperationDTO, List<IFormFile> Photos)
+        public async Task<IActionResult> Edit(int id, NcrOperationDTO ncrOperationDTO, List<IFormFile> Photos, bool isDraft = false)
         {
+            if (isDraft) ncrOperationDTO.NcrOpStatusFlag = true; 
 
             if (ModelState.IsValid)
             {
@@ -587,29 +605,39 @@ namespace HaverDevProject.Controllers
                     ncrOperation.NcrOperationUserId = "b58514b4-b008-43a4-bae2-4a4f4f5408ff";
                     ncrOperation.NcrOperationVideo = ncrOperationDTO.NcrOperationVideo;
                     ncrOperation.OpDefectPhotos = ncrOperationDTO.OpDefectPhotos;
+                    ncrOperation.NcrOpStatusFlag = ncrOperationDTO.NcrOpStatusFlag;
 
                     _context.Update(ncrOperation);
                     await _context.SaveChangesAsync();
 
                     var ncr = await _context.Ncrs.FirstOrDefaultAsync(n => n.NcrId == ncrOperation.NcrId);
                     ncr.NcrLastUpdated = DateTime.Now;
+                    if (!isDraft) ncr.NcrPhase = NcrPhase.Procurement;
                     _context.Update(ncr);
                     await _context.SaveChangesAsync();
-
-                    TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " edited successfully!";
+                    
                     int ncrOpId = ncrOperation.NcrOpId;
 
-                    //include supplier name in the email
-                    var ncrOp = await _context.NcrOperations
-                        .Include(n => n.Ncr)
-                        .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
-                        .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
-                        .FirstOrDefaultAsync(n => n.NcrOpId == ncrOpId);
+                    if(isDraft)
+                    {
+                        TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " was edited as draft successfully!";
+                    }
+                    else
+                    {
+                        TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " edited successfully!";
 
-                    // Send notification email to Procurement
-                    var subject = "NCR Edited in Operations " + ncr.NcrNumber;
-                    var emailContent = "A NCR has been edited :<br><br>NCR #: " + ncr.NcrNumber + "<br>Supplier: " + ncr.NcrQa.Supplier.SupplierName;
-                    await NotificationEdit(ncrOpId, subject, emailContent);
+                        //include supplier name in the email
+                        var ncrOp = await _context.NcrOperations
+                            .Include(n => n.Ncr)
+                            .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
+                            .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Supplier)
+                            .FirstOrDefaultAsync(n => n.NcrOpId == ncrOpId);
+
+                        // Send notification email to Procurement
+                        var subject = "NCR Edited " + ncr.NcrNumber;
+                        var emailContent = "A NCR has been edited :<br><br>Ncr #: " + ncr.NcrNumber + "<br>Supplier: " + ncr.NcrQa.Supplier.SupplierName;
+                        await NotificationEdit(ncrOpId, subject, emailContent);
+                    }                    
 
                     return RedirectToAction("Details", new { id = ncrOpId });
                 }
@@ -656,10 +684,16 @@ namespace HaverDevProject.Controllers
 
         public JsonResult GetNcrs()
         {
+            //List<Ncr> pendings = _context.Ncrs
+            //    .Include(n => n.NcrQa).ThenInclude(n => n.Supplier)
+            //    .Include(n => n.NcrEng)
+            //    .Where(n => n.NcrPhase == NcrPhase.Operations)
+            //    .ToList();
+
             List<Ncr> pendings = _context.Ncrs
                 .Include(n => n.NcrQa).ThenInclude(n => n.Supplier)
                 .Include(n => n.NcrEng)
-                .Where(n => n.NcrPhase == NcrPhase.Operations)
+                .Where(n => n.NcrPhase == NcrPhase.Operations && n.NcrOperation.NcrOpStatusFlag != true)
                 .ToList();
 
             // Extract relevant data for the client-side
@@ -718,8 +752,12 @@ namespace HaverDevProject.Controllers
         //Pending NCRs count
         public JsonResult GetPendingCount()
         {
+            //int pendingCount = _context.Ncrs
+            //    .Where(n => n.NcrPhase == NcrPhase.Operations)
+            //    .Count();
+
             int pendingCount = _context.Ncrs
-                .Where(n => n.NcrPhase == NcrPhase.Operations)
+                .Where(n => n.NcrPhase == NcrPhase.Operations && n.NcrOperation.NcrOpStatusFlag != true)
                 .Count();
 
             return Json(pendingCount);

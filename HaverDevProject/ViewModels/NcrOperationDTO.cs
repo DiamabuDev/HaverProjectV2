@@ -15,6 +15,7 @@ namespace HaverDevProject.ViewModels
         public DateTime NcrOpCompleteDate { get; set; }
         public DateTime NcrOpCreationDate { get; set; }
         public bool NcrStatus { get; set; } = true;
+        public bool NcrOpStatusFlag { get; set; }
         public int NcrOpId { get; set; }
         public int NcrId { get; set; }
         public Ncr Ncr { get; set; }

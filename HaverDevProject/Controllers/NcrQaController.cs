@@ -77,7 +77,7 @@ namespace HaverDevProject.Controllers
                 .Include(n => n.Defect)
                 .Include(n => n.Ncr)
                 .Where(n => n.Ncr.NcrPhase != NcrPhase.Archive)
-                .AsNoTracking();
+                .AsNoTracking();                       
 
             //Filterig values            
             if (!String.IsNullOrEmpty(filter))
@@ -343,25 +343,26 @@ namespace HaverDevProject.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int NcrQaId, int NcrId, NcrQaDTO ncrQaDTO, List<IFormFile> Photos, bool isDraft = false) 
-        {
+        {    
             // validate if there are cookies available
-            if (isDraft)
-            {
-                // convert the object to json format
-                var json = JsonConvert.SerializeObject(ncrQaDTO);
+            //if (isDraft)
+            //{
+            //    // convert the object to json format
+            //    var json = JsonConvert.SerializeObject(ncrQaDTO);
 
-                // Save the object in a cookie with name "DraftData"
-                Response.Cookies.Append("DraftNCRQa", json, new CookieOptions
-                {
-                    // Define time for cookies
-                    Expires = DateTime.Now.AddMinutes(2880) // Cookies will expire in 48 hrs
-                });
+            //    // Save the object in a cookie with name "DraftData"
+            //    Response.Cookies.Append("DraftNCRQa", json, new CookieOptions
+            //    {
+            //        // Define time for cookies
+            //        Expires = DateTime.Now.AddMinutes(2880) // Cookies will expire in 48 hrs
+            //    });
 
-                return Ok(new { success = true, message = "Draft saved successfully.\nNote: This draft will be available for the next 48 hours." });                
-            }
+            //    return Ok(new { success = true, message = "Draft saved successfully.\nNote: This draft will be available for the next 48 hours." });                
+            //}
 
             if (ModelState.IsValid)
             {
+                
                 var user = await _userManager.GetUserAsync(User);
                 string NcrNewNumberValidated = GetNcrNumber();
                 bool engReq = ncrQaDTO.NcrQaEngDispositionRequired == true ? true : false;
@@ -375,6 +376,8 @@ namespace HaverDevProject.Controllers
                     ParentId = ncrQaDTO.ParentId,
                 };
 
+                if (isDraft) ncr.NcrPhase = NcrPhase.QualityInspector;
+
                 _context.Add(ncr);
                 await _context.SaveChangesAsync();
 
@@ -385,6 +388,7 @@ namespace HaverDevProject.Controllers
                     .FirstOrDefault();
 
                 await AddPictures(ncrQaDTO, Photos);
+                
                 NcrQa ncrQa = new NcrQa
                 {
                     NcrQaItemMarNonConforming = ncrQaDTO.NcrQaItemMarNonConforming,
@@ -404,6 +408,7 @@ namespace HaverDevProject.Controllers
                     DefectId = ncrQaDTO.DefectId,
                     NcrQaEngDispositionRequired = ncrQaDTO.NcrQaEngDispositionRequired
                 };
+                ncrQa.NcrQaStatusFlag = isDraft? true : false;
 
                 _context.NcrQas.Add(ncrQa);
                 await _context.SaveChangesAsync();
@@ -418,25 +423,31 @@ namespace HaverDevProject.Controllers
                         await _context.SaveChangesAsync();
                     }
                 }
-
-                TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " saved successfully!";
-                //Delete cookies
-                Response.Cookies.Delete("DraftNCRQa");
                 int ncrQaId = ncrQa.NcrQaId;
+                if (isDraft)
+                {
+                    TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " was saved as draft successfully!";
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = "NCR " + ncr.NcrNumber + " saved successfully!";
+                    //Delete cookies
+                    //Response.Cookies.Delete("DraftNCRQa");                
 
-                var ncrEmail = await _context.Ncrs
-                .AsNoTracking()
-                .FirstOrDefaultAsync(n => n.NcrId == NcrId);
+                    var ncrEmail = await _context.Ncrs
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(n => n.NcrId == NcrId);
 
-                //include supplier name in the email
-                var Supplier = await _context.Suppliers
-                .FirstOrDefaultAsync(n => n.SupplierId == ncrQa.SupplierId);
+                    //include supplier name in the email
+                    var Supplier = await _context.Suppliers
+                    .FirstOrDefaultAsync(n => n.SupplierId == ncrQa.SupplierId);
 
-                // Send notification email to Eng or Ops
-                var subject = "New NCR Created in Quality " + ncr.NcrNumber;
-                var emailContent = "A new NCR has been created:<br><br>NCR #: " + ncr.NcrNumber + "<br>Supplier: " + Supplier.SupplierName;
-                await NotificationCreate(NcrQaId, subject, emailContent);
-
+                    // Send notification email to Eng or Ops
+                    var subject = "New NCR Created " + ncr.NcrNumber;
+                    var emailContent = "A new NCR has been created:<br><br>Ncr #: " + ncr.NcrNumber + "<br>Supplier: " + Supplier.SupplierName;
+                    await NotificationCreate(NcrQaId, subject, emailContent);
+                }                              
+                
                 return RedirectToAction("Details", new { id = ncrQaId, referrer = "Create" });
             }
 
@@ -482,11 +493,13 @@ namespace HaverDevProject.Controllers
                 NcrId = ncrQa.NcrId,                
                 SupplierId = ncrQa.SupplierId,
                 NcrNumber = ncrQa.Ncr.NcrNumber,
+                NcrPhase = ncrQa.Ncr.NcrPhase,
                 ItemId = ncrQa.ItemId,
                 DefectId = ncrQa.DefectId,
                 NcrQaEngDispositionRequired = ncrQa.NcrQaEngDispositionRequired,
                 NcrQaDefectVideo = ncrQa.NcrQaDefectVideo,
-                ItemDefectPhotos = ncrQa.ItemDefectPhotos
+                ItemDefectPhotos = ncrQa.ItemDefectPhotos,
+                NcrQaStatusFlag = ncrQa.NcrQaStatusFlag
             };
 
             PopulateDropDownLists();
@@ -536,8 +549,10 @@ namespace HaverDevProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int NcrQaId, int NcrId, NcrQaDTO ncrQaDTO, List<IFormFile> Photos)
+        public async Task<IActionResult> Edit(int NcrQaId, int NcrId, NcrQaDTO ncrQaDTO, List<IFormFile> Photos, bool isDraft = false)
         {
+            if (isDraft) ncrQaDTO.NcrQaStatusFlag = true;
+
             if (ModelState.IsValid)
             {
                 var ncrToUpdate = await _context.Ncrs
@@ -557,16 +572,20 @@ namespace HaverDevProject.Controllers
                 if (ncrToUpdate == null)
                 {
                     return NotFound();
-                }
+                }                
+
                 else
-                {                
-                    if (ncrQaDTO.NcrQaEngDispositionRequired == true  && ncrEngExist == false)
+                {
+                    if (isDraft == false)
                     {
-                        ncrToUpdate.NcrPhase = NcrPhase.Engineer;
-                    }
-                    if(ncrQaDTO.NcrQaEngDispositionRequired == false && ncrOperationExist == false)
-                    {
-                        ncrToUpdate.NcrPhase = NcrPhase.Operations;
+                        if (ncrQaDTO.NcrQaEngDispositionRequired == true && ncrEngExist == false)
+                        {
+                            ncrToUpdate.NcrPhase = NcrPhase.Engineer;
+                        }
+                        if (ncrQaDTO.NcrQaEngDispositionRequired == false && ncrOperationExist == false)
+                        {
+                            ncrToUpdate.NcrPhase = NcrPhase.Operations;
+                        }
                     }
 
                     ncrToUpdate.NcrLastUpdated = DateTime.Now;
@@ -610,25 +629,33 @@ namespace HaverDevProject.Controllers
                         ncrQaToUpdate.SupplierId = ncrQaDTO.SupplierId;
                         ncrQaToUpdate.Supplier = null;
                         ncrQaToUpdate.NcrQaEngDispositionRequired = ncrQaDTO.NcrQaEngDispositionRequired;
-                        ncrQaToUpdate.ItemDefectPhotos = ncrQaDTO.ItemDefectPhotos;                   
+                        ncrQaToUpdate.ItemDefectPhotos = ncrQaDTO.ItemDefectPhotos;
+                        ncrQaToUpdate.NcrQaStatusFlag = ncrQaDTO.NcrQaStatusFlag;
 
                         _context.NcrQas.Update(ncrQaToUpdate);
                         await _context.SaveChangesAsync();
-                        
-                        TempData["SuccessMessage"] = "NCR " + ncrQaDTO.NcrNumber + " edited successfully!";
+
                         int updateNcrQa = ncrQaToUpdate.NcrQaId;
+                        if (isDraft)
+                        {
+                            TempData["SuccessMessage"] = "NCR " + ncrQaDTO.NcrNumber + " was edited as draft successfully!";
+                        }
+                        else
+                        {
+                            TempData["SuccessMessage"] = "NCR " + ncrQaDTO.NcrNumber + " edited successfully!";
 
-                        //include supplier name in the email
-                        var ncrQa = await _context.NcrQas
-                            .Include(n => n.Ncr)
-                            .Include(n => n.Supplier)
-                            .FirstOrDefaultAsync(n => n.NcrQaId == NcrQaId);
+                            //include supplier name in the email
+                            var ncrQa = await _context.NcrQas
+                                .Include(n => n.Ncr)
+                                .Include(n => n.Supplier)
+                                .FirstOrDefaultAsync(n => n.NcrQaId == NcrQaId);
 
-                        // Send notification email to Eng or Ops
-                        var subject = "NCR Edited in Quality " + ncrToUpdate.NcrNumber;
-                        var emailContent = "A NCR has been edited :<br><br>NCR #: " + ncrToUpdate.NcrNumber + "<br>Supplier: " + ncrToUpdate.NcrQa.Supplier.SupplierName;
-                        await NotificationCreate(NcrQaId, subject, emailContent);
-
+                            // Send notification email to Eng or Ops
+                            var subject = "NCR Edited " + ncrToUpdate.NcrNumber;
+                            var emailContent = "A NCR has been edited :<br><br>Ncr #: " + ncrToUpdate.NcrNumber + "<br>Supplier: " + ncrToUpdate.NcrQa.Supplier.SupplierName;
+                            await NotificationEdit(NcrQaId, subject, emailContent);
+                        }       
+                        
                         return RedirectToAction("Details", new { id = updateNcrQa, referrer = "Edit" });
                     }
                     catch (RetryLimitExceededException)

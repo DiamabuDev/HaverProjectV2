@@ -13,7 +13,8 @@ namespace HaverDevProject.ViewModels
         public int? ParentId { get; set; }
         public string NcrQaUserId { get; set; }
         public string NcrNumber { get; set; }
-        public bool NcrStatus { get; set; } = true;        
+        public bool NcrStatus { get; set; } = true;
+        public bool NcrQaStatusFlag { get; set; }
         public NcrPhase NcrPhase { get; set; }
         public bool NcrQaItemMarNonConforming { get; set; }        
         public bool NcrQaProcessApplicable { get; set; }        

@@ -24,6 +24,7 @@ public class NcrOperation : Auditable
         }
 
     }
+    public bool NcrOpStatusFlag { get; set; }
     public int NcrOpId { get; set; }
     public int NcrId { get; set; }
     public Ncr Ncr { get; set; }
