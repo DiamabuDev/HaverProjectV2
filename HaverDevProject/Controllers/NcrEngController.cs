@@ -654,7 +654,6 @@ namespace HaverDevProject.Controllers
                         await NotificationEdit(ncrEngId, subject, emailContent);
                     }                    
 
-
                     return RedirectToAction("Details", new { id = ncrEngId, referrer = "Edit" });
                 }
                 catch (DbUpdateConcurrencyException)
