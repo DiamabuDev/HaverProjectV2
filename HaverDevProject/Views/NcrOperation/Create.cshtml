@@ -186,8 +186,25 @@
             return new bootstrap.Tooltip(tooltipTriggerEl);
         });
     </script>
+    <!-- New Draft functionality-->
+    <script>
+        $(document).ready(function () {
+            $("#saveDraftButton").click(function () {
+                // Show the message.
+                var confirmMessage = "This record will be saved as a draft if all the required fields are filled. \nAre you sure you want to continue?";
+                if (confirm(confirmMessage)) {
+                    //if is true, change the value of the parameter
+                    $("#isDraftInput").val("true");
+                    // Send the form
+                    $("#formOper").submit();
+                } else {
+                    return false;
+                }
+            });
+        });
+    </script>
     <!-- Draft functionality using cookies-->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    @* <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         $(document).ready(function () {
             function saveDraft() {
@@ -218,7 +235,7 @@
             }
             $('#saveDraftButton').click(saveDraft);
         });
-    </script>
+    </script> *@
 
     @*     <script>
         $(document).ready(function () {
