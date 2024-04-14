@@ -134,7 +134,6 @@
                     </button>
                 </th>
                 <th></th>
-                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -177,11 +176,11 @@
                       <div class="btn-group" role="group" aria-label="NCR Actions">
                         @if (item.NcrOpStatusFlag)
                         {
-                            <a asp-action="Edit" asp-route-id="@item.NcrOpId" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Edit Draft"><i class="bi bi-pencil-square"></i></a>
+                                <a asp-action="Edit" asp-route-id="@item.NcrOpId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Edit Draft"><i class="bi bi-pencil-square"></i></a>
                         }
                         @if (item.Ncr.NcrPhase != NcrPhase.Closed && item.NcrOpStatusFlag == false)
                         {
-                            <a asp-action="Edit" asp-route-id="@item.NcrOpId" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square"></i></a>
+                                <a asp-action="Edit" asp-route-id="@item.NcrOpId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil-square me-1"></i></a>
                         }
                         <a asp-controller="Report" asp-action="DownloadPDF" asp-route-id="@item.NcrId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Download PDF">
                             <i class="bi bi-file-earmark-pdf"></i>

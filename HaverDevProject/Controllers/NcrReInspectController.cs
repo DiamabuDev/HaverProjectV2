@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Identity;
 using OfficeOpenXml.Style;
 using OfficeOpenXml;
 using SkiaSharp;
+using NuGet.Protocol;
 
 namespace HaverDevProject.Controllers
 {
@@ -880,9 +881,9 @@ namespace HaverDevProject.Controllers
             return ncr?.NcrId ?? 0;
         }
 
-        public IActionResult ExportToExcel()
+        public async Task<IActionResult> ExportToExcelAsync()
         {
-            var ncrOperation = _context.NcrReInspects
+            var ncrReinspect = _context.NcrReInspects
                 .Include(n => n.Ncr)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa)
                 .Include(n => n.Ncr).ThenInclude(n => n.NcrQa).ThenInclude(n => n.Item)
@@ -922,14 +923,20 @@ namespace HaverDevProject.Controllers
                     range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
                 }
 
+
+
                 // Fill data into Excel
                 int row = 3;
-                foreach (var item in ncrOperation)
+                foreach (var item in ncrReinspect)
                 {
+                    //Get the inspector name from _userManager using the NcrReInspectUserId.
+                    var inspector = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == item.NcrReInspectUserId);
+                    string inspectorName = inspector != null ? inspector.FirstName + ' ' + inspector.LastName  : "Unknown";
+
                     worksheet.Cells[row, 1].Value = item.Ncr.NcrNumber;
                     worksheet.Cells[row, 2].Value = item.Ncr.NcrQa.Supplier.SupplierName;
                     worksheet.Cells[row, 3].Value = item.NcrReInspectAcceptable ? "Yes" : "No";
-                    worksheet.Cells[row, 4].Value = item.NcrReInspectId;
+                    worksheet.Cells[row, 4].Value = inspectorName;
                     worksheet.Cells[row, 5].Value = item.Ncr.NcrPhase.ToString();
                     worksheet.Cells[row, 6].Value = item.Ncr.NcrQa.NcrQacreationDate.ToString();
                     worksheet.Cells[row, 7].Value = item.Ncr.NcrLastUpdated.ToString();

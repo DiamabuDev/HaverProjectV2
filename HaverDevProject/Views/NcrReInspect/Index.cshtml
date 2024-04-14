@@ -98,7 +98,7 @@
                         @Html.Raw(ViewData["filterApplied:Created"])
                     </button>
                 </th>
-                <th class="d-none d-md-table-cell col-auto">
+                <th class="d-md-table-cell col-auto">
                     <button type="submit" name="actionButton" value="NCR #" class="btn text-light custom-btn-text-start">
                         NCR #
                         @Html.Raw(ViewData["filterApplied:Ncr"])
@@ -110,19 +110,19 @@
                         @Html.Raw(ViewData["filterApplied:Supplier"])
                     </button>
                 </th>
-                <th class="d-none d-md-table-cell col-auto">
+                <th class="d-md-table-cell col-auto">
                     <button type="submit" name="actionButton" value="Acceptable" class="btn text-light custom-btn-text-start">
                         Acceptable
                         @Html.Raw(ViewData["filterApplied:NcrReInspectAcceptable"])
                     </button>
                 </th>
-                <th class="d-none d-md-table-cell col-auto">
+                <th class="d-none d-md-table-cell">
                     <button type="submit" name="actionButton" value="Inspected By" class="btn text-light custom-btn-text-start">
                         Inspected By
                         @Html.Raw(ViewData["filterApplied:NcrReInspectUserId"])
                     </button>
                 </th>
-                <th>
+                <th class="d-none d-md-table-cell">
                     <button type="submit" name="actionButton" value="Phase" class="btn text-light custom-btn-text-start">
                         Phase
                         @Html.Raw(ViewData["filterApplied:Phase"])
@@ -167,7 +167,7 @@
                             @(item.NcrReInspectAcceptable ? "Yes" : "No")
                         </span>                
                     </td>
-                    <td class="col-auto">
+                    <td class="d-none d-md-table-cell">
                         @await Component.InvokeAsync("UserDetails", new { userEmail = item.CreatedBy, section = "reinsp" })
                     </td>
                     <td class="d-none d-md-table-cell">

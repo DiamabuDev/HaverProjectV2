@@ -71,7 +71,7 @@
                         @Html.Raw(ViewData["filterApplied:UserLastName"])
                     </button>
                 </th>
-                <th class="three-cols">
+                <th class="d-none d-md-table-cell">
                     <button type="submit" name="actionButton" value="Email" class="btn text-light custom-btn-text-start">
                         Email
                         @Html.Raw(ViewData["filterApplied:UserEmail"])
@@ -99,7 +99,7 @@
                     <td class="three-cols">
                         @Html.DisplayFor(modelItem => item.LastName)
                     </td>
-                    <td class="three-cols">
+                    <td class="d-none d-md-table-cell">
                         @Html.DisplayFor(modelItem => item.Email)
                         </td>
                     <td class="three-cols">
