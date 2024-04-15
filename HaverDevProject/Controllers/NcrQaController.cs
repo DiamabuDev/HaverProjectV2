@@ -443,7 +443,7 @@ namespace HaverDevProject.Controllers
                     .FirstOrDefaultAsync(n => n.SupplierId == ncrQa.SupplierId);
 
                     // Send notification email to Eng or Ops
-                    var subject = "New NCR Created " + ncr.NcrNumber;
+                    var subject = "New NCR Created " + ncr.NcrNumber + "  from Quality";
                     var emailContent = "A new NCR has been created:<br><br>Ncr #: " + ncr.NcrNumber + "<br>Supplier: " + Supplier.SupplierName;
                     await NotificationCreate(NcrQaId, subject, emailContent);
                 }                              
@@ -651,7 +651,7 @@ namespace HaverDevProject.Controllers
                                 .FirstOrDefaultAsync(n => n.NcrQaId == NcrQaId);
 
                             // Send notification email to Eng or Ops
-                            var subject = "NCR Edited " + ncrToUpdate.NcrNumber;
+                            var subject = "NCR Edited " + ncrToUpdate.NcrNumber + "  from Quality";
                             var emailContent = "A NCR has been edited :<br><br>Ncr #: " + ncrToUpdate.NcrNumber + "<br>Supplier: " + ncrToUpdate.NcrQa.Supplier.SupplierName;
                             await NotificationEdit(NcrQaId, subject, emailContent);
                         }       

@@ -495,7 +495,7 @@ namespace HaverDevProject.Controllers
                             .FirstOrDefaultAsync(n => n.NcrEngId == ncrEngId);
 
                         // Send notification email to Procurement
-                        var subject = "New NCR Created " + ncr.NcrNumber;
+                        var subject = "New NCR Created " + ncr.NcrNumber + "  from Engineer";
                         var emailContent = "A new NCR has been created:<br><br>Ncr #: " + ncr.NcrNumber + "<br>Supplier: " + ncr.NcrQa.Supplier.SupplierName;
                         await NotificationCreate(ncrEngId, subject, emailContent);
                     }                    
@@ -649,7 +649,7 @@ namespace HaverDevProject.Controllers
                             .FirstOrDefaultAsync(n => n.NcrEngId == ncrEngId);
 
                         // Send notification email to Procurement
-                        var subject = "NCR Edited " + ncr.NcrNumber;
+                        var subject = "NCR Edited " + ncr.NcrNumber + "  from Engineer";
                         var emailContent = "A NCR has been edited :<br><br>Ncr #: " + ncr.NcrNumber + "<br>Supplier: " + ncr.NcrQa.Supplier.SupplierName;
                         await NotificationEdit(ncrEngId, subject, emailContent);
                     }                    
