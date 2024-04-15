@@ -177,7 +177,7 @@
                         @if (item.NcrPhase == NcrPhase.Closed)
                         {
                             <div class="btn-group" role="group" aria-label="NCR Actions">
-                                <a asp-controller="Report" asp-action="DownloadPDF" asp-route-id="@item.NcrId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Download PDF">
+                                <a asp-controller="Report" asp-action="DownloadPDFSections" asp-route-id="@item.NcrId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Download PDF">
                                     <i class="bi bi-file-earmark-pdf"></i>
                                 </a>
 
@@ -193,7 +193,7 @@
                         else
                         {
                             <div class="btn-group" role="group" aria-label="NCR Actions">
-                                <a asp-controller="Report" asp-action="DownloadPDF" asp-route-id="@item.NcrId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Download PDF">
+                                <a asp-controller="Report" asp-action="DownloadPDFSections" asp-route-id="@item.NcrId" class="btn btn-sm btn-primary me-1" data-bs-toggle="tooltip" title="Download PDF">
                                     <i class="bi bi-file-earmark-pdf"></i>
                                 </a>
 
