@@ -474,7 +474,7 @@ namespace HaverDevProject.Controllers
                                 NcrNumber = newNcrNumber,
                                 NcrStatus = true,
                                 NcrLastUpdated = DateTime.Now,
-                                NcrPhase = NcrPhase.Engineer
+                                NcrPhase = NcrPhase.QualityInspector
                             };
 
                             _context.Ncrs.Add(newNcr);
@@ -499,7 +499,8 @@ namespace HaverDevProject.Controllers
                                 DefectId = ncrToUpdate.NcrQa.DefectId,
                                 NcrQacreationDate = DateTime.Now.Date,
                                 NcrQaUserId = user.Id,
-                                NcrQaEngDispositionRequired = ncrToUpdate.NcrQa.NcrQaEngDispositionRequired
+                                NcrQaEngDispositionRequired = ncrToUpdate.NcrQa.NcrQaEngDispositionRequired,
+                                NcrQaStatusFlag = true
                             };
 
                             _context.NcrQas.Add(newNcrQa);
