@@ -126,8 +126,8 @@ namespace HaverDevProject.CustomControllers
                         var wb = workbookPicture.Worksheets.Add("Quality");
                         workbookPicture.Worksheets["Quality"].CopyFrom(workbookPicture.Worksheets["Pictures"]);
                         wb.Range["A6"].Value = "Quality";
-                        int picCount = _context.ItemDefectPhotos.Count();
-                        var Pics = _context.ItemDefectPhotos.Take(Math.Min(4, picCount)).ToList();
+                        int picCount = ncr.NcrQa.ItemDefectPhotos.Count();
+                        var Pics = ncr.NcrQa.ItemDefectPhotos.Take(Math.Min(4, picCount)).ToList();
                         List<ExcelPicture> pictures = new List<ExcelPicture>();
                         for (int i = 0; i < Pics.Count; i++)
                         {
@@ -220,8 +220,8 @@ namespace HaverDevProject.CustomControllers
                         //var wbE = workbookPicture.Worksheets["Pictures"];
                         //workbookPicture.Worksheets.AddCopyBefore(wbE);
                         wbE.Range["A6"].Value = "Engineering";
-                        int picCount = _context.EngDefectPhotos.Count();
-                        var Pics = _context.EngDefectPhotos.Take(Math.Min(4, picCount)).ToList();
+                        int picCount = ncr.NcrEng.EngDefectPhotos.Count();
+                        var Pics = ncr.NcrEng.EngDefectPhotos.Take(Math.Min(4, picCount)).ToList();
                         List<ExcelPicture> pictures = new List<ExcelPicture>();
                         for (int i = 0; i < Pics.Count; i++)
                         {
@@ -313,8 +313,8 @@ namespace HaverDevProject.CustomControllers
                         //var wbO = workbookPicture.Worksheets["Pictures"];
                         //workbookPicture.Worksheets.AddCopyBefore(wbO);
                         wbO.Range["A6"].Value = "Operations";
-                        int picCount = _context.OpDefectPhotos.Count();
-                        var Pics = _context.OpDefectPhotos.Take(Math.Min(4, picCount)).ToList();
+                        int picCount = ncr.NcrOperation.OpDefectPhotos.Count();
+                        var Pics = ncr.NcrOperation.OpDefectPhotos.Take(Math.Min(4, picCount)).ToList();
                         List<ExcelPicture> pictures = new List<ExcelPicture>();
                         for (int i = 0; i < Pics.Count; i++)
                         {
@@ -405,8 +405,8 @@ namespace HaverDevProject.CustomControllers
                         //var wbP = workbookPicture.Worksheets["Pictures"];
                         //workbookPicture.Worksheets.AddCopyBefore(wbP);
                         wbP.Range["A6"].Value = "Procurement";
-                        int picCount = _context.ProcDefectPhotos.Count();
-                        var Pics = _context.ProcDefectPhotos.Take(Math.Min(4, picCount)).ToList();
+                        int picCount = ncr.NcrProcurement.ProcDefectPhotos.Count();
+                        var Pics = ncr.NcrProcurement.ProcDefectPhotos.Take(Math.Min(4, picCount)).ToList();
                         List<ExcelPicture> pictures = new List<ExcelPicture>();
                         for (int i = 0; i < Pics.Count; i++)
                         {
@@ -480,8 +480,8 @@ namespace HaverDevProject.CustomControllers
                         //var wbR = workbookPicture.Worksheets["Pictures"];
                         //workbookPicture.Worksheets.AddCopyBefore(wbR);
                         wbR.Range["A6"].Value = "Reinspection";
-                        int picCount = _context.NcrReInspectPhotos.Count();
-                        var Pics = _context.NcrReInspectPhotos.Take(Math.Min(4, picCount)).ToList();
+                        int picCount = ncr.NcrReInspect.NcrReInspectPhotos.Count();
+                        var Pics = ncr.NcrReInspect.NcrReInspectPhotos.Take(Math.Min(4, picCount)).ToList();
                         List<ExcelPicture> pictures = new List<ExcelPicture>();
                         for (int i = 0; i < Pics.Count; i++)
                         {
@@ -690,8 +690,8 @@ namespace HaverDevProject.CustomControllers
                         //var wb = workbookPicture.Worksheets.Add("Quality");
                         //workbookPicture.Worksheets["Quality"].CopyFrom(workbookPicture.Worksheets["Pictures"]);
                         //wb.Range["A6"].Value = "Quality";
-                        int picCount = _context.ItemDefectPhotos.Count();
-                        var Pics = _context.ItemDefectPhotos.Take(Math.Min(4, picCount)).ToList();
+                        int picCount = ncr.NcrQa.ItemDefectPhotos.Count();
+                        var Pics = ncr.NcrQa.ItemDefectPhotos.Take(Math.Min(4, picCount)).ToList();
                         List<ExcelPicture> pictures = new List<ExcelPicture>();
                         for (int i = 0; i < Pics.Count; i++)
                         {
@@ -792,8 +792,8 @@ namespace HaverDevProject.CustomControllers
                         //var wbE = workbookPicture.Worksheets["Pictures"];
                         //workbookPicture.Worksheets.AddCopyBefore(wbE);
                         //wbE.Range["A6"].Value = "Engineering";
-                        int picCount = _context.EngDefectPhotos.Count();
-                        var Pics = _context.EngDefectPhotos.Take(Math.Min(4, picCount)).ToList();
+                        int picCount = ncr.NcrEng.EngDefectPhotos.Count();
+                        var Pics = ncr.NcrEng.EngDefectPhotos.Take(Math.Min(4, picCount)).ToList();
                         List<ExcelPicture> pictures = new List<ExcelPicture>();
                         for (int i = 0; i < Pics.Count; i++)
                         {
@@ -894,8 +894,8 @@ namespace HaverDevProject.CustomControllers
                         //var wbO = workbookPicture.Worksheets["Pictures"];
                         //workbookPicture.Worksheets.AddCopyBefore(wbO);
                         wbO.Range["A6"].Value = "Operations";
-                        int picCount = _context.OpDefectPhotos.Count();
-                        var Pics = _context.OpDefectPhotos.Take(Math.Min(4, picCount)).ToList();
+                        int picCount = ncr.NcrOperation.OpDefectPhotos.Count();
+                        var Pics = ncr.NcrOperation.OpDefectPhotos.Take(Math.Min(4, picCount)).ToList();
                         List<ExcelPicture> pictures = new List<ExcelPicture>();
                         for (int i = 0; i < Pics.Count; i++)
                         {
@@ -994,8 +994,8 @@ namespace HaverDevProject.CustomControllers
                         //var wbP = workbookPicture.Worksheets["Pictures"];
                         //workbookPicture.Worksheets.AddCopyBefore(wbP);
                         wbP.Range["A6"].Value = "Procurement";
-                        int picCount = _context.ProcDefectPhotos.Count();
-                        var Pics = _context.ProcDefectPhotos.Take(Math.Min(4, picCount)).ToList();
+                        int picCount = ncr.NcrProcurement.ProcDefectPhotos.Count();
+                        var Pics = ncr.NcrProcurement.ProcDefectPhotos.Take(Math.Min(4, picCount)).ToList();
                         List<ExcelPicture> pictures = new List<ExcelPicture>();
                         for (int i = 0; i < Pics.Count; i++)
                         {
@@ -1075,8 +1075,8 @@ namespace HaverDevProject.CustomControllers
                         //var wbR = workbookPicture.Worksheets["Pictures"];
                         //workbookPicture.Worksheets.AddCopyBefore(wbR);
                         wbR.Range["A6"].Value = "Reinspection";
-                        int picCount = _context.NcrReInspectPhotos.Count();
-                        var Pics = _context.NcrReInspectPhotos.Take(Math.Min(4, picCount)).ToList();
+                        int picCount = ncr.NcrReInspect.NcrReInspectPhotos.Count();
+                        var Pics = ncr.NcrReInspect.NcrReInspectPhotos.Take(Math.Min(4, picCount)).ToList();
                         List<ExcelPicture> pictures = new List<ExcelPicture>();
                         for (int i = 0; i < Pics.Count; i++)
                         {
