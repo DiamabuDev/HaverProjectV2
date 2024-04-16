@@ -590,11 +590,6 @@ namespace HaverDevProject.Controllers
         {
             if (isDraft) ncrProcDTO.NcrProcFlagStatus = true;
 
-            ncrProcDTO.NcrId = id;
-            if (id != ncrProcDTO.NcrId)
-            {
-                return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
@@ -615,7 +610,6 @@ namespace HaverDevProject.Controllers
                     ncrProc.NcrProcUserId = ncrProcDTO.NcrProcUserId;
                     ncrProc.NcrProcCreated = ncrProcDTO.NcrProcCreated;
                     ncrProc.NcrProcCompleteDate = ncrProcDTO.NcrProcCompleteDate;
-                    ncrProc.NcrId = ncrProcDTO.NcrId;
                     ncrProc.SupplierReturnMANum = ncrProcDTO.SupplierReturnMANum;
                     ncrProc.SupplierReturnName = ncrProcDTO.SupplierReturnName;
                     ncrProc.SupplierReturnAccount = ncrProcDTO.SupplierReturnAccount;
